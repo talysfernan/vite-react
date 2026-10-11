@@ -770,6 +770,7 @@ svg.c-wires{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
 /* ---------- modais ---------- */
 .c-mod{width:min(1020px,100%);max-height:calc(100vh - 40px);overflow:auto;padding:20px 22px;animation:pop .3s var(--ease) both}
 .c-mod.sm{width:min(480px,100%)}
+.c-late{color:var(--red);font-weight:600;margin-left:6px}
 .c-pt{display:flex;flex-direction:column;gap:16px}.c-pt .c-sseg{flex-wrap:wrap}
 .c-more summary{cursor:pointer;color:var(--muted);font-size:12px;list-style:none;display:inline-flex;align-items:center;gap:6px}.c-more summary::before{content:'+';font-size:14px}.c-more[open] summary::before{content:'–'}.c-more summary:hover{color:var(--text-2)}.c-mod.wide{width:min(940px,100%)}
 .c-askscrim{z-index:120}
@@ -1552,6 +1553,7 @@ function openEd(id, fresh) {
   const links = (n.links || []).map(N).filter(Boolean), M = marcas(), T = times(), P = pessoas();
   const tailable = ['pill', 'outline', 'mini'].includes(sh);
   if (n.cat === 'ponto') return edShow(id, edPonto(n, p, kids, list, sub), 'c-ed sm', fresh);
+  if (n.cat === 'acao') return edShow(id, edAcao(n, p, list, sub), 'c-ed sm', fresh);
   const html = `<div class="c-mh" style="--c:${colorOf(n)}"><button class="c-cat" data-act="ed-cat" title="Trocar tipo"><span class="c-ic2">${ic(n.cat)}</span>${esc(C.n)}</button>${p ? `<button class="c-crumb" data-act="open" data-id="${p.id}">${ic('left', 'width:12px;height:12px')}${esc(labelOf(p))}</button>` : ''}<span class="sp"></span>${n.from ? `<button class="tag" data-act="goto" data-id="${n.from.id}">veio de ${monthName(n.from.month, false)}</button>` : ''}${n.carried ? `<button class="tag" data-act="goto" data-id="${n.carried}">seguiu para ${monthName(addMonth(n.month, 1), false)}</button>` : ''}<button class="pill sm icon ghost" data-act="close" aria-label="Fechar">${ic('x')}</button></div>
   <input class="c-title" data-nf="title" value="${esc(n.title)}" placeholder="${esc(labelOf({ ...n, title: '' }))}" autocomplete="off">
   <div class="c-ebody">
@@ -1606,6 +1608,23 @@ function edShow(id, html, cls, fresh) {
 }
 /* cabeçalho comum: tipo (trocar), de onde nasce, fechar */
 const edHead = (n, p) => `<div class="c-mh" style="--c:${colorOf(n)}"><button class="c-cat" data-act="ed-cat" title="Trocar tipo"><span class="c-ic2">${ic(n.cat)}</span>${esc(CAT(n.cat).n)}</button>${p ? `<button class="c-crumb" data-act="open" data-id="${p.id}">${ic('left', 'width:12px;height:12px')}${esc(labelOf(p))}</button>` : ''}<span class="sp"></span><button class="pill sm icon ghost" data-act="close" aria-label="Fechar">${ic('x')}</button></div>`;
+const edMore = (n, p, list, sub) => `<details class="c-more" ${ED.more ? 'open' : ''} ontoggle="ED.more = this.open"><summary>Mais opções</summary>
+      <label class="field mt8"><span>Ligado a</span><select class="inp sm" data-par="1"><option value="">— solto na constelação —</option>${list.filter(x => x.id !== n.id && !sub.some(s => s.id === x.id)).map(x => `<option value="${x.id}" ${n.parent === x.id ? 'selected' : ''}>${esc(labelOf(x))} · ${esc(CAT(x.cat).n)}</option>`).join('')}</select></label>
+      ${p ? `<div class="field mt8"><span>Linha até ${esc(labelOf(p))}</span><nav class="seg">${[['auto', 'Auto'], ['reta', 'Reta'], ['curva', 'Curva'], ['cotovelo', 'Cotovelo']].map(([k, l]) => `<button class="pill sm ${(n.ln || 'auto') === k ? 'on' : ''}" data-act="ed-ln" data-v="${k}">${l}</button>`).join('')}</nav></div>` : ''}
+    </details>`;
+/* Ação = pop-up rápido: o que é, quem faz, prazo e feito */
+function edAcao(n, p, list, sub) {
+  const P = pessoas(), done = n.status === 'done', late = !done && n.due && n.due < todayISO();
+  return `${edHead(n, p)}
+  <input class="c-title" data-nf="title" value="${esc(n.title)}" placeholder="O que precisa ser feito" autocomplete="off">
+  <div class="c-pt">
+    <label class="field"><span>Detalhes</span><textarea class="inp c-ta" rows="2" data-nf="notes" placeholder="Opcional">${esc(n.notes || '')}</textarea></label>
+    <div class="field"><span>Quem faz</span><div class="c-chips">${P.map(x => `<button class="pill sm c-pp ${(n.who || []).includes(x.id) ? 'on' : ''}" data-act="ed-who" data-v="${x.id}">${av(x, 18)}${esc(x.name.split(' ')[0])}</button>`).join('')}${isAdmin() ? `<button class="pill sm ghost" data-act="ent" data-k="pessoa" data-id="" data-back="${n.id}">${ic('plus', 'width:12px;height:12px')}Pessoa</button>` : ''}${!P.length && !isAdmin() ? '<span class="c-mut">Ninguém cadastrado.</span>' : ''}</div></div>
+    <div class="c-mrow"><label class="field"><span>Prazo${late ? ' <b class="c-late">atrasada</b>' : ''}</span><input class="inp sm" type="date" data-nf="due" value="${esc(n.due || '')}"></label></div>
+    ${edMore(n, p, list, sub)}
+  </div>
+  <div class="c-mf"><button class="pill sm danger ghost" data-act="ed-del">${ic('trash', 'width:13px;height:13px')}Excluir</button><span class="sp"></span><button class="pill sm ${done ? 'on' : ''}" data-act="ed-st" data-v="${done ? 'todo' : 'done'}">${ic(done ? 'undo' : 'check', 'width:13px;height:13px')}${done ? 'Reabrir' : 'Marcar como feita'}</button><button class="pill sm white" data-act="close">Pronto</button></div>`;
+}
 /* Ponto = marco: quando, se aconteceu, como se reconhece e o que fazer se não acontecer */
 const MARCO_ST = [['todo', 'Aguardando'], ['review', 'Em risco'], ['done', 'Aconteceu'], ['blocked', 'Não aconteceu']];
 function edPonto(n, p, kids, list, sub) {
@@ -1620,10 +1639,7 @@ function edPonto(n, p, kids, list, sub) {
     <div class="c-sec"><h5>${ic('fork', 'width:13px;height:13px')}Ramos</h5>
       ${kids.map(k => `<button class="c-kid" data-act="open" data-id="${k.id}"><span class="c-ic2" style="--c:${colorOf(k)}">${ic(k.cat)}</span><span>${esc(labelOf(k))}</span><i class="c-sdot" style="--sc:${ST(k.status)[2]}"></i></button>`).join('')}
       <button class="pill sm" data-act="ramo" data-id="${n.id}">${ic('plus', 'width:12px;height:12px')}Novo ramo</button></div>
-    <details class="c-more" ${ED.more ? 'open' : ''} ontoggle="ED.more = this.open"><summary>Mais opções</summary>
-      <label class="field mt8"><span>Ligado a</span><select class="inp sm" data-par="1"><option value="">— solto na constelação —</option>${list.filter(x => x.id !== n.id && !sub.some(s => s.id === x.id)).map(x => `<option value="${x.id}" ${n.parent === x.id ? 'selected' : ''}>${esc(labelOf(x))} · ${esc(CAT(x.cat).n)}</option>`).join('')}</select></label>
-      ${p ? `<div class="field mt8"><span>Linha até ${esc(labelOf(p))}</span><nav class="seg">${[['auto', 'Auto'], ['reta', 'Reta'], ['curva', 'Curva'], ['cotovelo', 'Cotovelo']].map(([k, l]) => `<button class="pill sm ${(n.ln || 'auto') === k ? 'on' : ''}" data-act="ed-ln" data-v="${k}">${l}</button>`).join('')}</nav></div>` : ''}
-    </details>
+    ${edMore(n, p, list, sub)}
   </div>
   <div class="c-mf"><button class="pill sm danger ghost" data-act="ed-del">${ic('trash', 'width:13px;height:13px')}Excluir</button><span class="sp"></span><button class="pill sm white" data-act="close">Pronto</button></div>`;
 }
