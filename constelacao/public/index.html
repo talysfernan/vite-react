@@ -1509,7 +1509,7 @@ function createNode(cat, ctx = {}, title = '') {
   if (C.s === 'periodo') n.w = 220;
   if (cat === 'canal') n.f.rede = 'TikTok';
   if (cat === 'loja') n.f.loja = LOJAS[store.board][0];
-  tx(() => putNode(n)); refresh(); setTimeout(() => openEd(n.id, !title), 120);
+  tx(() => putNode(n)); refresh(); NODES.forEach((el, k) => el.classList.toggle('sel', k === n.id));
 }
 
 /* ---------- editor completo ---------- */
