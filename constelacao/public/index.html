@@ -1771,6 +1771,7 @@ function edSec(n, p, list, sub, field, X) {
     if (k === '@due') return `<label class="field"><span>${l || 'Prazo'}${late ? ' <b class="c-late">atrasado</b>' : ''}</span><input class="inp sm" type="date" data-nf="due" value="${esc(n.due || '')}"></label>`;
     if (k === '@start') return `<label class="field"><span>${l || 'Início'}</span><input class="inp sm" type="date" data-nf="start" value="${esc(n.start || '')}"></label>`;
     if (k === '@who') return `<div class="field w2"><span>${l || 'Responsáveis'}</span><div class="c-chips">${P.map(x => `<button class="pill sm c-pp ${(n.who || []).includes(x.id) ? 'on' : ''}" data-act="ed-who" data-v="${x.id}">${av(x, 18)}${esc(x.name.split(' ')[0])}</button>`).join('')}${isAdmin() ? `<button class="pill sm ghost" data-act="ent" data-k="pessoa" data-id="" data-back="${n.id}">${ic('plus', 'width:12px;height:12px')}Pessoa</button>` : ''}${!P.length && !isAdmin() ? '<span class="c-mut">Ninguém cadastrado.</span>' : ''}</div></div>`;
+    if (k === '@team') { const T = times(); return `<div class="field w2"><span>${l || 'Time'}</span><div class="c-chips">${T.map(x => `<button class="pill sm ${n.team === x.id ? 'on' : ''}" data-act="ed-team" data-v="${x.id}">${ic('time', `width:13px;height:13px;color:${x.color}`)}${esc(x.name)}</button>`).join('')}${isAdmin() ? `<button class="pill sm ghost" data-act="ent" data-k="time" data-id="" data-back="${n.id}">${ic('plus', 'width:12px;height:12px')}Time</button>` : ''}${!T.length && !isAdmin() ? '<span class="c-mut">Nenhum time.</span>' : ''}</div></div>`; }
     if (k === '@att') return `<div class="w2">${X.drop ? `<p class="c-mut c-hint0">${X.drop}</p>` : ''}${attHTML(n)}</div>`;
     if (k === '@res') return `<label class="field w2"><span>${l || 'Como foi'}</span><textarea class="inp c-ta" rows="3" data-ff="resultado" placeholder="Números, o que funcionou, o que aprendemos">${esc(f.resultado || '')}</textarea></label>`;
     if (k === '@notes') return `<label class="field w2"><span>${l || 'Observações'}</span><textarea class="inp c-ta" rows="3" data-nf="notes" placeholder="Contexto, combinados, observações">${esc(n.notes || '')}</textarea></label>`;
@@ -1804,21 +1805,41 @@ Object.assign(ED_T, {
 });
 /* canais e lojas, produção (landing, produto) e estrutura */
 Object.assign(ED_T, {
-  canal: { ph: 'Nome do canal', sec: [['Canal', ['rede', 'perfil', 'link']], ['Ritmo e meta', ['frequencia', 'meta']], ['O que sai aqui', ['@kids:Adicionar post ou ação']], ['Responsáveis', ['@who']], ['', ['@notes']]] },
-  loja: { ph: 'Nome da loja ou do anúncio', drop: 'Suba fotos do anúncio, planilhas ou cole os links', sec: [['Loja', ['loja', 'link']], ['Meta e estoque', ['meta', 'estoque']], ['Ações nesta loja', ['@kids:Adicionar ação']], ['Arquivos e links', ['@att']], ['Responsáveis', ['@who']], ['', ['obs']]] },
+  canal: { ph: 'Nome do canal', sec: [['Canal', ['rede', 'perfil', 'link']], ['Ritmo e meta', ['frequencia', 'meta']], ['O que sai aqui', ['@kids:Adicionar post ou ação']], ['', ['@who']], ['', ['@notes']]] },
+  loja: { ph: 'Nome da loja ou do anúncio', drop: 'Suba fotos do anúncio, planilhas ou cole os links', sec: [['Loja', ['loja', 'link']], ['Meta e estoque', ['meta', 'estoque']], ['Ações nesta loja', ['@kids:Adicionar ação']], ['Arquivos e links', ['@att']], ['', ['@who']], ['', ['obs']]] },
   landing: { ph: 'Nome da página', st: ['Briefing', 'Construindo', 'Revisão', 'No ar', 'Travada'], drop: 'Suba o layout e os textos ou cole o link do Figma',
     sec: [['Página', ['url', 'objetivo']], ['Seções', ['secoes']], ['Arquivos e links', ['@att']], ['Quem e quando', ['@who', '@due:Prazo']], ['', ['@notes:Comentários de revisão']]] },
   produto: { ph: 'Nome do produto ou da embalagem', st: ['Ideia', 'Desenvolvendo', 'Aprovação', 'Pronto', 'Travado'], drop: 'Suba artes de rótulo, fichas técnicas e fotos de amostra',
     sec: [['Produto', ['item', 'etapa:Fase do produto', 'fornecedor']], ['Detalhes', ['detalhes']], ['Arquivos', ['@att']], ['Quem e quando', ['@who', '@due:Prazo']], ['', ['@notes']]] },
   estrategia: { ph: 'Nome da estratégia', st: ['Rascunho', 'Validando', 'Revisão', 'Definida', 'Travada'], drop: 'Suba estudos e referências ou cole os links',
-    sec: [['A aposta', ['tese']], ['Para quem e por quê', ['publico', 'diferencial']], ['Riscos', ['riscos']], ['O que nasce dela', ['@kids:Adicionar plano ou ação']], ['Referências', ['@att']], ['Responsáveis', ['@who']]] },
+    sec: [['A aposta', ['tese']], ['Para quem e por quê', ['publico', 'diferencial']], ['Riscos', ['riscos']], ['O que nasce dela', ['@kids:Adicionar plano ou ação']], ['Referências', ['@att']], ['', ['@who']]] },
   fase: { ph: 'Nome da fase', st: ['A começar', 'Em andamento', 'Revisão', 'Fechada', 'Travada'],
-    sec: [['Entrega', ['entrega', 'criterio']], ['Período', ['@start:Início', '@due:Fim']], ['O que nasce dela', ['@kids:Adicionar']], ['Responsáveis', ['@who']], ['', ['@notes']]] },
+    sec: [['Entrega', ['entrega', 'criterio']], ['Período', ['@start:Início', '@due:Fim']], ['O que nasce dela', ['@kids:Adicionar']], ['', ['@who']], ['', ['@notes']]] },
   periodo: { ph: 'Nome do período (ex.: Black Friday)', sec: [['Janela', ['tipo', '@start:Começa', '@due:Termina']], ['', ['obs']], ['O que acontece nele', ['@kids:Adicionar']]] },
   marco: { ph: 'Nome do marco', st: ['Aguardando', '', 'Em risco', 'Cumprido', 'Não cumprido'], stL: 'Estado',
     sec: [['Quando', ['@due:Data', 'hora', 'tipo']], ['O que nasce dele', ['@kids:Adicionar']], ['', ['@notes']]] },
   decisao: { ph: 'Nome da decisão', st: ['Em aberto', 'Discutindo', '', 'Decidido', 'Travado'], stL: 'Estado',
     sec: [['A decisão', ['pergunta:A pergunta', 'criterio']], ['Caminhos', ['opcoes', 'decidido']], ['Prazo e quem decide', ['@due:Decidir até', '@who:Quem decide']], ['Um ramo por caminho', ['@kids:Adicionar caminho']]] }
+});
+/* pessoas, gestão e quadros livres */
+Object.assign(ED_T, {
+  time: { ph: 'Nome (opcional)', sec: [['Qual time', ['@team']], ['Papel do time aqui', ['papel']], ['Pessoas envolvidas', ['@who:Pessoas']], ['O que o time faz aqui', ['@kids:Adicionar ação']]] },
+  funcao: { ph: 'Nome da função', st: ['A definir', 'Em transição', '', 'Ocupada', 'Travada'], stL: 'Situação', sec: [['A função', ['descricao', 'dedicacao']], ['Quem assume', ['quem', '@who:Pessoa no sistema']], ['', ['@notes']]] },
+  contratacao: { ph: 'Nome da vaga', st: ['Abrir vaga', 'Entrevistas', 'Proposta', 'Contratado', 'Travada'], drop: 'Suba currículos, a descrição da vaga ou contratos',
+    sec: [['Vaga', ['vaga', 'modelo', 'custo']], ['Perfil buscado', ['perfil']], ['Prazo e quem conduz', ['@due:Contratar até', '@who:Quem conduz']], ['Currículos e documentos', ['@att']], ['', ['@notes']]] },
+  lista: { ph: 'Nome da lista', sec: [['Itens', ['@chk:Novo item']], ['Quem e quando', ['@who', '@due:Prazo']]] },
+  documento: { ph: 'Nome do documento', drop: 'Suba o arquivo (contrato, briefing, planilha) ou cole o link', sec: [['Arquivo', ['@att']], ['Link e resumo', ['url:Link principal', 'resumo']], ['', ['@who:Responsável']]] },
+  pesquisa: { ph: 'Nome da pesquisa', st: ['A fazer', 'Pesquisando', 'Revisão', 'Concluída', 'Travada'], drop: 'Suba estudos, prints e planilhas',
+    sec: [['Pergunta', ['pergunta']], ['Fontes', ['fontes', '@att']], ['Conclusões', ['conclusao']], ['Quem e quando', ['@who', '@due:Prazo']]] },
+  relatorio: { ph: 'Nome do relatório', st: ['A fazer', 'Montando', 'Revisão', 'Entregue', 'Travado'], drop: 'Suba o relatório, prints ou planilhas',
+    sec: [['Período', ['@start:De', '@due:Até']], ['Métricas', ['metricas']], ['Aprendizados', ['aprendizados']], ['Próximos passos', ['@kids:Adicionar ação']], ['Arquivos', ['@att']], ['Quem', ['@who']]] },
+  aprovacao: { ph: 'O que precisa ser aprovado', st: ['Aguardando', 'Em análise', 'Ajustes pedidos', 'Aprovado', 'Recusado'], stL: 'Situação', drop: 'Suba o que será avaliado ou cole o link',
+    sec: [['O que e quem', ['oque', 'quem', '@due:Aprovar até']], ['Para avaliar', ['@att']], ['Parecer', ['parecer']]] },
+  meta: { ph: 'Nome da meta', st: ['A começar', 'Em andamento', 'Em risco', 'Batida', 'Não batida'], stL: 'Situação',
+    sec: [['Meta', ['indicador', 'alvo', 'atual', 'fonte']], ['Período', ['@start:De', '@due:Até']], ['O que move esta meta', ['@kids:Adicionar ação']], ['', ['@who']]] },
+  quadro: { ph: 'Título', sec: [['', ['texto', 'link']], ['Arquivos', ['@att']]] },
+  nota: { ph: 'Título da nota', sec: [['', ['@notes:Nota']]] },
+  ref: { ph: 'Nome da referência', drop: 'Suba prints ou arquivos de inspiração', sec: [['', ['url', 'porque']], ['Arquivos', ['@att']]] }
 });
 /* Reunião: quando, onde, quem, pauta e decisões (cada decisão pode virar uma Ação) */
 const decList = n => (n.f || {}).dec || String((n.f || {}).decisoes || '').split('\n').map(t => t.trim()).filter(Boolean).map((t, i) => ({ id: 'l' + i, t }));
