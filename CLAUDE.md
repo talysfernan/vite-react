@@ -182,3 +182,41 @@ users  = [{ id, name, user, cargo, email, note, pass(hash), passEnc, active,
   3. Atualizar a **cópia de teste** (`python3 constelacao/preview.py <saída>`, publicada como artifact privado) para o Talys testar.
   4. Commit + push na branch de trabalho.
   5. Publicar no Cloudflare e conferir no ar (Talys liberou publicar direto, seguindo a seção 1).
+
+---
+
+## 9. Padrões aprovados pelo Talys (valem para todo painel novo)
+
+Aprendidos na Constelação (out/2026). Seguir sem precisar perguntar de novo.
+
+### Jeito de trabalhar
+- Uma coisa por vez; quando ele pré-aprovar um estilo, seguir em sequência sem perguntar a cada passo.
+- Antes de algo grande (pop-up complexo, painel novo), mostrar a proposta em tópicos curtos e pedir ok.
+- Cada entrega: testar no navegador (Playwright, com API simulada ou `wrangler dev` local), publicar, conferir no ar e mandar print.
+- Nunca mudar o que não foi pedido; quando ele volta atrás numa ideia, voltar exatamente ao que era.
+
+### Interação
+- Adicionar algo **não abre pop-up**; só abre quando ele clica no item depois.
+- Clicar dentro de um pop-up **não pode piscar**: atualizar o conteúdo no lugar (sem recriar o modal nem repetir animação), mantendo rolagem e foco.
+- Hover com opções: listas de "pills vitrificadas" empilhadas, com a sugestão mais provável primeiro e embaixo do cursor; dá para clicar ou arrastar.
+- Arrastar com ímã: alinhar com elementos próximos dá um "pulo" + guia tracejada discreta (+ vibração curta no celular).
+- Cursor: só a mãozinha de clique ou de arrastar; nunca cruz ou cursor de copiar.
+- Exclusão sempre com janela Cancelar/Excluir. Desligar uma opção (ex.: verba) esconde o valor, não apaga.
+
+### Visual
+- Controles discretos em vidro: `background: rgba(255,255,255,.04–.08)`, borda `rgba(255,255,255,.1–.16)`, `backdrop-filter: blur(8–18px) saturate(1.4)`, tamanhos pequenos (16–30px). Nada de branco sólido em controles secundários.
+- Transições suaves com `var(--ease)`; trocas de aba deslizam/aparecem na direção da troca; respeitar `prefers-reduced-motion`.
+- Barra de ferramentas: vidro, itens agrupados com separadores finos, hover sobe 3px e o ícone cresce de leve.
+
+### Pop-ups
+- Cada tipo de item tem pop-up próprio, pensado para o que ele é (nada de formulário genérico):
+  - título com placeholder do tipo ("Nome do roteiro"…), **etapa** com nomes próprios do tipo, seções com títulos curtos em maiúsculas;
+  - **Arquivos e links** em destaque quando o item normalmente tem um arquivo (roteiro, arte, contrato): arrastar/escolher + links, com uma dica do que subir;
+  - o que é raro fica recolhido em "Mais opções"; rodapé com Excluir · (Duplicar) · Pronto.
+- Item complexo (ex.: Plano) usa abas com contador (`Anexos 3`, `Tarefas 2/5`) e lembra a última aba aberta.
+- Itens rápidos (ex.: Ação) cabem em um pop-up estreito: o quê, quem, prazo e "marcar como feita".
+
+### Painel e dados
+- BR e US no mesmo painel, com bandeiras (SVG, não emoji) no canto para alternar; dados separados por país.
+- Anexos: `POST /api/files` em partes de 1,8 MB no SQLite; servir com `?b=` para imagens/downloads.
+
