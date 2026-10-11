@@ -663,8 +663,10 @@ svg.c-wires{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
 /* ícone */
 .sh-icone .c-b{width:46px;height:42px;border-radius:12px;background:#0e0e11;color:#ededf0}
 .sh-icone .c-b svg{width:34px;height:34px;stroke-width:1.7}
-.c-lg{display:flex;flex-direction:column;gap:4px;width:44px}
-.c-lg i{height:8px;border-radius:5px;border:1.8px solid #ededf0;position:relative;overflow:hidden}
+.cat-lista .c-b{width:34px;height:32px;border-radius:10px}
+.cat-time .c-b{color:var(--tc,#ededf0);border:1px solid color-mix(in srgb,var(--tc,#ededf0) 35%,transparent)}.cat-time .c-b svg{width:30px;height:30px;stroke-width:1.6}
+.c-lg{display:flex;flex-direction:column;gap:3px;width:22px}
+.c-lg i{height:5px;border-radius:3px;border:1.4px solid #ededf0;position:relative;overflow:hidden}
 .c-lg i:first-child::after{content:"";position:absolute;inset:0;width:calc(var(--p) * 100%);background:#4ade80;transition:width .5s}
 .c-lg i:first-child{border-color:color-mix(in srgb,#4ade80 calc(var(--p) * 100%),#ededf0)}
 /* rótulo com haste */
@@ -725,6 +727,22 @@ svg.c-wires{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
 @media (hover:none){.c-n.sel .c-k{opacity:1}}
 
 /* ---------- barras do palco ---------- */
+.c-mid{position:absolute;top:0;left:0;width:0;height:0;pointer-events:none;z-index:0}
+.c-mid>*{position:absolute;display:none}
+.c-mid[data-mode="linha"] .c-midl{display:block;left:-.5px;top:-1600px;height:3200px;width:0;border-left:1px dashed rgba(255,255,255,.16)}
+.c-mid[data-mode="linha"] .c-midt,.c-mid[data-mode="ponto"] .c-midt{display:block;left:0;top:14px;transform:translateX(-50%);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);white-space:nowrap}
+.c-mid[data-mode="linha"] .c-midt{top:auto;bottom:10px}
+.c-mid[data-mode="ponto"] .c-midp{display:block;left:-7px;top:-7px;width:14px;height:14px;transform:rotate(45deg);border-radius:3px;background:var(--bg,#0e0e11);border:1.5px solid rgba(255,255,255,.55);box-shadow:0 0 14px rgba(255,255,255,.18)}
+.c-mid[data-mode="quinzenas"] .c-midp{display:block;left:-1px;top:-9px;width:2px;height:18px;border-radius:2px;background:rgba(255,255,255,.4)}
+.c-mid[data-mode="quinzenas"] .c-midq{display:block;top:-26px;transform:translateX(-50%);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);white-space:nowrap}
+.c-mid[data-mode="quinzenas"] .c-midq.a{left:-14px;transform:translateX(-100%)}.c-mid[data-mode="quinzenas"] .c-midq.b{left:14px;transform:none}
+.c-mid[data-mode="quinzenas"] .c-midq.a::after{content:" ←";letter-spacing:0}.c-mid[data-mode="quinzenas"] .c-midq.b::before{content:"→ ";letter-spacing:0}
+.c-midc{position:absolute;top:14px;left:14px;z-index:6}
+.c-midb{width:30px;height:30px;display:grid;place-items:center;border-radius:10px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);cursor:pointer;transition:color .2s,background .2s,border-color .2s}
+.c-midb svg{width:15px;height:15px}.c-midb:hover,.c-midb.on{color:var(--text);background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16)}
+.c-midm{position:absolute;top:36px;left:0;display:flex;flex-direction:column;gap:2px;padding:5px;border-radius:12px;background:rgba(24,24,28,.72);border:1px solid rgba(255,255,255,.1);-webkit-backdrop-filter:blur(12px) saturate(1.4);backdrop-filter:blur(12px) saturate(1.4);box-shadow:0 12px 30px -12px rgba(0,0,0,.8);opacity:0;transform:translateY(-4px);pointer-events:none;transition:opacity .2s var(--ease),transform .2s var(--ease)}
+.c-midc.open .c-midm{opacity:1;transform:none;pointer-events:auto}
+.c-midm button{text-align:left;padding:6px 12px;border-radius:8px;font-size:12px;color:var(--text-2);white-space:nowrap;cursor:pointer}.c-midm button:hover{background:rgba(255,255,255,.08);color:var(--text)}.c-midm button.on{color:var(--text);background:rgba(255,255,255,.06)}
 .c-hud{position:absolute;top:14px;right:14px;z-index:6;display:flex;align-items:center;gap:12px;padding:8px 14px 8px 8px;border-radius:14px;background:rgba(20,20,23,.82);border:1px solid var(--line);backdrop-filter:blur(10px);pointer-events:none}
 .c-hp{position:relative;width:38px;height:38px}.c-hp svg{width:38px;height:38px;transform:rotate(-90deg)}
 .c-hp .bg{fill:none;stroke:#2a2a30;stroke-width:3.2}.c-hp .fg{fill:none;stroke:#ededf0;stroke-width:3.2;stroke-linecap:round;transition:stroke-dasharray .6s}
@@ -735,11 +753,13 @@ svg.c-wires{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
 .c-zw{display:flex;align-items:center;gap:5px}
 .c-sep{width:1px;height:20px;background:var(--line);margin:0 3px;flex:none}
 .c-zl{font-size:11.5px;color:var(--muted);min-width:40px;text-align:center;font-variant-numeric:tabular-nums}
-.c-dock{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:7;display:flex;align-items:center;gap:2px;padding:6px 8px;border-radius:18px;background:rgba(20,20,23,.88);border:1px solid var(--line);backdrop-filter:blur(14px);box-shadow:0 18px 40px -18px rgba(0,0,0,.9);max-width:calc(100% - 300px);overflow-x:auto;scrollbar-width:none}
+.c-dock{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:7;display:flex;align-items:center;gap:2px;padding:5px;border-radius:20px;background:rgba(24,24,28,.62);border:1px solid rgba(255,255,255,.08);-webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 22px 44px -20px rgba(0,0,0,.95);max-width:calc(100% - 300px);overflow-x:auto;scrollbar-width:none}
 .c-dock::-webkit-scrollbar{display:none}
-.c-di{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:56px;padding:6px 5px 4px;border-radius:12px;color:var(--muted);font-size:10.5px;cursor:grab;touch-action:none;transition:background .2s,color .2s,transform .25s cubic-bezier(.2,1.4,.4,1)}
-.c-di:hover{background:#232328;color:var(--text);transform:translateY(-3px)}
-.c-di:active{cursor:grabbing}
+.c-di{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:58px;padding:6px 6px 5px;border-radius:15px;color:var(--muted);font-size:10.5px;letter-spacing:.01em;cursor:grab;touch-action:none;transition:background .2s,color .2s,transform .3s cubic-bezier(.2,1.4,.4,1)}
+.c-di>i{transition:transform .3s cubic-bezier(.2,1.4,.4,1),filter .2s}
+.c-di:hover{background:rgba(255,255,255,.07);color:var(--text);transform:translateY(-3px)}.c-di:hover>i{transform:scale(1.1);filter:drop-shadow(0 4px 10px rgba(0,0,0,.6))}
+.c-di:active{cursor:grabbing;transform:translateY(-1px) scale(.96)}.c-di:focus-visible{outline:1.5px solid rgba(255,255,255,.5);outline-offset:-2px}
+.c-dock .c-sep{height:28px;background:rgba(255,255,255,.08);margin:0 4px}
 .c-di{justify-content:center;height:54px}.c-di>i{flex:none}.c-di>i+span{margin-top:auto}.c-di>i{margin-top:auto}
 .c-di.more svg{width:18px;height:18px;margin:2px 0}
 .dk-pill{width:34px;height:14px;border-radius:999px;border:1.4px solid #fff;margin:4px 0}
@@ -772,12 +792,15 @@ svg.c-wires{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
 .c-sdot{width:7px;height:7px;border-radius:50%;background:var(--sc);display:inline-block;flex:none;font-style:normal}
 
 /* ---------- modais ---------- */
-.c-mod{width:min(1020px,100%);max-height:calc(100vh - 40px);overflow:auto;padding:20px 22px;animation:pop .3s var(--ease) both}
+.c-mod{width:min(1020px,100%);max-height:calc(100vh - 40px);overflow:auto;padding:20px 22px;animation:pop .3s var(--ease) both}.c-mod.still{animation:none}
 .c-mod.sm{width:min(480px,100%)}
 .c-mod.c-plano{width:min(820px,100%)}
 .c-plbar{height:4px;border-radius:4px;background:var(--well);overflow:hidden;margin:-4px 0 14px}.c-plbar i{display:block;height:100%;background:var(--green);border-radius:4px;transition:width .4s var(--ease)}
 .c-ptabs{display:flex;flex-wrap:wrap;margin-bottom:16px}.c-ptabs small{margin-left:6px;font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}.c-ptabs .pill.on small{color:var(--text-2)}
-.c-ptb{min-height:240px}
+.c-ptb{min-height:240px}.c-ptb.in-r{animation:tabR .32s var(--ease) both}.c-ptb.in-l{animation:tabL .32s var(--ease) both}
+@keyframes tabR{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}@keyframes tabL{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:none}}
+.c-ptabs .pill{transition:background .25s var(--ease),color .25s var(--ease),box-shadow .25s var(--ease)}
+@media (prefers-reduced-motion:reduce){.c-ptb.in-r,.c-ptb.in-l{animation:none}}
 .c-drop{display:flex;align-items:center;gap:12px;padding:18px;border:1px dashed var(--line-2);border-radius:var(--r-sm);background:var(--well);color:var(--text-2);cursor:pointer;transition:border-color .2s,background .2s}
 .c-drop:hover,.c-drop.over{border-color:var(--text-2);background:#18181b}.c-drop span{display:flex;flex-direction:column;gap:3px}.c-drop small{color:var(--muted)}
 .c-files{display:grid;gap:8px}.c-file{display:flex;align-items:center;gap:10px;padding:8px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--node)}
@@ -785,6 +808,7 @@ svg.c-wires{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
 .c-fext{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--text-2);text-decoration:none}
 .c-fmeta{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.c-fmeta b{font-weight:550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.c-fmeta small{color:var(--muted)}
 .c-mod.c-prod{width:min(640px,100%)}.c-att{display:flex;flex-direction:column;gap:10px}.c-att .c-sec h5{margin-top:4px}.c-hint0{margin:-4px 0 10px;font-size:12px}
+.c-verba{display:flex;align-items:center;gap:10px;min-height:38px}.c-verba .inp{flex:1;min-width:0}
 .c-plmais{display:flex;flex-direction:column;gap:18px}
 .c-late{color:var(--red);font-weight:600;margin-left:6px}
 .c-pt .c-ci .pill{white-space:nowrap;flex:none}
@@ -919,6 +943,7 @@ const IC = {
   user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>', users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/>',
   list: '<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/>', star: '<path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/>',
   const: '<circle cx="5" cy="17" r="1.8"/><circle cx="11" cy="7" r="1.8"/><circle cx="19" cy="11" r="1.8"/><circle cx="15" cy="19" r="1.4"/><path d="M6.4 15.6l3.3-7M12.7 7.7l4.6 2.5M18 12.7l-2.3 4.8"/>',
+  half: '<circle cx="12" cy="12" r="8"/><path d="M12 2v20"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor" stroke="none" opacity=".35"/>',
   hand: '<path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V12M11 11V4.5a1.5 1.5 0 0 1 3 0V12M14 11V6.5a1.5 1.5 0 0 1 3 0V14c0 4-2.5 7-6 7-2.7 0-4.2-1.2-5.6-3.6L3.8 14.6a1.5 1.5 0 0 1 2.4-1.8L8 15"/>',
   /* categorias */
   plano: '<path d="M4 6h16M4 12h10M4 18h6"/><circle cx="19" cy="16" r="3"/>', estrategia: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/>', fase: '<rect x="3" y="8" width="18" height="8" rx="4"/>',
@@ -931,7 +956,7 @@ const IC = {
   lancamento: '<path d="M5 19l3-1 8-8a5 5 0 0 0 0-7 5 5 0 0 0-7 0l-8 8-1 3"/><path d="M9 15l-3-3M14 6l4 4"/>', promo: '<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8" r="1.5"/>', evento: '<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>',
   design: '<circle cx="12" cy="12" r="9"/><circle cx="8" cy="10" r="1.2"/><circle cx="12" cy="7.5" r="1.2"/><circle cx="16" cy="10" r="1.2"/><path d="M12 21a3 3 0 0 1 0-6h2a3 3 0 0 0 3-3"/>', foto: '<path d="M4 8h3l2-3h6l2 3h3v12H4z"/><circle cx="12" cy="13" r="3.5"/>', landing: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 6.5h.01M10 6.5h.01M8 13h8M8 16h5"/>',
   produto: '<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/>',
-  time: '<circle cx="5.5" cy="8" r="2.5"/><circle cx="12" cy="8" r="2.5"/><circle cx="18.5" cy="8" r="2.5"/><path d="M2 17a3.5 3.5 0 0 1 7 0M8.5 17a3.5 3.5 0 0 1 7 0M15 17a3.5 3.5 0 0 1 7 0"/>', funcao: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/>',
+  time: '<circle cx="12" cy="8.2" r="3.1"/><path d="M6.2 19.5a5.8 5.8 0 0 1 11.6 0"/><circle cx="5.3" cy="9.6" r="2.2" opacity=".7"/><circle cx="18.7" cy="9.6" r="2.2" opacity=".7"/><path d="M1.8 17.6a3.9 3.9 0 0 1 4.6-3.6M22.2 17.6a3.9 3.9 0 0 0-4.6-3.6" opacity=".7"/>', funcao: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/>',
   contratacao: '<circle cx="10" cy="8" r="4"/><path d="M3 21a7 7 0 0 1 14 0M19 8v6M16 11h6"/>', reuniao: '<circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M2 20a6 6 0 0 1 12 0M10 20a6 6 0 0 1 12 0"/>',
   acao: '<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>', lista: '<path d="M9 6h11M9 12h11M9 18h11"/><path d="M3 6l1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/>', documento: '<rect x="5" y="3" width="14" height="18" rx="1"/><path d="M8.5 8h7M8.5 12h7M8.5 16h7"/>',
   pesquisa: '<circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5M8.5 11h5M11 8.5v5"/>', relatorio: '<path d="M4 20V4M4 20h16"/><path d="M8 16v-4M12 16V8M16 16v-6"/>', aprovacao: '<path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>',
@@ -1168,15 +1193,19 @@ function render() {
 function refresh() { if (UI.view === 'cst' && $('#world')) { reconcile(); } else render(); }
 
 /* =================== CONSTELAÇÃO =================== */
+/* marco do meio do mês: divide a linha em duas quinzenas (só visual, por pessoa) */
+const MIDM = [['off', 'Desligado'], ['linha', 'Linha'], ['ponto', 'Ponto'], ['quinzenas', 'Quinzenas']];
+const midHTML = () => `<i class="c-midl"></i><b class="c-midp"></b><span class="c-midt">metade do mês</span><span class="c-midq a">1ª quinzena</span><span class="c-midq b">2ª quinzena</span>`;
 function vCst() {
   return `<div class="c-stage" id="stage">
-    <div class="c-world" id="world"><div class="c-spine" id="spine"><i class="c-prog" id="prog"></i><b class="c-tip" id="tip"></b></div><svg class="c-wires" id="wires" width="1" height="1"></svg><div id="nodes"></div><div id="bridges"></div></div>
+    <div class="c-world" id="world"><div class="c-spine" id="spine"><i class="c-prog" id="prog"></i><b class="c-tip" id="tip"></b></div><div class="c-mid" id="mid" data-mode="${UI.mid || 'off'}">${midHTML()}</div><svg class="c-wires" id="wires" width="1" height="1"></svg><div id="nodes"></div><div id="bridges"></div></div>
     <div class="c-hud" id="hud"></div>
+    <div class="c-midc ${UI.midMenu ? 'open' : ''}"><button class="c-midb ${UI.mid && UI.mid !== 'off' ? 'on' : ''}" data-act="mid-menu" title="Marco do meio do mês" aria-label="Marco do meio do mês">${ic('half')}</button><div class="c-midm">${MIDM.map(([k, l]) => `<button class="${(UI.mid || 'off') === k ? 'on' : ''}" data-act="mid" data-v="${k}">${l}</button>`).join('')}</div></div>
     <div class="c-empty" id="empty" hidden><div>${ic('const', 'width:30px;height:30px')}<b>A constelação de ${monthName(UI.month, false)} está vazia</b><span>Arraste um item da barra de baixo para o canvas, ou dê dois cliques em qualquer lugar.</span></div></div>
     <div class="c-ctl"><button class="pill sm icon" data-act="undo" title="Desfazer (Ctrl+Z)" aria-label="Desfazer">${ic('undo')}</button><button class="pill sm icon" data-act="redo" title="Refazer" aria-label="Refazer">${ic('redo')}</button><span class="c-sep"></span>
       <span class="c-zw"><button class="pill sm icon" data-act="zoom" data-v="-1" aria-label="Diminuir">${ic('minus')}</button><span class="c-zl" id="zl"></span><button class="pill sm icon" data-act="zoom" data-v="1" aria-label="Aumentar">${ic('plus')}</button></span>
       <button class="pill sm icon" data-act="fit" title="Enquadrar tudo (F)" aria-label="Enquadrar">${ic('fit')}</button></div>
-    <div class="c-dock" id="dock">${DOCK.map(([k, l]) => `<button class="c-di" data-dock="${k}" title="Arraste para o canvas">${dockIcon(k)}<span>${l}</span></button>`).join('')}<span class="c-sep"></span><button class="c-di more" data-act="pick-any" title="Todos os tipos">${ic('plus')}<span>Mais</span></button></div>
+    <div class="c-dock" id="dock">${DOCK.map(([k, l], i) => `${[4, 6, 9].includes(i) ? '<span class="c-sep"></span>' : ''}<button class="c-di" data-dock="${k}" title="Clique para adicionar · arraste para posicionar">${dockIcon(k)}<span>${l}</span></button>`).join('')}<span class="c-sep"></span><button class="c-di more" data-act="pick-any" title="Todos os tipos">${ic('plus')}<span>Mais</span></button></div>
   </div>`;
 }
 function dockIcon(k) {
@@ -1234,10 +1263,10 @@ function reconcile(first) {
   for (const n of list) {
     let el = NODES.get(n.id); const sh = shapeOf(n), html = nodeHTML(n), col = colorOf(n);
     if (!el) { el = document.createElement('div'); el.dataset.id = n.id; nodesEl.appendChild(el); NODES.set(n.id, el); if (!first) el.classList.add('born'); POS[n.id] = { x: n.x, y: n.y }; }
-    const cls = `c-n sh-${sh} st-${n.status || 'todo'}${n.y === 0 ? ' on-spine' : ''}${f && !matchF(n) ? ' dim' : ''}${n.carried ? ' carried' : ''}${ED.id === n.id ? ' sel' : ''}${n.prio === 'a' ? ' hi' : ''}`;
+    const cls = `c-n sh-${sh} cat-${n.cat} st-${n.status || 'todo'}${n.y === 0 ? ' on-spine' : ''}${f && !matchF(n) ? ' dim' : ''}${n.carried ? ' carried' : ''}${ED.id === n.id ? ' sel' : ''}${n.prio === 'a' ? ' hi' : ''}`;
     if (el._h !== html) { el.innerHTML = html; el._h = html; }
     if (el._c !== cls) { const born = el.classList.contains('born'); el.className = cls + (born ? ' born' : ''); el._c = cls; }
-    el.style.setProperty('--c', col);
+    el.style.setProperty('--c', col); if (n.cat === 'time') el.style.setProperty('--tc', (time(n.team) || {}).color || '#ededf0');
     const b = el.querySelector('.c-b'); SIZE[n.id] = { w: b ? b.offsetWidth : 0, h: b ? b.offsetHeight : 0 };
     const S = SIZE[n.id], hw = sh === 'periodo' ? (n.w || 220) / 2 : S.w / 2;
     el.style.setProperty('--w', (n.w || 220) + 'px');
@@ -1318,29 +1347,12 @@ let SP = { x0: 0, x1: 2400 };
 function spine(list) {
   let x0 = -300, x1 = 2400; for (const n of list) { const p = POS[n.id]; if (!p) continue; x0 = Math.min(x0, p.x - 520); x1 = Math.max(x1, p.x + (n.tail || 0) + (SIZE[n.id]?.w || 0) / 2 + 520); }
   SP = { x0, x1 }; const s = $('#spine'); if (!s) return;
+  const md = $('#mid'); if (md) { md.style.left = (x0 + x1) / 2 + 'px'; md.style.setProperty('--half', (x1 - x0) / 2 + 'px'); }
   s.style.left = x0 + 'px'; s.style.width = x1 - x0 + 'px';
   const pr = progressOf(list), pg = $('#prog'), tp = $('#tip'); if (pg) pg.style.width = pr.pct + '%'; if (tp) tp.style.left = pr.pct + '%';
   const br = $('#bridges'); if (br) { const l = br.querySelector('.c-edge.l'), r = br.querySelector('.c-edge.r'); if (l) l.style.left = x0 - 270 + 'px'; if (r) r.style.left = x1 + 30 + 'px'; }
 }
-function bridges(list) {
-  const el = $('#bridges'); if (!el) return;
-  const m = UI.month, prev = addMonth(m, -1), next = addMonth(m, 1), all = allNodes();
-  const pend = all.filter(n => n.month === prev && countable(n) && n.status !== 'done' && !n.carried);
-  const reps = recurringMissing(all, m), fromPrev = list.filter(n => n.from && n.from.month === prev).length, toNext = list.filter(n => n.carried).length;
-  const open = list.filter(n => countable(n) && n.status !== 'done' && !n.carried).length;
-  const ext = []; list.forEach(n => (n.links || []).forEach(k => { const o = N(k); if (o && o.month !== m) ext.push([n, o]); }));
-  el.innerHTML = `<div class="c-edge l"><span class="c-ek">${ic('left', 'width:12px;height:12px')}${cap1(monthName(prev, false))}</span>
-    ${fromPrev ? `<p><b>${fromPrev}</b> ${fromPrev === 1 ? 'ponto veio' : 'pontos vieram'} de lá</p>` : ''}
-    ${pend.length ? `<p><b>${pend.length}</b> ${pend.length === 1 ? 'pendência ficou' : 'pendências ficaram'} lá</p><button class="pill sm" data-act="bring">${ic('next', 'width:13px;height:13px')}Trazer para cá</button>` : ''}
-    ${reps.length ? `<p><b>${reps.length}</b> ${reps.length === 1 ? 'recorrente falta' : 'recorrentes faltam'} aqui</p><button class="pill sm" data-act="reps">${ic('repeat', 'width:13px;height:13px')}Adicionar</button>` : ''}
-    ${!fromPrev && !pend.length && !reps.length ? '<p class="c-mut">Nada pendente do mês anterior.</p>' : ''}
-    <button class="c-elink" data-act="mon" data-v="-1">abrir ${monthName(prev, false)} ${ic('arrow', 'width:12px;height:12px')}</button></div>
-  <div class="c-edge r"><span class="c-ek">${cap1(monthName(next, false))}${ic('right', 'width:12px;height:12px')}</span>
-    ${toNext ? `<p><b>${toNext}</b> ${toNext === 1 ? 'ponto segue' : 'pontos seguem'} para lá</p>` : ''}
-    ${open ? `<p><b>${open}</b> em aberto neste mês</p><button class="pill sm" data-act="carry-all">${ic('next', 'width:13px;height:13px')}Levar pendências</button>` : list.length ? '<p class="c-mut">Tudo concluído neste mês.</p>' : ''}
-    ${ext.length ? `<div class="c-ext">${ext.slice(0, 6).map(([a, o]) => `<button data-act="goto" data-id="${o.id}">${ic('link', 'width:12px;height:12px')}<span>${esc(labelOf(a))} ↔ ${esc(labelOf(o))}</span><small>${monthName(o.month, false)}</small></button>`).join('')}</div>` : ''}
-    <button class="c-elink" data-act="mon" data-v="1">abrir ${monthName(next, false)} ${ic('arrow', 'width:12px;height:12px')}</button></div>`;
-}
+function bridges() { const el = $('#bridges'); if (el) el.innerHTML = ''; }
 function recurringMissing(all, m) {
   const here = new Set(all.filter(n => n.month === m && n.rid).map(n => n.rid)), last = {};
   all.filter(n => n.rep && n.month < m).forEach(n => { const r = n.rid || n.id; if (!last[r] || last[r].month < n.month) last[r] = n; });
@@ -1385,7 +1397,7 @@ document.addEventListener('pointerdown', e => {
   const st = $('#stage'); if (!st || e.button > 0) return;
   const dk = e.target.closest('[data-dock]');
   if (dk) { drag = { kind: 'dock', cat: dk.dataset.dock, sx: e.clientX, sy: e.clientY, moved: false }; e.preventDefault(); return; }
-  if (!st.contains(e.target) || e.target.closest('.c-ctl,.c-dock,.c-edge,.c-hud,button:not(.c-k)')) return;
+  if (!st.contains(e.target) || e.target.closest('.c-ctl,.c-dock,.c-edge,.c-hud,.c-midc,button:not(.c-k)')) return;
   const r = st.getBoundingClientRect();
   ptrs.set(e.pointerId, { x: e.clientX - r.left, y: e.clientY - r.top });
   if (ptrs.size === 2) { clearTimeout(lpT); const [a, b] = [...ptrs.values()]; drag = { kind: 'pinch', d0: Math.hypot(a.x - b.x, a.y - b.y), z0: V.z, x0: V.x, y0: V.y, cx: (a.x + b.x) / 2, cy: (a.y + b.y) / 2 }; return; }
@@ -1449,6 +1461,7 @@ const endDrag = e => {
     openPick({ parent: d.id, x: Math.round(d.to.x), y: Math.abs(d.to.y) < SNAP ? 0 : Math.round(d.to.y) }); kick();
   }
 };
+document.addEventListener('pointerdown', e => { if (UI.midMenu && !e.target.closest('.c-midc')) { UI.midMenu = false; $('.c-midc')?.classList.remove('open'); } }, true);
 document.addEventListener('pointerup', endDrag); document.addEventListener('pointercancel', endDrag);
 document.addEventListener('wheel', e => {
   const st = $('#stage'); if (!st || !st.contains(e.target) || $('#modal')) return; e.preventDefault();
@@ -1636,7 +1649,11 @@ ${side}
 }
 function edShow(id, html, cls, fresh) {
   const keep = $('#modal .c-mod'), sc = keep ? keep.scrollTop : 0, same = keep && keep.dataset.id === id;
-  const s = modal(html, cls); const md = $('.c-mod', s); md.dataset.id = id; if (same) md.scrollTop = sc;
+  if (same) { const ae = document.activeElement, key = ae && keep.contains(ae) ? ae.dataset.nf || ae.dataset.ff || ae.id : '';
+    keep.className = `node c-mod ${cls} still`; keep.innerHTML = html; keep.scrollTop = sc;
+    if (key) { const t = keep.querySelector(`[data-nf="${key}"],[data-ff="${key}"],#${CSS.escape(key)}`); if (t && t.tagName !== 'SELECT') t.focus({ preventScroll: true }); }
+    return; }
+  const s = modal(html, cls); const md = $('.c-mod', s); md.dataset.id = id;
   if (fresh) setTimeout(() => $('.c-title', s)?.focus(), 40);
 }
 /* cabeçalho comum: tipo (trocar), de onde nasce, fechar */
@@ -1649,8 +1666,12 @@ const edMore = (n, p, list, sub) => `<details class="c-more" ${ED.more ? 'open' 
 const PTABS = [['resumo', 'Resumo'], ['acoes', 'Ações'], ['anexos', 'Anexos e links'], ['tarefas', 'Tarefas'], ['notas', 'Notas'], ['mais', 'Mais']];
 const fileUrl = (a, dl) => `/api/blob/${a.file}?b=${store.board}${dl ? '&dl=1' : ''}`;
 const fmtSize = b => b >= 1e6 ? (b / 1e6).toFixed(1).replace('.', ',') + ' MB' : Math.max(1, Math.round(b / 1e3)) + ' KB';
+/* verba: desligar só esconde o valor (não apaga) */
+const hasVerba = f => f.temVerba ?? (f.verba != null && f.verba !== '');
 function edPlano(n, p, kids, sub, sp, side) {
   const f = n.f || {}, M = marcas(), T = times(), P = pessoas(), tab = PTABS.some(t => t[0] === UI.ptab) ? UI.ptab : 'resumo';
+  const ix = k => PTABS.findIndex(t => t[0] === k), prev = ED.ptabFor === n.id ? ED.ptab : tab, anim = prev !== tab ? (ix(tab) > ix(prev) ? ' in-r' : ' in-l') : '';
+  ED.ptabFor = n.id; ED.ptab = tab;
   const chk = n.chk || [];
   const cnt = { acoes: kids.length ? `${sp.done}/${sp.total}` : '', anexos: (n.att || []).length || '', tarefas: chk.length ? `${chk.filter(x => x.ok).length}/${chk.length}` : '', notas: n.notes ? '•' : '' };
   const chips = (arr, act, sel, lab) => arr.map(x => `<button class="pill sm ${sel(x) ? 'on' : ''}" data-act="${act}" data-v="${x.id}">${lab(x)}</button>`).join('');
@@ -1664,7 +1685,7 @@ function edPlano(n, p, kids, sub, sp, side) {
       </div>
       <div class="c-fg">
         <label class="field"><span>Indicador de sucesso</span><input class="inp sm" data-ff="kpi" value="${esc(f.kpi || '')}" placeholder="ex.: 300 vendas" autocomplete="off"></label>
-        <label class="field"><span>Verba</span><input class="inp sm" type="number" step="0.01" data-ff="verba" value="${esc(f.verba ?? '')}" placeholder="${store.board === 'us' ? 'US$' : 'R$'}"></label>
+        <div class="field"><span>Verba</span><div class="c-verba"><button class="switch ${hasVerba(f) ? 'on' : ''}" data-act="pl-verba" aria-label="Envolve verba"></button>${hasVerba(f) ? `<input class="inp sm" type="number" step="0.01" data-ff="verba" value="${esc(f.verba ?? '')}" placeholder="${store.board === 'us' ? 'US$' : 'R$'}">` : '<span class="c-mut">Sem verba</span>'}</div></div>
       </div>
       <div class="field"><span>Responsáveis</span><div class="c-chips">${chips(P, 'ed-who', x => (n.who || []).includes(x.id), x => av(x, 18) + esc(x.name.split(' ')[0]))}${isAdmin() ? `<button class="pill sm ghost" data-act="ent" data-k="pessoa" data-id="" data-back="${n.id}">${ic('plus', 'width:12px;height:12px')}Pessoa</button>` : ''}</div></div>
       <div class="field"><span>Time</span><div class="c-chips">${chips(T, 'ed-team', x => n.team === x.id, x => ic('time', `width:13px;height:13px;color:${x.color}`) + esc(x.name))}${isAdmin() ? `<button class="pill sm ghost" data-act="ent" data-k="time" data-id="" data-back="${n.id}">${ic('plus', 'width:12px;height:12px')}Time</button>` : ''}</div></div>
@@ -1683,7 +1704,7 @@ function edPlano(n, p, kids, sub, sp, side) {
   <input class="c-title" data-nf="title" value="${esc(n.title)}" placeholder="Nome do plano" autocomplete="off">
   ${sp.total ? `<div class="c-plbar"><i style="width:${sp.pct}%"></i></div>` : ''}
   <nav class="seg c-ptabs" role="tablist">${PTABS.map(([k, l]) => `<button class="pill sm ${tab === k ? 'on' : ''}" role="tab" aria-selected="${tab === k}" data-act="ptab" data-v="${k}">${l}${cnt[k] ? `<small>${cnt[k]}</small>` : ''}</button>`).join('')}</nav>
-  <div class="c-pt c-ptb">${body[tab]()}</div>
+  <div class="c-pt c-ptb${anim}">${body[tab]()}</div>
   <div class="c-mf"><button class="pill sm danger ghost" data-act="ed-del">${ic('trash', 'width:13px;height:13px')}Excluir</button><button class="pill sm ghost" data-act="ed-dup">${ic('copy', 'width:13px;height:13px')}Duplicar</button><span class="sp"></span><span class="c-mut">${n.by ? 'criado por ' + esc(n.by) : ''}</span><button class="pill sm white" data-act="close">Pronto</button></div>`;
 }
 /* anexos: arquivos (arrastar ou escolher) e links */
@@ -1954,6 +1975,8 @@ const ACT = {
   zoom: a => { const st = $('#stage'); zoomAt(+a.dataset.v > 0 ? 1.25 : 0.8, st.clientWidth / 2, st.clientHeight / 2); },
   fit: () => fit(),
   undo: () => undo(), redo: () => redo(),
+  'mid-menu': () => { UI.midMenu = !UI.midMenu; $('.c-midc')?.classList.toggle('open', UI.midMenu); },
+  mid: a => { UI.mid = a.dataset.v; UI.midMenu = false; saveUI(); const m = $('#mid'); if (m) m.dataset.mode = UI.mid; $('.c-midc')?.classList.remove('open'); $('.c-midb')?.classList.toggle('on', UI.mid !== 'off'); $$('.c-midm button').forEach(b => b.classList.toggle('on', b.dataset.v === UI.mid)); },
   'pick-any': () => openPick(freeSpot(null)),
   ramo: a => openPick(a.dataset.at ? { parent: a.dataset.id, at: a.dataset.at, ...freeSpot(a.dataset.id) } : freeSpot(a.dataset.id)),
   pick: a => { const c = PICK || {}, t = ($('#pick-t')?.value || '').trim(); closeModal(true); createNode(a.dataset.k, c, t); },
@@ -1976,6 +1999,7 @@ const ACT = {
   'ed-del': async () => { const n = edNode(), sub = descendants(n.id, monthNodes(n.month)); if (!(await ask(sub.length ? `Excluir “${labelOf(n)}” e os ${sub.length} ramos que nascem dele?` : `Excluir “${labelOf(n)}”?`, 'Excluir'))) return; delNodes([n.id, ...sub.map(x => x.id)]); closeModal(true); ED.id = ''; refresh(); toast('Excluído · Ctrl+Z desfaz', 'w'); },
   'ed-dup': () => { const n = edNode(), c = clone(n); c.id = uid(); c.title = (n.title || '') + (n.title ? ' (cópia)' : ''); c.t = Date.now(); c.links = []; c.x += 40; c.y += (Math.sign(c.y) || 1) * 50; delete c.carried; delete c.from; tx(() => putNode(c)); refresh(); openEd(c.id); },
   'chk-t': a => edSet(n => { const c = n.chk.find(x => x.id === a.dataset.c); c.ok = !c.ok; }),
+  'pl-verba': () => edSet(n => { n.f = n.f || {}; n.f.temVerba = !hasVerba(n.f); }),
   ptab: a => { UI.ptab = a.dataset.v; saveUI(); openEd(ED.id); },
   'pl-add': a => { const pl = edNode(); if (!pl) return; createNode(a.dataset.k, { parent: pl.id, ...freeSpot(pl.id) }); openEd(pl.id); },
   'dec-x': a => decSet(l => l.filter(x => x.id !== a.dataset.v)),
