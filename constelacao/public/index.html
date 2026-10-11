@@ -1599,6 +1599,7 @@ function openEd(id, fresh) {
     <div class="c-sec"><h5>${ic('next', 'width:13px;height:13px')}Próximos meses</h5>
       <div class="row"><span>Repetir todo mês</span><span class="sp"></span><button class="switch ${n.rep ? 'on' : ''}" data-act="ed-rep"></button></div>
       ${n.carried ? `<p class="c-mut mt8">Já segue para ${monthName(addMonth(n.month, 1), false)}.</p>` : `<button class="pill sm mt8" data-act="carry">${ic('next', 'width:12px;height:12px')}Levar para ${monthName(addMonth(n.month, 1), false)}${sub.length ? ' com os ramos abertos' : ''}</button>`}</div>`;
+  if (CONT[n.cat]) return edShow(id, edCont(n, p, list, sub, field), 'c-ed c-prod', fresh);
   if (PROD[n.cat]) return edShow(id, edProd(n, p, list, sub, field), 'c-ed c-prod', fresh);
   if (n.cat === 'plano') return edShow(id, edPlano(n, p, kids, sub, sp, side), 'c-ed c-plano', fresh);
   if (n.cat === 'ponto') return edShow(id, edPonto(n, p, kids, list, sub), 'c-ed sm', fresh);
@@ -1727,6 +1728,34 @@ function edProd(n, p, list, sub, field) {
       <div class="c-mrow mt8">${X.date ? `<label class="field"><span>${X.date}</span><input class="inp sm" type="date" data-nf="start" value="${esc(n.start || '')}"></label>` : ''}<label class="field"><span>Prazo${late ? ' <b class="c-late">atrasado</b>' : ''}</span><input class="inp sm" type="date" data-nf="due" value="${esc(n.due || '')}"></label></div></div>
     <div class="c-sec"><h5>Detalhes · ${esc(C.n)}</h5><div class="c-fg">${fs.map(field).join('')}</div>
       ${long ? `<details class="c-more mt8" ${lv ? 'open' : ''}><summary>${X.longL}${lv ? '' : ' (opcional)'}</summary><textarea class="inp c-ta mt8" rows="8" data-ff="${X.long}" placeholder="${esc(long[3] || '')}">${esc(lv || '')}</textarea></details>` : ''}</div>
+    <label class="field"><span>Comentários de revisão</span><textarea class="inp c-ta" rows="3" data-nf="notes" placeholder="Ajustes pedidos, aprovações, observações">${esc(n.notes || '')}</textarea></label>
+    ${edMore(n, p, list, sub)}
+  </div>
+  <div class="c-mf"><button class="pill sm danger ghost" data-act="ed-del">${ic('trash', 'width:13px;height:13px')}Excluir</button><button class="pill sm ghost" data-act="ed-dup">${ic('copy', 'width:13px;height:13px')}Duplicar</button><span class="sp"></span><button class="pill sm white" data-act="close">Pronto</button></div>`;
+}
+/* Conteúdo e divulgação (Post, Conteúdo, Artigo, E-mail, Copy): onde e quando sai, o texto, arquivos e resultado */
+const CONT = {
+  social: { ph: 'Nome do post', st: ['Ideia', 'Produzindo', 'Revisão', 'Publicado', 'Travado'], pub: ['redes', 'formato', 'hora'], date: 'Publicação', text: ['legenda', 'hashtags'], res: ['link'], drop: 'Suba a arte, o vídeo ou o carrossel do post' },
+  blog: { ph: 'Título do artigo', st: ['Pauta', 'Escrevendo', 'Revisão', 'Publicado', 'Travado'], pub: ['palavra', 'tamanho'], date: 'Publicação', text: ['estrutura'], res: ['url'], drop: 'Suba o texto, imagens ou cole o link do rascunho' },
+  email: { ph: 'Nome do disparo', st: ['Rascunho', 'Montando', 'Revisão', 'Enviado', 'Travado'], pub: ['tipo', 'segmento', 'hora'], date: 'Envio', text: ['assunto', 'pre', 'corpo'], res: [], drop: 'Suba o layout, imagens ou cole o link do e-mail' },
+  copy2: { ph: 'Nome do texto', st: ['Briefing', 'Escrevendo', 'Revisão', 'Aprovado', 'Travado'], pub: ['onde', 'tom'], text: ['texto', 'variacoes'], drop: 'Suba referências ou cole o link do documento' },
+  conteudo: { ph: 'Nome da linha de conteúdo', st: ['Planejada', 'Ativa', 'Em revisão', 'Encerrada', 'Pausada'], pub: ['canais', 'frequencia'], nodue: true, text: ['tema', 'pilares'], drop: 'Suba o guia, referências ou cole o link' }
+};
+function edCont(n, p, list, sub, field) {
+  const C = CAT(n.cat), X = CONT[n.cat], P = pessoas(), late = n.status !== 'done' && n.due && n.due < todayISO();
+  const F = k => { const d = C.f.find(f => f[0] === k) || (k === 'hora' ? ['hora', 'Horário', 't', 'ex.: 18:00'] : null); return d ? field(d) : ''; };
+  const due = `<label class="field"><span>${X.date || 'Prazo'}${late ? ' <b class="c-late">atrasado</b>' : ''}</span><input class="inp sm" type="date" data-nf="due" value="${esc(n.due || '')}"></label>`;
+  return `${edHead(n, p)}
+  <input class="c-title" data-nf="title" value="${esc(n.title)}" placeholder="${X.ph}" autocomplete="off">
+  <div class="c-pt">
+    <div class="field"><span>Etapa</span><nav class="seg c-sseg">${STATUS.map(([k, , c], i) => `<button class="pill sm ${(n.status || 'todo') === k ? 'on' : ''}" data-act="ed-st" data-v="${k}" style="--sc:${c}"><i class="c-sdot"></i>${X.st[i]}</button>`).join('')}</nav></div>
+    <div class="c-sec"><h5>${n.cat === 'copy2' ? 'Onde e como' : n.cat === 'conteudo' ? 'Onde e com que frequência' : 'Onde e quando sai'}</h5><div class="c-fg">${X.date ? due : ''}${X.pub.map(F).join('')}</div></div>
+    <div class="c-sec"><h5>${n.cat === 'conteudo' ? 'Linha editorial' : 'Texto'}</h5><div class="c-fg">${X.text.map(F).join('')}</div></div>
+    <div class="c-sec"><h5>Arquivos e links</h5><p class="c-mut c-hint0">${X.drop}</p>${attHTML(n)}</div>
+    <div class="c-sec"><h5>Quem${X.date || X.nodue ? '' : ' e prazo'}</h5>
+      <div class="field"><span>Responsáveis</span><div class="c-chips">${P.map(x => `<button class="pill sm c-pp ${(n.who || []).includes(x.id) ? 'on' : ''}" data-act="ed-who" data-v="${x.id}">${av(x, 18)}${esc(x.name.split(' ')[0])}</button>`).join('')}${isAdmin() ? `<button class="pill sm ghost" data-act="ent" data-k="pessoa" data-id="" data-back="${n.id}">${ic('plus', 'width:12px;height:12px')}Pessoa</button>` : ''}${!P.length && !isAdmin() ? '<span class="c-mut">Ninguém cadastrado.</span>' : ''}</div></div>
+      ${X.date || X.nodue ? '' : `<div class="c-mrow mt8">${due}</div>`}</div>
+    ${X.res ? `<div class="c-sec"><h5>Resultado</h5><div class="c-fg">${X.res.map(F).join('')}<label class="field w2"><span>Como foi</span><textarea class="inp c-ta" rows="3" data-ff="resultado" placeholder="Alcance, cliques, vendas, o que aprendemos">${esc((n.f || {}).resultado || '')}</textarea></label></div></div>` : ''}
     <label class="field"><span>Comentários de revisão</span><textarea class="inp c-ta" rows="3" data-nf="notes" placeholder="Ajustes pedidos, aprovações, observações">${esc(n.notes || '')}</textarea></label>
     ${edMore(n, p, list, sub)}
   </div>
