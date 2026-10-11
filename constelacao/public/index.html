@@ -1346,7 +1346,8 @@ function wires(list) {
 }
 let SP = { x0: 0, x1: 2400 };
 function spine(list) {
-  let x0 = -300, x1 = 2400; for (const n of list) { const p = POS[n.id]; if (!p) continue; x0 = Math.min(x0, p.x - 520); x1 = Math.max(x1, p.x + (n.tail || 0) + (SIZE[n.id]?.w || 0) / 2 + 520); }
+  /* o mês começa no ponto inicial (x = 0, ou a estrela mais à esquerda se houver alguma antes); enquanto arrasta, o início fica parado */
+  let x0 = drag && drag.kind === 'node' && drag.x0 != null ? drag.x0 : Math.min(0, ...list.map(n => n.x)), x1 = 2400; for (const n of list) { const p = POS[n.id]; if (!p) continue; x1 = Math.max(x1, p.x + (n.tail || 0) + (SIZE[n.id]?.w || 0) / 2 + 520); }
   SP = { x0, x1 }; const s = $('#spine'); if (!s) return;
   const md = $('#mid'); if (md) { md.style.left = (x0 + x1) / 2 + 'px'; md.style.setProperty('--half', (x1 - x0) / 2 + 'px'); }
   s.style.left = x0 + 'px'; s.style.width = x1 - x0 + 'px';
@@ -1409,7 +1410,7 @@ document.addEventListener('pointerdown', e => {
   else if (nodeEl && e.target.closest('.c-anc')) { drag = { kind: 'anc', id, a: e.target.closest('.c-anc').dataset.anc, sx: e.clientX, sy: e.clientY, moved: false }; }
   else if (nodeEl) {
     const n = N(id), sub = descendants(id, monthNodes()), ids = new Set([id, ...sub.map(x => x.id)]);
-    drag = { kind: 'node', id, ids, sx: e.clientX, sy: e.clientY, start: Object.fromEntries([...ids].map(k => [k, { x: N(k).x, y: N(k).y }])), moved: false, live: true };
+    drag = { kind: 'node', id, ids, sx: e.clientX, sy: e.clientY, start: Object.fromEntries([...ids].map(k => [k, { x: N(k).x, y: N(k).y }])), x0: SP.x0, moved: false, live: true };
   } else {
     drag = { kind: 'pan', sx: e.clientX, sy: e.clientY, x0: V.x, y0: V.y, moved: false, w, wire: e.target.closest('.c-wh')?.dataset.wire };
     if (e.pointerType !== 'mouse' && !drag.wire) { clearTimeout(lpT); lpT = setTimeout(() => { if (drag && drag.kind === 'pan' && !drag.moved) { drag = null; navigator.vibrate && navigator.vibrate(12); openPick({ x: w.x, y: w.y }); } }, 520); }
@@ -1428,8 +1429,8 @@ document.addEventListener('pointermove', e => {
   const dx = (e.clientX - drag.sx) / V.z, dy = (e.clientY - (drag.sy ?? e.clientY)) / V.z;
   if (drag.kind === 'node') {
     const s0 = drag.start[drag.id]; let ny = Math.round(s0.y + dy); const snap = Math.abs(ny) < SNAP; if (snap) ny = 0;
-    const ddy = ny - s0.y;
-    for (const k of drag.ids) { const n = store.docs['node/' + k], s = drag.start[k]; n.x = Math.round(s.x + dx); n.y = k === drag.id ? ny : Math.round(s.y + ddy); }
+    const ddy = ny - s0.y, minX = Math.min(...[...drag.ids].map(k => drag.start[k].x)), dxc = Math.max(dx, drag.x0 - minX);
+    for (const k of drag.ids) { const n = store.docs['node/' + k], s = drag.start[k]; n.x = Math.round(s.x + dxc); n.y = k === drag.id ? ny : Math.round(s.y + ddy); }
     st.classList.toggle('magnet', snap); drag.dirty = true; NODES.get(drag.id)?.classList.add('lift'); kick(); return;
   }
   if (drag.kind === 'tail') { const n = store.docs['node/' + drag.id]; n.tail = Math.max(40, Math.round(drag.t0 + dx)); drag.dirty = true; layoutTail(NODES.get(drag.id), { ...n, id: drag.id }); kick(); return; }
