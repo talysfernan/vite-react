@@ -624,6 +624,9 @@ svg.c-wires{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
 .c-lk{fill:none;stroke:#8b8b95;stroke-width:1.3;stroke-dasharray:.012 .018;opacity:.8}
 .c-lk.born{stroke-dasharray:1}
 .c-rub{fill:none;stroke:#ededf0;stroke-width:1.6;stroke-dasharray:5 6;opacity:.9}
+.c-wh{fill:none;stroke:transparent;stroke-width:18;stroke-linecap:round;pointer-events:stroke;cursor:copy}
+.c-wx{fill:none;stroke:none;visibility:hidden}
+.c-wdot{fill:#0e0e11;stroke:#ededf0;stroke-width:1.6;pointer-events:none;opacity:0;transition:opacity .15s}.c-wdot.on{opacity:1}
 .dim{opacity:.13!important}
 .hlon .c-n:not(.hl),.hlon .c-w:not(.hl){opacity:.3}
 /* linha central do mês */
@@ -1211,10 +1214,30 @@ function frame() {
   wires(list); spine(list);
   if (moving || (drag && drag.live)) requestAnimationFrame(frame); else anim = false;
 }
-function attach(n, by) {
+function attach(n, by, depth = 0) {
   const p = by[n.parent], pp = p && POS[p.id]; if (!pp) return null;
   if (n.at && p.tail > 0) { const a = (p.anc || []).find(x => x.id === n.at); if (a) return { x: pp.x + SIZE[p.id].w / 2 + p.tail * a.p, y: pp.y, horiz: true }; }
+  if (n.via != null && depth < 40) { const q = wireAt(p, by, n.via, depth + 1); if (q) return { x: q.x, y: q.y, horiz: false }; }
   return { x: pp.x, y: pp.y, horiz: p.y === 0 || shapeOf(p) === 'dot' && pp.y === 0 };
+}
+/* fio que chega em n (do pai até n), medido num path invisível */
+function wirePath(n, by, depth = 0) {
+  const P = attach(n, by, depth), C = POS[n.id]; if (!P || !C) return null;
+  const svg = $('#wires'); if (!svg) return null;
+  let el = svg.querySelector('.c-wx'); if (!el) { el = document.createElementNS('http://www.w3.org/2000/svg', 'path'); el.setAttribute('class', 'c-wx'); svg.appendChild(el); }
+  el.setAttribute('d', pathFor(P, C, n.ln || 'auto')); return el;
+}
+function wireAt(n, by, t, depth = 0) { const el = wirePath(n, by, depth); if (!el) return null; const L = el.getTotalLength(), q = el.getPointAtLength(clamp(t, 0, 1) * L); return { x: q.x, y: q.y }; }
+/* ponto do fio mais perto de w: { t, x, y, nx, ny } (n = normal) */
+function wireNear(n, w) {
+  const by = Object.fromEntries(monthNodes().map(x => [x.id, x])), el = wirePath(n, by); if (!el) return null;
+  const L = el.getTotalLength(); if (!L) return null; let best = 0, bd = Infinity;
+  const d2 = l => { const q = el.getPointAtLength(l); return (q.x - w.x) ** 2 + (q.y - w.y) ** 2; };
+  for (let i = 0; i <= 80; i++) { const l = L * i / 80, d = d2(l); if (d < bd) { bd = d; best = l; } }
+  for (let s = L / 160; s > 0.25; s /= 2) for (const l of [best - s, best + s]) if (l >= 0 && l <= L) { const d = d2(l); if (d < bd) { bd = d; best = l; } }
+  const q = el.getPointAtLength(best), a = el.getPointAtLength(Math.max(0, best - 2)), b = el.getPointAtLength(Math.min(L, best + 2));
+  const tx = b.x - a.x, ty = b.y - a.y, m = Math.hypot(tx, ty) || 1;
+  return { t: Math.round(best / L * 1000) / 1000, x: q.x, y: q.y, nx: -ty / m, ny: tx / m };
 }
 function pathFor(P, C, mode) {
   const dx = C.x - P.x, dy = C.y - P.y;
@@ -1228,7 +1251,10 @@ function wires(list) {
   const put = (key, d, cls) => { seen.add(key); let p = WIRES.get(key); if (!p) { p = document.createElementNS('http://www.w3.org/2000/svg', 'path'); p.setAttribute('pathLength', '1'); svg.appendChild(p); WIRES.set(key, p); p.classList.add('born'); setTimeout(() => p.classList.remove('born'), 700); } if (p._d !== d) { p.setAttribute('d', d); p._d = d; } if (p._c !== cls) { p.setAttribute('class', cls); p._c = cls; } };
   for (const n of list) {
     if (!n.parent || !by[n.parent]) continue; const P = attach(n, by), C = POS[n.id]; if (!P || !C) continue;
-    put('w' + n.id, pathFor(P, C, n.ln || 'auto'), `c-w${n.status === 'done' ? ' ok' : ''}${f && !matchF(n) ? ' dim' : ''}`);
+    const d = pathFor(P, C, n.ln || 'auto');
+    put('w' + n.id, d, `c-w${n.status === 'done' ? ' ok' : ''}${f && !matchF(n) ? ' dim' : ''}`);
+    seen.add('h' + n.id); let h = WIRES.get('h' + n.id); if (!h) { h = document.createElementNS('http://www.w3.org/2000/svg', 'path'); h.setAttribute('class', 'c-wh'); h.dataset.wire = n.id; svg.appendChild(h); WIRES.set('h' + n.id, h); }
+    if (h._d !== d) { h.setAttribute('d', d); h._d = d; }
   }
   for (const n of list) for (const k of n.links || []) { if (k < n.id || !by[k] || !POS[k] || !POS[n.id]) continue; const a = POS[n.id], b = POS[k]; put('l' + n.id + k, `M${a.x} ${a.y}C${(a.x + b.x) / 2} ${a.y} ${(a.x + b.x) / 2} ${b.y} ${b.x} ${b.y}`, 'c-lk'); }
   if (drag && drag.kind === 'knob' && drag.to) { const a = POS[drag.id]; put('rubber', `M${a.x} ${a.y}L${drag.to.x} ${drag.to.y}`, 'c-rub'); }
@@ -1318,8 +1344,8 @@ document.addEventListener('pointerdown', e => {
     const n = N(id), sub = descendants(id, monthNodes()), ids = new Set([id, ...sub.map(x => x.id)]);
     drag = { kind: 'node', id, ids, sx: e.clientX, sy: e.clientY, start: Object.fromEntries([...ids].map(k => [k, { x: N(k).x, y: N(k).y }])), moved: false, live: true };
   } else {
-    drag = { kind: 'pan', sx: e.clientX, sy: e.clientY, x0: V.x, y0: V.y, moved: false, w };
-    if (e.pointerType !== 'mouse') { clearTimeout(lpT); lpT = setTimeout(() => { if (drag && drag.kind === 'pan' && !drag.moved) { drag = null; navigator.vibrate && navigator.vibrate(12); openPick({ x: w.x, y: w.y }); } }, 520); }
+    drag = { kind: 'pan', sx: e.clientX, sy: e.clientY, x0: V.x, y0: V.y, moved: false, w, wire: e.target.closest('.c-wh')?.dataset.wire };
+    if (e.pointerType !== 'mouse' && !drag.wire) { clearTimeout(lpT); lpT = setTimeout(() => { if (drag && drag.kind === 'pan' && !drag.moved) { drag = null; navigator.vibrate && navigator.vibrate(12); openPick({ x: w.x, y: w.y }); } }, 520); }
   }
   e.preventDefault();
 });
@@ -1355,6 +1381,7 @@ const endDrag = e => {
     const w = toWorld(e.clientX, e.clientY); createNode(d.cat, { x: Math.round(w.x), y: Math.abs(w.y) < SNAP ? 0 : Math.round(w.y) }); return;
   }
   if (d.kind === 'pan') {
+    if (!d.moved && d.wire) { branchFromWire(d.wire, d.w); return; }
     if (!d.moved && e.pointerType === 'mouse') { const now = Date.now(); if (now - lastTap.t < 340 && Math.abs(e.clientX - lastTap.x) < 8 && Math.abs(e.clientY - lastTap.y) < 8) { lastTap.t = 0; openPick({ x: d.w.x, y: Math.abs(d.w.y) < SNAP ? 0 : d.w.y }); } else lastTap = { t: now, x: e.clientX, y: e.clientY }; }
     return;
   }
@@ -1377,6 +1404,8 @@ document.addEventListener('wheel', e => {
 }, { passive: false });
 let hoverId = '';
 function hover(e) {
+  const wh = e.target.closest && e.target.closest('.c-wh'), wn = wh && N(wh.dataset.wire);
+  if (wn) wireDot(wireNear(wn, toWorld(e.clientX, e.clientY))); else wireDot(null);
   const b = e.target.closest && e.target.closest('.c-n'), id = b ? b.dataset.id : '';
   if (id === hoverId) return; hoverId = id; const w = $('#world'); if (!w) return;
   w.classList.toggle('hlon', !!id); $$('.hl', w).forEach(x => x.classList.remove('hl'));
@@ -1396,6 +1425,17 @@ function freeSpot(pid, base) {
   const hit = (a, b) => list.some(n => Math.abs(n.x - a) < 110 && Math.abs(n.y - b) < 40);
   const dir = Math.sign(y) || 1; for (let i = 0; i < 24 && hit(x, y); i++) y += dir * 52;
   return { parent: pid || null, x: Math.round(x), y: Math.round(y) };
+}
+function branchFromWire(id, w) {
+  const n = N(id), q = n && wireNear(n, w); if (!q) return; wireDot(null);
+  let ox = q.nx, oy = q.ny; if (Math.abs(q.y + oy * 130) < Math.abs(q.y - oy * 130) || (Math.abs(q.y) < 1 && oy > 0)) { ox = -ox; oy = -oy; }
+  openPick({ ...freeSpot(id, { x: q.x + ox * 130 + 40, y: q.y + oy * 130 }), via: q.t });
+}
+function wireDot(q) {
+  const svg = $('#wires'); if (!svg) return; let c = svg.querySelector('.c-wdot');
+  if (!q) { c?.classList.remove('on'); return; }
+  if (!c) { c = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); c.setAttribute('class', 'c-wdot'); c.setAttribute('r', '5'); svg.appendChild(c); }
+  c.setAttribute('cx', q.x); c.setAttribute('cy', q.y); c.classList.add('on');
 }
 function linkNodes(a, b) { tx(() => { const A = N(a), B = N(b); if (!A || !B) return; A.links = [...new Set([...(A.links || []), b])]; B.links = [...new Set([...(B.links || []), a])]; putNode(A); putNode(B); }); }
 
@@ -1452,7 +1492,7 @@ function closeModal(silent) { const m = $('#modal'); if (m) m.remove(); document
 let PICK = null;
 function openPick(ctx) {
   PICK = ctx;
-  const s = modal(`<div class="c-mh"><div><b>${ctx.parent ? 'Novo ramo' : 'Novo ponto'}</b><span>${ctx.parent ? 'nasce de ' + esc(labelOf(N(ctx.parent) || {})) : 'escolha o tipo · depois é só editar'}</span></div><span class="sp"></span><button class="pill sm icon ghost" data-act="close">${ic('x')}</button></div>
+  const s = modal(`<div class="c-mh"><div><b>${ctx.parent ? 'Novo ramo' : 'Novo ponto'}</b><span>${ctx.parent ? (ctx.via != null ? 'nasce do fio até ' : 'nasce de ') + esc(labelOf(N(ctx.parent) || {})) : 'escolha o tipo · depois é só editar'}</span></div><span class="sp"></span><button class="pill sm icon ghost" data-act="close">${ic('x')}</button></div>
     <div class="c-pickt"><input class="inp" id="pick-t" placeholder="Nome (opcional)" autocomplete="off"><label class="c-srch">${ic('search')}<input id="pick-q" placeholder="Buscar tipo" autocomplete="off"></label></div>
     <div class="c-pick" id="pick-l">${pickList('')}</div>`, 'wide');
   setTimeout(() => $('#pick-t', s)?.focus(), 30);
@@ -1465,7 +1505,7 @@ function createNode(cat, ctx = {}, title = '') {
   const C = CAT(cat), p = ctx.parent ? N(ctx.parent) : null;
   let { x, y } = ctx; if (x == null) ({ x, y } = freeSpot(p ? p.id : null));
   if (C.s === 'periodo' && Math.abs(y) < 80) y = 0;
-  const n = { id: uid(), month: UI.month, cat, title, x: Math.round(x), y: Math.round(y), parent: p ? p.id : null, at: ctx.at || null, status: 'todo', prio: 'm', brands: p ? [...(p.brands || [])] : [...UI.fb], team: p ? p.team || '' : UI.ft || '', who: p ? [...(p.who || [])] : UI.who ? [UI.who] : [], f: {}, chk: [], anc: [], links: [], by: store.name, t: Date.now() };
+  const n = { id: uid(), month: UI.month, cat, title, x: Math.round(x), y: Math.round(y), parent: p ? p.id : null, at: ctx.at || null, via: p && ctx.via != null ? ctx.via : null, status: 'todo', prio: 'm', brands: p ? [...(p.brands || [])] : [...UI.fb], team: p ? p.team || '' : UI.ft || '', who: p ? [...(p.who || [])] : UI.who ? [UI.who] : [], f: {}, chk: [], anc: [], links: [], by: store.name, t: Date.now() };
   if (C.s === 'periodo') n.w = 220;
   if (cat === 'canal') n.f.rede = 'TikTok';
   if (cat === 'loja') n.f.loja = LOJAS[store.board][0];
@@ -1666,7 +1706,7 @@ document.addEventListener('change', e => {
   const t = e.target, n = edNode();
   if (t.dataset.nf && n) { n[t.dataset.nf] = t.value; putNode(n); refresh(); return; }
   if (t.dataset.ff && n) { n.f = n.f || {}; n.f[t.dataset.ff] = t.type === 'number' ? (t.value === '' ? null : +t.value) : t.value; putNode(n); refresh(); if (t.tagName === 'SELECT') openEd(n.id); return; }
-  if (t.dataset.par && n) { edSet(x => { x.parent = t.value || null; x.at = null; }); return; }
+  if (t.dataset.par && n) { edSet(x => { x.parent = t.value || null; x.at = null; x.via = null; }); return; }
   if (t.dataset.chk && n) { const c = (n.chk || []).find(x => x.id === t.dataset.chk); if (c) { c.t = t.value; putNode(n); } return; }
   if (t.dataset.att && n) { const a = (n.att || []).find(x => x.id === t.dataset.att); if (a) { a[t.dataset.k] = t.value; putNode(n); if (t.dataset.k === 'u') openEd(n.id); } return; }
   if (t.dataset.anc && n) { const a = (n.anc || []).find(x => x.id === t.dataset.anc); if (a) { a.t = t.value; putNode(n); refresh(); } return; }
