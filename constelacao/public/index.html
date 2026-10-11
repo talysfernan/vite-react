@@ -784,6 +784,7 @@ svg.c-wires{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
 .c-thumb{flex:none;width:44px;height:44px;border-radius:9px;overflow:hidden;background:var(--well);display:grid;place-items:center}.c-thumb img{width:100%;height:100%;object-fit:cover}
 .c-fext{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--text-2);text-decoration:none}
 .c-fmeta{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.c-fmeta b{font-weight:550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.c-fmeta small{color:var(--muted)}
+.c-mod.c-prod{width:min(640px,100%)}.c-att{display:flex;flex-direction:column;gap:10px}.c-att .c-sec h5{margin-top:4px}.c-hint0{margin:-4px 0 10px;font-size:12px}
 .c-plmais{display:flex;flex-direction:column;gap:18px}
 .c-late{color:var(--red);font-weight:600;margin-left:6px}
 .c-pt .c-ci .pill{white-space:nowrap;flex:none}
@@ -1598,6 +1599,7 @@ function openEd(id, fresh) {
     <div class="c-sec"><h5>${ic('next', 'width:13px;height:13px')}Próximos meses</h5>
       <div class="row"><span>Repetir todo mês</span><span class="sp"></span><button class="switch ${n.rep ? 'on' : ''}" data-act="ed-rep"></button></div>
       ${n.carried ? `<p class="c-mut mt8">Já segue para ${monthName(addMonth(n.month, 1), false)}.</p>` : `<button class="pill sm mt8" data-act="carry">${ic('next', 'width:12px;height:12px')}Levar para ${monthName(addMonth(n.month, 1), false)}${sub.length ? ' com os ramos abertos' : ''}</button>`}</div>`;
+  if (PROD[n.cat]) return edShow(id, edProd(n, p, list, sub, field), 'c-ed c-prod', fresh);
   if (n.cat === 'plano') return edShow(id, edPlano(n, p, kids, sub, sp, side), 'c-ed c-plano', fresh);
   if (n.cat === 'ponto') return edShow(id, edPonto(n, p, kids, list, sub), 'c-ed sm', fresh);
   if (n.cat === 'reuniao') return edShow(id, edReuniao(n, p, list, sub), 'c-ed sm', fresh);
@@ -1647,7 +1649,7 @@ const fileUrl = (a, dl) => `/api/blob/${a.file}?b=${store.board}${dl ? '&dl=1' :
 const fmtSize = b => b >= 1e6 ? (b / 1e6).toFixed(1).replace('.', ',') + ' MB' : Math.max(1, Math.round(b / 1e3)) + ' KB';
 function edPlano(n, p, kids, sub, sp, side) {
   const f = n.f || {}, M = marcas(), T = times(), P = pessoas(), tab = PTABS.some(t => t[0] === UI.ptab) ? UI.ptab : 'resumo';
-  const files = (n.att || []).filter(a => a.file), links = (n.att || []).filter(a => !a.file), chk = n.chk || [];
+  const chk = n.chk || [];
   const cnt = { acoes: kids.length ? `${sp.done}/${sp.total}` : '', anexos: (n.att || []).length || '', tarefas: chk.length ? `${chk.filter(x => x.ok).length}/${chk.length}` : '', notas: n.notes ? '•' : '' };
   const chips = (arr, act, sel, lab) => arr.map(x => `<button class="pill sm ${sel(x) ? 'on' : ''}" data-act="${act}" data-v="${x.id}">${lab(x)}</button>`).join('');
   const body = {
@@ -1669,9 +1671,7 @@ function edPlano(n, p, kids, sub, sp, side) {
       return `<div class="c-chips">${[['acao', 'Ação'], ['reuniao', 'Reunião'], ['ponto', 'Ponto']].map(([k, l]) => `<button class="pill sm" data-act="pl-add" data-k="${k}">${ic('plus', 'width:12px;height:12px')}${l}</button>`).join('')}<button class="pill sm ghost" data-act="ramo" data-id="${n.id}">${ic('plus', 'width:12px;height:12px')}Outro tipo</button></div>
       ${kids.length ? Object.entries(groups).map(([g, ks]) => `<div class="c-sec"><h5>${esc(g)} <small>${ks.length}</small></h5>${ks.map(k => `<button class="c-kid" data-act="open" data-id="${k.id}"><span class="c-ic2" style="--c:${colorOf(k)}">${ic(k.cat)}</span><span>${esc(labelOf(k))}</span>${k.due ? `<small class="c-mut">${fmtD(k.due)}</small>` : ''}<i class="c-sdot" style="--sc:${ST(k.status)[2]}"></i></button>`).join('')}</div>`).join('') : '<p class="c-mut">Nada nasce deste plano ainda. Use os botões acima ou clique no fio na constelação.</p>'}
       ${sp.total ? `<p class="c-mut">${sp.done === sp.total ? 'Tudo que nasce daqui está feito.' : `Faltam ${sp.total - sp.done} para fechar.`}</p>` : ''}`; },
-    anexos: () => `<label class="c-drop" id="drop"><input type="file" id="file-in" multiple hidden>${ic('plus', 'width:16px;height:16px')}<span><b>Arraste arquivos aqui</b> ou clique para escolher<small>Roteiros, PDFs, imagens, planilhas · até 20 MB cada</small></span></label>
-      ${files.length ? `<div class="c-files">${files.map(a => `<div class="c-file">${/^image\//.test(a.type) ? `<a href="${fileUrl(a)}" target="_blank" rel="noopener" class="c-thumb"><img src="${fileUrl(a)}" alt="" loading="lazy"></a>` : `<a href="${fileUrl(a)}" target="_blank" rel="noopener" class="c-thumb c-fext">${esc((a.t.split('.').pop() || 'arq').slice(0, 4).toUpperCase())}</a>`}<div class="c-fmeta"><b title="${esc(a.t)}">${esc(a.t)}</b><small>${fmtSize(a.size || 0)}</small></div><a class="pill sm icon ghost" href="${fileUrl(a, 1)}" title="Baixar" aria-label="Baixar">${ic('arrow', 'width:12px;height:12px;transform:rotate(90deg)')}</a><button class="pill sm icon ghost" data-act="att-x" data-v="${a.id}" aria-label="Remover">${ic('x', 'width:12px;height:12px')}</button></div>`).join('')}</div>` : ''}
-      <div class="c-sec"><h5>Links</h5>${links.map(a => `<div class="c-ci"><input class="inp sm" data-att="${a.id}" data-k="t" value="${esc(a.t || '')}" placeholder="Nome" style="max-width:180px"><input class="inp sm" data-att="${a.id}" data-k="u" value="${esc(a.u || '')}" placeholder="https://">${a.u ? `<a class="pill sm icon ghost" href="${esc(a.u)}" target="_blank" rel="noopener" title="Abrir">${ic('arrow', 'width:12px;height:12px')}</a>` : ''}<button class="pill sm icon ghost" data-act="att-x" data-v="${a.id}" aria-label="Remover">${ic('x', 'width:12px;height:12px')}</button></div>`).join('')}<button class="pill sm" data-act="att-new">${ic('plus', 'width:12px;height:12px')}Link</button></div>`,
+    anexos: () => attHTML(n),
     tarefas: () => `<div class="c-chk">${chk.map(x => `<div class="c-ci ${x.ok ? 'ok' : ''}"><button class="c-cb" data-act="chk-t" data-c="${x.id}">${x.ok ? ic('check', 'width:12px;height:12px') : ''}</button><input class="inp sm" data-chk="${x.id}" value="${esc(x.t)}"><button class="pill sm icon ghost" data-act="chk-x" data-c="${x.id}" aria-label="Remover">${ic('x', 'width:12px;height:12px')}</button></div>`).join('')}
       <input class="inp sm" id="chk-new" placeholder="Nova tarefa e Enter" autocomplete="off"></div>`,
     notas: () => `<textarea class="inp c-ta" rows="10" data-nf="notes" placeholder="Contexto, combinados, ideias…">${esc(n.notes || '')}</textarea>`,
@@ -1683,6 +1683,13 @@ function edPlano(n, p, kids, sub, sp, side) {
   <nav class="seg c-ptabs" role="tablist">${PTABS.map(([k, l]) => `<button class="pill sm ${tab === k ? 'on' : ''}" role="tab" aria-selected="${tab === k}" data-act="ptab" data-v="${k}">${l}${cnt[k] ? `<small>${cnt[k]}</small>` : ''}</button>`).join('')}</nav>
   <div class="c-pt c-ptb">${body[tab]()}</div>
   <div class="c-mf"><button class="pill sm danger ghost" data-act="ed-del">${ic('trash', 'width:13px;height:13px')}Excluir</button><button class="pill sm ghost" data-act="ed-dup">${ic('copy', 'width:13px;height:13px')}Duplicar</button><span class="sp"></span><span class="c-mut">${n.by ? 'criado por ' + esc(n.by) : ''}</span><button class="pill sm white" data-act="close">Pronto</button></div>`;
+}
+/* anexos: arquivos (arrastar ou escolher) e links */
+function attHTML(n) {
+  const files = (n.att || []).filter(a => a.file), links = (n.att || []).filter(a => !a.file);
+  return `<div class="c-att"><label class="c-drop" id="drop"><input type="file" id="file-in" multiple hidden>${ic('plus', 'width:16px;height:16px')}<span><b>Arraste arquivos aqui</b> ou clique para escolher<small>Roteiros, PDFs, imagens, planilhas · até 20 MB cada</small></span></label>
+      ${files.length ? `<div class="c-files">${files.map(a => `<div class="c-file">${/^image\//.test(a.type) ? `<a href="${fileUrl(a)}" target="_blank" rel="noopener" class="c-thumb"><img src="${fileUrl(a)}" alt="" loading="lazy"></a>` : `<a href="${fileUrl(a)}" target="_blank" rel="noopener" class="c-thumb c-fext">${esc((a.t.split('.').pop() || 'arq').slice(0, 4).toUpperCase())}</a>`}<div class="c-fmeta"><b title="${esc(a.t)}">${esc(a.t)}</b><small>${fmtSize(a.size || 0)}</small></div><a class="pill sm icon ghost" href="${fileUrl(a, 1)}" title="Baixar" aria-label="Baixar">${ic('arrow', 'width:12px;height:12px;transform:rotate(90deg)')}</a><button class="pill sm icon ghost" data-act="att-x" data-v="${a.id}" aria-label="Remover">${ic('x', 'width:12px;height:12px')}</button></div>`).join('')}</div>` : ''}
+      <div class="c-sec"><h5>Links</h5>${links.map(a => `<div class="c-ci"><input class="inp sm" data-att="${a.id}" data-k="t" value="${esc(a.t || '')}" placeholder="Nome" style="max-width:180px"><input class="inp sm" data-att="${a.id}" data-k="u" value="${esc(a.u || '')}" placeholder="https://">${a.u ? `<a class="pill sm icon ghost" href="${esc(a.u)}" target="_blank" rel="noopener" title="Abrir">${ic('arrow', 'width:12px;height:12px')}</a>` : ''}<button class="pill sm icon ghost" data-act="att-x" data-v="${a.id}" aria-label="Remover">${ic('x', 'width:12px;height:12px')}</button></div>`).join('')}<button class="pill sm" data-act="att-new">${ic('plus', 'width:12px;height:12px')}Link</button></div></div>`;
 }
 async function uploadFiles(list) {
   const n = edNode(); if (!n || !list.length) return;
@@ -1700,6 +1707,31 @@ async function uploadFiles(list) {
 document.addEventListener('dragover', e => { const d = e.target.closest && e.target.closest('#drop'); if (d) { e.preventDefault(); d.classList.add('over'); } });
 document.addEventListener('dragleave', e => { const d = e.target.closest && e.target.closest('#drop'); if (d) d.classList.remove('over'); });
 document.addEventListener('drop', e => { const d = e.target.closest && e.target.closest('#drop'); if (!d) return; e.preventDefault(); d.classList.remove('over'); uploadFiles([...(e.dataTransfer?.files || [])]); });
+/* Produção (Roteiro, Vídeo, Arte, Fotos): etapa, arquivo/link em destaque, detalhes do tipo, quem e prazo */
+const PROD = {
+  roteiro: { ph: 'Nome do roteiro', st: ['Ideia', 'Escrevendo', 'Revisão', 'Aprovado', 'Travado'], long: 'cenas', longL: 'Escrever o roteiro aqui', drop: 'Suba o roteiro (PDF, Docs, Word) ou cole o link' },
+  video: { ph: 'Nome do vídeo', st: ['A gravar', 'Gravando / editando', 'Revisão', 'Pronto', 'Travado'], date: 'Gravação', drop: 'Suba o vídeo final, cortes ou cole o link da pasta' },
+  design: { ph: 'Nome da peça', st: ['Briefing', 'Criando', 'Revisão', 'Aprovada', 'Travada'], drop: 'Suba as artes (PNG, JPG, PDF) ou cole o link do Figma/Canva' },
+  foto: { ph: 'Nome da sessão', st: ['A agendar', 'Em produção', 'Seleção', 'Entregue', 'Travada'], date: 'Sessão', drop: 'Suba as fotos escolhidas ou cole o link da pasta' }
+};
+function edProd(n, p, list, sub, field) {
+  const C = CAT(n.cat), X = PROD[n.cat], P = pessoas(), late = n.status !== 'done' && n.due && n.due < todayISO();
+  const fs = C.f.filter(f => f[0] !== X.long), long = X.long && C.f.find(f => f[0] === X.long), lv = long && (n.f || {})[X.long];
+  return `${edHead(n, p)}
+  <input class="c-title" data-nf="title" value="${esc(n.title)}" placeholder="${X.ph}" autocomplete="off">
+  <div class="c-pt">
+    <div class="field"><span>Etapa</span><nav class="seg c-sseg">${STATUS.map(([k, , c], i) => `<button class="pill sm ${(n.status || 'todo') === k ? 'on' : ''}" data-act="ed-st" data-v="${k}" style="--sc:${c}"><i class="c-sdot"></i>${X.st[i]}</button>`).join('')}</nav></div>
+    <div class="c-sec"><h5>Arquivo</h5><p class="c-mut c-hint0">${X.drop}</p>${attHTML(n)}</div>
+    <div class="c-sec"><h5>Quem e quando</h5>
+      <div class="field"><span>Responsáveis</span><div class="c-chips">${P.map(x => `<button class="pill sm c-pp ${(n.who || []).includes(x.id) ? 'on' : ''}" data-act="ed-who" data-v="${x.id}">${av(x, 18)}${esc(x.name.split(' ')[0])}</button>`).join('')}${isAdmin() ? `<button class="pill sm ghost" data-act="ent" data-k="pessoa" data-id="" data-back="${n.id}">${ic('plus', 'width:12px;height:12px')}Pessoa</button>` : ''}${!P.length && !isAdmin() ? '<span class="c-mut">Ninguém cadastrado.</span>' : ''}</div></div>
+      <div class="c-mrow mt8">${X.date ? `<label class="field"><span>${X.date}</span><input class="inp sm" type="date" data-nf="start" value="${esc(n.start || '')}"></label>` : ''}<label class="field"><span>Prazo${late ? ' <b class="c-late">atrasado</b>' : ''}</span><input class="inp sm" type="date" data-nf="due" value="${esc(n.due || '')}"></label></div></div>
+    <div class="c-sec"><h5>Detalhes · ${esc(C.n)}</h5><div class="c-fg">${fs.map(field).join('')}</div>
+      ${long ? `<details class="c-more mt8" ${lv ? 'open' : ''}><summary>${X.longL}${lv ? '' : ' (opcional)'}</summary><textarea class="inp c-ta mt8" rows="8" data-ff="${X.long}" placeholder="${esc(long[3] || '')}">${esc(lv || '')}</textarea></details>` : ''}</div>
+    <label class="field"><span>Comentários de revisão</span><textarea class="inp c-ta" rows="3" data-nf="notes" placeholder="Ajustes pedidos, aprovações, observações">${esc(n.notes || '')}</textarea></label>
+    ${edMore(n, p, list, sub)}
+  </div>
+  <div class="c-mf"><button class="pill sm danger ghost" data-act="ed-del">${ic('trash', 'width:13px;height:13px')}Excluir</button><button class="pill sm ghost" data-act="ed-dup">${ic('copy', 'width:13px;height:13px')}Duplicar</button><span class="sp"></span><button class="pill sm white" data-act="close">Pronto</button></div>`;
+}
 /* Reunião: quando, onde, quem, pauta e decisões (cada decisão pode virar uma Ação) */
 const decList = n => (n.f || {}).dec || String((n.f || {}).decisoes || '').split('\n').map(t => t.trim()).filter(Boolean).map((t, i) => ({ id: 'l' + i, t }));
 const decSet = fn => edSet(n => { n.f = n.f || {}; const l = decList(n).map(x => ({ ...x })); n.f.dec = fn(l) || l; delete n.f.decisoes; });
