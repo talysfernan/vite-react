@@ -9,7 +9,8 @@ const HEAD = { 'content-type': 'text/html; charset=utf-8', 'x-frame-options': 'D
 
 export default {
   async fetch(req, env, ctx) {
-    const p = new URL(req.url).pathname;
+    const u = new URL(req.url), p = u.pathname, old = u.hostname.match(/^constelacao-(br|us)\./);
+    if (old && !p.startsWith('/api/')) { u.searchParams.set('pais', old[1]); return Response.redirect('https://constelacao.meucaos.com/' + u.search, 302); }
     if ((p === '/' || p === '/index.html') && (req.method === 'GET' || req.method === 'HEAD')) return new Response(req.method === 'HEAD' ? null : INDEX, { headers: HEAD });
     return app.fetch(req, env, ctx);
   }

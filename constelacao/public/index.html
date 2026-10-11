@@ -58,6 +58,7 @@ svg.i{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6;stro
 .month-btn{height:40px;padding:0 20px;border-radius:12px;background:var(--node);border:1px solid var(--line);display:flex;align-items:center;gap:10px;font-weight:500;min-width:200px;justify-content:center;transition:background .2s}
 .month-btn:hover{background:var(--node-2)}
 .top-r{display:flex;justify-content:flex-end;align-items:center;gap:8px}
+.c-flags .pill{padding:0 9px}.c-flags svg{width:22px;height:15px;border-radius:3px;display:block;opacity:.45;filter:saturate(.5);transition:opacity .2s,filter .2s}.c-flags .pill.on svg,.c-flags .pill:hover svg{opacity:1;filter:none}
 .save-st{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);padding:0 6px;white-space:nowrap}
 .brandbar{display:flex;align-items:center;gap:10px;padding:16px var(--gut) 0}
 ._unused{}
@@ -1007,10 +1008,12 @@ const DOCK = [['plano', 'Plano'], ['acao', 'Ação'], ['reuniao', 'Reunião'], [
 
 
 /* =================== estado / sincronização / desfazer =================== */
-const store = { role: null, name: '', board: 'br', docs: {}, since: 0, queue: {}, saving: false, ready: false };
+const BOARD0 = (() => { const q = new URLSearchParams(location.search).get('pais'); if (q === 'br' || q === 'us') return q; try { const v = localStorage.getItem('cst:board'); if (v === 'br' || v === 'us') return v; } catch (e) {} return /^constelacao-us\./.test(location.hostname) ? 'us' : 'br'; })();
+document.cookie = 'cst_b=' + BOARD0 + '; Path=/; Secure; SameSite=Lax; Max-Age=31536000';
+const store = { role: null, name: '', board: BOARD0, docs: {}, since: 0, queue: {}, saving: false, ready: false };
 const isAdmin = () => store.role === 'admin';
 async function api(path, opt = {}) {
-  let r; try { r = await fetch(path, { credentials: 'same-origin', ...opt, headers: { 'content-type': 'application/json', ...(opt.headers || {}) } }); } catch (e) { return { ok: false, status: 0, data: {} }; }
+  let r; try { r = await fetch(path, { credentials: 'same-origin', ...opt, headers: { 'content-type': 'application/json', 'x-board': store.board, ...(opt.headers || {}) } }); } catch (e) { return { ok: false, status: 0, data: {} }; }
   let data = {}; try { data = await r.json(); } catch (e) {}
   if (r.status === 401) { store.role = null; window.lockScreen && lockScreen(); }
   return { ok: r.ok, status: r.status, data };
@@ -1049,7 +1052,7 @@ async function flush() {
 }
 const savest = t => { const el = $('#savest'); if (el) el.innerHTML = t ? `<span class="dot ${/Salvo/.test(t) ? 'g' : /Erro|Sem/.test(t) ? 'r' : 'o'}"></span>${t}` : ''; };
 async function poll() {
-  if (drag) return;
+  if (drag || store.switching) return;
   const r = await api('/api/changes?since=' + store.since); if (!r.ok) return;
   let ch = false; for (const [k, v] of Object.entries(r.data.docs || {})) { if (k in store.queue) continue; if (v === null) delete store.docs[k]; else store.docs[k] = v; ch = true; }
   store.since = r.data.now; if (ch && !busyTyping()) { refresh(); if (ED.id && !D('node/' + ED.id)) closeModal(); }
@@ -1058,6 +1061,27 @@ const busyTyping = () => /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.ta
 
 /* =================== dados =================== */
 const PAIS = { br: { name: 'Brasil', flag: '🇧🇷' }, us: { name: 'USA', flag: '🇺🇸' } };
+const FLAG = {
+  br: '<svg viewBox="0 0 22 15"><rect width="22" height="15" fill="#1f9d55"/><path d="M11 2 20 7.5 11 13 2 7.5z" fill="#facc15"/><circle cx="11" cy="7.5" r="3.3" fill="#1e3a8a"/></svg>',
+  us: '<svg viewBox="0 0 22 15"><rect width="22" height="15" fill="#f4f4f5"/><path d="M0 0h22v1.15H0zM0 2.3h22v1.15H0zM0 4.6h22v1.15H0zM0 6.9h22v1.15H0zM0 9.2h22v1.15H0zM0 11.5h22v1.15H0zM0 13.8h22V15H0z" fill="#dc2626"/><rect width="9.5" height="8.05" fill="#1e3a8a"/></svg>'
+};
+/* lembra o país escolhido (cookie: para chamadas sem cabeçalho, como a tela de login) */
+function rememberBoard(b) { try { localStorage.setItem('cst:board', b); } catch (e) {} document.cookie = 'cst_b=' + b + '; Path=/; Secure; SameSite=Lax; Max-Age=31536000'; const u = new URL(location.href); u.searchParams.set('pais', b); history.replaceState(null, '', u); }
+async function setBoard(b) {
+  if (b === store.board || store.switching) return; store.switching = true;
+  try {
+    clearTimeout(commit.t); await flush(); for (let i = 0; i < 40 && (store.saving || Object.keys(store.queue).length); i++) { await new Promise(r => setTimeout(r, 150)); if (!store.saving) await flush(); }
+    if (Object.keys(store.queue).length) { toast('Ainda salvando. Tente de novo em instantes.', 'r'); return; }
+    const s = await api('/api/session', { headers: { 'x-board': b } });
+    if (!s.data.role) { toast('Você não tem acesso à constelação ' + PAIS[b].name + '. Peça a liberação no Quintal.', 'r'); return; }
+    const d = await api('/api/docs', { headers: { 'x-board': b } }); if (!d.ok) { toast('Não foi possível abrir ' + PAIS[b].name + '.', 'r'); return; }
+    closeModal(true); ED.id = '';
+    store.board = b; store.role = s.data.role; store.name = s.data.name === 'admin' ? 'Mestre' : s.data.name || '';
+    store.docs = d.data.docs || {}; store.since = d.data.now || 0; store.queue = {}; H.undo = []; H.redo = [];
+    UI.fb = (UI.fb || []).filter(marca); if (UI.ft && !time(UI.ft)) UI.ft = ''; if (UI.who && !pessoa(UI.who)) UI.who = ''; if (UI.view === 'set' && !isAdmin()) UI.view = 'cst'; saveUI();
+    rememberBoard(b); loadView(); render();
+  } finally { store.switching = false; }
+}
 const CFG0 = () => ({ title: { text: 'Constelação · ' + PAIS[store.board].name, color: '#26262b', size: 14 }, logo: '', logoSize: 70 });
 function cfg() { const c = D('app/cfg') || {}, d = CFG0(); const o = { ...d, ...c }; o.title = { ...d.title, ...(c.title || {}) }; return o; }
 const docsOf = pre => Object.entries(store.docs).filter(([k, v]) => k.startsWith(pre) && v).map(([k, v]) => ({ ...v, id: k.slice(pre.length) }));
@@ -1107,7 +1131,7 @@ function render() {
   <header class="top">
     <div class="top-l"><nav class="seg">${VIEWS.map(([k, l, i]) => `<button class="pill ${UI.view === k ? 'on' : ''}" data-act="view" data-v="${k}">${ic(i, 'width:14px;height:14px')}${l}</button>`).join('')}</nav></div>
     <div class="month">${UI.view === 'set' ? `<span class="sub">${ic('gear', 'width:13px;height:13px')} ajustes</span>` : `<button class="pill icon" data-act="mon" data-v="-1" aria-label="Mês anterior">${ic('left')}</button><button class="month-btn" data-act="mon-pop">${cap1(monthName(UI.month))}${UI.month === curMonth() ? '<span class="dot g"></span>' : ''}</button><button class="pill icon" data-act="mon" data-v="1" aria-label="Próximo mês">${ic('right')}</button>`}</div>
-    <div class="top-r"><div class="save-st" id="savest"></div></div>
+    <div class="top-r"><div class="save-st" id="savest"></div><nav class="seg c-flags" aria-label="País">${Object.keys(PAIS).map(k => `<button class="pill ${store.board === k ? 'on' : ''}" data-act="board" data-v="${k}" title="Constelação ${PAIS[k].name}" aria-label="Constelação ${PAIS[k].name}" aria-pressed="${store.board === k}">${FLAG[k]}</button>`).join('')}</nav></div>
   </header>
   ${UI.view === 'set' ? '' : `<div class="brandbar c-filt">
     ${M.map(b => `<button class="pill sm ${UI.fb.includes(b.id) ? 'on' : ''}" data-act="fb" data-v="${b.id}"><span class="dot" style="background:${b.color};box-shadow:0 0 10px ${b.color}80"></span>${esc(b.name)}</button>`).join('')}
@@ -1622,6 +1646,7 @@ function setMonth(m) { UI.month = m; saveUI(); loadView(); render(); }
 function goto(id) { const n = N(id); if (!n) return; closeModal(true); ED.id = ''; if (n.month !== UI.month) setMonth(n.month); if (UI.view !== 'cst') { UI.view = 'cst'; saveUI(); render(); } setTimeout(() => { const st = $('#stage'); if (st && V) camTo({ z: Math.max(V.z, .8), x: st.clientWidth / 2 - n.x * Math.max(V.z, .8), y: st.clientHeight / 2 - n.y * Math.max(V.z, .8) }); openEd(id); }, 80); }
 function delNodes(ids) { tx(() => ids.forEach(k => { const x = N(k); if (!x) return; (x.links || []).forEach(l => { const o = N(l); if (o) { o.links = (o.links || []).filter(y => y !== k); putNode(o); } }); commit('node/' + k, null); })); }
 const ACT = {
+  board: a => setBoard(a.dataset.v),
   view: a => { UI.view = a.dataset.v; saveUI(); render(); scrollTo({ top: 0 }); },
   mon: a => setMonth(addMonth(UI.month, +a.dataset.v)),
   'mon-pop': () => monthPop(),
@@ -1732,7 +1757,7 @@ window.isAdmin = isAdmin; window.isApi = () => true;
 (async () => {
   const s = await api('/api/session');
   if (!s.data.role) { if (window.lockScreen) lockScreen(); return; }
-  store.role = s.data.role; store.name = s.data.name === 'admin' ? 'Mestre' : s.data.name || ''; store.board = s.data.board === 'us' ? 'us' : 'br';
+  store.role = s.data.role; store.name = s.data.name === 'admin' ? 'Mestre' : s.data.name || ''; store.board = s.data.board === 'us' ? 'us' : 'br'; rememberBoard(store.board);
   const d = await api('/api/docs');
   store.docs = d.data.docs || {}; store.since = d.data.now || 0; store.ready = true;
   if (isAdmin() && !docsOf('marca/').length && !D('app/seeded')) { commit('marca/cl', { name: 'Coco & Luna', color: '#f87171', t: 1 }, false); commit('marca/yu', { name: 'Yucaloo', color: '#60a5fa', t: 2 }, false); commit('app/seeded', { t: Date.now() }, false); }

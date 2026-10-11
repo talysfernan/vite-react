@@ -230,7 +230,10 @@ var Store = class extends DurableObject {
   }
 };
 var BOARDS = ["br", "us"];
-var boardOf = /* @__PURE__ */ __name((url) => /^constelacao-us\./.test(url.hostname) ? "us" : "br", "boardOf");
+var boardOf = /* @__PURE__ */ __name((url, req) => {
+  const h = req && req.headers.get("x-board"), c = req && ((req.headers.get("cookie") || "").match(/(?:^|;\s*)cst_b=(br|us)/) || [])[1];
+  return h === "us" || h === "br" ? h : c || (/^constelacao-us\./.test(url.hostname) ? "us" : "br");
+}, "boardOf");
 var store = /* @__PURE__ */ __name((env, b) => env.STORE.get(env.STORE.idFromName(b)), "store");
 var SEC = { "x-frame-options": "DENY", "x-content-type-options": "nosniff", "referrer-policy": "no-referrer", "cache-control": "no-cache" };
 var index_default = {
@@ -238,7 +241,7 @@ var index_default = {
     const url = new URL(req.url);
     if (url.pathname.startsWith("/api/")) {
       {
-        const b = boardOf(url), r2 = new Request(req);
+        const b = boardOf(url, req), r2 = new Request(req);
         r2.headers.set("x-board", b);
         return store(env, b).fetch(r2);
       }

@@ -168,7 +168,7 @@ users  = [{ id, name, user, cargo, email, note, pass(hash), passEnc, active,
 
 ## 8. Este repositório (talysfernan/vite-react)
 
-- `constelacao/` — painel **Constelação de ações** (worker `caos-constelacao`), BR em constelacao-br.meucaos.com e US em constelacao-us.meucaos.com. Um worker para os dois; o país vem do subdomínio.
+- `constelacao/` — painel **Constelação de ações** (worker `caos-constelacao`) em **constelacao.meucaos.com**, com bandeiras BR/US no canto para alternar. Cada país tem seus dados (Durable Object `br`/`us`) e sua chave no Quintal (`constelacao-br`/`constelacao-us`). O país vem do cabeçalho `x-board` (app), depois do cookie `cst_b`; `?pais=br|us` escolhe ao abrir. Os endereços antigos constelacao-br/us redirecionam para o novo.
   - `public/` = estático (`index.html` é o app inteiro); `worker.js` = worker + Durable Object `Store` (cópia do que está no ar, já empacotado).
   - Base = versão feita no Cowork e baixada do Cloudflare em 11/10/2026. A versão antiga (branch `claude/jolly-thompson-qxpaie`) foi descartada — nunca usá-la nem o `deploy.sh` dela.
   - Deploy: `cd constelacao && CLOUDFLARE_API_TOKEN=proxy npx -y wrangler@4.40.0 deploy` (no Claude Code na nuvem o proxy injeta a credencial).

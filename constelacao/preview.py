@@ -9,7 +9,7 @@ out = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else root / 'preview.html'
 MOCK = r"""<script>
 /* ===== MODO TESTE: API simulada no navegador (nada vai para o servidor) ===== */
 (() => {
-  const KEY = 'constelacao-teste-docs';
+  const KEY = 'constelacao-teste-docs2';
   const nowBR = new Date(Date.now() - 3 * 3600e3), m = nowBR.toISOString().slice(0, 7);
   const base = { month: m, status: 'todo', prio: 'm', brands: [], team: '', who: [], f: {}, chk: [], anc: [], links: [], t: 1 };
   const SEED = {
@@ -18,14 +18,14 @@ MOCK = r"""<script>
     'node/ex2': { ...base, cat: 'plano', title: 'Plano', x: 650, y: -430, parent: 'ex1' },
     'node/ex3': { ...base, cat: 'acao', title: 'Ação de exemplo', x: 900, y: 160, parent: 'ex0' }
   };
-  let docs; try { docs = JSON.parse(localStorage.getItem(KEY)) || null; } catch (e) {}
-  if (!docs) docs = JSON.parse(JSON.stringify(SEED));
-  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(docs)); } catch (e) {} };
+  let all; try { all = JSON.parse(localStorage.getItem(KEY)) || null; } catch (e) {}
+  if (!all) all = { br: JSON.parse(JSON.stringify(SEED)), us: { 'node/u0': { ...base, cat: 'ponto', title: '', x: 300, y: 0, parent: null }, 'node/u1': { ...base, cat: 'plano', title: 'Plano USA', x: 520, y: -200, parent: 'u0' } } };
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(all)); } catch (e) {} };
   window.__resetTeste = () => { try { localStorage.removeItem(KEY); } catch (e) {} location.reload(); };
   const res = (o, s = 200) => Promise.resolve(new Response(JSON.stringify(o), { status: s, headers: { 'content-type': 'application/json' } }));
   window.fetch = (url, opt = {}) => {
-    const p = String(url).split('?')[0];
-    if (p === '/api/session') return res({ role: 'admin', name: 'Teste', board: 'br' });
+    const p = String(url).split('?')[0], b = (opt.headers || {})['x-board'] === 'us' ? 'us' : 'br', docs = all[b];
+    if (p === '/api/session') return res({ role: 'admin', name: 'Teste', board: b });
     if (p === '/api/ver') return res({ v: 'teste' });
     if (p === '/api/docs' && (opt.method || 'GET') === 'GET') return res({ docs, now: Date.now() });
     if (p === '/api/changes') return res({ docs: {}, now: Date.now() });

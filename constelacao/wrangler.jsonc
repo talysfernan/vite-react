@@ -8,6 +8,7 @@
   "workers_dev": true,
   "preview_urls": true,
   "routes": [
+    { "pattern": "constelacao.meucaos.com", "custom_domain": true },
     { "pattern": "constelacao-br.meucaos.com", "custom_domain": true },
     { "pattern": "constelacao-us.meucaos.com", "custom_domain": true }
   ],
