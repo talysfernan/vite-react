@@ -626,12 +626,14 @@ svg.c-wires{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
 .c-lk.born{stroke-dasharray:1}
 .c-rub{fill:none;stroke:#ededf0;stroke-width:1.6;stroke-dasharray:5 6;opacity:.9}
 .c-wh{fill:none;stroke:transparent;stroke-width:18;stroke-linecap:round;pointer-events:stroke;cursor:pointer}
+.c-wdel{position:absolute;z-index:4;width:20px;height:20px;margin:-10px 0 0 -10px;display:grid;place-items:center;border-radius:50%;color:var(--text-2);background:rgba(24,24,28,.7);border:1px solid rgba(255,255,255,.16);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 4px 12px rgba(0,0,0,.4);cursor:pointer;transition:color .15s,background .15s,border-color .15s}.c-wdel svg{width:10px;height:10px;stroke-width:2.2}.c-wdel:hover{color:#fff;background:rgba(248,113,113,.35);border-color:rgba(248,113,113,.6)}
 .c-wx{fill:none;stroke:none;visibility:hidden}
 .c-wdot{fill:#0e0e11;stroke:#ededf0;stroke-width:1.6;pointer-events:none;opacity:0;transition:opacity .15s}.c-wdot.on{opacity:1}
 .dim{opacity:.13!important}
 .hlon .c-n:not(.hl),.hlon .c-w:not(.hl){opacity:.3}
 /* linha central do mês */
 .c-spine{position:absolute;top:-1px;height:2px;background:#35353c;border-radius:2px;transition:box-shadow .3s}
+.c-cap{position:absolute;top:1px;transform:translateY(-50%);height:18px;padding:0 8px;border-radius:9px;display:flex;align-items:center;font-size:9.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);background:rgba(14,14,17,.7);border:1px solid rgba(255,255,255,.09);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);white-space:nowrap;pointer-events:none}.c-cap.s{right:100%;margin-right:6px}.c-cap.e{left:100%;margin-left:6px}
 .c-prog{position:absolute;left:0;top:0;height:2px;background:#f2f2f5;border-radius:2px;box-shadow:0 0 10px rgba(255,255,255,.35);transition:width .8s cubic-bezier(.2,.8,.2,1)}
 .c-tip{position:absolute;top:-3px;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:#fff;box-shadow:0 0 0 4px rgba(255,255,255,.08),0 0 14px rgba(255,255,255,.7);transition:left .8s cubic-bezier(.2,.8,.2,1)}
 .c-stage.magnet .c-spine{box-shadow:0 0 0 5px rgba(255,255,255,.06),0 0 22px rgba(255,255,255,.25)}
@@ -663,6 +665,8 @@ svg.c-wires{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
 /* ícone */
 .sh-icone .c-b{width:46px;height:42px;border-radius:12px;background:#0e0e11;color:#ededf0}
 .sh-icone .c-b svg{width:34px;height:34px;stroke-width:1.7}
+.sz-s.sh-pill .c-b,.sz-s.sh-outline .c-b{height:24px;padding:0 13px;font-size:11px;border-width:1.3px}.sz-l.sh-pill .c-b,.sz-l.sh-outline .c-b{height:44px;padding:0 28px;font-size:17px;border-width:2px}
+.sz-s.sh-mini .c-b{height:14px;padding:0 11px;font-size:7.6px}.sz-l.sh-mini .c-b{height:23px;padding:0 20px;font-size:11px}
 .cat-lista .c-b{width:34px;height:32px;border-radius:10px}
 .cat-time .c-b{color:var(--tc,#ededf0);border:1px solid color-mix(in srgb,var(--tc,#ededf0) 35%,transparent)}.cat-time .c-b svg{width:30px;height:30px;stroke-width:1.6}
 .c-lg{display:flex;flex-direction:column;gap:3px;width:22px}
@@ -1199,7 +1203,7 @@ const MIDM = [['off', 'Desligado'], ['linha', 'Linha'], ['ponto', 'Ponto'], ['qu
 const midHTML = () => `<i class="c-midl"></i><b class="c-midp"></b><span class="c-midt">metade do mês</span><span class="c-midq a">1ª quinzena</span><span class="c-midq b">2ª quinzena</span>`;
 function vCst() {
   return `<div class="c-stage" id="stage">
-    <div class="c-world" id="world"><div class="c-spine" id="spine"><i class="c-prog" id="prog"></i><b class="c-tip" id="tip"></b></div><div class="c-mid" id="mid" data-mode="${UI.mid || 'off'}">${midHTML()}</div><svg class="c-wires" id="wires" width="1" height="1"></svg><div id="nodes"></div><div id="bridges"></div></div>
+    <div class="c-world" id="world"><div class="c-spine" id="spine"><i class="c-prog" id="prog"></i><b class="c-tip" id="tip"></b><span class="c-cap s">início</span><span class="c-cap e">final</span></div><div class="c-mid" id="mid" data-mode="${UI.mid || 'off'}">${midHTML()}</div><svg class="c-wires" id="wires" width="1" height="1"></svg><div id="nodes"></div><div id="bridges"></div><button class="c-wdel" id="wdel" data-act="wire-del" title="Apagar este fio" aria-label="Apagar este fio" hidden>${ic('x')}</button></div>
     <div class="c-hud" id="hud"></div>
     <div class="c-midc ${UI.midMenu ? 'open' : ''}"><button class="c-midb ${UI.mid && UI.mid !== 'off' ? 'on' : ''}" data-act="mid-menu" title="Marco do meio do mês" aria-label="Marco do meio do mês">${ic('half')}</button><div class="c-midm">${MIDM.map(([k, l]) => `<button class="${(UI.mid || 'off') === k ? 'on' : ''}" data-act="mid" data-v="${k}">${l}</button>`).join('')}</div></div>
     <div class="c-empty" id="empty" hidden><div>${ic('const', 'width:30px;height:30px')}<b>A constelação de ${monthName(UI.month, false)} está vazia</b><span>Arraste um item da barra de baixo para o canvas, ou dê dois cliques em qualquer lugar.</span></div></div>
@@ -1264,7 +1268,7 @@ function reconcile(first) {
   for (const n of list) {
     let el = NODES.get(n.id); const sh = shapeOf(n), html = nodeHTML(n), col = colorOf(n);
     if (!el) { el = document.createElement('div'); el.dataset.id = n.id; nodesEl.appendChild(el); NODES.set(n.id, el); if (!first) el.classList.add('born'); POS[n.id] = { x: n.x, y: n.y }; }
-    const cls = `c-n sh-${sh} cat-${n.cat} st-${n.status || 'todo'}${n.y === 0 ? ' on-spine' : ''}${f && !matchF(n) ? ' dim' : ''}${n.carried ? ' carried' : ''}${ED.id === n.id ? ' sel' : ''}${n.prio === 'a' ? ' hi' : ''}`;
+    const cls = `c-n sh-${sh} cat-${n.cat}${n.sz ? ' sz-' + n.sz : ''} st-${n.status || 'todo'}${n.y === 0 ? ' on-spine' : ''}${f && !matchF(n) ? ' dim' : ''}${n.carried ? ' carried' : ''}${ED.id === n.id ? ' sel' : ''}${n.prio === 'a' ? ' hi' : ''}`;
     if (el._h !== html) { el.innerHTML = html; el._h = html; }
     if (el._c !== cls) { const born = el.classList.contains('born'); el.className = cls + (born ? ' born' : ''); el._c = cls; }
     el.style.setProperty('--c', col); if (n.cat === 'time') el.style.setProperty('--tc', (time(n.team) || {}).color || '#ededf0');
@@ -1340,14 +1344,15 @@ function wires(list) {
     seen.add('h' + n.id); let h = WIRES.get('h' + n.id); if (!h) { h = document.createElementNS('http://www.w3.org/2000/svg', 'path'); h.setAttribute('class', 'c-wh'); h.dataset.wire = n.id; svg.appendChild(h); WIRES.set('h' + n.id, h); }
     if (h._d !== d) { h.setAttribute('d', d); h._d = d; }
   }
-  for (const n of list) for (const k of n.links || []) { if (k < n.id || !by[k] || !POS[k] || !POS[n.id]) continue; const a = POS[n.id], b = POS[k]; put('l' + n.id + k, `M${a.x} ${a.y}C${(a.x + b.x) / 2} ${a.y} ${(a.x + b.x) / 2} ${b.y} ${b.x} ${b.y}`, 'c-lk'); }
+  for (const n of list) for (const k of n.links || []) { if (k < n.id || !by[k] || !POS[k] || !POS[n.id]) continue; const a = POS[n.id], b = POS[k]; const d = `M${a.x} ${a.y}C${(a.x + b.x) / 2} ${a.y} ${(a.x + b.x) / 2} ${b.y} ${b.x} ${b.y}`; put('l' + n.id + k, d, 'c-lk'); seen.add('hk' + n.id + k); let h = WIRES.get('hk' + n.id + k); if (!h) { h = document.createElementNS('http://www.w3.org/2000/svg', 'path'); h.setAttribute('class', 'c-wh'); h.dataset.link = n.id + '|' + k; svg.appendChild(h); WIRES.set('hk' + n.id + k, h); } if (h._d !== d) { h.setAttribute('d', d); h._d = d; } }
   if (drag && drag.kind === 'knob' && drag.to) { const a = POS[drag.id]; put('rubber', `M${a.x} ${a.y}L${drag.to.x} ${drag.to.y}`, 'c-rub'); }
   for (const [k, p] of WIRES) if (!seen.has(k)) { p.remove(); WIRES.delete(k); }
 }
 let SP = { x0: 0, x1: 2400 };
 function spine(list) {
-  /* o mês começa no ponto inicial (x = 0, ou a estrela mais à esquerda se houver alguma antes); enquanto arrasta, o início fica parado */
-  let x0 = drag && drag.kind === 'node' && drag.x0 != null ? drag.x0 : Math.min(0, ...list.map(n => n.x)), x1 = 2400; for (const n of list) { const p = POS[n.id]; if (!p) continue; x1 = Math.max(x1, p.x + (n.tail || 0) + (SIZE[n.id]?.w || 0) / 2 + 520); }
+  /* a linha cresce com o conteúdo: pouco espaço antes da primeira estrela, mais espaço depois da última */
+  let x0 = list.length ? Infinity : -300, x1 = 2400; for (const n of list) { const p = POS[n.id]; if (!p) continue; x0 = Math.min(x0, p.x - (SIZE[n.id]?.w || 0) / 2 - 70); x1 = Math.max(x1, p.x + (n.tail || 0) + (SIZE[n.id]?.w || 0) / 2 + 520); }
+  if (!isFinite(x0)) x0 = -300;
   SP = { x0, x1 }; const s = $('#spine'); if (!s) return;
   const md = $('#mid'); if (md) { md.style.left = (x0 + x1) / 2 + 'px'; md.style.setProperty('--half', (x1 - x0) / 2 + 'px'); }
   s.style.left = x0 + 'px'; s.style.width = x1 - x0 + 'px';
@@ -1410,9 +1415,9 @@ document.addEventListener('pointerdown', e => {
   else if (nodeEl && e.target.closest('.c-anc')) { drag = { kind: 'anc', id, a: e.target.closest('.c-anc').dataset.anc, sx: e.clientX, sy: e.clientY, moved: false }; }
   else if (nodeEl) {
     const n = N(id), sub = descendants(id, monthNodes()), ids = new Set([id, ...sub.map(x => x.id)]);
-    drag = { kind: 'node', id, ids, sx: e.clientX, sy: e.clientY, start: Object.fromEntries([...ids].map(k => [k, { x: N(k).x, y: N(k).y }])), x0: SP.x0, moved: false, live: true };
+    drag = { kind: 'node', id, ids, sx: e.clientX, sy: e.clientY, start: Object.fromEntries([...ids].map(k => [k, { x: N(k).x, y: N(k).y }])), moved: false, live: true };
   } else {
-    drag = { kind: 'pan', sx: e.clientX, sy: e.clientY, x0: V.x, y0: V.y, moved: false, w, wire: e.target.closest('.c-wh')?.dataset.wire };
+    drag = { kind: 'pan', sx: e.clientX, sy: e.clientY, x0: V.x, y0: V.y, moved: false, w, wire: e.target.closest('.c-wh')?.dataset.wire || undefined };
     if (e.pointerType !== 'mouse' && !drag.wire) { clearTimeout(lpT); lpT = setTimeout(() => { if (drag && drag.kind === 'pan' && !drag.moved) { drag = null; navigator.vibrate && navigator.vibrate(12); openPick({ x: w.x, y: w.y }); } }, 520); }
   }
   e.preventDefault();
@@ -1429,8 +1434,8 @@ document.addEventListener('pointermove', e => {
   const dx = (e.clientX - drag.sx) / V.z, dy = (e.clientY - (drag.sy ?? e.clientY)) / V.z;
   if (drag.kind === 'node') {
     const s0 = drag.start[drag.id]; let ny = Math.round(s0.y + dy); const snap = Math.abs(ny) < SNAP; if (snap) ny = 0;
-    const ddy = ny - s0.y, minX = Math.min(...[...drag.ids].map(k => drag.start[k].x)), dxc = Math.max(dx, drag.x0 - minX);
-    for (const k of drag.ids) { const n = store.docs['node/' + k], s = drag.start[k]; n.x = Math.round(s.x + dxc); n.y = k === drag.id ? ny : Math.round(s.y + ddy); }
+    const ddy = ny - s0.y;
+    for (const k of drag.ids) { const n = store.docs['node/' + k], s = drag.start[k]; n.x = Math.round(s.x + dx); n.y = k === drag.id ? ny : Math.round(s.y + ddy); }
     st.classList.toggle('magnet', snap); drag.dirty = true; NODES.get(drag.id)?.classList.add('lift'); kick(); return;
   }
   if (drag.kind === 'tail') { const n = store.docs['node/' + drag.id]; n.tail = Math.max(40, Math.round(drag.t0 + dx)); drag.dirty = true; layoutTail(NODES.get(drag.id), { ...n, id: drag.id }); kick(); return; }
@@ -1474,9 +1479,17 @@ document.addEventListener('wheel', e => {
   else { V.x -= e.shiftKey ? e.deltaY : e.deltaX; V.y -= e.shiftKey ? 0 : e.deltaY; applyView(); }
 }, { passive: false });
 let hoverId = '';
+let wdelT = 0;
+function wireDel(wh) {
+  const b = $('#wdel'); if (!b) return;
+  if (!wh) { if (!b.hidden && !wdelT) wdelT = setTimeout(() => { b.hidden = true; wdelT = 0; }, 450); return; }
+  clearTimeout(wdelT); wdelT = 0; const L = wh.getTotalLength(), q = wh.getPointAtLength(L / 2), a = wh.getPointAtLength(Math.max(0, L / 2 - 2)), c = wh.getPointAtLength(Math.min(L, L / 2 + 2)), tx = c.x - a.x, ty = c.y - a.y, m = Math.hypot(tx, ty) || 1;
+  b.style.left = q.x - ty / m * 16 + 'px'; b.style.top = q.y + tx / m * 16 + 'px'; b.dataset.wire = wh.dataset.wire || ''; b.dataset.link = wh.dataset.link || ''; b.hidden = false;
+}
 function hover(e) {
-  const wh = e.target.closest && e.target.closest('.c-wh'), wn = wh && N(wh.dataset.wire);
+  const wh = e.target.closest && e.target.closest('.c-wh'), wn = wh && wh.dataset.wire && N(wh.dataset.wire);
   if (wn) wireDot(wireNear(wn, toWorld(e.clientX, e.clientY))); else wireDot(null);
+  if (wh) wireDel(wh); else if (e.target.closest && e.target.closest('#wdel')) { clearTimeout(wdelT); wdelT = 0; } else wireDel(null);
   const b = e.target.closest && e.target.closest('.c-n'), id = b ? b.dataset.id : '';
   if (id === hoverId) return; hoverId = id; const w = $('#world'); if (!w) return;
   w.classList.toggle('hlon', !!id); $$('.hl', w).forEach(x => x.classList.remove('hl'));
@@ -1596,7 +1609,7 @@ function openEd(id, fresh) {
     return `<label class="field${W}"><span>${esc(l)}${t === 'u' && v ? ` <a href="${esc(v)}" target="_blank" rel="noopener" class="c-open">abrir</a>` : ''}</span><input class="inp sm" type="${ty}" data-ff="${k}" value="${esc(v ?? '')}" placeholder="${esc(o || '')}"${t === '$' ? ' step="0.01"' : ''}></label>`; };
   const links = (n.links || []).map(N).filter(Boolean), M = marcas(), T = times(), P = pessoas();
   const tailable = ['pill', 'outline', 'mini'].includes(sh);
-  const side = `    <div class="c-sec"><h5>Aparência</h5>
+  const side = `    <div class="c-sec"><h5>Aparência</h5>${sizeCtl(n)}
       <div class="c-shapes">${SHAPES.map(([k, l]) => `<button class="c-shp ${sh === k ? 'on' : ''}" data-act="ed-shape" data-v="${k}" title="${l}">${dockIcon({ pill: 'plano', outline: 'reuniao', mini: 'acao', dot: 'ponto', canal: 'canal', icone: 'nota', haste: 'loja', periodo: 'periodo' }[k])}<span>${l}</span></button>`).join('')}</div>
       <div class="c-chips mt8">${SWATCH.map(c => `<button class="c-col ${colorOf(n) === c ? 'on' : ''}" data-act="ed-color" data-v="${c}" style="background:${c}"></button>`).join('')}${n.color ? `<button class="pill sm ghost" data-act="ed-color" data-v="">padrão</button>` : ''}</div>
       ${p ? `<div class="field mt8"><span>Linha até ${esc(labelOf(p))}</span><nav class="seg">${[['auto', 'Auto'], ['reta', 'Reta'], ['curva', 'Curva'], ['cotovelo', 'Cotovelo']].map(([k, l]) => `<button class="pill sm ${(n.ln || 'auto') === k ? 'on' : ''}" data-act="ed-ln" data-v="${k}">${l}</button>`).join('')}</nav></div>` : ''}
@@ -1662,7 +1675,9 @@ function edShow(id, html, cls, fresh) {
 }
 /* cabeçalho comum: tipo (trocar), de onde nasce, fechar */
 const edHead = (n, p) => `<div class="c-mh" style="--c:${colorOf(n)}"><button class="c-cat" data-act="ed-cat" title="Trocar tipo"><span class="c-ic2">${ic(n.cat)}</span>${esc(CAT(n.cat).n)}</button>${p ? `<button class="c-crumb" data-act="open" data-id="${p.id}">${ic('left', 'width:12px;height:12px')}${esc(labelOf(p))}</button>` : ''}<span class="sp"></span><button class="pill sm icon ghost" data-act="close" aria-label="Fechar">${ic('x')}</button></div>`;
-const edMore = (n, p, list, sub) => `<details class="c-more" ${ED.more ? 'open' : ''} ontoggle="ED.more = this.open"><summary>Mais opções</summary>
+const SIZES = [['s', 'Pequena'], ['m', 'Média'], ['l', 'Grande']];
+const sizeCtl = n => ['pill', 'outline', 'mini'].includes(shapeOf(n)) ? `<div class="field mt8"><span>Tamanho</span><nav class="seg">${SIZES.map(([k, l]) => `<button class="pill sm ${(n.sz || 'm') === k ? 'on' : ''}" data-act="ed-sz" data-v="${k}">${l}</button>`).join('')}</nav></div>` : '';
+const edMore = (n, p, list, sub) => `<details class="c-more" ${ED.more ? 'open' : ''} ontoggle="ED.more = this.open"><summary>Mais opções</summary>${sizeCtl(n)}
       <label class="field mt8"><span>Ligado a</span><select class="inp sm" data-par="1"><option value="">— solto na constelação —</option>${list.filter(x => x.id !== n.id && !sub.some(s => s.id === x.id)).map(x => `<option value="${x.id}" ${n.parent === x.id ? 'selected' : ''}>${esc(labelOf(x))} · ${esc(CAT(x.cat).n)}</option>`).join('')}</select></label>
       ${p ? `<div class="field mt8"><span>Linha até ${esc(labelOf(p))}</span><nav class="seg">${[['auto', 'Auto'], ['reta', 'Reta'], ['curva', 'Curva'], ['cotovelo', 'Cotovelo']].map(([k, l]) => `<button class="pill sm ${(n.ln || 'auto') === k ? 'on' : ''}" data-act="ed-ln" data-v="${k}">${l}</button>`).join('')}</nav></div>` : ''}
     </details>`;
@@ -1995,7 +2010,15 @@ const ACT = {
   'ed-multi': a => edSet(n => { n.f = n.f || {}; const s = new Set(n.f[a.dataset.k] || []); s.has(a.dataset.v) ? s.delete(a.dataset.v) : s.add(a.dataset.v); n.f[a.dataset.k] = [...s]; }),
   'ed-shape': a => edSet(n => { n.shape = a.dataset.v === CAT(n.cat).s ? undefined : a.dataset.v; if (!n.shape) delete n.shape; if (a.dataset.v === 'periodo' && !n.w) n.w = 220; }),
   'ed-color': a => edSet(n => { if (a.dataset.v) n.color = a.dataset.v; else delete n.color; }),
+  'wire-del': async a => {
+    const id = a.dataset.wire, lk = a.dataset.link; a.hidden = true;
+    if (id) { const n = N(id), p = n && N(n.parent); if (!n) return; if (!(await ask(`Apagar o fio entre “${labelOf(p || {})}” e “${labelOf(n)}”? ${labelOf(n)} fica solto na constelação.`, 'Apagar'))) return;
+      tx(() => { const x = N(id); x.parent = null; x.at = null; x.via = null; putNode(x); monthNodes(x.month).filter(k => k.parent === id && k.via != null).forEach(k => { const y = N(k.id); y.via = null; putNode(y); }); }); refresh(); toast('Fio apagado', 'g'); return; }
+    if (lk) { const [x, y] = lk.split('|'), A = N(x), B = N(y); if (!A || !B) return; if (!(await ask(`Apagar a conexão entre “${labelOf(A)}” e “${labelOf(B)}”?`, 'Apagar'))) return;
+      tx(() => { const a1 = N(x), b1 = N(y); a1.links = (a1.links || []).filter(k => k !== y); b1.links = (b1.links || []).filter(k => k !== x); putNode(a1); putNode(b1); }); refresh(); toast('Conexão apagada', 'g'); }
+  },
   'ed-ln': a => edSet(n => (n.ln = a.dataset.v)),
+  'ed-sz': a => edSet(n => { if (a.dataset.v === 'm') delete n.sz; else n.sz = a.dataset.v; }),
   'ed-tail': () => edSet(n => { n.tail = n.tail > 0 ? 0 : 180; }),
   'ed-rep': () => edSet(n => { n.rep = !n.rep; if (n.rep && !n.rid) n.rid = n.id; }),
   'ed-cat': () => { const id = ED.id; modal(`<div class="c-mh"><div><b>Trocar tipo</b><span>os campos em comum são mantidos</span></div><span class="sp"></span><button class="pill sm icon ghost" data-act="open" data-id="${id}">${ic('x')}</button></div><div class="c-pick">${GROUPS.map(([g, gn]) => `<div class="c-pg2"><h4>${gn}</h4><div>${Object.entries(CATS).filter(([, c]) => c.g === g).map(([k, c]) => `<button class="c-pk" data-act="ed-cat-go" data-k="${k}" style="--c:${c.c}"><span class="c-ic2">${ic(k)}</span><b>${c.n}</b></button>`).join('')}</div></div>`).join('')}</div>`, 'wide'); },
