@@ -1802,6 +1802,24 @@ Object.assign(ED_T, {
   evento: { ph: 'Nome do evento', st: ['Planejando', 'Preparando', 'Ajustes finais', 'Realizado', 'Travado'], drop: 'Suba credenciais, mapa, contratos ou cole os links',
     sec: [['Quando e onde', ['@due:Data', 'hora', 'local']], ['Público e logística', ['publico', 'logistica']], ['Checklist', ['@chk:Novo item']], ['Arquivos e links', ['@att']], ['Equipe', ['@who']], ['Resultado', ['@res']]] }
 });
+/* canais e lojas, produção (landing, produto) e estrutura */
+Object.assign(ED_T, {
+  canal: { ph: 'Nome do canal', sec: [['Canal', ['rede', 'perfil', 'link']], ['Ritmo e meta', ['frequencia', 'meta']], ['O que sai aqui', ['@kids:Adicionar post ou ação']], ['Responsáveis', ['@who']], ['', ['@notes']]] },
+  loja: { ph: 'Nome da loja ou do anúncio', drop: 'Suba fotos do anúncio, planilhas ou cole os links', sec: [['Loja', ['loja', 'link']], ['Meta e estoque', ['meta', 'estoque']], ['Ações nesta loja', ['@kids:Adicionar ação']], ['Arquivos e links', ['@att']], ['Responsáveis', ['@who']], ['', ['obs']]] },
+  landing: { ph: 'Nome da página', st: ['Briefing', 'Construindo', 'Revisão', 'No ar', 'Travada'], drop: 'Suba o layout e os textos ou cole o link do Figma',
+    sec: [['Página', ['url', 'objetivo']], ['Seções', ['secoes']], ['Arquivos e links', ['@att']], ['Quem e quando', ['@who', '@due:Prazo']], ['', ['@notes:Comentários de revisão']]] },
+  produto: { ph: 'Nome do produto ou da embalagem', st: ['Ideia', 'Desenvolvendo', 'Aprovação', 'Pronto', 'Travado'], drop: 'Suba artes de rótulo, fichas técnicas e fotos de amostra',
+    sec: [['Produto', ['item', 'etapa:Fase do produto', 'fornecedor']], ['Detalhes', ['detalhes']], ['Arquivos', ['@att']], ['Quem e quando', ['@who', '@due:Prazo']], ['', ['@notes']]] },
+  estrategia: { ph: 'Nome da estratégia', st: ['Rascunho', 'Validando', 'Revisão', 'Definida', 'Travada'], drop: 'Suba estudos e referências ou cole os links',
+    sec: [['A aposta', ['tese']], ['Para quem e por quê', ['publico', 'diferencial']], ['Riscos', ['riscos']], ['O que nasce dela', ['@kids:Adicionar plano ou ação']], ['Referências', ['@att']], ['Responsáveis', ['@who']]] },
+  fase: { ph: 'Nome da fase', st: ['A começar', 'Em andamento', 'Revisão', 'Fechada', 'Travada'],
+    sec: [['Entrega', ['entrega', 'criterio']], ['Período', ['@start:Início', '@due:Fim']], ['O que nasce dela', ['@kids:Adicionar']], ['Responsáveis', ['@who']], ['', ['@notes']]] },
+  periodo: { ph: 'Nome do período (ex.: Black Friday)', sec: [['Janela', ['tipo', '@start:Começa', '@due:Termina']], ['', ['obs']], ['O que acontece nele', ['@kids:Adicionar']]] },
+  marco: { ph: 'Nome do marco', st: ['Aguardando', '', 'Em risco', 'Cumprido', 'Não cumprido'], stL: 'Estado',
+    sec: [['Quando', ['@due:Data', 'hora', 'tipo']], ['O que nasce dele', ['@kids:Adicionar']], ['', ['@notes']]] },
+  decisao: { ph: 'Nome da decisão', st: ['Em aberto', 'Discutindo', '', 'Decidido', 'Travado'], stL: 'Estado',
+    sec: [['A decisão', ['pergunta:A pergunta', 'criterio']], ['Caminhos', ['opcoes', 'decidido']], ['Prazo e quem decide', ['@due:Decidir até', '@who:Quem decide']], ['Um ramo por caminho', ['@kids:Adicionar caminho']]] }
+});
 /* Reunião: quando, onde, quem, pauta e decisões (cada decisão pode virar uma Ação) */
 const decList = n => (n.f || {}).dec || String((n.f || {}).decisoes || '').split('\n').map(t => t.trim()).filter(Boolean).map((t, i) => ({ id: 'l' + i, t }));
 const decSet = fn => edSet(n => { n.f = n.f || {}; const l = decList(n).map(x => ({ ...x })); n.f.dec = fn(l) || l; delete n.f.decisoes; });
