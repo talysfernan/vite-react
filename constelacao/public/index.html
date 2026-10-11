@@ -1599,6 +1599,7 @@ function openEd(id, fresh) {
     <div class="c-sec"><h5>${ic('next', 'width:13px;height:13px')}Próximos meses</h5>
       <div class="row"><span>Repetir todo mês</span><span class="sp"></span><button class="switch ${n.rep ? 'on' : ''}" data-act="ed-rep"></button></div>
       ${n.carried ? `<p class="c-mut mt8">Já segue para ${monthName(addMonth(n.month, 1), false)}.</p>` : `<button class="pill sm mt8" data-act="carry">${ic('next', 'width:12px;height:12px')}Levar para ${monthName(addMonth(n.month, 1), false)}${sub.length ? ' com os ramos abertos' : ''}</button>`}</div>`;
+  if (ED_T[n.cat]) return edShow(id, edSec(n, p, list, sub, field, ED_T[n.cat]), 'c-ed c-prod', fresh);
   if (CONT[n.cat]) return edShow(id, edCont(n, p, list, sub, field), 'c-ed c-prod', fresh);
   if (PROD[n.cat]) return edShow(id, edProd(n, p, list, sub, field), 'c-ed c-prod', fresh);
   if (n.cat === 'plano') return edShow(id, edPlano(n, p, kids, sub, sp, side), 'c-ed c-plano', fresh);
@@ -1761,6 +1762,46 @@ function edCont(n, p, list, sub, field) {
   </div>
   <div class="c-mf"><button class="pill sm danger ghost" data-act="ed-del">${ic('trash', 'width:13px;height:13px')}Excluir</button><button class="pill sm ghost" data-act="ed-dup">${ic('copy', 'width:13px;height:13px')}Duplicar</button><span class="sp"></span><button class="pill sm white" data-act="close">Pronto</button></div>`;
 }
+/* Pop-ups por seções: cada tipo descreve suas seções (campos do tipo + blocos comuns) */
+const ED_T = {};
+function edSec(n, p, list, sub, field, X) {
+  const C = CAT(n.cat), P = pessoas(), f = n.f || {}, kids = list.filter(x => x.parent === n.id), late = n.status !== 'done' && n.due && n.due < todayISO();
+  const tok = t => {
+    const [k, l] = t.split(':');
+    if (k === '@due') return `<label class="field"><span>${l || 'Prazo'}${late ? ' <b class="c-late">atrasado</b>' : ''}</span><input class="inp sm" type="date" data-nf="due" value="${esc(n.due || '')}"></label>`;
+    if (k === '@start') return `<label class="field"><span>${l || 'Início'}</span><input class="inp sm" type="date" data-nf="start" value="${esc(n.start || '')}"></label>`;
+    if (k === '@who') return `<div class="field w2"><span>${l || 'Responsáveis'}</span><div class="c-chips">${P.map(x => `<button class="pill sm c-pp ${(n.who || []).includes(x.id) ? 'on' : ''}" data-act="ed-who" data-v="${x.id}">${av(x, 18)}${esc(x.name.split(' ')[0])}</button>`).join('')}${isAdmin() ? `<button class="pill sm ghost" data-act="ent" data-k="pessoa" data-id="" data-back="${n.id}">${ic('plus', 'width:12px;height:12px')}Pessoa</button>` : ''}${!P.length && !isAdmin() ? '<span class="c-mut">Ninguém cadastrado.</span>' : ''}</div></div>`;
+    if (k === '@att') return `<div class="w2">${X.drop ? `<p class="c-mut c-hint0">${X.drop}</p>` : ''}${attHTML(n)}</div>`;
+    if (k === '@res') return `<label class="field w2"><span>${l || 'Como foi'}</span><textarea class="inp c-ta" rows="3" data-ff="resultado" placeholder="Números, o que funcionou, o que aprendemos">${esc(f.resultado || '')}</textarea></label>`;
+    if (k === '@notes') return `<label class="field w2"><span>${l || 'Observações'}</span><textarea class="inp c-ta" rows="3" data-nf="notes" placeholder="Contexto, combinados, observações">${esc(n.notes || '')}</textarea></label>`;
+    if (k === '@chk') return `<div class="c-chk w2">${(n.chk || []).map(x => `<div class="c-ci ${x.ok ? 'ok' : ''}"><button class="c-cb" data-act="chk-t" data-c="${x.id}">${x.ok ? ic('check', 'width:12px;height:12px') : ''}</button><input class="inp sm" data-chk="${x.id}" value="${esc(x.t)}"><button class="pill sm icon ghost" data-act="chk-x" data-c="${x.id}" aria-label="Remover">${ic('x', 'width:12px;height:12px')}</button></div>`).join('')}<input class="inp sm" id="chk-new" placeholder="${l || 'Novo item'} e Enter" autocomplete="off"></div>`;
+    if (k === '@kids') return `<div class="w2">${kids.map(x => `<button class="c-kid" data-act="open" data-id="${x.id}"><span class="c-ic2" style="--c:${colorOf(x)}">${ic(x.cat)}</span><span>${esc(labelOf(x))}</span><small class="c-mut">${esc(CAT(x.cat).n)}</small><i class="c-sdot" style="--sc:${ST(x.status)[2]}"></i></button>`).join('')}<button class="pill sm mt8" data-act="ramo" data-id="${n.id}">${ic('plus', 'width:12px;height:12px')}${l || 'Novo ramo'}</button></div>`;
+    const d = C.f.find(x => x[0] === k); return d ? field(l ? [d[0], l, ...d.slice(2)] : d) : '';
+  };
+  return `${edHead(n, p)}
+  <input class="c-title" data-nf="title" value="${esc(n.title)}" placeholder="${X.ph}" autocomplete="off">
+  <div class="c-pt">
+    ${X.st ? `<div class="field"><span>${X.stL || 'Etapa'}</span><nav class="seg c-sseg">${STATUS.map(([k, , c], i) => X.st[i] ? `<button class="pill sm ${(n.status || 'todo') === k ? 'on' : ''}" data-act="ed-st" data-v="${k}" style="--sc:${c}"><i class="c-sdot"></i>${X.st[i]}</button>` : '').join('')}</nav></div>` : ''}
+    ${X.sec.map(([h, items]) => `<div class="c-sec">${h ? `<h5>${h}</h5>` : ''}<div class="c-fg">${items.map(tok).join('')}</div></div>`).join('')}
+    ${edMore(n, p, list, sub)}
+  </div>
+  <div class="c-mf"><button class="pill sm danger ghost" data-act="ed-del">${ic('trash', 'width:13px;height:13px')}Excluir</button>${X.nodup ? '' : `<button class="pill sm ghost" data-act="ed-dup">${ic('copy', 'width:13px;height:13px')}Duplicar</button>`}<span class="sp"></span><button class="pill sm white" data-act="close">Pronto</button></div>`;
+}
+/* campanha e mídia — status: [a fazer, em andamento, revisão, feito, travado] */
+Object.assign(ED_T, {
+  campanha: { ph: 'Nome da campanha', st: ['Planejando', 'No ar', 'Em análise', 'Encerrada', 'Pausada'], drop: 'Suba as peças, o plano de mídia ou cole os links',
+    sec: [['Estratégia', ['objetivo', 'kpi', 'publico', 'mensagem', 'oferta']], ['Período e verba', ['@start:Início', '@due:Fim', 'verba']], ['Canais', ['canais']], ['O que faz parte', ['@kids:Adicionar peça ou ação']], ['Arquivos e links', ['@att']], ['Equipe', ['@who']], ['Resultado', ['@res']], ['', ['@notes']]] },
+  anuncio: { ph: 'Nome do anúncio', st: ['Rascunho', 'Rodando', 'Em análise', 'Encerrado', 'Pausado'], drop: 'Suba os criativos (imagens, vídeos) ou cole os links',
+    sec: [['Plataforma e objetivo', ['plataforma', 'objetivo', 'kpi']], ['Verba e período', ['verba', 'diaria', '@start:Início', '@due:Fim']], ['Público', ['publico']], ['Criativos', ['criativos', '@att']], ['Resultado', ['@res']], ['Quem cuida', ['@who']], ['', ['@notes']]] },
+  influencer: { ph: 'Nome do criador ou da parceria', st: ['Contato', 'Produzindo', 'Aprovação', 'Publicado', 'Travado'], drop: 'Suba o contrato, o briefing ou o conteúdo entregue',
+    sec: [['Criador', ['perfil', 'rede', 'contato']], ['Acordo', ['entregas', 'cache', '@due:Publicação']], ['Conteúdo', ['link', '@att']], ['Resultado', ['@res']], ['Quem acompanha', ['@who']], ['', ['@notes']]] },
+  lancamento: { ph: 'Nome do lançamento', st: ['Preparando', 'Aquecendo', 'Revisão final', 'Lançado', 'Travado'], drop: 'Suba o plano, artes ou cole os links',
+    sec: [['O que e quando', ['produto', '@due:Data do lançamento']], ['Canais', ['canais']], ['Aquecimento', ['aquecimento']], ['Tudo que faz parte', ['@kids:Adicionar ao lançamento']], ['Arquivos e links', ['@att']], ['Equipe', ['@who']], ['Resultado', ['@res']]] },
+  promo: { ph: 'Nome da promoção', st: ['Planejada', 'No ar', 'Revisão', 'Encerrada', 'Pausada'], drop: 'Suba as artes da oferta ou cole os links',
+    sec: [['Oferta', ['oferta', 'cupom', 'onde']], ['Vigência', ['@start:Começa', '@due:Termina']], ['Regras', ['regras']], ['Artes e links', ['@att']], ['Quem cuida', ['@who']], ['Resultado', ['@res']]] },
+  evento: { ph: 'Nome do evento', st: ['Planejando', 'Preparando', 'Ajustes finais', 'Realizado', 'Travado'], drop: 'Suba credenciais, mapa, contratos ou cole os links',
+    sec: [['Quando e onde', ['@due:Data', 'hora', 'local']], ['Público e logística', ['publico', 'logistica']], ['Checklist', ['@chk:Novo item']], ['Arquivos e links', ['@att']], ['Equipe', ['@who']], ['Resultado', ['@res']]] }
+});
 /* Reunião: quando, onde, quem, pauta e decisões (cada decisão pode virar uma Ação) */
 const decList = n => (n.f || {}).dec || String((n.f || {}).decisoes || '').split('\n').map(t => t.trim()).filter(Boolean).map((t, i) => ({ id: 'l' + i, t }));
 const decSet = fn => edSet(n => { n.f = n.f || {}; const l = decList(n).map(x => ({ ...x })); n.f.dec = fn(l) || l; delete n.f.decisoes; });
