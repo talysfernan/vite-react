@@ -61,7 +61,7 @@ async function session(req, env, host, doLog) {
   if (own) return own;
   try {
     const r = await env.QUINTAL.check(req.headers.get("cookie") || "", host, doLog);
-    return r && r.role ? { role: r.role, name: r.name === "admin" ? "Mestre" : r.name } : { role: null, reason: r?.reason, glitch: r?.glitch };
+    return r && r.role ? { role: r.role, name: r.name === "admin" ? "Mestre" : r.name, glitch: r.glitch !== false } : { role: null, reason: r?.reason, glitch: r?.glitch };
   } catch (e) {
     return { role: null, down: true };
   }
@@ -96,11 +96,12 @@ async function api(req, env, url) {
   if (p === "/api/ping") return json({ ok: true, board: b });
   if (p === "/api/login" && method === "POST") {
     if (await tooMany(env, ip)) return json({ error: "Muitas tentativas. Aguarde alguns minutos." }, 429);
-    const { pin = "" } = await req.json().catch(() => ({}));
+    const { pin = "", kind = "admin" } = await req.json().catch(() => ({}));
     if (!safeEq(await pinHash(env, String(pin)), await storedHash(env))) {
       await env.DB.prepare("INSERT INTO attempts(ip,ts) VALUES(?,?)").bind(ip, Date.now()).run();
       return json({ ok: false }, 403);
     }
+    if (kind === "verify") return json({ ok: true });
     return json({ ok: true, role: "admin" }, 200, { "set-cookie": setCookie(await makeToken(env, "admin")) });
   }
   if (p === "/api/logout" && method === "POST") {
@@ -116,6 +117,7 @@ async function api(req, env, url) {
   const s = await session(req, env, host, false);
   if (!s.role) return json({ error: "login" }, 401);
   const admin = s.role === "admin";
+  if (p === "/api/demote" && method === "POST") return json({ ok: true, role: "view" }, 200, { "set-cookie": setCookie(await makeToken(env, "view")) });
   if (p === "/api/docs" && method === "GET") {
     // backup diário sem cron: o primeiro acesso do dia tira a foto
     if ((await getMeta(env, "snapDay")) !== dayBR()) { await snapshot(env); await setMeta(env, "snapDay", dayBR()); }
@@ -126,12 +128,13 @@ async function api(req, env, url) {
     return json({ docs: await docsWhere(env, b, since), now: Date.now() });
   }
   if (p === "/api/docs" && method === "POST") {
-    if (!admin) return json({ error: "Você tem acesso só de leitura a este painel." }, 403);
     const { ops } = await req.json().catch(() => ({}));
     if (!Array.isArray(ops) || !ops.length || ops.length > 600) return json({ error: "bad ops" }, 400);
     const now = Date.now(), stmts = [];
     for (const o of ops) {
       if (!o || typeof o.path !== "string" || !PATH_RE.test(o.path) || !visible(o.path, b)) return json({ error: "bad path " + o?.path }, 400);
+      // a teia (estrelas e ligações) é do time; cadastros e identidade só no modo admin
+      if (!admin && o.path.startsWith("app/")) return json({ error: "Ajustes exigem a senha de administrador." }, 403);
       const body = o.body === null ? "null" : JSON.stringify(o.body);
       if (body.length > 15e5) return json({ error: "Grande demais: " + o.path }, 413);
       stmts.push(env.DB.prepare("INSERT INTO docs(path,body,updated) VALUES(?,?,?) ON CONFLICT(path) DO UPDATE SET body=excluded.body, updated=excluded.updated").bind(o.path, body, now));
@@ -140,6 +143,13 @@ async function api(req, env, url) {
     return json({ ok: true, now });
   }
   if (!admin) return json({ error: "admin" }, 403);
+  if (p === "/api/pin" && method === "POST") {
+    const { pin } = await req.json().catch(() => ({}));
+    if (String(pin || "").length < 4) return json({ error: "senha curta" }, 400);
+    await setMeta(env, "adminHash", await pinHash(env, String(pin)));
+    await setMeta(env, "pinVer", String(+(await pinVer(env)) + 1));
+    return json({ ok: true }, 200, { "set-cookie": setCookie(await makeToken(env, "admin")) });
+  }
   if (p === "/api/backups" && method === "GET") {
     const { results } = await env.DB.prepare("SELECT day, COUNT(*) AS n FROM backup_docs GROUP BY day ORDER BY day DESC").all();
     return json({ backups: results });
