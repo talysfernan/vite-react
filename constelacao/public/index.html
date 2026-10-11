@@ -770,6 +770,17 @@ svg.c-wires{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
 /* ---------- modais ---------- */
 .c-mod{width:min(1020px,100%);max-height:calc(100vh - 40px);overflow:auto;padding:20px 22px;animation:pop .3s var(--ease) both}
 .c-mod.sm{width:min(480px,100%)}
+.c-mod.c-plano{width:min(820px,100%)}
+.c-plbar{height:4px;border-radius:4px;background:var(--well);overflow:hidden;margin:-4px 0 14px}.c-plbar i{display:block;height:100%;background:var(--green);border-radius:4px;transition:width .4s var(--ease)}
+.c-ptabs{display:flex;flex-wrap:wrap;margin-bottom:16px}.c-ptabs small{margin-left:6px;font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}.c-ptabs .pill.on small{color:var(--text-2)}
+.c-ptb{min-height:240px}
+.c-drop{display:flex;align-items:center;gap:12px;padding:18px;border:1px dashed var(--line-2);border-radius:var(--r-sm);background:var(--well);color:var(--text-2);cursor:pointer;transition:border-color .2s,background .2s}
+.c-drop:hover,.c-drop.over{border-color:var(--text-2);background:#18181b}.c-drop span{display:flex;flex-direction:column;gap:3px}.c-drop small{color:var(--muted)}
+.c-files{display:grid;gap:8px}.c-file{display:flex;align-items:center;gap:10px;padding:8px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--node)}
+.c-thumb{flex:none;width:44px;height:44px;border-radius:9px;overflow:hidden;background:var(--well);display:grid;place-items:center}.c-thumb img{width:100%;height:100%;object-fit:cover}
+.c-fext{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--text-2);text-decoration:none}
+.c-fmeta{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.c-fmeta b{font-weight:550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.c-fmeta small{color:var(--muted)}
+.c-plmais{display:flex;flex-direction:column;gap:18px}
 .c-late{color:var(--red);font-weight:600;margin-left:6px}
 .c-pt .c-ci .pill{white-space:nowrap;flex:none}
 .c-pt{display:flex;flex-direction:column;gap:16px}.c-pt .c-sseg{flex-wrap:wrap}
@@ -1553,6 +1564,27 @@ function openEd(id, fresh) {
     return `<label class="field${W}"><span>${esc(l)}${t === 'u' && v ? ` <a href="${esc(v)}" target="_blank" rel="noopener" class="c-open">abrir</a>` : ''}</span><input class="inp sm" type="${ty}" data-ff="${k}" value="${esc(v ?? '')}" placeholder="${esc(o || '')}"${t === '$' ? ' step="0.01"' : ''}></label>`; };
   const links = (n.links || []).map(N).filter(Boolean), M = marcas(), T = times(), P = pessoas();
   const tailable = ['pill', 'outline', 'mini'].includes(sh);
+  const side = `    <div class="c-sec"><h5>Aparência</h5>
+      <div class="c-shapes">${SHAPES.map(([k, l]) => `<button class="c-shp ${sh === k ? 'on' : ''}" data-act="ed-shape" data-v="${k}" title="${l}">${dockIcon({ pill: 'plano', outline: 'reuniao', mini: 'acao', dot: 'ponto', canal: 'canal', icone: 'nota', haste: 'loja', periodo: 'periodo' }[k])}<span>${l}</span></button>`).join('')}</div>
+      <div class="c-chips mt8">${SWATCH.map(c => `<button class="c-col ${colorOf(n) === c ? 'on' : ''}" data-act="ed-color" data-v="${c}" style="background:${c}"></button>`).join('')}${n.color ? `<button class="pill sm ghost" data-act="ed-color" data-v="">padrão</button>` : ''}</div>
+      ${p ? `<div class="field mt8"><span>Linha até ${esc(labelOf(p))}</span><nav class="seg">${[['auto', 'Auto'], ['reta', 'Reta'], ['curva', 'Curva'], ['cotovelo', 'Cotovelo']].map(([k, l]) => `<button class="pill sm ${(n.ln || 'auto') === k ? 'on' : ''}" data-act="ed-ln" data-v="${k}">${l}</button>`).join('')}</nav></div>` : ''}
+      ${tailable ? `<div class="row mt8"><span>Esticar até finalizar</span><span class="sp"></span><button class="switch ${n.tail > 0 ? 'on' : ''}" data-act="ed-tail"></button></div><p class="c-mut c-hint">Cria uma cauda com pontos de ancoragem. Arraste o fim para esticar.</p>` : ''}
+    </div>
+    ${tailable && n.tail > 0 ? `<div class="c-sec"><h5>${ic('anchor', 'width:13px;height:13px')}Pontos de ancoragem</h5>
+      ${(n.anc || []).slice().sort((a, b) => a.p - b.p).map(a => `<div class="c-ai ${a.ok ? 'ok' : ''}"><button class="c-cb" data-act="anc-t" data-a="${a.id}">${a.ok ? ic('check', 'width:12px;height:12px') : ''}</button><input class="inp sm" data-anc="${a.id}" value="${esc(a.t || '')}" placeholder="O que acontece aqui"><button class="pill sm icon ghost" data-act="ramo" data-id="${id}" data-at="${a.id}" title="Ramificar daqui">${ic('fork', 'width:13px;height:13px')}</button><button class="pill sm icon ghost" data-act="anc-x" data-a="${a.id}">${ic('x', 'width:12px;height:12px')}</button></div>`).join('')}
+      <button class="pill sm" data-act="anc-new">${ic('plus', 'width:12px;height:12px')}Ponto de ancoragem</button></div>` : ''}
+    <div class="c-sec"><h5>${ic('fork', 'width:13px;height:13px')}Ramos${sp.total ? ` <small>${sp.done}/${sp.total}</small>` : ''}</h5>
+      ${kids.map(k => `<button class="c-kid" data-act="open" data-id="${k.id}"><span class="c-ic2" style="--c:${colorOf(k)}">${ic(k.cat)}</span><span>${esc(labelOf(k))}</span><i class="c-sdot" style="--sc:${ST(k.status)[2]}"></i></button>`).join('')}
+      <button class="pill sm" data-act="ramo" data-id="${id}">${ic('plus', 'width:12px;height:12px')}Novo ramo</button>
+      ${sub.length && sp.total ? `<p class="c-mut mt8">${sp.done === sp.total ? 'Tudo que nasce daqui está feito.' : `Faltam ${sp.total - sp.done} para fechar.`}</p>` : ''}
+      <label class="field mt8"><span>Ligado a</span><select class="inp sm" data-par="1"><option value="">— solto na constelação —</option>${list.filter(x => x.id !== id && !sub.some(s => s.id === x.id)).map(x => `<option value="${x.id}" ${n.parent === x.id ? 'selected' : ''}>${esc(labelOf(x))} · ${esc(CAT(x.cat).n)}</option>`).join('')}</select></label></div>
+    <div class="c-sec"><h5>${ic('link', 'width:13px;height:13px')}Conexões</h5><p class="c-mut">Ligue a pontos que se complementam, em qualquer mês.</p>
+      ${links.map(o => `<div class="c-lnk"><button data-act="goto" data-id="${o.id}"><span class="c-ic2" style="--c:${colorOf(o)}">${ic(o.cat)}</span><span>${esc(labelOf(o))}</span><small>${monthName(o.month, false)}</small></button><button class="pill sm icon ghost" data-act="link-x" data-v="${o.id}">${ic('x', 'width:12px;height:12px')}</button></div>`).join('')}
+      <div class="c-lsrch"><input class="inp sm" id="link-q" placeholder="Buscar ponto para conectar" autocomplete="off"><div id="link-r"></div></div></div>
+    <div class="c-sec"><h5>${ic('next', 'width:13px;height:13px')}Próximos meses</h5>
+      <div class="row"><span>Repetir todo mês</span><span class="sp"></span><button class="switch ${n.rep ? 'on' : ''}" data-act="ed-rep"></button></div>
+      ${n.carried ? `<p class="c-mut mt8">Já segue para ${monthName(addMonth(n.month, 1), false)}.</p>` : `<button class="pill sm mt8" data-act="carry">${ic('next', 'width:12px;height:12px')}Levar para ${monthName(addMonth(n.month, 1), false)}${sub.length ? ' com os ramos abertos' : ''}</button>`}</div>`;
+  if (n.cat === 'plano') return edShow(id, edPlano(n, p, kids, sub, sp, side), 'c-ed c-plano', fresh);
   if (n.cat === 'ponto') return edShow(id, edPonto(n, p, kids, list, sub), 'c-ed sm', fresh);
   if (n.cat === 'reuniao') return edShow(id, edReuniao(n, p, list, sub), 'c-ed sm', fresh);
   if (n.cat === 'acao') return edShow(id, edAcao(n, p, list, sub), 'c-ed sm', fresh);
@@ -1578,26 +1610,7 @@ function openEd(id, fresh) {
     <div class="c-sec"><h5>Notas</h5><textarea class="inp c-ta" rows="3" data-nf="notes" placeholder="Contexto, combinados, ideias…">${esc(n.notes || '')}</textarea></div>
    </div>
    <aside class="c-eside">
-    <div class="c-sec"><h5>Aparência</h5>
-      <div class="c-shapes">${SHAPES.map(([k, l]) => `<button class="c-shp ${sh === k ? 'on' : ''}" data-act="ed-shape" data-v="${k}" title="${l}">${dockIcon({ pill: 'plano', outline: 'reuniao', mini: 'acao', dot: 'ponto', canal: 'canal', icone: 'nota', haste: 'loja', periodo: 'periodo' }[k])}<span>${l}</span></button>`).join('')}</div>
-      <div class="c-chips mt8">${SWATCH.map(c => `<button class="c-col ${colorOf(n) === c ? 'on' : ''}" data-act="ed-color" data-v="${c}" style="background:${c}"></button>`).join('')}${n.color ? `<button class="pill sm ghost" data-act="ed-color" data-v="">padrão</button>` : ''}</div>
-      ${p ? `<div class="field mt8"><span>Linha até ${esc(labelOf(p))}</span><nav class="seg">${[['auto', 'Auto'], ['reta', 'Reta'], ['curva', 'Curva'], ['cotovelo', 'Cotovelo']].map(([k, l]) => `<button class="pill sm ${(n.ln || 'auto') === k ? 'on' : ''}" data-act="ed-ln" data-v="${k}">${l}</button>`).join('')}</nav></div>` : ''}
-      ${tailable ? `<div class="row mt8"><span>Esticar até finalizar</span><span class="sp"></span><button class="switch ${n.tail > 0 ? 'on' : ''}" data-act="ed-tail"></button></div><p class="c-mut c-hint">Cria uma cauda com pontos de ancoragem. Arraste o fim para esticar.</p>` : ''}
-    </div>
-    ${tailable && n.tail > 0 ? `<div class="c-sec"><h5>${ic('anchor', 'width:13px;height:13px')}Pontos de ancoragem</h5>
-      ${(n.anc || []).slice().sort((a, b) => a.p - b.p).map(a => `<div class="c-ai ${a.ok ? 'ok' : ''}"><button class="c-cb" data-act="anc-t" data-a="${a.id}">${a.ok ? ic('check', 'width:12px;height:12px') : ''}</button><input class="inp sm" data-anc="${a.id}" value="${esc(a.t || '')}" placeholder="O que acontece aqui"><button class="pill sm icon ghost" data-act="ramo" data-id="${id}" data-at="${a.id}" title="Ramificar daqui">${ic('fork', 'width:13px;height:13px')}</button><button class="pill sm icon ghost" data-act="anc-x" data-a="${a.id}">${ic('x', 'width:12px;height:12px')}</button></div>`).join('')}
-      <button class="pill sm" data-act="anc-new">${ic('plus', 'width:12px;height:12px')}Ponto de ancoragem</button></div>` : ''}
-    <div class="c-sec"><h5>${ic('fork', 'width:13px;height:13px')}Ramos${sp.total ? ` <small>${sp.done}/${sp.total}</small>` : ''}</h5>
-      ${kids.map(k => `<button class="c-kid" data-act="open" data-id="${k.id}"><span class="c-ic2" style="--c:${colorOf(k)}">${ic(k.cat)}</span><span>${esc(labelOf(k))}</span><i class="c-sdot" style="--sc:${ST(k.status)[2]}"></i></button>`).join('')}
-      <button class="pill sm" data-act="ramo" data-id="${id}">${ic('plus', 'width:12px;height:12px')}Novo ramo</button>
-      ${sub.length && sp.total ? `<p class="c-mut mt8">${sp.done === sp.total ? 'Tudo que nasce daqui está feito.' : `Faltam ${sp.total - sp.done} para fechar.`}</p>` : ''}
-      <label class="field mt8"><span>Ligado a</span><select class="inp sm" data-par="1"><option value="">— solto na constelação —</option>${list.filter(x => x.id !== id && !sub.some(s => s.id === x.id)).map(x => `<option value="${x.id}" ${n.parent === x.id ? 'selected' : ''}>${esc(labelOf(x))} · ${esc(CAT(x.cat).n)}</option>`).join('')}</select></label></div>
-    <div class="c-sec"><h5>${ic('link', 'width:13px;height:13px')}Conexões</h5><p class="c-mut">Ligue a pontos que se complementam, em qualquer mês.</p>
-      ${links.map(o => `<div class="c-lnk"><button data-act="goto" data-id="${o.id}"><span class="c-ic2" style="--c:${colorOf(o)}">${ic(o.cat)}</span><span>${esc(labelOf(o))}</span><small>${monthName(o.month, false)}</small></button><button class="pill sm icon ghost" data-act="link-x" data-v="${o.id}">${ic('x', 'width:12px;height:12px')}</button></div>`).join('')}
-      <div class="c-lsrch"><input class="inp sm" id="link-q" placeholder="Buscar ponto para conectar" autocomplete="off"><div id="link-r"></div></div></div>
-    <div class="c-sec"><h5>${ic('next', 'width:13px;height:13px')}Próximos meses</h5>
-      <div class="row"><span>Repetir todo mês</span><span class="sp"></span><button class="switch ${n.rep ? 'on' : ''}" data-act="ed-rep"></button></div>
-      ${n.carried ? `<p class="c-mut mt8">Já segue para ${monthName(addMonth(n.month, 1), false)}.</p>` : `<button class="pill sm mt8" data-act="carry">${ic('next', 'width:12px;height:12px')}Levar para ${monthName(addMonth(n.month, 1), false)}${sub.length ? ' com os ramos abertos' : ''}</button>`}</div>
+${side}
    </aside>
   </div>
   <div class="c-mf"><button class="pill sm danger ghost" data-act="ed-del">${ic('trash', 'width:13px;height:13px')}Excluir</button><button class="pill sm ghost" data-act="ed-dup">${ic('copy', 'width:13px;height:13px')}Duplicar</button><span class="sp"></span><span class="c-mut">${n.by ? 'criado por ' + esc(n.by) : ''}</span><button class="pill sm white" data-act="close">Pronto</button></div>`;
@@ -1614,6 +1627,65 @@ const edMore = (n, p, list, sub) => `<details class="c-more" ${ED.more ? 'open' 
       <label class="field mt8"><span>Ligado a</span><select class="inp sm" data-par="1"><option value="">— solto na constelação —</option>${list.filter(x => x.id !== n.id && !sub.some(s => s.id === x.id)).map(x => `<option value="${x.id}" ${n.parent === x.id ? 'selected' : ''}>${esc(labelOf(x))} · ${esc(CAT(x.cat).n)}</option>`).join('')}</select></label>
       ${p ? `<div class="field mt8"><span>Linha até ${esc(labelOf(p))}</span><nav class="seg">${[['auto', 'Auto'], ['reta', 'Reta'], ['curva', 'Curva'], ['cotovelo', 'Cotovelo']].map(([k, l]) => `<button class="pill sm ${(n.ln || 'auto') === k ? 'on' : ''}" data-act="ed-ln" data-v="${k}">${l}</button>`).join('')}</nav></div>` : ''}
     </details>`;
+/* Plano: pop-up grande com abas */
+const PTABS = [['resumo', 'Resumo'], ['acoes', 'Ações'], ['anexos', 'Anexos e links'], ['tarefas', 'Tarefas'], ['notas', 'Notas'], ['mais', 'Mais']];
+const fileUrl = (a, dl) => `/api/blob/${a.file}?b=${store.board}${dl ? '&dl=1' : ''}`;
+const fmtSize = b => b >= 1e6 ? (b / 1e6).toFixed(1).replace('.', ',') + ' MB' : Math.max(1, Math.round(b / 1e3)) + ' KB';
+function edPlano(n, p, kids, sub, sp, side) {
+  const f = n.f || {}, M = marcas(), T = times(), P = pessoas(), tab = PTABS.some(t => t[0] === UI.ptab) ? UI.ptab : 'resumo';
+  const files = (n.att || []).filter(a => a.file), links = (n.att || []).filter(a => !a.file), chk = n.chk || [];
+  const cnt = { acoes: kids.length ? `${sp.done}/${sp.total}` : '', anexos: (n.att || []).length || '', tarefas: chk.length ? `${chk.filter(x => x.ok).length}/${chk.length}` : '', notas: n.notes ? '•' : '' };
+  const chips = (arr, act, sel, lab) => arr.map(x => `<button class="pill sm ${sel(x) ? 'on' : ''}" data-act="${act}" data-v="${x.id}">${lab(x)}</button>`).join('');
+  const body = {
+    resumo: () => `<label class="field"><span>Objetivo</span><textarea class="inp c-ta" rows="3" data-ff="objetivo" placeholder="O que precisa estar verdade quando este plano fechar?">${esc(f.objetivo || '')}</textarea></label>
+      <div class="field"><span>Status</span><nav class="seg c-sseg">${STATUS.map(([k, l, c]) => `<button class="pill sm ${n.status === k ? 'on' : ''}" data-act="ed-st" data-v="${k}" style="--sc:${c}"><i class="c-sdot"></i>${l}</button>`).join('')}</nav></div>
+      <div class="c-mrow">
+        <label class="field"><span>Início</span><input class="inp sm" type="date" data-nf="start" value="${esc(n.start || '')}"></label>
+        <label class="field"><span>Entrega</span><input class="inp sm" type="date" data-nf="due" value="${esc(n.due || '')}"></label>
+        <div class="field"><span>Prioridade</span><nav class="seg">${PRIO.map(([k, l]) => `<button class="pill sm ${(n.prio || 'm') === k ? 'on' : ''}" data-act="ed-prio" data-v="${k}">${l}</button>`).join('')}</nav></div>
+      </div>
+      <div class="c-fg">
+        <label class="field"><span>Indicador de sucesso</span><input class="inp sm" data-ff="kpi" value="${esc(f.kpi || '')}" placeholder="ex.: 300 vendas" autocomplete="off"></label>
+        <label class="field"><span>Verba</span><input class="inp sm" type="number" step="0.01" data-ff="verba" value="${esc(f.verba ?? '')}" placeholder="${store.board === 'us' ? 'US$' : 'R$'}"></label>
+      </div>
+      <div class="field"><span>Responsáveis</span><div class="c-chips">${chips(P, 'ed-who', x => (n.who || []).includes(x.id), x => av(x, 18) + esc(x.name.split(' ')[0]))}${isAdmin() ? `<button class="pill sm ghost" data-act="ent" data-k="pessoa" data-id="" data-back="${n.id}">${ic('plus', 'width:12px;height:12px')}Pessoa</button>` : ''}</div></div>
+      <div class="field"><span>Time</span><div class="c-chips">${chips(T, 'ed-team', x => n.team === x.id, x => ic('time', `width:13px;height:13px;color:${x.color}`) + esc(x.name))}${isAdmin() ? `<button class="pill sm ghost" data-act="ent" data-k="time" data-id="" data-back="${n.id}">${ic('plus', 'width:12px;height:12px')}Time</button>` : ''}</div></div>
+      <div class="field"><span>Marcas</span><div class="c-chips">${chips(M, 'ed-brand', x => (n.brands || []).includes(x.id), x => `<span class="dot" style="background:${x.color}"></span>${esc(x.name)}`)}${isAdmin() ? `<button class="pill sm ghost" data-act="ent" data-k="marca" data-id="" data-back="${n.id}">${ic('plus', 'width:12px;height:12px')}Marca</button>` : ''}</div></div>`,
+    acoes: () => { const groups = {}; kids.forEach(k => (groups[CAT(k.cat).n] = groups[CAT(k.cat).n] || []).push(k));
+      return `<div class="c-chips">${[['acao', 'Ação'], ['reuniao', 'Reunião'], ['ponto', 'Ponto']].map(([k, l]) => `<button class="pill sm" data-act="pl-add" data-k="${k}">${ic('plus', 'width:12px;height:12px')}${l}</button>`).join('')}<button class="pill sm ghost" data-act="ramo" data-id="${n.id}">${ic('plus', 'width:12px;height:12px')}Outro tipo</button></div>
+      ${kids.length ? Object.entries(groups).map(([g, ks]) => `<div class="c-sec"><h5>${esc(g)} <small>${ks.length}</small></h5>${ks.map(k => `<button class="c-kid" data-act="open" data-id="${k.id}"><span class="c-ic2" style="--c:${colorOf(k)}">${ic(k.cat)}</span><span>${esc(labelOf(k))}</span>${k.due ? `<small class="c-mut">${fmtD(k.due)}</small>` : ''}<i class="c-sdot" style="--sc:${ST(k.status)[2]}"></i></button>`).join('')}</div>`).join('') : '<p class="c-mut">Nada nasce deste plano ainda. Use os botões acima ou clique no fio na constelação.</p>'}
+      ${sp.total ? `<p class="c-mut">${sp.done === sp.total ? 'Tudo que nasce daqui está feito.' : `Faltam ${sp.total - sp.done} para fechar.`}</p>` : ''}`; },
+    anexos: () => `<label class="c-drop" id="drop"><input type="file" id="file-in" multiple hidden>${ic('plus', 'width:16px;height:16px')}<span><b>Arraste arquivos aqui</b> ou clique para escolher<small>Roteiros, PDFs, imagens, planilhas · até 20 MB cada</small></span></label>
+      ${files.length ? `<div class="c-files">${files.map(a => `<div class="c-file">${/^image\//.test(a.type) ? `<a href="${fileUrl(a)}" target="_blank" rel="noopener" class="c-thumb"><img src="${fileUrl(a)}" alt="" loading="lazy"></a>` : `<a href="${fileUrl(a)}" target="_blank" rel="noopener" class="c-thumb c-fext">${esc((a.t.split('.').pop() || 'arq').slice(0, 4).toUpperCase())}</a>`}<div class="c-fmeta"><b title="${esc(a.t)}">${esc(a.t)}</b><small>${fmtSize(a.size || 0)}</small></div><a class="pill sm icon ghost" href="${fileUrl(a, 1)}" title="Baixar" aria-label="Baixar">${ic('arrow', 'width:12px;height:12px;transform:rotate(90deg)')}</a><button class="pill sm icon ghost" data-act="att-x" data-v="${a.id}" aria-label="Remover">${ic('x', 'width:12px;height:12px')}</button></div>`).join('')}</div>` : ''}
+      <div class="c-sec"><h5>Links</h5>${links.map(a => `<div class="c-ci"><input class="inp sm" data-att="${a.id}" data-k="t" value="${esc(a.t || '')}" placeholder="Nome" style="max-width:180px"><input class="inp sm" data-att="${a.id}" data-k="u" value="${esc(a.u || '')}" placeholder="https://">${a.u ? `<a class="pill sm icon ghost" href="${esc(a.u)}" target="_blank" rel="noopener" title="Abrir">${ic('arrow', 'width:12px;height:12px')}</a>` : ''}<button class="pill sm icon ghost" data-act="att-x" data-v="${a.id}" aria-label="Remover">${ic('x', 'width:12px;height:12px')}</button></div>`).join('')}<button class="pill sm" data-act="att-new">${ic('plus', 'width:12px;height:12px')}Link</button></div>`,
+    tarefas: () => `<div class="c-chk">${chk.map(x => `<div class="c-ci ${x.ok ? 'ok' : ''}"><button class="c-cb" data-act="chk-t" data-c="${x.id}">${x.ok ? ic('check', 'width:12px;height:12px') : ''}</button><input class="inp sm" data-chk="${x.id}" value="${esc(x.t)}"><button class="pill sm icon ghost" data-act="chk-x" data-c="${x.id}" aria-label="Remover">${ic('x', 'width:12px;height:12px')}</button></div>`).join('')}
+      <input class="inp sm" id="chk-new" placeholder="Nova tarefa e Enter" autocomplete="off"></div>`,
+    notas: () => `<textarea class="inp c-ta" rows="10" data-nf="notes" placeholder="Contexto, combinados, ideias…">${esc(n.notes || '')}</textarea>`,
+    mais: () => `<div class="c-plmais">${side}</div>`
+  };
+  return `${edHead(n, p)}
+  <input class="c-title" data-nf="title" value="${esc(n.title)}" placeholder="Nome do plano" autocomplete="off">
+  ${sp.total ? `<div class="c-plbar"><i style="width:${sp.pct}%"></i></div>` : ''}
+  <nav class="seg c-ptabs" role="tablist">${PTABS.map(([k, l]) => `<button class="pill sm ${tab === k ? 'on' : ''}" role="tab" aria-selected="${tab === k}" data-act="ptab" data-v="${k}">${l}${cnt[k] ? `<small>${cnt[k]}</small>` : ''}</button>`).join('')}</nav>
+  <div class="c-pt c-ptb">${body[tab]()}</div>
+  <div class="c-mf"><button class="pill sm danger ghost" data-act="ed-del">${ic('trash', 'width:13px;height:13px')}Excluir</button><button class="pill sm ghost" data-act="ed-dup">${ic('copy', 'width:13px;height:13px')}Duplicar</button><span class="sp"></span><span class="c-mut">${n.by ? 'criado por ' + esc(n.by) : ''}</span><button class="pill sm white" data-act="close">Pronto</button></div>`;
+}
+async function uploadFiles(list) {
+  const n = edNode(); if (!n || !list.length) return;
+  for (const file of list) {
+    if (file.size > 20 * 1024 * 1024) { toast(`“${file.name}” passa de 20 MB`, 'r'); continue; }
+    toast(`Enviando ${file.name}…`);
+    let r; try { r = await fetch('/api/files', { method: 'POST', credentials: 'same-origin', headers: { 'content-type': file.type || 'application/octet-stream', 'x-name': encodeURIComponent(file.name), 'x-board': store.board }, body: file }); } catch (e) {}
+    const d = r && r.ok ? await r.json().catch(() => null) : null;
+    if (!d || !d.id) { toast(`Não foi possível enviar “${file.name}”`, 'r'); continue; }
+    const cur = N(n.id); if (!cur) return; cur.att = [...(cur.att || []), { id: uid(), t: d.name, file: d.id, type: d.type, size: d.size }]; putNode(cur);
+    toast(`${d.name} anexado`, 'g');
+  }
+  refresh(); if (ED.id === n.id) openEd(n.id);
+}
+document.addEventListener('dragover', e => { const d = e.target.closest && e.target.closest('#drop'); if (d) { e.preventDefault(); d.classList.add('over'); } });
+document.addEventListener('dragleave', e => { const d = e.target.closest && e.target.closest('#drop'); if (d) d.classList.remove('over'); });
+document.addEventListener('drop', e => { const d = e.target.closest && e.target.closest('#drop'); if (!d) return; e.preventDefault(); d.classList.remove('over'); uploadFiles([...(e.dataTransfer?.files || [])]); });
 /* Reunião: quando, onde, quem, pauta e decisões (cada decisão pode virar uma Ação) */
 const decList = n => (n.f || {}).dec || String((n.f || {}).decisoes || '').split('\n').map(t => t.trim()).filter(Boolean).map((t, i) => ({ id: 'l' + i, t }));
 const decSet = fn => edSet(n => { n.f = n.f || {}; const l = decList(n).map(x => ({ ...x })); n.f.dec = fn(l) || l; delete n.f.decisoes; });
@@ -1749,13 +1821,15 @@ const ACT = {
   'ed-del': async () => { const n = edNode(), sub = descendants(n.id, monthNodes(n.month)); if (!(await ask(sub.length ? `Excluir “${labelOf(n)}” e os ${sub.length} ramos que nascem dele?` : `Excluir “${labelOf(n)}”?`, 'Excluir'))) return; delNodes([n.id, ...sub.map(x => x.id)]); closeModal(true); ED.id = ''; refresh(); toast('Excluído · Ctrl+Z desfaz', 'w'); },
   'ed-dup': () => { const n = edNode(), c = clone(n); c.id = uid(); c.title = (n.title || '') + (n.title ? ' (cópia)' : ''); c.t = Date.now(); c.links = []; c.x += 40; c.y += (Math.sign(c.y) || 1) * 50; delete c.carried; delete c.from; tx(() => putNode(c)); refresh(); openEd(c.id); },
   'chk-t': a => edSet(n => { const c = n.chk.find(x => x.id === a.dataset.c); c.ok = !c.ok; }),
+  ptab: a => { UI.ptab = a.dataset.v; saveUI(); openEd(ED.id); },
+  'pl-add': a => { const pl = edNode(); if (!pl) return; createNode(a.dataset.k, { parent: pl.id, ...freeSpot(pl.id) }); openEd(pl.id); },
   'dec-x': a => decSet(l => l.filter(x => x.id !== a.dataset.v)),
   'dec-acao': a => { const r = edNode(), d = decList(r).find(x => x.id === a.dataset.v); if (!r || !d) return;
     tx(() => { const id = createNode('acao', { parent: r.id, ...freeSpot(r.id) }, d.t), x = N(id); x.who = []; putNode(x); ED.id = r.id; decSet(l => l.map(y => y.id === d.id ? { ...y, acao: id } : y)); });
     toast('Ação criada', 'g'); },
   'chk-x': a => edSet(n => (n.chk = n.chk.filter(x => x.id !== a.dataset.c))),
   'att-new': () => edSet(n => { n.att = [...(n.att || []), { id: uid(), t: '', u: '' }]; }),
-  'att-x': a => edSet(n => (n.att = (n.att || []).filter(x => x.id !== a.dataset.v))),
+  'att-x': async a => { const n = edNode(), f = n && (n.att || []).find(x => x.id === a.dataset.v); if (!f) return; if (f.file && !(await ask(`Remover o anexo “${f.t}”?`, 'Remover'))) return; if (f.file) fetch(`/api/files/${f.file}`, { method: 'DELETE', credentials: 'same-origin', headers: { 'x-board': store.board } }).catch(() => {}); edSet(x => (x.att = (x.att || []).filter(y => y.id !== f.id))); },
   'anc-new': () => edSet(n => { n.anc = n.anc || []; const ps = n.anc.map(a => a.p).sort(); let p = 0.5; for (const c of [0.5, 0.25, 0.75, 0.15, 0.4, 0.6, 0.9]) if (!ps.some(x => Math.abs(x - c) < 0.08)) { p = c; break; } n.anc.push({ id: uid(), p, t: '', ok: false }); }),
   'anc-t': a => edSet(n => { const x = n.anc.find(y => y.id === a.dataset.a); x.ok = !x.ok; }),
   'anc-x': a => edSet(n => (n.anc = n.anc.filter(y => y.id !== a.dataset.a))),
@@ -1812,6 +1886,7 @@ document.addEventListener('change', e => {
   if (t.dataset.anc && n) { const a = (n.anc || []).find(x => x.id === t.dataset.anc); if (a) { a.t = t.value; putNode(n); refresh(); } return; }
   if (t.dataset.cfg) { cfgSet(t.dataset.cfg, t.value); render(); return; }
   if (t.dataset.cfgNum) { cfgSet(t.dataset.cfgNum, +t.value); render(); return; }
+  if (t.id === 'file-in' && t.files.length) { uploadFiles([...t.files]); t.value = ''; return; }
   if (t.id === 'logo-in' && t.files[0]) { const rd = new FileReader(); rd.onload = () => { cfgSet('logo', rd.result); render(); }; rd.readAsDataURL(t.files[0]); }
 });
 

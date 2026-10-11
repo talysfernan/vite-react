@@ -136,6 +136,31 @@ async function api(req, env, url) {
   const s = await session(req, env);
   if (!s) return json({ error: "login" }, 401);
   const admin = s.role === "admin";
+  // anexos: arquivo em partes de 1,8 MB no SQLite do país
+  if (p === "/api/files" && method === "POST") {
+    const buf = await req.arrayBuffer();
+    if (!buf.byteLength) return json({ error: "vazio" }, 400);
+    if (buf.byteLength > MAX_FILE) return json({ error: "Arquivo maior que 20 MB" }, 413);
+    const id = crypto.randomUUID().replace(/-/g, "").slice(0, 20), PART = 18e5;
+    const name = decodeURIComponent(req.headers.get("x-name") || "arquivo").slice(0, 200), type = (req.headers.get("content-type") || "application/octet-stream").slice(0, 120);
+    const stmts = [env.DB.prepare("INSERT INTO files(id,name,type,size,t) VALUES(?,?,?,?,?)").bind(id, name, type, buf.byteLength, Date.now())];
+    for (let i = 0, n = 0; i < buf.byteLength; i += PART, n++) stmts.push(env.DB.prepare("INSERT INTO file_parts(id,n,data) VALUES(?,?,?)").bind(id, n, buf.slice(i, i + PART)));
+    await env.DB.batch(stmts);
+    return json({ id, name, type, size: buf.byteLength });
+  }
+  const fm = p.match(/^\/api\/(?:blob|files)\/([a-f0-9]{20})$/);
+  if (fm && method === "GET") {
+    const f = await env.DB.prepare("SELECT name,type,size FROM files WHERE id=?").bind(fm[1]).first();
+    if (!f) return json({ error: "not found" }, 404);
+    const { results } = await env.DB.prepare("SELECT data FROM file_parts WHERE id=? ORDER BY n").bind(fm[1]).all();
+    const body = new Uint8Array(f.size); let o = 0; for (const r of results) { const d = new Uint8Array(r.data); body.set(d, o); o += d.byteLength; }
+    const disp = (url.searchParams.has("dl") ? "attachment" : "inline") + "; filename*=UTF-8''" + encodeURIComponent(f.name);
+    return new Response(body, { headers: { "content-type": f.type, "content-length": String(f.size), "content-disposition": disp, "cache-control": "private, max-age=31536000, immutable", "x-content-type-options": "nosniff", "content-security-policy": "sandbox" } });
+  }
+  if (fm && method === "DELETE") {
+    await env.DB.batch([env.DB.prepare("DELETE FROM file_parts WHERE id=?").bind(fm[1]), env.DB.prepare("DELETE FROM files WHERE id=?").bind(fm[1])]);
+    return json({ ok: true });
+  }
   if (p === "/api/demote" && method === "POST") return json({ ok: true, role: "view" }, 200, { "set-cookie": setCookie(await makeToken(env, "view")) });
   if (p === "/api/docs" && method === "GET") return json({ docs: await allDocs(env), now: Date.now() });
   if (p === "/api/changes" && method === "GET") {
@@ -183,7 +208,7 @@ async function api(req, env, url) {
   return json({ error: "not found" }, 404);
 }
 __name(api, "api");
-var SCHEMA = ["CREATE TABLE IF NOT EXISTS docs (path TEXT PRIMARY KEY, body TEXT NOT NULL, updated INTEGER NOT NULL)", "CREATE TABLE IF NOT EXISTS backup_docs (day TEXT NOT NULL, path TEXT NOT NULL, body TEXT NOT NULL, PRIMARY KEY (day, path))", "CREATE TABLE IF NOT EXISTS meta (k TEXT PRIMARY KEY, v TEXT NOT NULL)", "CREATE TABLE IF NOT EXISTS attempts (ip TEXT NOT NULL, ts INTEGER NOT NULL)", "CREATE INDEX IF NOT EXISTS attempts_ip ON attempts(ip, ts)", "CREATE INDEX IF NOT EXISTS docs_updated ON docs(updated)"];
+var SCHEMA = ["CREATE TABLE IF NOT EXISTS docs (path TEXT PRIMARY KEY, body TEXT NOT NULL, updated INTEGER NOT NULL)", "CREATE TABLE IF NOT EXISTS backup_docs (day TEXT NOT NULL, path TEXT NOT NULL, body TEXT NOT NULL, PRIMARY KEY (day, path))", "CREATE TABLE IF NOT EXISTS meta (k TEXT PRIMARY KEY, v TEXT NOT NULL)", "CREATE TABLE IF NOT EXISTS attempts (ip TEXT NOT NULL, ts INTEGER NOT NULL)", "CREATE INDEX IF NOT EXISTS attempts_ip ON attempts(ip, ts)", "CREATE INDEX IF NOT EXISTS docs_updated ON docs(updated)", "CREATE TABLE IF NOT EXISTS files (id TEXT PRIMARY KEY, name TEXT NOT NULL, type TEXT NOT NULL, size INTEGER NOT NULL, t INTEGER NOT NULL)", "CREATE TABLE IF NOT EXISTS file_parts (id TEXT NOT NULL, n INTEGER NOT NULL, data BLOB NOT NULL, PRIMARY KEY (id, n))"];
 function d1(storage) {
   const conv = /* @__PURE__ */ __name((v) => v === void 0 ? null : typeof v === "boolean" ? v ? 1 : 0 : v, "conv");
   const stmt = /* @__PURE__ */ __name((q, args = []) => ({
@@ -231,7 +256,7 @@ var Store = class extends DurableObject {
 };
 var BOARDS = ["br", "us"];
 var boardOf = /* @__PURE__ */ __name((url, req) => {
-  const h = req && req.headers.get("x-board"), c = req && ((req.headers.get("cookie") || "").match(/(?:^|;\s*)cst_b=(br|us)/) || [])[1];
+  const h = req && (req.headers.get("x-board") || url.searchParams.get("b")), c = req && ((req.headers.get("cookie") || "").match(/(?:^|;\s*)cst_b=(br|us)/) || [])[1];
   return h === "us" || h === "br" ? h : c || (/^constelacao-us\./.test(url.hostname) ? "us" : "br");
 }, "boardOf");
 var store = /* @__PURE__ */ __name((env, b) => env.STORE.get(env.STORE.idFromName(b)), "store");

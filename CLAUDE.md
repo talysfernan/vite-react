@@ -173,6 +173,8 @@ users  = [{ id, name, user, cargo, email, note, pass(hash), passEnc, active,
   - Base = versão feita no Cowork e baixada do Cloudflare em 11/10/2026. A versão antiga (branch `claude/jolly-thompson-qxpaie`) foi descartada — nunca usá-la nem o `deploy.sh` dela.
   - Deploy: `cd constelacao && CLOUDFLARE_API_TOKEN=proxy npx -y wrangler@4.40.0 deploy` (no Claude Code na nuvem o proxy injeta a credencial).
   - O proxy quebra o envio de assets do wrangler (401 no upload), por isso o `index.html` vai embutido no código: `site.js` é a entrada, serve `/` e repassa o resto ao `worker.js`; `public/.assetsignore` tira o `index.html` dos assets. Os outros arquivos de `public/` só são enviados se não mudarem — se mudar um ícone/sw.js, o upload falha e precisa de outro caminho.
+  - Anexos: `POST /api/files` (corpo = arquivo, cabeçalhos `x-name`, `x-board`), `GET /api/blob/:id?b=br|us[&dl=1]`, `DELETE /api/files/:id`; guardados em partes de 1,8 MB nas tabelas `files`/`file_parts` do Durable Object do país (fora da foto diária e do export).
+  - Teste local com o servidor real: `.dev.vars` com `SESSION_SECRET=...` e `npx wrangler dev`; login local pela senha de emergência padrão.
   - Antes de publicar, anotar a versão atual (`/workers/scripts/caos-constelacao/deployments`) para poder voltar.
 - Fluxo das correções:
   1. Uma correção por vez, só o que foi pedido.
