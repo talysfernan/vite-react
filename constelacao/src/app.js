@@ -348,7 +348,7 @@ function render() {
   <div class="titlebar" id="titlebar">${titlePillHTML()}</div>
   <header class="top">
     <div class="top-l"><nav class="seg">${views.map(([k, l]) => `<button class="pill ${ui.view === k ? 'on' : ''}" data-act="view" data-v="${k}">${l}</button>`).join('')}</nav></div>
-    <div class="month" id="topc">${ui.view === 'set' ? `<span class="sub">${ic('unlock', 'width:13px;height:13px')} modo administrador</span>` : ui.view === 'ano' ? `<button class="pill icon" data-act="y-prev" aria-label="Ano anterior">${ic('l')}</button><button class="month-btn" data-act="noop">${ic('cal', 'color:var(--muted)')}${ui.month.slice(0, 4)}</button><button class="pill icon" data-act="y-next" aria-label="Próximo ano">${ic('r')}</button>` : `<button class="pill icon" data-act="m-prev" aria-label="Mês anterior">${ic('l')}</button><button class="month-btn" data-act="mpick">${ic('cal', 'color:var(--muted)')}${mLong(ui.month)}${ic('down', 'width:14px;color:var(--muted)')}</button><button class="pill icon" data-act="m-next" aria-label="Próximo mês">${ic('r')}</button>`}</div>
+    <div class="month" id="topc">${ui.view === 'set' ? `<span class="sub">${S.open ? 'Ajustes' : `${ic('unlock', 'width:13px;height:13px')} modo administrador`}</span>` : ui.view === 'ano' ? `<button class="pill icon" data-act="y-prev" aria-label="Ano anterior">${ic('l')}</button><button class="month-btn" data-act="noop">${ic('cal', 'color:var(--muted)')}${ui.month.slice(0, 4)}</button><button class="pill icon" data-act="y-next" aria-label="Próximo ano">${ic('r')}</button>` : `<button class="pill icon" data-act="m-prev" aria-label="Mês anterior">${ic('l')}</button><button class="month-btn" data-act="mpick">${ic('cal', 'color:var(--muted)')}${mLong(ui.month)}${ic('down', 'width:14px;color:var(--muted)')}</button><button class="pill icon" data-act="m-next" aria-label="Próximo mês">${ic('r')}</button>`}</div>
     <div class="top-r"><div class="save-st" id="savest"></div></div>
   </header>
   <div class="brandbar">
@@ -1249,7 +1249,7 @@ function viewSet() {
   const c = cfg();
   const del = (k, i) => `<button class="pill sm icon ghost" data-act="r-del" data-k="${k}" data-i="${i}" aria-label="Excluir">${ic('trash')}</button>`;
   const color = (k, i, v) => `<input type="color" class="colorin" data-r="${k}:${i}:color" value="${esc(v || '#a78bfa')}">`;
-  return `<div class="between mb"><div><h1>Ajustes</h1><div class="sub">Pessoas, times, marcas, canais e lojas valem para as duas constelações (Brasil e Estados Unidos).</div></div><button class="pill" data-act="lock">${ic('lock')}Sair do modo admin</button></div>
+  return `<div class="between mb"><div><h1>Ajustes</h1><div class="sub">Pessoas, times, marcas, canais e lojas valem para as duas constelações (Brasil e Estados Unidos).</div></div>${S.open ? '' : `<button class="pill" data-act="lock">${ic('lock')}Sair do modo admin</button>`}</div>
   <div class="grid set-grid">
     <div class="grid">
       <div><div class="label"><span class="dot p"></span>Pessoas</div><div class="node pad">
@@ -1284,10 +1284,10 @@ function viewSet() {
         <p class="hint mb">Tudo salva sozinho no servidor. Uma cópia diária fica guardada por 30 dias.</p>
         <div class="row" style="flex-wrap:wrap"><button class="pill sm" data-act="export">${ic('dl')}Baixar tudo (JSON)</button><button class="pill sm" data-act="import">${ic('ul')}Importar</button><button class="pill sm" data-act="bk-now">${ic('clock')}Fazer cópia agora</button></div>
         <div class="stat-list mt" id="bk-list"><p class="hint">Carregando cópias…</p></div></div></div>
-      <div><div class="label"><span class="dot r"></span>Senha de emergência</div><div class="node pad">
+      ${S.open ? '' : `<div><div class="label"><span class="dot r"></span>Senha de emergência</div><div class="node pad">
         <p class="hint mb">Usada quando o Quintal estiver fora do ar (endereço com <span class="mono">?emergencia</span>) e para abrir estes Ajustes.</p>
         <div class="fgrid"><input class="inp" type="password" id="np" placeholder="Nova senha" inputmode="numeric"><input class="inp" type="password" id="nc" placeholder="Repita" inputmode="numeric"></div>
-        <button class="pill sm mt" data-act="pin-save">${ic('lock')}Alterar senha</button></div></div>
+        <button class="pill sm mt" data-act="pin-save">${ic('lock')}Alterar senha</button></div></div>`}
     </div>
   </div>`;
 }
@@ -1363,7 +1363,7 @@ const ACT = {
   brand: a => { ui.brand = a.dataset.v; saveUi(); render(); },
   country: a => {
     const other = B() === 'br' ? 'us' : 'br', url = location.hostname.startsWith('constelacao-') ? location.origin.replace(/constelacao-[a-z]{2}\./, `constelacao-${other}.`) + '/' : location.pathname + '?b=' + other;
-    popUnder(`<b>Constelações por país</b><div class="stat-list mt"><div class="li"><span class="lk" style="display:flex;gap:8px;align-items:center">${flagHere()}${esc(countryName())}</span><span class="tag">aqui</span></div><a class="li linkrow" href="${esc(url)}" style="text-decoration:none;color:inherit"><span class="lk" style="display:flex;gap:8px;align-items:center">${flagSVG(other === 'us' ? 'US' : 'BR')}${other === 'us' ? 'Estados Unidos' : 'Brasil'}</span>${ic('r')}</a></div><button class="pill sm ghost mt" data-act="logout">${ic('logout')}Sair</button>`, a, 260);
+    popUnder(`<b>Constelações por país</b><div class="stat-list mt"><div class="li"><span class="lk" style="display:flex;gap:8px;align-items:center">${flagHere()}${esc(countryName())}</span><span class="tag">aqui</span></div><a class="li linkrow" href="${esc(url)}" style="text-decoration:none;color:inherit"><span class="lk" style="display:flex;gap:8px;align-items:center">${flagSVG(other === 'us' ? 'US' : 'BR')}${other === 'us' ? 'Estados Unidos' : 'Brasil'}</span>${ic('r')}</a></div>${S.open ? '' : `<button class="pill sm ghost mt" data-act="logout">${ic('logout')}Sair</button>`}`, a, 260);
   },
   logout: () => fetch('/api/logout', { method: 'POST', credentials: 'same-origin' }).finally(() => location.replace('https://meucaos.com/')),
   'new-star': a => { const r = a.getBoundingClientRect(); kindsPop(r.right - 340, r.bottom + 8); },
@@ -1482,7 +1482,7 @@ function emergencyGate(down) {
   let s;
   try { s = await (await fetch('/api/session', { credentials: 'same-origin' })).json(); } catch (e) { s = { down: true }; }
   if (!s.role) return lockScreen();
-  S.role = s.role; S.name = s.name || ''; S.board = s.board || 'br';
+  S.role = s.role; S.name = s.name || ''; S.board = s.board || 'br'; S.open = !!s.open;
   if (s.glitch === false) setGlitch(false);
   const d = await req('/api/docs');
   S.docs = d.docs || {}; S.since = d.now || 0;

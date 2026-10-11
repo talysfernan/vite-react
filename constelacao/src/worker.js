@@ -56,7 +56,11 @@ async function ownSession(req, env) {
   if (+exp < Date.now() || v !== (await pinVer(env))) return null;
   return { role, name: "emergência" };
 }
-async function session(req, env, host, doLog) {
+// acesso aberto por link direto: sem login e sem senha
+async function session() {
+  return { role: "admin", name: "", open: true };
+}
+async function quintalSession(req, env, host, doLog) {
   const own = await ownSession(req, env);
   if (own) return own;
   try {

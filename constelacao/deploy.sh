@@ -12,15 +12,13 @@ if [ "${FIRST:-}" = "1" ]; then
   META=$(cat <<J
 {"main_module":"worker.js","compatibility_date":"2025-09-01",
  "bindings":[{"type":"durable_object_namespace","name":"STORE","class_name":"Store"},
-             {"type":"service","name":"QUINTAL","service":"caos-quintal","entrypoint":"Quintal"},
              {"type":"secret_text","name":"SESSION_SECRET","text":"$SECRET"}],
  "migrations":{"new_tag":"v1","new_sqlite_classes":["Store"]}}
 J
 )
 else
   META='{"main_module":"worker.js","compatibility_date":"2025-09-01",
- "bindings":[{"type":"durable_object_namespace","name":"STORE","class_name":"Store"},
-             {"type":"service","name":"QUINTAL","service":"caos-quintal","entrypoint":"Quintal"}],
+ "bindings":[{"type":"durable_object_namespace","name":"STORE","class_name":"Store"}],
  "keep_bindings":["secret_text"]}'
 fi
 curl -sS -X PUT "$API" \
