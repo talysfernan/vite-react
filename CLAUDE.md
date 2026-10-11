@@ -171,10 +171,12 @@ users  = [{ id, name, user, cargo, email, note, pass(hash), passEnc, active,
 - `constelacao/` — painel **Constelação de ações** (worker `caos-constelacao`), BR em constelacao-br.meucaos.com e US em constelacao-us.meucaos.com. Um worker para os dois; o país vem do subdomínio.
   - `public/` = estático (`index.html` é o app inteiro); `worker.js` = worker + Durable Object `Store` (cópia do que está no ar, já empacotado).
   - Base = versão feita no Cowork e baixada do Cloudflare em 11/10/2026. A versão antiga (branch `claude/jolly-thompson-qxpaie`) foi descartada — nunca usá-la nem o `deploy.sh` dela.
-  - Ainda não há `wrangler.jsonc`; montar no padrão da seção 6 antes do primeiro deploy.
+  - Deploy: `cd constelacao && CLOUDFLARE_API_TOKEN=proxy npx -y wrangler@4.40.0 deploy` (no Claude Code na nuvem o proxy injeta a credencial).
+  - O proxy quebra o envio de assets do wrangler (401 no upload), por isso o `index.html` vai embutido no código: `site.js` é a entrada, serve `/` e repassa o resto ao `worker.js`; `public/.assetsignore` tira o `index.html` dos assets. Os outros arquivos de `public/` só são enviados se não mudarem — se mudar um ícone/sw.js, o upload falha e precisa de outro caminho.
+  - Antes de publicar, anotar a versão atual (`/workers/scripts/caos-constelacao/deployments`) para poder voltar.
 - Fluxo das correções:
   1. Uma correção por vez, só o que foi pedido.
   2. Testar no navegador (Playwright) com a API simulada.
   3. Atualizar a **cópia de teste** (`python3 constelacao/preview.py <saída>`, publicada como artifact privado) para o Talys testar.
   4. Commit + push na branch de trabalho.
-  5. Publicar no Cloudflare **só quando o Talys aprovar**.
+  5. Publicar no Cloudflare e conferir no ar (Talys liberou publicar direto, seguindo a seção 1).
