@@ -248,13 +248,6 @@ select.inp{appearance:none;background-image:linear-gradient(45deg,transparent 50
 .xb{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;color:var(--dim);transition:color .2s,background .2s}
 .xb:hover{color:var(--red);background:rgba(248,113,113,.08)}
 .xb .i{width:14px;height:14px}
-/* público */
-.aud{border-radius:14px;background:linear-gradient(135deg,rgba(11,222,134,.07),rgba(32,95,212,.08));border:1px solid rgba(255,255,255,.09);padding:12px 12px 10px}
-.aud-r{display:flex;align-items:center;gap:10px;padding:6px 0}
-.aud-r+.aud-r{border-top:1px solid rgba(255,255,255,.06)}
-.aud-r code{font-family:var(--mono);font-size:12px;color:#e7fbe9;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.aud-r .sub{font-size:11px;display:block;margin-top:2px}
-.aud-r>div{flex:1;min-width:0}
 /* base dos produtos */
 .base{border-radius:14px;border:1px dashed rgba(255,255,255,.12);padding:12px 14px;margin-bottom:20px;background:rgba(255,255,255,.015)}
 .base summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);font-weight:600}
@@ -507,14 +500,6 @@ const weekNo = wk => Math.floor(diffD(cfg().start, wk) / 7) + 1;
 const wkLabel = wk => { const n = weekNo(wk); return n >= 1 ? 'semana ' + pad(n) : 'pré-estreia'; };
 const weekItems = wk => { const a = [null, null, null]; items().filter(i => i.wk === wk && i.slot >= 0 && i.slot < 3).sort((x, y) => (x.t || 0) - (y.t || 0)).forEach(i => { if (!a[i.slot]) a[i.slot] = i; }); return a; };
 const banco = () => items().filter(i => !i.wk).sort((a, b) => (b.t || 0) - (a.t || 0));
-const pcode = p => p.code || norm(p.name).toUpperCase().replace(/[^A-Z0-9]+/g, '').slice(0, 12) || 'PROD';
-function audName(it) {
-  if (it.aud) return it.aud;
-  const L = (it.prods || []).map(x => ({ ...x, p: prod(x.id) })).filter(x => x.p);
-  const dir = L.filter(x => x.lig !== 'ctx'), use = dir.length ? dir : L;
-  const pos = it.wk ? 'S' + pad(Math.max(0, weekNo(it.wk))) + '_C' + (it.slot + 1) : 'BANCO';
-  return ['NV', store.board.toUpperCase(), pos, use.map(x => pcode(x.p)).join('-') || 'SEMPRODUTO', PIL(it.pilar)?.[2]].filter(Boolean).join('_');
-}
 function lateOf(it) {
   const t = todayISO(), s = SI(it.stage);
   if (s >= SI('feito')) return '';
@@ -760,7 +745,7 @@ function nextBtn(it) {
   }
 }
 function tTema(it) {
-  const P = prods(), L = (it.prods || []).map(x => ({ ...x, p: prod(x.id) })).filter(x => x.p), others = P.filter(p => !L.some(x => x.id === p.id)), aud = audName(it);
+  const P = prods(), L = (it.prods || []).map(x => ({ ...x, p: prod(x.id) })).filter(x => x.p), others = P.filter(p => !L.some(x => x.id === p.id));
   return `${it.aj && it.stage === 'roteiro' ? ajBox(it) : ''}
   <div class="g2">${sec('Pilar', one('pilar', PILARES, it.pilar))}${sec('Espécie', one('esp', ESPECIES, it.esp))}</div>
   ${sec('Dor ou interesse que o tema ativa', fld('dor', it.dor, 'Ex.: tutor de apartamento preocupado com o cheiro da caixa de areia', { area: 1, rows: 2 }) + '<div class="hint">É esse interesse que forma o público. Quem assiste até o fim mostra que tem essa dor — e vê o produto depois, na campanha.</div>')}
@@ -769,10 +754,6 @@ function tTema(it) {
       <button class="xb" data-act="unlink" data-id="${x.id}" aria-label="Tirar ${esc(x.p.name)}">${ic('x')}</button></div>`).join('')}</div>` : ''}
     ${others.length ? `<div class="chips">${others.map(p => `<button class="chip ghost" data-act="link" data-id="${p.id}">${ic('plus')}<span class="dot" style="background:${p.color}"></span>${esc(p.name)}</button>`).join('')}</div>` : P.length ? '' : `<div class="sub">Nenhum produto cadastrado. ${isAdmin() ? '<button class="chip" data-act="view" data-v="prod">Cadastrar produtos</button>' : 'Peça para um admin cadastrar em Produtos.'}</div>`}
     <div class="hint"><b style="color:var(--text-2)">Direta</b>: o tema é a dor que o produto resolve. <b style="color:var(--text-2)">Contexto</b>: mesmo público, sem ligação direta. O produto nunca é citado no conteúdo.</div>`, 'de forma indireta')}
-  ${sec('Público gerado', `<div class="aud">
-    <div class="aud-r"><div><code id="aud1">${esc(aud)}_V75</code><span class="sub">Meta: viu 75% do vídeo · TikTok: assistiu 6s ou mais · janela de 365 dias</span></div><button class="pill sm icon" data-act="copy" data-v="${esc(aud)}_V75" aria-label="Copiar">${ic('copy')}</button></div>
-    <div class="aud-r"><div><code id="aud2">${esc(aud)}_ENG</code><span class="sub">Meta e TikTok: interagiu com o post (curtiu, comentou, salvou, compartilhou) · 365 dias</span></div><button class="pill sm icon" data-act="copy" data-v="${esc(aud)}_ENG" aria-label="Copiar">${ic('copy')}</button></div>
-  </div><div class="hint">Use esses nomes ao criar o público personalizado no gerenciador de anúncios. ${it.aud ? 'Nome travado na publicação.' : 'O nome trava quando o conteúdo é publicado.'}</div>`)}
   <div class="g2">${sec('Formato', one('formato', FORMATOS, it.formato))}${sec('Plataformas', many('redes', REDES, it.redes))}</div>
   ${sec('Prazos', `<div class="g3"><label class="fl"><span>Roteiro pronto até</span>${fld('dRot', it.dRot, '', { type: 'date' })}</label><label class="fl"><span>Aprovação até</span>${fld('dApr', it.dApr, '', { type: 'date' })}</label><label class="fl"><span>Publicação</span>${fld('date', it.date, '', { type: 'date' })}</label></div>`)}
   ${sec('Briefing para o time de conteúdo', fld('brief', it.brief, 'O que o conteúdo precisa passar, tom, referências, o que evitar…', { area: 1, rows: 4 }))}
@@ -810,7 +791,7 @@ function tApr(it) {
 function tPub(it) {
   const R = (it.redes || []).length ? it.redes : REDES.map(r => r[0]);
   return `${sec('Links dos posts', `<div class="chk">${R.map(k => { const r = RED(k), u = it.pub?.[k] || ''; return `<div class="lnk" style="grid-template-columns:150px 1fr auto;margin:0"><span class="row" style="color:var(--text-2)">${ic(r[2])}${r[1]}</span><input class="inp" data-pub="${k}" data-fk="pub${k}" placeholder="https://" value="${esc(u)}">${u ? `<a class="pill sm icon" href="${esc(/^https?:\/\//.test(u) ? u : 'https://' + u)}" target="_blank" rel="noopener" aria-label="Abrir">${ic('open')}</a>` : '<span></span>'}</div>`; }).join('')}</div><div class="hint">Com pelo menos um link dá para marcar como publicado.</div>`)}
-  ${sec('Métricas', `<div class="met">${MET.map(([k, l]) => `<label>${l}${fld('met.' + k, it.met?.[k], '—', { type: 'number', min: 0 })}</label>`).join('')}</div><div class="hint">Preencha uns 7 dias depois de publicar. <b style="color:var(--text-2)">Público gerado</b> = tamanho do público ${esc(audName(it))}_V75 no gerenciador. Alimenta o Ranking e a Cobertura em Resultados.</div>`, 'opcional')}
+  ${sec('Métricas', `<div class="met">${MET.map(([k, l]) => `<label>${l}${fld('met.' + k, it.met?.[k], '—', { type: 'number', min: 0 })}</label>`).join('')}</div><div class="hint">Preencha uns 7 dias depois de publicar. <b style="color:var(--text-2)">Público gerado</b> = tamanho do público formado por esse conteúdo no gerenciador de anúncios. Alimenta o Ranking e a Cobertura em Resultados.</div>`, 'opcional')}
   ${it.stage === 'feito' ? `<div class="apr g"><div class="at">${ic('check')}Feito${it.doneAt ? ' em ' + fmtT(it.doneAt) : ''}</div></div>` : ''}`;
 }
 function missing(it) {
@@ -830,7 +811,7 @@ function prodHTML() {
     ${sec('Características', `<div class="ben">${C.map((c, i) => `<div class="ben-r"><span class="n">${ic('check', 'width:12px;height:12px')}</span><input class="inp" data-car="${i}" data-fk="car${i}" placeholder="Ex.: 100% biodegradável · pacote de 2 kg" value="${esc(c)}" ${dis ? 'disabled' : ''}>${a ? `<button class="xb" data-act="rmcar" data-v="${i}" aria-label="Remover">${ic('x')}</button>` : ''}</div>`).join('')}</div>${a ? `<div style="margin-top:8px"><button class="chip ghost" data-act="addcar">${ic('plus')}Característica</button></div>` : C.length ? '' : '<div class="sub">—</div>'}`)}
     ${a ? `<details class="more"><summary>${ic('chev', 'width:13px;height:13px')}Mais opções</summary>
       ${sec('Cor', `<div class="sw">${CORES.map(c => `<button class="${p.color === c ? 'on' : ''}" style="background:${c}" data-act="pset" data-f="color" data-v="${c}" aria-label="Cor ${c}"></button>`).join('')}</div>`)}
-      ${sec('Sigla nos públicos', `<input class="inp" data-pf="code" data-fk="pcode" placeholder="${esc(pcode({ name: p.name }))}" value="${esc(p.code || '')}" maxlength="14" style="text-transform:uppercase;max-width:220px">`, 'aparece no nome do público')}</details>` : ''}
+      </details>` : ''}
   </div></div>
   <div class="md-f">${a ? `<button class="pill sm danger" data-act="delprod">${ic('trash')}Excluir</button>` : ''}<span class="sp"></span><button class="pill sm white" data-act="close">Pronto</button></div>`;
 }
@@ -857,8 +838,8 @@ function nextStage(it) {
   const s = it.stage || 'tema';
   if (s === 'tema') { if (!String(it.title || '').trim()) { toast('Dê um nome ao tema primeiro', 'r'); $('.md-t')?.focus(); return; } it.stage = 'roteiro'; hist(it, 'roteiro'); UI.tab = 'roteiro'; }
   else if (s === 'aprovado') { it.stage = 'producao'; hist(it, 'producao'); }
-  else if (s === 'producao') { if (!Object.values(it.pub || {}).some(Boolean)) { UI.tab = 'pub'; saveUI(); paintModal(); toast('Cole o link de pelo menos um post', 'r'); return; } it.stage = 'publicado'; it.pubAt = Date.now(); it.aud = audName(it); hist(it, 'publicou'); UI.tab = 'pub'; }
-  else if (s === 'publicado') { it.stage = 'feito'; it.doneAt = Date.now(); if (!it.aud) it.aud = audName(it); hist(it, 'feito'); }
+  else if (s === 'producao') { if (!Object.values(it.pub || {}).some(Boolean)) { UI.tab = 'pub'; saveUI(); paintModal(); toast('Cole o link de pelo menos um post', 'r'); return; } it.stage = 'publicado'; it.pubAt = Date.now(); hist(it, 'publicou'); UI.tab = 'pub'; }
+  else if (s === 'publicado') { it.stage = 'feito'; it.doneAt = Date.now(); hist(it, 'feito'); }
   saveUI(); putItem(it);
   if (it.stage === 'feito') toast('Conteúdo feito!', 'g');
 }
@@ -869,8 +850,6 @@ function setStage(it, k) {
   if (n < SI('aprovado')) it.apr = null;
   if (n === SI('aprovacao') && (!it.rq || it.rq.status !== 'pending')) it.rq = { id: uid(), t: Date.now(), by: store.name, status: 'pending' };
   if (n < SI('aprovacao') && it.rq?.status === 'pending') it.rq = { ...it.rq, status: 'no', decidedAt: Date.now(), dby: store.name, note: 'etapa alterada' };
-  if (n >= SI('publicado') && !it.aud) it.aud = audName(it);
-  if (n < SI('publicado')) delete it.aud;
   if (n === SI('feito') && !it.doneAt) it.doneAt = Date.now();
   it.aj = false; it.stage = k; hist(it, 'etapa', { to: k }); putItem(it);
 }
@@ -967,7 +946,7 @@ document.addEventListener('input', e => {
   }
   if (ED.kind === 'prod' && t.closest('#md') && isAdmin()) {
     const p = prod(ED.id); if (!p) return;
-    if (t.dataset.pf) p[t.dataset.pf] = t.dataset.pf === 'code' ? t.value.toUpperCase().replace(/[^A-Z0-9]/g, '') : t.value;
+    if (t.dataset.pf) p[t.dataset.pf] = t.value;
     else if (t.dataset.ben) { const b = [0, 1, 2, 3].map(i => (p.ben || [])[i] || ''); b[+t.dataset.ben] = t.value; p.ben = b; }
     else if (t.dataset.car) { const c = [...(p.car || [])]; c[+t.dataset.car] = t.value; p.car = c; }
     else return;
