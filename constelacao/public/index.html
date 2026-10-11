@@ -627,6 +627,8 @@ svg.c-wires{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
 .c-rub{fill:none;stroke:#ededf0;stroke-width:1.6;stroke-dasharray:5 6;opacity:.9}
 .c-wh{fill:none;stroke:transparent;stroke-width:18;stroke-linecap:round;pointer-events:stroke;cursor:pointer}
 .c-wdel{position:absolute;z-index:4;width:20px;height:20px;margin:-10px 0 0 -10px;display:grid;place-items:center;border-radius:50%;color:var(--text-2);background:rgba(24,24,28,.7);border:1px solid rgba(255,255,255,.16);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 4px 12px rgba(0,0,0,.4);cursor:pointer;transition:color .15s,background .15s,border-color .15s}.c-wdel svg{width:10px;height:10px;stroke-width:2.2}.c-wdel:hover{color:#fff;background:rgba(248,113,113,.35);border-color:rgba(248,113,113,.6)}
+.c-guide{fill:none;stroke:rgba(255,255,255,.35);stroke-width:1;stroke-dasharray:3 5;pointer-events:none}
+.c-n.snapq .c-b{animation:snapq .22s cubic-bezier(.2,1.6,.4,1)}@keyframes snapq{0%{filter:brightness(1.35)}100%{filter:none}}
 .c-wx{fill:none;stroke:none;visibility:hidden}
 .c-wdot{fill:#0e0e11;stroke:#ededf0;stroke-width:1.6;pointer-events:none;opacity:0;transition:opacity .15s}.c-wdot.on{opacity:1}
 .dim{opacity:.13!important}
@@ -1305,7 +1307,7 @@ function frame() {
 function attach(n, by, depth = 0) {
   const p = by[n.parent], pp = p && POS[p.id]; if (!pp) return null;
   if (n.at && p.tail > 0) { const a = (p.anc || []).find(x => x.id === n.at); if (a) return { x: pp.x + SIZE[p.id].w / 2 + p.tail * a.p, y: pp.y, horiz: true }; }
-  if (n.via != null && depth < 40) { const q = wireAt(p, by, n.via, depth + 1); if (q) return { x: q.x, y: q.y, horiz: false }; }
+  if (n.via != null && depth < 40) { const q = wireAt(p, by, n.via, depth + 1); if (q) return { x: q.x, y: q.y, horiz: true }; }
   return { x: pp.x, y: pp.y, horiz: p.y === 0 || shapeOf(p) === 'dot' && pp.y === 0 };
 }
 /* fio que chega em n (do pai até n), medido num path invisível */
@@ -1345,6 +1347,7 @@ function wires(list) {
     if (h._d !== d) { h.setAttribute('d', d); h._d = d; }
   }
   for (const n of list) for (const k of n.links || []) { if (k < n.id || !by[k] || !POS[k] || !POS[n.id]) continue; const a = POS[n.id], b = POS[k]; const d = `M${a.x} ${a.y}C${(a.x + b.x) / 2} ${a.y} ${(a.x + b.x) / 2} ${b.y} ${b.x} ${b.y}`; put('l' + n.id + k, d, 'c-lk'); seen.add('hk' + n.id + k); let h = WIRES.get('hk' + n.id + k); if (!h) { h = document.createElementNS('http://www.w3.org/2000/svg', 'path'); h.setAttribute('class', 'c-wh'); h.dataset.link = n.id + '|' + k; svg.appendChild(h); WIRES.set('hk' + n.id + k, h); } if (h._d !== d) { h.setAttribute('d', d); h._d = d; } }
+  const G = drag && drag.kind === 'node' && drag.guide; if (G && G.gy) { const a = Math.min(G.gy.x, G.x) - 60, b = Math.max(G.gy.x, G.x) + 60; put('guide-h', `M${a} ${G.y}L${b} ${G.y}`, 'c-guide'); } if (G && G.gx) { const a = Math.min(G.gx.y, G.y) - 60, b = Math.max(G.gx.y, G.y) + 60; put('guide-v', `M${G.x} ${a}L${G.x} ${b}`, 'c-guide'); }
   if (drag && drag.kind === 'knob' && drag.to) { const a = POS[drag.id]; put('rubber', `M${a.x} ${a.y}L${drag.to.x} ${drag.to.y}`, 'c-rub'); }
   for (const [k, p] of WIRES) if (!seen.has(k)) { p.remove(); WIRES.delete(k); }
 }
@@ -1433,9 +1436,15 @@ document.addEventListener('pointermove', e => {
   if (far) drag.moved = true; if (!drag.moved) return;
   const dx = (e.clientX - drag.sx) / V.z, dy = (e.clientY - (drag.sy ?? e.clientY)) / V.z;
   if (drag.kind === 'node') {
-    const s0 = drag.start[drag.id]; let ny = Math.round(s0.y + dy); const snap = Math.abs(ny) < SNAP; if (snap) ny = 0;
-    const ddy = ny - s0.y;
-    for (const k of drag.ids) { const n = store.docs['node/' + k], s = drag.start[k]; n.x = Math.round(s.x + dx); n.y = k === drag.id ? ny : Math.round(s.y + ddy); }
+    const s0 = drag.start[drag.id]; let ny = Math.round(s0.y + dy), nx = Math.round(s0.x + dx); const snap = Math.abs(ny) < SNAP; if (snap) ny = 0;
+    /* ímã: alinha com o pai (fio reto) ou com outra estrela, na horizontal e na vertical */
+    const me = N(drag.id), par = me && me.parent && N(me.parent), others = monthNodes().filter(o => !drag.ids.has(o.id)); let gx = null, gy = null;
+    if (!snap) { let by = 12 / V.z; for (const o of others) { const t = (par && o.id === par.id ? 12 : 7) / V.z, d = Math.abs(o.y - ny); if (d < t && d < by) { by = d; gy = o; } } if (gy) ny = gy.y; }
+    { let bx = 12 / V.z; for (const o of others) { const t = (par && o.id === par.id ? 12 : 7) / V.z, d = Math.abs(o.x - nx); if (d < t && d < bx) { bx = d; gx = o; } } if (gx) nx = gx.x; }
+    const was = drag.guide && (drag.guide.gx || drag.guide.gy); drag.guide = { gx, gy, x: nx, y: ny };
+    if ((gx || gy) && !was) { NODES.get(drag.id)?.classList.remove('snapq'); void NODES.get(drag.id)?.offsetWidth; NODES.get(drag.id)?.classList.add('snapq'); navigator.vibrate && navigator.vibrate(6); }
+    const ddy = ny - s0.y, ddx = nx - s0.x;
+    for (const k of drag.ids) { const n = store.docs['node/' + k], s = drag.start[k]; n.x = Math.round(s.x + ddx); n.y = k === drag.id ? ny : Math.round(s.y + ddy); }
     st.classList.toggle('magnet', snap); drag.dirty = true; NODES.get(drag.id)?.classList.add('lift'); kick(); return;
   }
   if (drag.kind === 'tail') { const n = store.docs['node/' + drag.id]; n.tail = Math.max(40, Math.round(drag.t0 + dx)); drag.dirty = true; layoutTail(NODES.get(drag.id), { ...n, id: drag.id }); kick(); return; }
