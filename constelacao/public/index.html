@@ -769,7 +769,9 @@ svg.c-wires{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
 
 /* ---------- modais ---------- */
 .c-mod{width:min(1020px,100%);max-height:calc(100vh - 40px);overflow:auto;padding:20px 22px;animation:pop .3s var(--ease) both}
-.c-mod.sm{width:min(480px,100%)}.c-mod.wide{width:min(940px,100%)}
+.c-mod.sm{width:min(480px,100%)}
+.c-pt{display:flex;flex-direction:column;gap:16px}.c-pt .c-sseg{flex-wrap:wrap}
+.c-more summary{cursor:pointer;color:var(--muted);font-size:12px;list-style:none;display:inline-flex;align-items:center;gap:6px}.c-more summary::before{content:'+';font-size:14px}.c-more[open] summary::before{content:'–'}.c-more summary:hover{color:var(--text-2)}.c-mod.wide{width:min(940px,100%)}
 .c-askscrim{z-index:120}
 .c-mh{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .c-mh>div b{display:block;font-size:15px}.c-mh>div span{font-size:12px;color:var(--muted)}
@@ -1549,6 +1551,7 @@ function openEd(id, fresh) {
     return `<label class="field${W}"><span>${esc(l)}${t === 'u' && v ? ` <a href="${esc(v)}" target="_blank" rel="noopener" class="c-open">abrir</a>` : ''}</span><input class="inp sm" type="${ty}" data-ff="${k}" value="${esc(v ?? '')}" placeholder="${esc(o || '')}"${t === '$' ? ' step="0.01"' : ''}></label>`; };
   const links = (n.links || []).map(N).filter(Boolean), M = marcas(), T = times(), P = pessoas();
   const tailable = ['pill', 'outline', 'mini'].includes(sh);
+  if (n.cat === 'ponto') return edShow(id, edPonto(n, p, kids, list, sub), 'c-ed sm', fresh);
   const html = `<div class="c-mh" style="--c:${colorOf(n)}"><button class="c-cat" data-act="ed-cat" title="Trocar tipo"><span class="c-ic2">${ic(n.cat)}</span>${esc(C.n)}</button>${p ? `<button class="c-crumb" data-act="open" data-id="${p.id}">${ic('left', 'width:12px;height:12px')}${esc(labelOf(p))}</button>` : ''}<span class="sp"></span>${n.from ? `<button class="tag" data-act="goto" data-id="${n.from.id}">veio de ${monthName(n.from.month, false)}</button>` : ''}${n.carried ? `<button class="tag" data-act="goto" data-id="${n.carried}">seguiu para ${monthName(addMonth(n.month, 1), false)}</button>` : ''}<button class="pill sm icon ghost" data-act="close" aria-label="Fechar">${ic('x')}</button></div>
   <input class="c-title" data-nf="title" value="${esc(n.title)}" placeholder="${esc(labelOf({ ...n, title: '' }))}" autocomplete="off">
   <div class="c-ebody">
@@ -1594,9 +1597,35 @@ function openEd(id, fresh) {
    </aside>
   </div>
   <div class="c-mf"><button class="pill sm danger ghost" data-act="ed-del">${ic('trash', 'width:13px;height:13px')}Excluir</button><button class="pill sm ghost" data-act="ed-dup">${ic('copy', 'width:13px;height:13px')}Duplicar</button><span class="sp"></span><span class="c-mut">${n.by ? 'criado por ' + esc(n.by) : ''}</span><button class="pill sm white" data-act="close">Pronto</button></div>`;
+  edShow(id, html, 'c-ed', fresh);
+}
+function edShow(id, html, cls, fresh) {
   const keep = $('#modal .c-mod'), sc = keep ? keep.scrollTop : 0, same = keep && keep.dataset.id === id;
-  const s = modal(html, 'c-ed'); const md = $('.c-mod', s); md.dataset.id = id; if (same) md.scrollTop = sc;
+  const s = modal(html, cls); const md = $('.c-mod', s); md.dataset.id = id; if (same) md.scrollTop = sc;
   if (fresh) setTimeout(() => $('.c-title', s)?.focus(), 40);
+}
+/* cabeçalho comum: tipo (trocar), de onde nasce, fechar */
+const edHead = (n, p) => `<div class="c-mh" style="--c:${colorOf(n)}"><button class="c-cat" data-act="ed-cat" title="Trocar tipo"><span class="c-ic2">${ic(n.cat)}</span>${esc(CAT(n.cat).n)}</button>${p ? `<button class="c-crumb" data-act="open" data-id="${p.id}">${ic('left', 'width:12px;height:12px')}${esc(labelOf(p))}</button>` : ''}<span class="sp"></span><button class="pill sm icon ghost" data-act="close" aria-label="Fechar">${ic('x')}</button></div>`;
+/* Ponto = marco: quando, se aconteceu, como se reconhece e o que fazer se não acontecer */
+const MARCO_ST = [['todo', 'Aguardando'], ['review', 'Em risco'], ['done', 'Aconteceu'], ['blocked', 'Não aconteceu']];
+function edPonto(n, p, kids, list, sub) {
+  const f = n.f || {}, sc = k => ST(k)[2];
+  return `${edHead(n, p)}
+  <input class="c-title" data-nf="title" value="${esc(n.title)}" placeholder="Nome do marco" autocomplete="off">
+  <div class="c-pt">
+    <div class="c-mrow"><label class="field"><span>Quando</span><input class="inp sm" type="date" data-nf="due" value="${esc(n.due || '')}"></label></div>
+    <div class="field"><span>Estado</span><nav class="seg c-sseg">${MARCO_ST.map(([k, l]) => `<button class="pill sm ${(n.status || 'todo') === k ? 'on' : ''}" data-act="ed-st" data-v="${k}" style="--sc:${sc(k)}"><i class="c-sdot"></i>${l}</button>`).join('')}</nav></div>
+    <label class="field"><span>Como sabemos que aconteceu</span><textarea class="inp c-ta" rows="3" data-ff="sinal" placeholder="O sinal que confirma este marco">${esc(f.sinal || '')}</textarea></label>
+    <label class="field"><span>Se não acontecer</span><textarea class="inp c-ta" rows="3" data-ff="planob" placeholder="O que fazemos no lugar">${esc(f.planob || '')}</textarea></label>
+    <div class="c-sec"><h5>${ic('fork', 'width:13px;height:13px')}Ramos</h5>
+      ${kids.map(k => `<button class="c-kid" data-act="open" data-id="${k.id}"><span class="c-ic2" style="--c:${colorOf(k)}">${ic(k.cat)}</span><span>${esc(labelOf(k))}</span><i class="c-sdot" style="--sc:${ST(k.status)[2]}"></i></button>`).join('')}
+      <button class="pill sm" data-act="ramo" data-id="${n.id}">${ic('plus', 'width:12px;height:12px')}Novo ramo</button></div>
+    <details class="c-more" ${ED.more ? 'open' : ''} ontoggle="ED.more = this.open"><summary>Mais opções</summary>
+      <label class="field mt8"><span>Ligado a</span><select class="inp sm" data-par="1"><option value="">— solto na constelação —</option>${list.filter(x => x.id !== n.id && !sub.some(s => s.id === x.id)).map(x => `<option value="${x.id}" ${n.parent === x.id ? 'selected' : ''}>${esc(labelOf(x))} · ${esc(CAT(x.cat).n)}</option>`).join('')}</select></label>
+      ${p ? `<div class="field mt8"><span>Linha até ${esc(labelOf(p))}</span><nav class="seg">${[['auto', 'Auto'], ['reta', 'Reta'], ['curva', 'Curva'], ['cotovelo', 'Cotovelo']].map(([k, l]) => `<button class="pill sm ${(n.ln || 'auto') === k ? 'on' : ''}" data-act="ed-ln" data-v="${k}">${l}</button>`).join('')}</nav></div>` : ''}
+    </details>
+  </div>
+  <div class="c-mf"><button class="pill sm danger ghost" data-act="ed-del">${ic('trash', 'width:13px;height:13px')}Excluir</button><span class="sp"></span><button class="pill sm white" data-act="close">Pronto</button></div>`;
 }
 const edNode = () => N(ED.id);
 function edSet(fn, reopen = true) { const n = edNode(); if (!n) return; fn(n); putNode(n); refresh(); if (reopen) openEd(n.id); }
