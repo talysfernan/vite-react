@@ -715,13 +715,13 @@ svg.c-wires{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
 .c-anc.ok{background:#4ade80}.c-anc:hover{transform:scale(1.35)}
 /* alça para ligar e ramificar */
 .c-k{position:absolute;left:var(--kx,30px);top:var(--ky,0px);min-width:16px;height:16px;margin:-8px 0 0 -8px;padding:0 3px;border-radius:8px;display:flex;align-items:center;gap:3px;font-size:10.5px;font-weight:550;white-space:nowrap;background:rgba(255,255,255,.08);color:rgba(237,237,240,.85);border:1px solid rgba(255,255,255,.16);-webkit-backdrop-filter:blur(8px) saturate(1.4);backdrop-filter:blur(8px) saturate(1.4);opacity:0;transform:scale(.5);transition:opacity .2s,transform .25s cubic-bezier(.2,1.4,.4,1);z-index:5;cursor:pointer;box-shadow:0 1px 0 rgba(255,255,255,.08) inset,0 4px 12px rgba(0,0,0,.35)}
-.c-k .c-ks,.c-k .c-km{display:none}.c-k:hover{z-index:7}.c-k:hover .c-ks{display:inline}.c-k:hover .c-km{display:inline-grid;place-items:center;width:13px;height:13px;border-radius:50%;margin-right:-1px;background:rgba(255,255,255,.08);font-size:10px;line-height:1}.c-k .c-km:hover{background:rgba(255,255,255,.2)}
+.c-k:hover{z-index:7}.c-k:hover>svg{opacity:0}.c-kl{display:none;position:absolute;flex-direction:column;gap:4px;padding:6px}.c-k:hover .c-kl{display:flex}.c-kr .c-kl{left:-7px;top:-10px}.c-ku .c-kl{left:50%;bottom:-10px;transform:translateX(-50%);flex-direction:column-reverse}.c-kd .c-kl{left:50%;top:-10px;transform:translateX(-50%)}.c-ki{height:22px;padding:0 10px;border-radius:11px;display:flex;align-items:center;font-size:11.5px;font-weight:550;color:rgba(237,237,240,.88);background:rgba(28,28,32,.55);border:1px solid rgba(255,255,255,.14);-webkit-backdrop-filter:blur(10px) saturate(1.4);backdrop-filter:blur(10px) saturate(1.4);box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 6px 16px rgba(0,0,0,.35);transition:background .15s,border-color .15s,color .15s}.c-ki.on{border-color:rgba(255,255,255,.3);color:var(--text)}.c-ki:hover{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.34);color:#fff}.c-ki.more{color:var(--muted)}
 .c-k.c-ku,.c-k.c-kd{left:0;margin:0;translate:-8px -8px}.c-k.c-ku{top:calc(-1 * var(--kh,16px) - 13px)}.c-k.c-kd{top:calc(var(--kh,16px) + 13px)}
 .sh-haste .c-ku,.sh-haste .c-kd,.sh-periodo .c-ku,.sh-periodo .c-kd{display:none}
 .c-k svg{width:10px;height:10px;stroke-width:2.2}
-.c-k:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.28);color:var(--text)}
+.c-k:hover{background:transparent;border-color:transparent;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
 .c-n:hover .c-k,.c-n.sel .c-k{opacity:1;transform:scale(1)}
-.c-k:hover{transform:scale(1.06)!important}
+.c-k:hover{transform:scale(1)!important}
 @media (hover:none){.c-n.sel .c-k{opacity:1}}
 
 /* ---------- barras do palco ---------- */
@@ -1201,6 +1201,7 @@ function sizeStage() { const st = $('#stage'); if (!st) return; const top = st.g
 function listGlyph(n) { const p = chkPct(n); return `<span class="c-lg"><i style="--p:${p}"></i><i></i><i></i></span>`; }
 /* atalho ao passar o mouse: tipo sugerido para cada lado */
 const SUGG = { spine: { r: 'ponto', u: 'plano', d: 'plano' }, plano: { r: 'acao', u: 'reuniao', d: 'ponto' }, acao: { r: 'acao', u: 'reuniao', d: 'ponto' }, reuniao: { r: 'acao', u: 'ponto', d: 'reuniao' }, ponto: { r: 'acao', u: 'plano', d: 'reuniao' }, outro: { r: 'acao', u: 'ponto', d: 'reuniao' } };
+const knobTypes = (n, d) => { const s = suggestFor(n, d); return [s, ...['acao', 'plano', 'reuniao', 'ponto'].filter(k => k !== s)]; };
 const suggestFor = (n, d) => (n.y === 0 ? SUGG.spine : SUGG[n.cat] || SUGG.outro)[d];
 function dirSpot(id, d) {
   const n = N(id), S = SIZE[id] || { w: 100, h: 32 }, w = S.w / 2 + (n.tail > 0 ? n.tail : 0);
@@ -1223,7 +1224,7 @@ function nodeHTML(n) {
   const anc = (n.tail > 0 ? (n.anc || []) : []).map(a => `<b class="c-anc ${a.ok ? 'ok' : ''}" data-anc="${a.id}" title="${esc(a.t || 'Ponto de ancoragem')}"></b>`).join('');
   const tail = n.tail > 0 && (sh === 'pill' || sh === 'outline' || sh === 'mini') ? `<i class="c-tail"></i><span class="c-end ${n.status === 'done' ? 'ok' : ''}" title="Arraste para esticar"></span>${anc}` : '';
   const per = sh === 'periodo' ? `<i class="c-stripe" style="width:${n.w || 220}px"></i><span class="c-ph l"></span><span class="c-ph r"></span>` : '';
-  return `${tail}${per}<div class="c-b">${body}</div>${below ? `<span class="c-lb">${esc(below)}</span>` : ''}${[['r', 'à direita'], ['u', 'acima'], ['d', 'abaixo']].map(([d, l]) => `<button class="c-k c-k${d}" data-dir="${d}" title="Adicionar ${esc(CAT(suggestFor(n, d)).n)} ${l} · arraste para ligar">${ic('plus')}<span class="c-ks">${esc(CAT(suggestFor(n, d)).n)}</span><span class="c-km" title="Escolher outro tipo">⋯</span></button>`).join('')}`;
+  return `${tail}${per}<div class="c-b">${body}</div>${below ? `<span class="c-lb">${esc(below)}</span>` : ''}${['r', 'u', 'd'].map(d => `<button class="c-k c-k${d}" data-dir="${d}" aria-label="Adicionar">${ic('plus')}<span class="c-kl">${knobTypes(n, d).map((k, i) => `<span class="c-ki${i ? '' : ' on'}" data-k="${k}">${esc(CAT(k).n)}</span>`).join('')}<span class="c-ki more" data-more="1">Outros…</span></span></button>`).join('')}`;
 }
 function reconcile(first) {
   const nodesEl = $('#nodes'); if (!nodesEl) return;
@@ -1388,7 +1389,7 @@ document.addEventListener('pointerdown', e => {
   ptrs.set(e.pointerId, { x: e.clientX - r.left, y: e.clientY - r.top });
   if (ptrs.size === 2) { clearTimeout(lpT); const [a, b] = [...ptrs.values()]; drag = { kind: 'pinch', d0: Math.hypot(a.x - b.x, a.y - b.y), z0: V.z, x0: V.x, y0: V.y, cx: (a.x + b.x) / 2, cy: (a.y + b.y) / 2 }; return; }
   const nodeEl = e.target.closest('.c-n'), id = nodeEl && nodeEl.dataset.id, w = toWorld(e.clientX, e.clientY);
-  if (nodeEl && e.target.closest('.c-k')) { drag = { kind: 'knob', dir: e.target.closest('.c-k').dataset.dir || 'r', more: !!e.target.closest('.c-km'), id, sx: e.clientX, sy: e.clientY, moved: false, live: true }; }
+  if (nodeEl && e.target.closest('.c-k')) { drag = { kind: 'knob', dir: e.target.closest('.c-k').dataset.dir || 'r', more: !!e.target.closest('[data-more]'), pick: e.target.closest('[data-k]')?.dataset.k, id, sx: e.clientX, sy: e.clientY, moved: false, live: true }; }
   else if (nodeEl && e.target.closest('.c-end')) { const n = N(id); drag = { kind: 'tail', id, sx: e.clientX, t0: n.tail, moved: false, live: true, ids: new Set() }; }
   else if (nodeEl && e.target.closest('.c-ph')) { const n = N(id); drag = { kind: 'per', id, sx: e.clientX, w0: n.w || 220, moved: false, live: true, ids: new Set() }; }
   else if (nodeEl && e.target.closest('.c-anc')) { drag = { kind: 'anc', id, a: e.target.closest('.c-anc').dataset.anc, sx: e.clientX, sy: e.clientY, moved: false }; }
@@ -1442,7 +1443,7 @@ const endDrag = e => {
   if (d.kind === 'anc') { openPick({ parent: d.id, at: d.a }); return; }
   if (d.kind === 'knob') {
     WIRES.get('rubber')?.remove(); WIRES.delete('rubber');
-    if (!d.moved) { const spot = dirSpot(d.id, d.dir); if (d.more) openPick(spot); else createNode(suggestFor(N(d.id), d.dir), spot); return; }
+    if (!d.moved) { const spot = dirSpot(d.id, d.dir); if (d.more) openPick(spot); else createNode(d.pick || suggestFor(N(d.id), d.dir), spot); return; }
     if (d.over) { linkNodes(d.id, d.over); toast('Conexão criada', 'g'); refresh(); return; }
     openPick({ parent: d.id, x: Math.round(d.to.x), y: Math.abs(d.to.y) < SNAP ? 0 : Math.round(d.to.y) }); kick();
   }
