@@ -1,0 +1,16 @@
+// Análise mensal (painel-caos) — fechamento do mês; expõe o entrypoint Sums
+{
+  "name": "painel-caos",
+  "account_id": "7555b9666c694118eaab1e89c150e74b",
+  "main": "site.js",
+  "rules": [{ "type": "Text", "globs": ["**/*.html"], "fallthrough": true }],
+  "compatibility_date": "2025-09-01",
+  "workers_dev": true,
+  "preview_urls": true,
+  "routes": [{ "pattern": "analise-mensal.meucaos.com", "custom_domain": true }],
+  "assets": { "directory": "public", "binding": "ASSETS", "run_worker_first": true },
+  "d1_databases": [{ "binding": "DB", "database_name": "painel-caos", "database_id": "84612a5c-69c2-4a25-8464-57fa34afbd9b" }],
+  "services": [{ "binding": "QUINTAL", "service": "caos-quintal", "entrypoint": "Quintal" }],
+  "triggers": { "crons": ["52 1 * * *"] }
+  // segredos (SESSION_SECRET, EXPORT_KEY) ficam no Cloudflare: wrangler secret put
+}
