@@ -1566,7 +1566,8 @@ function vSet() {
   if (setTab === 'time') body = times().map(x => row('time', x, `${pessoas().filter(p => p.team === x.id).length} pessoas`)).join('') + `<button class="pill sm" data-act="ent" data-k="time" data-id="">${ic('plus')}Novo time</button>`;
   if (setTab === 'pessoa') body = pessoas().map(x => row('pessoa', x, esc([x.role, (time(x.team) || {}).name].filter(Boolean).join(' · ')))).join('') + `<button class="pill sm" data-act="ent" data-k="pessoa" data-id="">${ic('plus')}Nova pessoa</button>`;
   if (setTab === 'look') body = `<div class="label"><span class="dot"></span>Título</div><div class="node c-spad"><div class="row"><input class="inp sm" data-cfg="title.text" value="${esc(c.title.text)}"><input type="color" class="colorin" data-cfg="title.color" value="${esc(c.title.color)}"></div><label class="field mt"><span>Tamanho</span><input type="range" class="range" min="10" max="30" data-cfg-num="title.size" value="${c.title.size}"></label></div>
-    <div class="label"><span class="dot"></span>Logo</div><div class="node c-spad"><div class="row"><label class="pill sm">${ic('plus')}${c.logo ? 'Trocar logo' : 'Enviar logo'}<input type="file" accept="image/*" id="logo-in" hidden></label>${c.logo ? '<button class="pill sm ghost" data-act="logo-del">Remover</button>' : ''}</div><label class="field mt"><span>Altura</span><input type="range" class="range" min="28" max="200" data-cfg-num="logoSize" value="${c.logoSize}"></label></div>`;
+    <div class="label"><span class="dot"></span>Logo</div><div class="node c-spad"><div class="row"><label class="pill sm">${ic('plus')}${c.logo ? 'Trocar logo' : 'Enviar logo'}<input type="file" accept="image/*" id="logo-in" hidden></label>${c.logo ? '<button class="pill sm ghost" data-act="logo-del">Remover</button>' : ''}</div><label class="field mt"><span>Altura</span><input type="range" class="range" min="28" max="200" data-cfg-num="logoSize" value="${c.logoSize}"></label></div>
+    <div class="label"><span class="dot"></span>Tamanho das pills</div><div class="node c-spad"><div class="row"><nav class="seg">${SIZES.map(([k, l]) => `<button class="pill sm ${(c.pillSize || 'm') === k ? 'on' : ''}" data-act="cfg-sz" data-v="${k}">${l}</button>`).join('')}</nav></div><p class="c-mut mt8">Tamanho com que cápsulas, contornos e minis nascem. Cada uma pode ser mudada depois no próprio pop-up.</p></div>`;
   return `<nav class="seg c-stabs">${[['marca', 'Marcas'], ['time', 'Times'], ['pessoa', 'Pessoas'], ['look', 'Visual']].map(([k, l]) => `<button class="pill sm ${setTab === k ? 'on' : ''}" data-act="set-tab" data-v="${k}">${l}</button>`).join('')}</nav>${body}`;
 }
 
@@ -1600,6 +1601,7 @@ function createNode(cat, ctx = {}, title = '') {
   if (C.s === 'periodo' && Math.abs(y) < 80) y = 0;
   const n = { id: uid(), month: UI.month, cat, title, x: Math.round(x), y: Math.round(y), parent: p ? p.id : null, at: ctx.at || null, via: p && ctx.via != null ? ctx.via : null, status: 'todo', prio: 'm', brands: p ? [...(p.brands || [])] : [...UI.fb], team: p ? p.team || '' : UI.ft || '', who: p ? [...(p.who || [])] : UI.who ? [UI.who] : [], f: {}, chk: [], anc: [], links: [], by: store.name, t: Date.now() };
   if (C.s === 'periodo') n.w = 220;
+  if (['pill', 'outline', 'mini'].includes(C.s) && cfg().pillSize && cfg().pillSize !== 'm') n.sz = cfg().pillSize;
   if (cat === 'canal') n.f.rede = 'TikTok';
   if (cat === 'loja') n.f.loja = LOJAS[store.board][0];
   tx(() => putNode(n)); refresh(); NODES.forEach((el, k) => el.classList.toggle('sel', k === n.id)); return n.id;
@@ -2027,6 +2029,7 @@ const ACT = {
       tx(() => { const a1 = N(x), b1 = N(y); a1.links = (a1.links || []).filter(k => k !== y); b1.links = (b1.links || []).filter(k => k !== x); putNode(a1); putNode(b1); }); refresh(); toast('Conexão apagada', 'g'); }
   },
   'ed-ln': a => edSet(n => (n.ln = a.dataset.v)),
+  'cfg-sz': a => { cfgSet('pillSize', a.dataset.v); render(); },
   'ed-sz': a => edSet(n => { if (a.dataset.v === 'm') delete n.sz; else n.sz = a.dataset.v; }),
   'ed-tail': () => edSet(n => { n.tail = n.tail > 0 ? 0 : 180; }),
   'ed-rep': () => edSet(n => { n.rep = !n.rep; if (n.rep && !n.rid) n.rid = n.id; }),
