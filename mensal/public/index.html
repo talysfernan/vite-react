@@ -178,6 +178,31 @@ h3{font-size:13px;font-weight:600}
 .static,.static .rise,.static .bar-fill,.static .bar-anim{animation:none!important}
 .tbl tr.subrow td{color:var(--muted);font-size:12px;background:rgba(0,0,0,.15)}
 .tbl .nm{display:flex;align-items:center;gap:9px}
+/* calculadora de custos de logística */
+.brandbar[hidden]{display:none}
+.lgt{min-width:880px}
+.lgt td{padding:5px 8px;vertical-align:middle}.lgt th{padding:9px 8px;vertical-align:bottom}
+.lgt th small{display:block;font-size:10.5px;color:var(--dim);font-weight:400;margin-top:2px}
+.lgt th.lg-ha{color:#4ade80}.lgt th.lg-hb{color:#60a5fa}
+.lgt .inp.sm{height:30px;background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.07)}
+.lgt .inp.sm:hover{border-color:var(--line-2)}.lgt .inp.sm:focus{background:var(--well)}
+.lgt .lg-name{min-width:260px;font-weight:500}
+.lgt td:nth-child(2) .inp{width:120px;margin-left:auto}
+.lg-u{display:flex;align-items:center;justify-content:flex-end;gap:6px}.lg-u em,.lg-pct em{font-style:normal;color:var(--dim);font-size:11.5px}.lg-u .inp{width:96px}
+.lgt td.lg-t{color:var(--text);font-variant-numeric:tabular-nums}
+.lgt td.lg-a .inp{width:120px;margin-left:auto;border-color:rgba(74,222,128,.28);background:rgba(74,222,128,.05)}
+.lgt td.lg-a .inp:focus{border-color:rgba(74,222,128,.6);box-shadow:0 0 0 3px rgba(74,222,128,.12)}
+.lgt td.lg-b{color:#93c5fd;font-variant-numeric:tabular-nums}.lgt td.neg{color:var(--red)}
+.lgt td.lg-x{width:34px}.lgt td.lg-x .pill{opacity:0;transition:opacity .2s}.lgt tr:hover td.lg-x .pill{opacity:1}
+.lgt tr.lg-g td{padding:16px 8px 6px;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line)}
+.lgt tr.lg-add td{border-bottom:0;padding:6px 8px 10px}
+.lgt tr.lg-sum td{font-weight:600;background:rgba(255,255,255,.025);border-bottom:1px solid rgba(255,255,255,.05);padding:10px 8px;font-variant-numeric:tabular-nums}
+.lgt tr.lg-sum td:first-child{text-align:left}.lgt tr.lg-sum.soft td{font-weight:400;color:var(--text-2);background:transparent}
+.lgt tr.lg-sum td:nth-child(3){color:#4ade80}.lgt tr.lg-sum td:nth-child(4){color:#93c5fd}
+.lgt tr.lg-sum.total td{font-size:14px;background:rgba(255,255,255,.05);border-top:1px solid var(--line-2)}
+.lg-pct{display:inline-flex;align-items:center;gap:5px;margin-left:8px}.lg-pct .inp{width:64px}
+.lg-cfg{gap:10px;align-items:flex-end;flex-wrap:wrap}.lg-cfg .field{width:160px}
+.lg-card .k{display:flex;align-items:center;gap:8px;color:var(--text-2);font-size:12.5px}.lg-card .v{font-size:26px;font-weight:650;margin:8px 0 2px;font-variant-numeric:tabular-nums}
 .scroll-x{overflow-x:auto}
 .split{display:flex;height:6px;border-radius:3px;overflow:hidden;gap:2px;min-width:90px;background:rgba(255,255,255,.04)}
 .split i{display:block;height:100%;border-radius:3px}
@@ -957,7 +982,7 @@ function applyRemote() {
   if (!store.pendingRemote || store.running || store.dirty) return; // edição local pendente tem prioridade; reaplica após salvar
   store.pendingRemote = false;
   const merged = {};
-  for (const [p, v] of Object.entries(remote)) merged[p] = v;
+  for (const [p, v] of Object.entries(remote)) if (!p.startsWith('logi/')) merged[p] = v;
   const changed = Object.keys(merged).some(p => JSON.stringify(merged[p]) !== store.sent[p]) || Object.keys(store.sent).some(p => !(p in merged));
   if (!changed) return;
   if (!merged['app/config'] && !Object.keys(merged).some(p => p.startsWith('brands/'))) return;
@@ -1070,7 +1095,8 @@ async function apiPoll() {
   const docs = r.data.docs || {};
   if (!Object.keys(docs).length) return;
   for (const [p, b] of Object.entries(docs)) { if (b === null) delete remote[p]; else remote[p] = b; }
-  store.pendingRemote = true; applyRemote();
+  if (Object.keys(docs).some(p => p.startsWith('logi/'))) logiRemote();
+  if (Object.keys(docs).some(p => !p.startsWith('logi/'))) { store.pendingRemote = true; applyRemote(); }
 }
 document.addEventListener('visibilitychange', () => { if (!document.hidden && isApi()) apiPoll(); });
 async function apiBackups() { const r = await apiFetch('/api/backups'); return r.ok ? r.data.backups || [] : []; }
@@ -1112,7 +1138,7 @@ async function bootStore() {
   if (/^https?:$/.test(location.protocol)) {
     const r = await apiFetch('/api/session').catch(() => null);
     if (r && r.ok && 'role' in r.data) {
-      store.mode = 'api'; store.role = r.data.role;
+      store.mode = 'api'; store.role = r.data.role; store.master = !!r.data.master;
       if (store.role) await apiLoad();
       return;
     }
@@ -1285,13 +1311,14 @@ function render() {
   saveUi(); closePop(); hideTip();
   if (!brandById(ui.scope)) ui.scope = state.brands[0].id;
   const scopes = state.brands;
-  const views = [['dash', 'Painel'], ['entry', 'Fechamento'], ['products', 'Produtos'], ['compare', 'Comparativo']];
+  if (ui.view === 'logi' && !isMaster()) ui.view = 'dash';
+  const views = [['dash', 'Painel'], ['entry', 'Fechamento'], ['products', 'Produtos'], ['compare', 'Comparativo'], ...(isMaster() ? [['logi', 'Logística']] : [])];
   $('#app').innerHTML = `
   ${state.logo ? `<div class="hero"><img src="${state.logo}" alt="Logo" id="hero-logo" style="height:${state.logoSize}px"></div>` : ''}
   <div class="titlebar" id="titlebar">${titlePillHTML()}</div>
   <header class="top">
     <div class="top-l">
-      <nav class="seg">${views.map(([k, l]) => `<button class="pill ${ui.view === k ? 'on' : ''}" data-act="view" data-v="${k}">${l}</button>`).join('')}</nav></div>
+      <nav class="seg">${views.map(([k, l]) => `<button class="pill ${ui.view === k ? 'on' : ''}" data-act="view" data-v="${k}" ${k === 'logi' ? 'title="Calculadora de custos de logística · só o mestre"' : ''}>${k === 'logi' ? LG_ICON : ''}${l}</button>`).join('')}</nav></div>
     <div class="month">
       <button class="pill icon" data-act="mprev" aria-label="Mês anterior">${ic('l')}</button>
       <button class="month-btn" data-act="mpick" id="mbtn"><span class="dot ${anyScopeData(ui.month) ? 'g' : ''}"></span>${mlabel(ui.month)}${ic('down', 'width:14px;color:var(--muted)')}</button>
@@ -1299,7 +1326,7 @@ function render() {
     </div>
     <div class="top-r"><div class="save-st" id="savest"></div></div>
   </header>
-  <div class="brandbar">${scopes.map(s => `<button class="pill sm ${ui.scope === s.id ? 'on' : ''}" data-act="scope" data-v="${s.id}"><span class="dot" style="background:${s.accent};box-shadow:0 0 10px ${s.accent}80"></span>${esc(s.name)}</button>`).join('')}
+  <div class="brandbar" ${ui.view === 'logi' ? 'hidden' : ''}>${scopes.map(s => `<button class="pill sm ${ui.scope === s.id ? 'on' : ''}" data-act="scope" data-v="${s.id}"><span class="dot" style="background:${s.accent};box-shadow:0 0 10px ${s.accent}80"></span>${esc(s.name)}</button>`).join('')}
     <span class="sp"></span><span class="sub">leitura de fechamento · ${esc(scopeName())}</span></div>
   <main id="main"></main>
   `;
@@ -1318,7 +1345,7 @@ const scopeName = () => curBrand()?.name || '';
 const anyScopeData = mk => { const b = curBrand(); return !!b && monthHasData(b, mk); };
 function renderMain(keepScroll) {
   const y = scrollY;
-  const V = { dash: viewDash, entry: viewEntry, products: viewProducts, compare: viewCompare, settings: viewSettings }[ui.view] || viewDash;
+  const V = { dash: viewDash, entry: viewEntry, products: viewProducts, compare: viewCompare, settings: viewSettings, logi: viewLogi }[ui.view] || viewDash;
   $('#main').innerHTML = `<div class="view${keepScroll ? ' static' : ''}">${V()}</div>`;
   if (keepScroll) scrollTo(0, y);
   postRender();
@@ -1329,9 +1356,9 @@ function paintSaveStatus() {
   let h;
   if (store.mode === 'cloud' || isApi()) {
     if (store.readonly) h = `<span class="dot r"></span>Somente leitura`;
-    else if (store.saving) h = `<span class="dot b"></span>Salvando na nuvem…`;
+    else if (store.saving || (typeof LG !== 'undefined' && LG.saving)) h = `<span class="dot b"></span>Salvando na nuvem…`;
     else if (store.error) h = `<span class="dot r"></span>${esc(store.error)}`;
-    else if (store.dirty) h = `<span class="dot y"></span>Alterações pendentes`;
+    else if (store.dirty || (typeof LG !== 'undefined' && LG.dirty)) h = `<span class="dot y"></span>Alterações pendentes`;
     else h = `<span class="dot g"></span>${isApi() ? 'Servidor' : 'Nuvem'} · ${store.lastSave ? 'salvo ' + t(store.lastSave) : 'sincronizado'}`;
   } else if (store.mode === 'offline') h = `<span class="dot r"></span>Sem conexão com a nuvem`;
   else h = store.dirty ? `<span class="dot y"></span>Local · sem backup` : `<span class="dot w"></span>Local`;
@@ -1956,7 +1983,128 @@ function monthCtx() {
   return { b, m };
 }
 
+/* =================== CALCULADORA DE CUSTOS DE LOGÍSTICA (só o mestre) ===================
+   Separada de tudo: guarda em logi/<mês>, não lê nem altera marcas, canais, meses ou a DRE. */
+const isMaster = () => isApi() && !!store.master;
+const LG_ICON = '<svg viewBox="0 0 24 24" style="width:14px;height:14px;margin-right:6px;vertical-align:-2px" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M8.5 7h7M8.5 11h.01M12 11h.01M15.5 11h.01M8.5 14.5h.01M12 14.5h.01M15.5 14.5h.01M8.5 18h.01M12 18h3.5"/></svg>';
+const LOGI_TPL = [
+  ['op', 'qty', 'Armazenagem Pallets (Até 3 Sku)', 100], ['op', 'qty', 'Movimento de Entrada Palete', 40], ['op', 'qty', 'Movimento de Entrada Volume', 1.5],
+  ['op', 'qty', 'Movimento de Saída B2C - Unidade', 3], ['op', 'qty', 'Movimento de Saída B2B - Unidades/Caixa fechada', 5], ['op', 'pct', 'Pico de valor armazenado', 0.3],
+  ['ex', 'qty', 'Insumos Operacionais', 0.7], ['ex', 'qty', 'Caixas de Embarque', 4], ['ex', 'qty', 'Expedição emergencial', 2], ['ex', 'qty', 'Diarista - Preparação envio Full', 285],
+  ['ex', 'qty', 'Envio Marketplace', 2], ['ex', 'qty', 'Movimento entrada - Devoluções', 2], ['ex', 'fixed', 'Sala comercial', 1000]
+];
+const LG = { mk: null, d: null, dirty: false, timer: null, saving: false };
+function logiNew(mk) {
+  const prev = Object.keys(remote).filter(p => p.startsWith('logi/') && p.slice(5) < mk).sort().pop();
+  const P = prev && remote[prev];
+  const rows = P && P.rows && P.rows.length ? P.rows.map(r => ({ id: uid(), g: r.g, kind: r.kind, name: r.name, q: r.kind === 'fixed' ? 1 : 0, u: r.u, a: 0 }))
+    : LOGI_TPL.map(([g, kind, name, u]) => ({ id: uid(), g, kind, name, q: kind === 'fixed' ? 1 : 0, u, a: 0 }));
+  const bs = state.brands;
+  return { rows, min: P ? num(P.min) : 5000, tax: P ? num(P.tax) : 18, aName: P?.aName || bs[0]?.name || 'Marca A', bName: P?.bName || bs[1]?.name || 'Marca B', note: '' };
+}
+function logiDoc() {
+  if (LG.mk !== ui.month || !LG.d) { LG.mk = ui.month; LG.d = remote['logi/' + ui.month] ? clone(remote['logi/' + ui.month]) : logiNew(ui.month); LG.dirty = false; }
+  return LG.d;
+}
+const lgTotal = r => (r.kind === 'fixed' ? num(r.u) : r.kind === 'pct' ? num(r.q) * num(r.u) / 100 : num(r.q) * num(r.u));
+function logiCalc(d) {
+  const sum = g => d.rows.filter(r => r.g === g).reduce((o, r) => { o.t += lgTotal(r); o.a += num(r.a); return o; }, { t: 0, a: 0 });
+  const op = sum('op'), ex = sum('ex'), min = num(d.min);
+  const fill = op.t < min ? min - op.t : 0, fillA = fill && op.t ? fill * op.a / op.t : 0;
+  const opT = op.t + fill, opA = op.a + fillA;
+  /* imposto "por dentro", como na fatura: total = sub-total ÷ (1 − alíquota) */
+  const sub = opT + ex.t, subA = opA + ex.a, k = Math.min(.95, Math.max(0, num(d.tax) / 100));
+  const total = sub / (1 - k), totalA = subA / (1 - k);
+  return { op, ex, fill, fillA, opT, opA, sub, subA, tax: total - sub, taxA: totalA - subA, total, totalA };
+}
+const lgMoney = n => fmt.brl(r2(n));
+const lgIn = v => (v ? DEC.format(v) : '');
+function lgRowHTML(r) {
+  const t = lgTotal(r), b = r2(t) - r2(num(r.a));
+  const qCell = r.kind === 'fixed' ? '<span class="dim">—</span>' : `<input class="inp sm r lg-in" data-lg="${r.id}" data-k="q" value="${r.kind === 'pct' ? lgIn(num(r.q)) : r.q ? String(r.q).replace('.', ',') : ''}" placeholder="${r.kind === 'pct' ? 'R$ armazenado' : '0'}" inputmode="decimal">`;
+  return `<tr data-lgr="${r.id}">
+    <td><input class="inp sm lg-name" data-lg="${r.id}" data-k="name" value="${esc(r.name)}" placeholder="Atividade"></td>
+    <td>${qCell}</td>
+    <td><div class="lg-u">${r.kind === 'pct' ? '' : '<em>R$</em>'}<input class="inp sm r lg-in" data-lg="${r.id}" data-k="u" value="${lgIn(num(r.u))}" inputmode="decimal">${r.kind === 'pct' ? '<em>%</em>' : ''}</div></td>
+    <td class="num lg-t" data-lgt="${r.id}">${lgMoney(t)}</td>
+    <td class="lg-a"><input class="inp sm r lg-in" data-lg="${r.id}" data-k="a" value="${lgIn(num(r.a))}" placeholder="0,00" inputmode="decimal"></td>
+    <td class="num lg-b ${b < 0 ? 'neg' : ''}" data-lgb="${r.id}">${lgMoney(b)}</td>
+    <td class="lg-x"><button class="pill sm icon ghost danger" data-act="lg-del" data-v="${r.id}" aria-label="Excluir linha">${ic('x')}</button></td></tr>`;
+}
+function lgSumRow(cls, label, t, a, extra = '') { return `<tr class="lg-sum ${cls}"><td colspan="3">${label}${extra}</td><td class="num">${lgMoney(t)}</td><td class="num">${lgMoney(a)}</td><td class="num ${t - a < -0.004 ? 'neg' : ''}">${lgMoney(t - a)}</td><td></td></tr>`; }
+function lgFootHTML(c, d) {
+  return `${c.fill ? lgSumRow('soft', 'Complemento do faturamento mínimo', c.fill, c.fillA, ' <span class="dim">· dividido na proporção</span>') : ''}
+    ${lgSumRow('', 'Sub-total operação', c.opT, c.opA, ` <span class="dim">· mínimo ${lgMoney(num(d.min))}</span>`)}`;
+}
+function lgEndHTML(c, d) {
+  return `${lgSumRow('', 'Sub-total', c.sub, c.subA)}
+    ${lgSumRow('soft', `Imposto <span class="dim">(por dentro)</span> <span class="lg-pct"><input class="inp sm r lg-in" data-lgc="tax" value="${lgIn(num(d.tax))}" inputmode="decimal"><em>%</em></span>`, c.tax, c.taxA, ' <span class="dim">· dividido na proporção</span>')}
+    ${lgSumRow('total', 'Total', c.total, c.totalA)}`;
+}
+function viewLogi() {
+  const d = logiDoc(), c = logiCalc(d);
+  const head = `<thead><tr><th>Atividade</th><th>Quantidade</th><th>Valor unitário</th><th>Valor total</th><th class="lg-ha">${esc(d.aName)}<small>custo equivalente</small></th><th class="lg-hb">${esc(d.bName)}<small>saldo</small></th><th></th></tr></thead>`;
+  const rows = g => d.rows.filter(r => r.g === g).map(lgRowHTML).join('');
+  const add = g => `<tr class="lg-add"><td colspan="7"><button class="pill sm ghost" data-act="lg-add" data-v="${g}">${ic('plus')}Adicionar linha</button></td></tr>`;
+  return `<div class="between mb rise" style="--d:0"><div><h1>Calculadora de custos de logística</h1><div class="sub">${mlabel(ui.month)} · só você vê · não entra em nenhum cálculo do painel</div></div>
+    <div class="row lg-cfg"><label class="field"><span>Marca A</span><input class="inp sm" data-lgc="aName" value="${esc(d.aName)}"></label><label class="field"><span>Marca B (saldo)</span><input class="inp sm" data-lgc="bName" value="${esc(d.bName)}"></label><label class="field"><span>Faturamento mínimo</span><input class="inp sm r lg-in" data-lgc="min" value="${lgIn(num(d.min))}" inputmode="decimal"></label></div></div>
+  <div class="node pad scroll-x rise lg" style="--d:1"><table class="tbl lgt">${head}
+    <tbody><tr class="lg-g"><td colspan="7">Operação</td></tr>${rows('op')}${add('op')}</tbody>
+    <tbody id="lg-f1">${lgFootHTML(c, d)}</tbody>
+    <tbody><tr class="lg-g"><td colspan="7">Serviços e extras</td></tr>${rows('ex')}${add('ex')}</tbody>
+    <tbody id="lg-f2">${lgEndHTML(c, d)}</tbody></table></div>
+  <div class="grid g2 mt2 rise" style="--d:2"><div class="node pad lg-card"><div class="k"><span class="dot" style="background:#4ade80"></span>${esc(d.aName)}</div><div class="v" id="lg-ta">${lgMoney(c.totalA)}</div><div class="muted" id="lg-pa">${fmt.pct(div(c.totalA, c.total))} do total</div></div>
+    <div class="node pad lg-card"><div class="k"><span class="dot" style="background:#60a5fa"></span>${esc(d.bName)}</div><div class="v" id="lg-tb">${lgMoney(c.total - c.totalA)}</div><div class="muted" id="lg-pb">${fmt.pct(div(c.total - c.totalA, c.total))} do total</div></div></div>
+  <div class="mt2 rise" style="--d:3"><label class="field"><span>Observações do mês</span><input class="inp" data-lgc="note" value="${esc(d.note || '')}" placeholder="opcional"></label></div>`;
+}
+/* atualiza só os números, sem redesenhar (mantém o foco) */
+function logiPaint() {
+  const d = LG.d, c = logiCalc(d);
+  d.rows.forEach(r => { const t = lgTotal(r), b = r2(t) - r2(num(r.a)), te = $(`[data-lgt="${r.id}"]`), be = $(`[data-lgb="${r.id}"]`); if (te) te.textContent = lgMoney(t); if (be) { be.textContent = lgMoney(b); be.classList.toggle('neg', b < 0); } });
+  const f1 = $('#lg-f1'); if (f1) f1.innerHTML = lgFootHTML(c, d);
+  const f2 = $('#lg-f2'), a = document.activeElement, keep = a && a.dataset && a.dataset.lgc === 'tax' ? [a.selectionStart, a.value] : null;
+  if (f2) { f2.innerHTML = lgEndHTML(c, d); if (keep) { const i = $('[data-lgc="tax"]', f2); i.value = keep[1]; i.focus(); i.setSelectionRange(keep[0], keep[0]); } }
+  const set = (id, v) => { const e = $(id); if (e) e.textContent = v; };
+  set('#lg-ta', lgMoney(c.totalA)); set('#lg-tb', lgMoney(c.total - c.totalA));
+  set('#lg-pa', fmt.pct(div(c.totalA, c.total)) + ' do total'); set('#lg-pb', fmt.pct(div(c.total - c.totalA, c.total)) + ' do total');
+}
+function logiSave() { LG.dirty = true; clearTimeout(LG.timer); LG.timer = setTimeout(logiFlush, 700); paintSaveStatus(); }
+async function logiFlush() {
+  if (!LG.dirty || !LG.d || !isMaster()) return;
+  if (LG.saving) { LG.timer = setTimeout(logiFlush, 400); return; }
+  LG.saving = true; const mk = LG.mk, body = clone(LG.d); LG.dirty = false;
+  const r = await apiFetch('/api/docs', { method: 'POST', body: JSON.stringify({ ops: [{ path: 'logi/' + mk, body }] }) }).catch(() => null);
+  LG.saving = false;
+  if (r && r.ok) remote['logi/' + mk] = body;
+  else { LG.dirty = true; toast('Calculadora: falha ao salvar — tentando de novo', 'r'); LG.timer = setTimeout(logiFlush, 4000); }
+  paintSaveStatus();
+}
+function logiRemote() {
+  if (ui.view !== 'logi' || LG.dirty || LG.saving) return;
+  const fresh = remote['logi/' + ui.month];
+  if (!fresh || JSON.stringify(fresh) === JSON.stringify(LG.d)) return;
+  const a = document.activeElement; if (a && $('#main').contains(a) && /INPUT/.test(a.tagName)) return;
+  LG.mk = null; renderMain(true);
+}
+window.addEventListener('beforeunload', () => { if (LG.dirty) logiFlush(); });
+document.addEventListener('input', e => {
+  const el = e.target; if (ui.view !== 'logi' || !LG.d) return;
+  if (el.dataset.lg) {
+    const r = LG.d.rows.find(x => x.id === el.dataset.lg); if (!r) return;
+    r[el.dataset.k] = el.dataset.k === 'name' ? el.value : parseNum(el.value);
+    if (el.dataset.k !== 'name') logiPaint(); logiSave(); return;
+  }
+  if (el.dataset.lgc) {
+    const k = el.dataset.lgc; LG.d[k] = ['min', 'tax'].includes(k) ? parseNum(el.value) : el.value;
+    if (k === 'aName' || k === 'bName') { const h = $(k === 'aName' ? '.lg-ha' : '.lg-hb'); if (h) h.firstChild.textContent = el.value; }
+    if (['min', 'tax'].includes(k)) logiPaint(); logiSave();
+  }
+});
+document.addEventListener('focusout', e => { const el = e.target; if (ui.view === 'logi' && el.classList && el.classList.contains('lg-in') && el.value.trim()) { const k = el.dataset.k, n = parseNum(el.value); if (k !== 'q' || el.placeholder === 'R$ armazenado') el.value = n ? DEC.format(n) : ''; } });
+
 const ACT = {
+  'lg-add': a => { const d = LG.d; if (!d) return; const r = { id: uid(), g: a.dataset.v, kind: 'qty', name: '', q: 0, u: 0, a: 0 }; const last = d.rows.map(x => x.g).lastIndexOf(a.dataset.v); d.rows.splice(last + 1, 0, r); logiSave(); renderMain(true); $(`[data-lg="${r.id}"][data-k="name"]`)?.focus(); },
+  'lg-del': a => { const d = LG.d, r = d && d.rows.find(x => x.id === a.dataset.v); if (!r) return; openModal({ title: 'Excluir linha', body: `<p>Excluir <b>${esc(r.name || 'esta linha')}</b> da calculadora deste mês?</p>`, actions: [{ label: 'Cancelar' }, { label: 'Excluir', danger: true, act: () => { d.rows = d.rows.filter(x => x !== r); logiSave(); renderMain(true); } }] }); },
   view: a => { const go = () => { ui.view = a.dataset.v; render(); scrollTo({ top: 0 }); }; ['entry', 'settings'].includes(a.dataset.v) ? requireAdmin(go) : go(); },
   'pin-save': a => changePin(a.dataset.v),
   lock: () => lockNow(),

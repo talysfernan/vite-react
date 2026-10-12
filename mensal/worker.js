@@ -4,7 +4,7 @@ var __name = (target, value) => __defProp(target, "name", { value, configurable:
 // src/index.js
 import { WorkerEntrypoint } from "cloudflare:workers";
 var enc = new TextEncoder();
-var PATH_RE = /^(app|brands|products|months|sum)\/[A-Za-z0-9_\-.~:@+]{1,200}$/;
+var PATH_RE = /^(app|brands|products|months|sum|logi)\/[A-Za-z0-9_\-.~:@+]{1,200}$/;
 var json = /* @__PURE__ */ __name((d, s = 200, h = {}) => new Response(JSON.stringify(d), { status: s, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store", ...h } }), "json");
 var b64u = /* @__PURE__ */ __name((buf) => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""), "b64u");
 async function sha(s) {
@@ -60,10 +60,10 @@ __name(ownSession, "ownSession");
 var PANEL_KEY = "mensal";
 async function session(req, env) {
   const own = await ownSession(req, env);
-  if (own) return own;
+  if (own) return { ...own, master: own.role === "admin" };
   try {
     const r = await env.QUINTAL.check(req.headers.get("cookie") || "", PANEL_KEY, false);
-    return r && r.role ? { role: r.role, name: r.name } : null;
+    return r && r.role ? { role: r.role, name: r.name, master: r.role === "admin" && r.name === "admin" } : null;
   } catch (e) {
     return null;
   }
@@ -75,8 +75,9 @@ async function tooMany(env, ip) {
 }
 __name(tooMany, "tooMany");
 var dayBR = /* @__PURE__ */ __name((t = Date.now()) => new Date(t - 3 * 36e5).toISOString().slice(0, 10), "dayBR");
-async function allDocs(env) {
-  const { results } = await env.DB.prepare("SELECT path, body FROM docs WHERE body != 'null'").all();
+var LOGI = /* @__PURE__ */ __name((master) => master ? "" : " AND path NOT LIKE 'logi/%'", "LOGI");
+async function allDocs(env, master = true) {
+  const { results } = await env.DB.prepare("SELECT path, body FROM docs WHERE body != 'null'" + LOGI(master)).all();
   const docs = {};
   for (const r of results) docs[r.path] = JSON.parse(r.body);
   return docs;
@@ -122,10 +123,10 @@ async function api(req, env, url) {
   }
   if (p === "/api/session") {
     const own = await ownSession(req, env);
-    if (own) return json({ role: own.role, name: "emerg\xEAncia" });
+    if (own) return json({ role: own.role, name: "emerg\xEAncia", master: own.role === "admin" });
     try {
       const r = await env.QUINTAL.check(req.headers.get("cookie") || "", PANEL_KEY, true);
-      return json({ role: r?.role || null, name: r?.name || null, reason: r?.reason || null, sso: true, glitch: r?.glitch !== false });
+      return json({ role: r?.role || null, name: r?.name || null, master: r?.role === "admin" && r?.name === "admin", reason: r?.reason || null, sso: true, glitch: r?.glitch !== false });
     } catch (e) {
       return json({ role: null, down: true });
     }
@@ -133,10 +134,10 @@ async function api(req, env, url) {
   const s = await session(req, env);
   if (!s) return json({ error: "login" }, 401);
   const admin = s.role === "admin";
-  if (p === "/api/docs" && method === "GET") return json({ docs: await allDocs(env), now: Date.now() });
+  if (p === "/api/docs" && method === "GET") return json({ docs: await allDocs(env, s.master), now: Date.now() });
   if (p === "/api/changes" && method === "GET") {
     const since = +url.searchParams.get("since") || 0;
-    const { results } = await env.DB.prepare("SELECT path, body FROM docs WHERE updated > ?").bind(since).all();
+    const { results } = await env.DB.prepare("SELECT path, body FROM docs WHERE updated > ?" + LOGI(s.master)).bind(since).all();
     const docs = {};
     for (const r of results) docs[r.path] = JSON.parse(r.body);
     return json({ docs, now: Date.now() });
@@ -148,7 +149,7 @@ async function api(req, env, url) {
     const now = Date.now(), stmts = [];
     for (const o of ops) {
       if (!o || typeof o.path !== "string" || !PATH_RE.test(o.path)) return json({ error: "bad path " + o?.path }, 400);
-      if (!admin && !empty && !o.path.startsWith("products/")) return json({ error: "admin" }, 403);
+      if (o.path.startsWith("logi/") ? !s.master : !admin && !empty && !o.path.startsWith("products/")) return json({ error: "admin" }, 403);
       const body = o.body === null ? "null" : JSON.stringify(o.body);
       if (body.length > 15e5) return json({ error: "too large " + o.path }, 413);
       stmts.push(env.DB.prepare("INSERT INTO docs(path,body,updated) VALUES(?,?,?) ON CONFLICT(path) DO UPDATE SET body=excluded.body, updated=excluded.updated").bind(o.path, body, now));
@@ -171,7 +172,7 @@ async function api(req, env, url) {
   if (p === "/api/backups/now" && method === "POST") return json({ day: await snapshot(env) });
   const bm = p.match(/^\/api\/backups\/(\d{4}-\d{2}-\d{2})$/);
   if (bm && method === "GET") {
-    const { results } = await env.DB.prepare("SELECT path, body FROM backup_docs WHERE day=?").bind(bm[1]).all();
+    const { results } = await env.DB.prepare("SELECT path, body FROM backup_docs WHERE day=?" + LOGI(s.master)).bind(bm[1]).all();
     const docs = {};
     for (const r of results) docs[r.path] = JSON.parse(r.body);
     return json({ format: "painel-caos-docs-v1", exportedAt: bm[1], docs });
