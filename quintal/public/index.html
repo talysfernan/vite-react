@@ -349,7 +349,10 @@ input::-ms-reveal,input::-ms-clear{display:none}
 .lcard .hint{margin-bottom:8px}
 .lf{position:relative;display:block}.lf svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--dim);pointer-events:none}
 .lf .inp{height:44px;padding-left:38px;border-radius:12px;font-size:14px}
-.lcard .msg{min-height:18px;font-size:12px;color:var(--red)}
+.lcard .msg{min-height:18px;font-size:12px;color:var(--red)}.lcard .msg.good{color:var(--green)}
+.lf[hidden],.lalt button[hidden]{display:none}
+.lcode{letter-spacing:.3em;font-variant-numeric:tabular-nums}.lcode::placeholder{letter-spacing:0}
+.lalt{display:flex;justify-content:center;gap:14px;margin-top:2px}.lalt button{background:none;border:0;padding:4px 2px;font:inherit;font-size:12px;color:var(--muted);cursor:pointer;transition:color .2s var(--ease)}.lalt button:hover{color:var(--text)}.lalt button:disabled{opacity:.5}
 .lgo{height:44px;justify-content:center;border-radius:12px;font-size:14px}
 .lgo:disabled{opacity:.6}
 /* ---------- cadastro de usuários ---------- */
@@ -544,30 +547,65 @@ function loginPop() {
     const s = document.createElement('div'); s.className = 'lscrim'; s.id = 'login';
     s.innerHTML = `<div class="lcard" role="dialog" aria-label="Entrar">
       <div class="lcat">${CAT_SVG}</div>
-      <h2>Entrar no quintal</h2><p class="hint">Seu usuário e sua senha do CAO(S)</p>
+      <h2>Entrar no quintal</h2><p class="hint" id="lg-h">Seu usuário e sua senha do CAO(S)</p>
       <label class="lf">${ic('at', 'width:15px;height:15px')}<input class="inp" id="lg-u" placeholder="usuário" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" data-lpignore="true" data-1p-ignore data-form-type="other"></label>
-      <label class="lf">${ic('lock', 'width:15px;height:15px')}<input ${pwdAttrs} id="lg-p" placeholder="senha"></label>
+      <label class="lf" id="lg-pf">${ic('lock', 'width:15px;height:15px')}<input ${pwdAttrs} id="lg-p" placeholder="senha"></label>
+      <label class="lf" id="lg-cf" hidden>${ic('lock', 'width:15px;height:15px')}<input class="inp lcode" id="lg-c" placeholder="código de 6 dígitos" inputmode="numeric" maxlength="6" autocomplete="one-time-code" spellcheck="false"></label>
       <div class="msg" id="lg-m"></div>
-      <button class="pill white lgo" id="lg-go">Entrar ${ic('arrow', 'width:14px;height:14px')}</button></div>`;
+      <button class="pill white lgo" id="lg-go">Entrar ${ic('arrow', 'width:14px;height:14px')}</button>
+      <div class="lalt"><button id="lg-alt">Entrar com código por e-mail</button><button id="lg-re" hidden>Reenviar código</button></div></div>`;
     document.body.appendChild(s);
-    const card = $('.lcard', s), un = $('#lg-u'), pw = $('#lg-p'), m = $('#lg-m'), go = $('#lg-go');
+    const card = $('.lcard', s), un = $('#lg-u'), pw = $('#lg-p'), m = $('#lg-m'), go = $('#lg-go'), hint = $('#lg-h'), pf = $('#lg-pf'), cf = $('#lg-cf'), cd = $('#lg-c'), alt = $('#lg-alt'), re = $('#lg-re');
     setTimeout(() => un.focus(), 80);
-    let busy = false;
-    const fail = t => { m.textContent = t; card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake'); };
+    let busy = false, mode = 'pass';
+    const fail = t => { m.classList.remove('good'); m.textContent = t; card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake'); };
+    const good = t => { m.classList.add('good'); m.textContent = t; };
+    const arrow = ic('arrow', 'width:14px;height:14px');
+    /* senha · pedir código · digitar código — troca no lugar, sem recriar a janela */
+    const setMode = md => {
+      mode = md; m.textContent = ''; m.classList.remove('good');
+      pf.hidden = md !== 'pass'; cf.hidden = md !== 'code'; re.hidden = md !== 'code';
+      un.placeholder = md === 'pass' ? 'usuário' : 'usuário ou e-mail';
+      hint.textContent = md === 'pass' ? 'Seu usuário e sua senha do CAO(S)' : md === 'ask' ? 'Enviamos um código para o e-mail do seu cadastro' : 'Digite o código que chegou no seu e-mail';
+      go.innerHTML = (md === 'ask' ? 'Receber código ' : 'Entrar ') + arrow;
+      alt.textContent = md === 'pass' ? 'Entrar com código por e-mail' : 'Entrar com senha';
+      setTimeout(() => (md === 'code' ? cd : md === 'pass' && un.value.trim() ? pw : un).focus(), 30);
+    };
+    const done = () => { pw.value = ''; cd.value = ''; card.classList.add('ok'); s.classList.add('out'); setTimeout(() => s.remove(), 450); resolve(true); };
+    const send = async () => {
+      if (!un.value.trim()) return fail('Digite seu usuário ou e-mail'), un.focus();
+      busy = true; go.disabled = re.disabled = true;
+      const r = await api('/api/code/send', { method: 'POST', body: JSON.stringify({ who: un.value.trim() }) });
+      busy = false; go.disabled = re.disabled = false;
+      if (!r.ok) return fail(r.status === 429 ? r.data.error : 'Não foi possível enviar agora');
+      if (mode !== 'code') setMode('code');
+      good('Se houver um e-mail no cadastro, o código chega em instantes. Vale 10 min.');
+    };
     const submit = async () => {
       if (busy) return;
-      if (!un.value.trim()) return fail('Digite seu usuário'), un.focus();
+      if (mode === 'ask') return send();
+      if (!un.value.trim()) return fail(mode === 'pass' ? 'Digite seu usuário' : 'Digite seu usuário ou e-mail'), un.focus();
+      if (mode === 'code') {
+        const c = cd.value.replace(/\D/g, '');
+        if (c.length !== 6) return fail('Digite os 6 dígitos'), cd.focus();
+        busy = true; go.disabled = true; m.textContent = '';
+        const r = await api('/api/code/verify', { method: 'POST', body: JSON.stringify({ who: un.value.trim(), code: c }) });
+        busy = false; go.disabled = false;
+        if (!r.ok) { cd.value = ''; cd.focus(); return fail(r.data.error || 'Código incorreto'); }
+        return done();
+      }
       if (!pw.value) return fail('Digite a senha'), pw.focus();
       busy = true; go.disabled = true; m.textContent = '';
       const r = await api('/api/login', { method: 'POST', body: JSON.stringify({ user: un.value.trim(), pass: pw.value }) });
       busy = false; go.disabled = false;
       if (!r.ok) { pw.value = ''; pw.focus(); return fail(r.status === 429 ? r.data.error : r.data.error || 'Usuário ou senha incorretos'); }
-      pw.value = '';
-      card.classList.add('ok'); s.classList.add('out'); setTimeout(() => s.remove(), 450);
-      resolve(true);
+      done();
     };
     go.addEventListener('click', submit);
-    [un, pw].forEach(i => i.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); if (i === un && !pw.value) pw.focus(); else submit(); } }));
+    alt.addEventListener('click', () => setMode(mode === 'pass' ? 'ask' : 'pass'));
+    re.addEventListener('click', () => { if (!busy) send(); });
+    cd.addEventListener('input', () => { const v = cd.value.replace(/\D/g, '').slice(0, 6); if (cd.value !== v) cd.value = v; if (v.length === 6) submit(); });
+    [un, pw, cd].forEach(i => i.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); if (i === un && mode === 'pass' && !pw.value) pw.focus(); else if (i === un && mode === 'code') cd.focus(); else submit(); } }));
   });
 }
 async function enter() {
@@ -815,7 +853,7 @@ function secUserEdit(u) {
     <label class="field"><span>Nome</span><input class="inp sm" value="${esc(u.name)}" data-u="${u.id}" data-k="name" placeholder="Nome e sobrenome" autocomplete="off"></label>
     <label class="field"><span>Usuário (login)</span><div class="affix">${ic('at', 'width:14px;height:14px')}<input class="inp sm" value="${esc(u.user)}" data-u="${u.id}" data-k="user" placeholder="ex.: charles" autocomplete="off" autocapitalize="none" spellcheck="false"></div>${dup ? '<em class="err">Esse usuário já existe</em>' : ''}</label>
     <label class="field"><span>Cargo</span><input class="inp sm" value="${esc(u.cargo)}" data-u="${u.id}" data-k="cargo" placeholder="ex.: Financeiro, Marketing…" autocomplete="off"></label>
-    <label class="field"><span>E-mail</span><input class="inp sm" value="${esc(u.email)}" data-u="${u.id}" data-k="email" placeholder="opcional" autocomplete="off"></label>
+    <label class="field"><span>E-mail</span><input class="inp sm" value="${esc(u.email)}" data-u="${u.id}" data-k="email" placeholder="para entrar com código" autocomplete="off" autocapitalize="none" spellcheck="false"><em class="err" data-eerr="${u.id}">${emailErr(u)}</em></label>
     <label class="field full"><span>Observação</span><input class="inp sm" value="${esc(u.note)}" data-u="${u.id}" data-k="note" placeholder="opcional — só o mestre vê" autocomplete="off"></label>
     <div class="row full"><span>Acesso ativo</span><span class="hint">· desligado, a pessoa não consegue entrar</span><span class="sp"></span><button class="switch ${u.active ? 'on' : ''}" data-act="u-active" data-id="${u.id}" role="switch" aria-checked="${u.active}"></button></div>
   </div></div></div>
@@ -832,6 +870,8 @@ function secUserEdit(u) {
   </div>
   <div class="row" style="margin-top:6px"><button class="pill sm ghost" data-act="u-back">${ic('back')}Voltar para a lista</button><span class="sp"></span><button class="pill sm ghost danger" data-act="u-del" data-id="${u.id}">${ic('trash')}Excluir pessoa</button></div>`;
 }
+/* e-mail do cadastro: usado para entrar com código; precisa ser válido e não repetir */
+const emailErr = u => { const e = String(u.email || '').trim().toLowerCase(); return !e ? '' : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e) ? 'E-mail inválido' : ADM.users.some(x => x !== u && String(x.email || '').trim().toLowerCase() === e) ? 'Esse e-mail já está em outro cadastro' : ''; };
 const pathOfU = u => { try { return new URL(u).pathname.replace(/\/$/, ''); } catch (e) { return ''; } };
 /* ---------- equipes ---------- */
 function secTeams() {
@@ -1075,6 +1115,7 @@ function onField(e) {
     if (t.dataset.k === 'user') { v = slug(v); if (t.value !== v && !/[.\-_]$/.test(t.value)) t.value = v; }
     if (t.dataset.k === 'name' && !u._userTouched && (!u.user || u.user === u._autoUser)) { u.user = u._autoUser = freeUser(u, v); const ui = $(`#console input[data-u="${u.id}"][data-k="user"]`); if (ui) ui.value = u.user; }
     if (t.dataset.k === 'user') u._userTouched = true;
+    if (t.dataset.k === 'email') { u.email = v; const er = $(`#console [data-eerr="${u.id}"]`); if (er) er.textContent = emailErr(u); if (/^\S+@\S+\.\S+$/.test(v.trim()) && emailErr(u)) return; }
     u[t.dataset.k] = t.dataset.k === 'user' ? v : v; save();
     const h = $('#console .chead h2'), sb = $('#console .chead .sub'); if (h && t.dataset.k === 'name') h.textContent = v || 'Nova pessoa'; if (sb) sb.textContent = u.user ? '@' + u.user : 'Cadastro';
     return;

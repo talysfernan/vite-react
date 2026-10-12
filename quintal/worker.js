@@ -179,10 +179,11 @@ async function sessionTok(tok, env, data) {
   if (!safeEq(await hmac(env.SESSION_SECRET, `${role}.${uid}.${exp}.${ver}`), sig) || +exp < Date.now()) return null;
   if (role === "admin") return ver === await pinVer(env) ? { role } : null;
   const u = data.users.find((x) => x.id === uid);
-  if (!u || !u.active || !u.pass || u.pass.slice(0, 10) !== ver) return null;
+  if (!u || !u.active || userVer(u) !== ver) return null;
   return { role: "user", user: u };
 }
 __name(sessionTok, "sessionTok");
+var userVer = /* @__PURE__ */ __name((u) => (u.pass || "-").slice(0, 10), "userVer");
 var ELEV_MS = 15 * 6e4;
 async function makeElev(env) {
   const p = `elev.${Date.now() + ELEV_MS}.${await pinVer(env)}`;
@@ -224,6 +225,29 @@ async function tooMany(env, ip) {
 __name(tooMany, "tooMany");
 var fail = /* @__PURE__ */ __name((env, ip) => env.DB.prepare("INSERT INTO attempts(ip,ts) VALUES(?,?)").bind(ip, Date.now()).run(), "fail");
 var logIt = /* @__PURE__ */ __name((env, user, panel, ok) => env.DB.prepare("INSERT INTO log(t,user,panel,ok) VALUES(?,?,?,?)").bind(Date.now(), String(user).slice(0, 60), String(panel).slice(0, 80), ok ? 1 : 0).run(), "logIt");
+var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+var CODE_MS = 10 * 6e4;
+var CODES_SQL = "CREATE TABLE IF NOT EXISTS codes (uid TEXT PRIMARY KEY, hash TEXT NOT NULL, exp INTEGER NOT NULL, tries INTEGER NOT NULL, n INTEGER NOT NULL, since INTEGER NOT NULL)";
+var codeHash = /* @__PURE__ */ __name((env, uid, code) => sha(env.SESSION_SECRET + ":code:" + uid + ":" + code), "codeHash");
+function byLogin(data, who) {
+  const w = String(who || "").trim().toLowerCase();
+  if (!w) return null;
+  const u = w.includes("@") ? data.users.find((x) => String(x.email || "").toLowerCase() === w) : data.users.find((x) => x.user === slug(w));
+  return u && u.active && EMAIL_RE.test(u.email || "") ? u : null;
+}
+__name(byLogin, "byLogin");
+var escH = /* @__PURE__ */ __name((t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]), "escH");
+function codeMail(u, code) {
+  const first = escH(String(u.name || "").trim().split(/\s+/)[0] || "");
+  return `<!doctype html><html><body style="margin:0;padding:0;background:#0b0b0d"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0b0b0d;padding:40px 16px"><tr><td align="center">
+<table role="presentation" cellpadding="0" cellspacing="0" style="max-width:420px;width:100%;background:#17171a;border:1px solid #2a2a30;border-radius:18px;font-family:Inter,'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;color:#ededf0">
+<tr><td style="padding:30px 30px 6px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#85858e">CAO(S) \xB7 Quintal</td></tr>
+<tr><td style="padding:6px 30px 0;font-size:15px;color:#b6b6be">${first ? `Oi, ${first}. ` : ""}Seu c\xF3digo para entrar:</td></tr>
+<tr><td style="padding:18px 30px"><div style="background:#141416;border:1px solid #2a2a30;border-radius:12px;padding:18px 0;text-align:center;font-size:34px;font-weight:700;letter-spacing:.32em;color:#ededf0;font-family:'SF Mono',Consolas,Menlo,monospace">${code}</div></td></tr>
+<tr><td style="padding:0 30px 30px;font-size:12px;line-height:1.6;color:#85858e">Vale por 10 minutos. Se n\xE3o foi voc\xEA, ignore este e-mail.</td></tr>
+</table></td></tr></table></body></html>`;
+}
+__name(codeMail, "codeMail");
 var CFG = CFG0;
 function levelOf(u, p) {
   if (!u || !p) return null;
@@ -309,7 +333,50 @@ async function api(req, env, url) {
       return json({ ok: false, error: "Usu\xE1rio desativado" }, 403);
     }
     await logIt(env, u.name, "Quintal \xB7 entrou", true);
-    return json({ ok: true, role: "user" }, 200, { "set-cookie": setCookie(await makeToken(env, "user", u.id, u.pass.slice(0, 10))) });
+    return json({ ok: true, role: "user" }, 200, { "set-cookie": setCookie(await makeToken(env, "user", u.id, userVer(u))) });
+  }
+  if (p === "/api/code/send" && method === "POST") {
+    if (await tooMany(env, ip)) return json({ error: "Muitas tentativas. Aguarde alguns minutos." }, 429);
+    const b = await req.json().catch(() => ({}));
+    const u = byLogin(data, b.who);
+    if (u) {
+      await env.DB.prepare(CODES_SQL).run();
+      const r = await env.DB.prepare("SELECT n, since FROM codes WHERE uid=?").bind(u.id).first();
+      const fresh = !r || Date.now() - r.since > 36e5, n = fresh ? 1 : r.n + 1;
+      if (n > 5) {
+        await logIt(env, u.name, "Quintal \xB7 c\xF3digo bloqueado (limite por hora)", false);
+      } else {
+        const code = String(crypto.getRandomValues(new Uint32Array(1))[0] % 1e6).padStart(6, "0");
+        await env.DB.prepare("INSERT INTO codes(uid,hash,exp,tries,n,since) VALUES(?,?,?,0,?,?) ON CONFLICT(uid) DO UPDATE SET hash=excluded.hash, exp=excluded.exp, tries=0, n=excluded.n, since=excluded.since").bind(u.id, await codeHash(env, u.id, code), Date.now() + CODE_MS, n, fresh ? Date.now() : r.since).run();
+        try {
+          await env.EMAIL.send({ from: { email: "acesso@meucaos.com", name: "CAO(S) \xB7 Quintal" }, to: u.email, subject: `${code} \xE9 o seu c\xF3digo do CAO(S)`, html: codeMail(u, code), text: `${code} \xE9 o seu c\xF3digo para entrar no CAO(S). Vale por 10 minutos. Se n\xE3o foi voc\xEA, ignore este e-mail.` });
+          await logIt(env, u.name, "Quintal \xB7 c\xF3digo enviado por e-mail", true);
+        } catch (e) {
+          await logIt(env, u.name, "Quintal \xB7 falha ao enviar c\xF3digo (" + String(e && (e.code || e.message) || e).slice(0, 40) + ")", false);
+        }
+      }
+    } else await fail(env, ip);
+    return json({ ok: true });
+  }
+  if (p === "/api/code/verify" && method === "POST") {
+    if (await tooMany(env, ip)) return json({ error: "Muitas tentativas. Aguarde alguns minutos." }, 429);
+    const b = await req.json().catch(() => ({}));
+    const u = byLogin(data, b.who), code = String(b.code || "").replace(/\D/g, "");
+    await env.DB.prepare(CODES_SQL).run();
+    const r = u && await env.DB.prepare("SELECT hash, exp, tries FROM codes WHERE uid=?").bind(u.id).first();
+    if (!r || !r.hash || r.exp < Date.now() || r.tries >= 5) {
+      await fail(env, ip);
+      return json({ ok: false, error: "C\xF3digo vencido. Pe\xE7a um novo." }, 403);
+    }
+    if (code.length !== 6 || !safeEq(await codeHash(env, u.id, code), r.hash)) {
+      await fail(env, ip);
+      await env.DB.prepare("UPDATE codes SET tries=tries+1 WHERE uid=?").bind(u.id).run();
+      await logIt(env, u.name, "Quintal \xB7 c\xF3digo incorreto", false);
+      return json({ ok: false, error: r.tries + 1 >= 5 ? "C\xF3digo vencido. Pe\xE7a um novo." : "C\xF3digo incorreto" }, 403);
+    }
+    await env.DB.prepare("UPDATE codes SET hash='', exp=0 WHERE uid=?").bind(u.id).run();
+    await logIt(env, u.name, "Quintal \xB7 entrou por c\xF3digo", true);
+    return json({ ok: true, role: "user" }, 200, { "set-cookie": setCookie(await makeToken(env, "user", u.id, userVer(u))) });
   }
   if (p === "/api/open" && method === "POST") {
     const b = await req.json().catch(() => ({}));
@@ -408,8 +475,10 @@ async function api(req, env, url) {
       let un = slug(x.user) || slug(x.name) || clean(x.id, 20);
       if (seenU.has(un)) return json({ error: `username "${un}" repetido` }, 400);
       seenU.add(un);
+      const email = clean(x.email, 80).trim().toLowerCase();
+      if (EMAIL_RE.test(email) && users.some((y) => y.email === email)) return json({ error: `e-mail "${email}" repetido` }, 400);
       const access = (x.access || []).filter((id) => ids.has(id));
-      users.push({ id: clean(x.id, 40), name: clean(x.name, 40), user: un, teams: (Array.isArray(x.teams) ? x.teams : []).filter((t) => tIds.has(t)), cargo: clean(x.cargo, 50), email: clean(x.email, 80), note: clean(x.note, 200), pass, passEnc, active: x.active !== false, access, admin: (x.admin || []).filter((id) => access.includes(id)) });
+      users.push({ id: clean(x.id, 40), name: clean(x.name, 40), user: un, teams: (Array.isArray(x.teams) ? x.teams : []).filter((t) => tIds.has(t)), cargo: clean(x.cargo, 50), email, note: clean(x.note, 200), pass, passEnc, active: x.active !== false, access, admin: (x.admin || []).filter((id) => access.includes(id)) });
     }
     for (const x of panels) if (!cfg.cats.some((c2) => c2.id === x.cat)) x.cat = cfg.cats[0].id;
     await env.DB.batch([putKV(env, "cfg", cfg), putKV(env, "panels", panels), putKV(env, "users", users)]);
