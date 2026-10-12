@@ -1375,7 +1375,7 @@ function viewDash() {
     ['Receita bruta', M.gross, P.gross, 'brl', 'g'],
     ['Pedidos', M.orders, P.orders, 'int', 'w'],
     ['Ticket médio', M.ticket, P.ticket, 'brl', 'b'],
-    ['Margem de contribuição', M.contribution, P.contribution, 'brl', 'y'],
+    ['Resultado dos canais', M.contribution, P.contribution, 'brl', 'y'],
     ['Investimentos e custos de marca', r.brandCosts, p.brandCosts, 'brl', 'r', true],
     ['Resultado líquido', r.result, p.result, 'brl', r.result < 0 ? 'r' : 'g']
   ];
@@ -1414,7 +1414,7 @@ function flowHTML(r) {
       <div class="node pad" data-node="costs"><span class="port l"></span>
         <div class="node-h"><div class="t"><span class="dot r"></span>Investimento de marca e operação</div></div>
         <div class="stat-list">
-          <div class="li"><span class="lk">Seeding · ${fmt.int(r.seed.units)} un.</span><span class="num">${fmt.brl(r.seed.total)}</span></div>
+          <div class="li"><span class="lk">Programa Parceiros · ${fmt.int(r.seed.units)} un.</span><span class="num">${fmt.brl(r.seed.total)}</span></div>
           <div class="li"><span class="lk">Branding / awareness</span><span class="num">${fmt.brl(r.aware)}</span></div>
           <div class="li"><span class="lk">Custos operacionais</span><span class="num">${fmt.brl(r.ops)}</span></div></div></div>
       <div class="node pad glow result-node ${resNeg ? 'neg' : ''}" data-node="result"><span class="port l"></span>
@@ -1461,8 +1461,8 @@ function dreHTML(r) {
     { k: 'income', n: 'Outras receitas', v: M.income, c: CATS.income.color, sign: '+' },
     ...DEDUCT_CATS.map(k => ({ k, n: CATS[k].label, v: -M[k], c: CATS[k].color })),
     { k: 'cogs', n: CATS.cogs.label, v: -M.cogs, c: CATS.cogs.color },
-    { tot: 1, n: 'Margem de contribuição', v: M.contribution, c: '#f4f4f5' },
-    { k: 'seed', n: 'Seeding (produtos + frete)', v: -r.seed.total, c: '#f472b6', det: r.seed.freight ? { 'Produtos doados (custo)': r.seed.product, 'Frete para parceiros': r.seed.freight } : { [`${fmt.int(r.seed.units)} itens enviados (com frete)`]: r.seed.total } },
+    { tot: 1, n: 'Resultado dos canais', v: M.contribution, c: '#f4f4f5' },
+    { k: 'seed', n: 'Programa Parceiros (produtos + frete)', v: -r.seed.total, c: '#f472b6', det: r.seed.freight ? { 'Produtos doados (custo)': r.seed.product, 'Frete para parceiros': r.seed.freight } : { [`${fmt.int(r.seed.units)} itens enviados (com frete)`]: r.seed.total } },
     { k: 'aware', n: 'Branding / awareness', v: -r.aware, c: '#a78bfa' },
     { k: 'ops', n: 'Custos operacionais', v: -r.ops, c: '#fb923c' },
     { tot: 1, n: 'Resultado líquido', v: r.result, c: r.result < 0 ? '#f87171' : '#4ade80' }
@@ -1486,12 +1486,12 @@ function splitHTML(r) {
   const rows = [
     ['Pedidos', m => fmt.int(m.orders)], ['Unidades', m => fmt.int(m.units)], ['Receita bruta', m => fmt.brl(m.gross)],
     ['Anúncios', m => fmt.brl(m.ads)], ['Afiliados e criadores', m => fmt.brl(m.aff)], ['ROAS (receita ÷ anúncios)', m => (m.ads ? (m.gross / m.ads).toFixed(2).replace('.', ',') + '×' : '—')],
-    ['TACoS (anúncios ÷ receita)', m => fmt.pct(div(m.ads, m.gross))], ['Margem de contribuição', m => fmt.brl(m.contribution)], ['Margem %', m => fmt.pct(m.margin)]
+    ['TACoS (anúncios ÷ receita)', m => fmt.pct(div(m.ads, m.gross))], ['Resultado dos canais', m => fmt.brl(m.contribution)], ['Margem %', m => fmt.pct(m.margin)]
   ];
   return `<div class="split" style="height:10px;margin-bottom:6px">${tg ? cols.map(([, , m, c]) => m.gross ? `<i style="width:${m.gross / tg * 100}%;background:${c}" class="bar-fill"></i>` : '').join('') : ''}</div>
   <div class="legend mb">${cols.map(([, n, m, c]) => `<span><i style="background:${c}"></i>${n} ${fmt.pct(div(m.gross, tg))}</span>`).join('')}</div>
   <table class="tbl"><thead><tr><th></th>${cols.map(([, n]) => `<th>${n}</th>`).join('')}${showU ? '<th>Não alocado</th>' : ''}</tr></thead>
-  <tbody>${rows.map(([n, f]) => `<tr><td class="muted">${n}</td>${cols.map(([, , m]) => `<td class="num">${f(m)}</td>`).join('')}${showU ? `<td class="num muted">${n === 'Margem de contribuição' ? fmt.brl(U.contribution) : '—'}</td>` : ''}</tr>`).join('')}</tbody></table>
+  <tbody>${rows.map(([n, f]) => `<tr><td class="muted">${n}</td>${cols.map(([, , m]) => `<td class="num">${f(m)}</td>`).join('')}${showU ? `<td class="num muted">${n === 'Resultado dos canais' ? fmt.brl(U.contribution) : '—'}</td>` : ''}</tr>`).join('')}</tbody></table>
   ${showU ? `<p class="hint mt">“Não alocado”: custos fixos de canal lançados em canais sem pedidos no mês — entram no total, mas não podem ser rateados entre orgânico e campanha.</p>` : ''}`;
 }
 function chTableHTML(r) {
@@ -1672,7 +1672,7 @@ function brandCostsHTML(b, mk, closed) {
   const m = b.months[mk] || {};
   const prods = b.products;
   return `<div class="node pad"><div class="node-h"><div class="t"><span class="dot r"></span><h2>Investimento de marca</h2></div></div>
-    <div class="cat-h"><span class="dot" style="background:#f472b6"></span>Seeding · produtos enviados a parceiros e criadores<span class="ln"></span></div>
+    <div class="cat-h"><span class="dot" style="background:#f472b6"></span>Programa Parceiros · produtos enviados a parceiros e criadores<span class="ln"></span></div>
     <p class="hint mb">Quantos itens de cada produto foram enviados no mês e o custo total já com frete — está no painel de Parceiros › Resumo › Enviados por produto.</p>
     ${prods.length ? `<div class="seedl">${prods.filter(p => p.active !== false || num(m.seedQty?.[p.id])).map(p => `<div class="sl-row"><span class="sl-n">${pimg(p, 28)}<span>${esc(p.name)}</span></span><div class="affix s" style="--sl:3"><input class="inp r" inputmode="numeric" data-p="seedQty.${p.id}" data-int="1" value="${num(m.seedQty?.[p.id]) ? inVal(m.seedQty[p.id], true) : ''}" placeholder="0" ${closed ? 'disabled' : ''}><span class="suf">un.</span></div></div>`).join('')}
       <div class="sl-row sl-tot"><span class="sl-n"><b>Custo total dos envios</b><em>produtos + frete</em></span>${money('seedTotal', m.seedTotal, closed)}</div></div>` : '<div class="hint">Cadastre produtos para registrar os envios.</div>'}
@@ -1698,8 +1698,8 @@ function summaryHTML(b, mk) {
   if (ui.sel === 'brand' || ui.sel === 'ops') {
     return `<div class="node pad glow result-node ${R.result < 0 ? 'neg' : ''}"><div class="node-h"><div class="t"><span class="dot w"></span>Resumo da marca · ${mshort(mk)}</div></div><div class="stat-list">
       <div class="li"><span class="lk">Saldo líquido multicanal</span><span class="num">${fmt.brl(R.multi.contribution)}</span></div>
-      ${R.seed.freight ? `<div class="li"><span class="lk">Seeding · produtos</span><span class="num">−${fmt.brl(R.seed.product)}</span></div>
-      <div class="li"><span class="lk">Seeding · frete</span><span class="num">−${fmt.brl(R.seed.freight)}</span></div>` : `<div class="li"><span class="lk">Seeding · ${fmt.int(R.seed.units)} itens com frete</span><span class="num">−${fmt.brl(R.seed.total)}</span></div>`}
+      ${R.seed.freight ? `<div class="li"><span class="lk">Programa Parceiros · produtos</span><span class="num">−${fmt.brl(R.seed.product)}</span></div>
+      <div class="li"><span class="lk">Programa Parceiros · frete</span><span class="num">−${fmt.brl(R.seed.freight)}</span></div>` : `<div class="li"><span class="lk">Programa Parceiros · ${fmt.int(R.seed.units)} itens com frete</span><span class="num">−${fmt.brl(R.seed.total)}</span></div>`}
       <div class="li"><span class="lk">Branding / awareness</span><span class="num">−${fmt.brl(R.aware)}</span></div>
       <div class="li"><span class="lk">Custos operacionais</span><span class="num">−${fmt.brl(R.ops)}</span></div></div>
       <div class="muted mt" style="font-size:11.5px">Resultado final</div><div class="big num ${R.result < 0 ? 'neg' : ''}">${fmt.brl(R.result)}</div><div class="muted">Margem líquida ${fmt.pct(R.net)}</div></div>`;
@@ -1713,7 +1713,7 @@ function summaryHTML(b, mk) {
     ${line('Receita bruta', T.revenue, '#4ade80')}${T.income ? line('Outras receitas', T.income, CATS.income.color) : ''}
     ${DEDUCT_CATS.map(k => line(CATS[k].label, T[k], CATS[k].color, true)).join('')}
     ${line('CMV', T.cogs, CATS.cogs.color, true)}</div>
-    <div class="well mt" style="padding:12px"><div class="muted" style="font-size:11.5px">Margem de contribuição</div>
+    <div class="well mt" style="padding:12px"><div class="muted" style="font-size:11.5px">Resultado dos canais</div>
       <div class="between"><div class="big num ${T.contribution < 0 ? 'neg' : ''}">${fmt.brl(T.contribution)}</div><span class="tag ${T.contribution < 0 ? 'r' : 'g'}">${fmt.pct(T.margin)}</span></div></div>
     <div class="stat-list mt">
       <div class="li"><span class="lk">Ticket médio</span><span class="num">${T.ticket == null ? '—' : fmt.brl(T.ticket)}</span></div>
@@ -1849,7 +1849,7 @@ function viewCompare() {
     ['Receita bruta', d => d.multi.gross, 'brl'], ['Pedidos', d => d.multi.orders, 'int'], ['Unidades', d => d.multi.units, 'int'], ['Ticket médio', d => d.multi.ticket, 'brl'],
     ['Taxas e comissões', d => d.multi.fee, 'brl', 1], ['Frete e fulfillment', d => d.multi.ship, 'brl', 1], ['Anúncios', d => d.multi.ads, 'brl', 1], ['Afiliados e criadores', d => d.multi.aff, 'brl', 1], ['Descontos e devoluções', d => d.multi.promo, 'brl', 1],
     ['Custos fixos de canal', d => d.multi.fixed, 'brl', 1], ['Logística', d => d.multi.logistics, 'brl', 1], ['CMV', d => d.multi.cogs, 'brl', 1],
-    ['Margem de contribuição', d => d.multi.contribution, 'brl', 0, 1], ['Margem %', d => d.multi.margin, 'pct'], ['Seeding', d => d.seed.total, 'brl', 1], ['Branding', d => d.aware, 'brl', 1], ['Custos operacionais', d => d.ops, 'brl', 1],
+    ['Resultado dos canais', d => d.multi.contribution, 'brl', 0, 1], ['Margem %', d => d.multi.margin, 'pct'], ['Programa Parceiros', d => d.seed.total, 'brl', 1], ['Branding', d => d.aware, 'brl', 1], ['Custos operacionais', d => d.ops, 'brl', 1],
     ['Resultado líquido', d => d.result, 'brl', 0, 1], ['Margem líquida', d => d.net, 'pct'], ['Receita orgânica', d => d.org.gross, 'brl'], ['Receita campanha', d => d.camp.gross, 'brl'], ['TACoS', d => div(d.multi.ads, d.multi.gross), 'pct', 1]
   ];
   const F = (v, f) => (v == null ? '—' : f === 'int' ? fmt.int(v) : f === 'pct' ? fmt.pct(v) : fmt.brl(v));
@@ -1862,7 +1862,7 @@ function viewCompare() {
     <div class="rise" style="--d:1"><div class="label"><span class="dot"></span>Resultado líquido por mês</div><div class="node pad"><div class="legend mb"><span><i style="background:#199e70"></i>Lucro</span><span><i style="background:#e66767"></i>Prejuízo</span></div><div class="chart" data-chart="cmpRes" style="height:240px"></div></div></div></div>
   <div class="mt2 rise" style="--d:2"><div class="label"><span class="dot"></span>DRE comparativa</div><div class="node pad scroll-x"><table class="tbl"><thead><tr><th></th>${months.map((k, i) => `<th>${mshort(k)}${data[i].has ? '' : ' <span class="dim">·</span>'}</th>`).join('')}</tr></thead>
     <tbody>${rows.map(([n, g, f, inv, bold]) => `<tr ${bold ? 'class="sum"' : ''}><td class="${bold ? '' : 'muted'}">${n}</td>${data.map((d, i) => { const v = g(d), pv = i ? g(data[i - 1]) : null; return `<td class="num ${bold && v < 0 ? 'neg' : ''}">${F(v, f)}${i && data[i - 1].has && d.has ? dl(v, pv, inv, f) : ''}</td>`; }).join('')}</tr>`).join('')}</tbody></table></div></div>
-  <div class="mt2 rise" style="--d:3"><div class="label"><span class="dot"></span>Canais × meses · ${{ gross: 'receita bruta', contribution: 'margem de contribuição', orders: 'pedidos', units: 'unidades' }[metric]}</div><div class="node pad scroll-x"><table class="tbl"><thead><tr><th>Canal</th>${months.map(k => `<th>${mshort(k)}</th>`).join('')}<th>Total</th></tr></thead><tbody>
+  <div class="mt2 rise" style="--d:3"><div class="label"><span class="dot"></span>Canais × meses · ${{ gross: 'receita bruta', contribution: 'resultado dos canais', orders: 'pedidos', units: 'unidades' }[metric]}</div><div class="node pad scroll-x"><table class="tbl"><thead><tr><th>Canal</th>${months.map(k => `<th>${mshort(k)}</th>`).join('')}<th>Total</th></tr></thead><tbody>
     ${chNames.map(key => { const vals = data.map(d => chVal(d, key)); const t = vals.reduce((s, v) => s + v, 0); return `<tr><td><div class="nm"><span class="dot" style="background:${chColor(chMap.get(key))}"></span>${esc(chMap.get(key).name)}</div></td>${vals.map(v => `<td class="num">${isMoney ? fmt.brl(v) : fmt.int(v)}</td>`).join('')}<td class="num"><b>${isMoney ? fmt.brl(t) : fmt.int(t)}</b></td></tr>`; }).join('')}</tbody></table></div></div>`;
 }
 
