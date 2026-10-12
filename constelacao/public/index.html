@@ -615,7 +615,7 @@ body.modal-on{overflow:hidden}
 /* ---------- palco ---------- */
 .c-stage{--bg:#0e0e11;position:relative;overflow:hidden;border-radius:var(--radius);border:1px solid var(--line);background-color:var(--bg);background-image:radial-gradient(rgba(255,255,255,.075) 1px,transparent 1.25px);background-size:22px 22px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:default}
 .c-stage.grab{cursor:grabbing}
-.c-world{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}
+.c-world{position:absolute;left:0;top:0;transform-origin:0 0}.c-world.moving{will-change:transform}
 #nodes,#bridges{position:absolute;left:0;top:0}
 svg.c-wires{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
 .c-w{fill:none;stroke:#e9e9ee;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:opacity .3s,stroke .3s}
@@ -1429,6 +1429,8 @@ function hud(list) {
 function applyView() {
   const w = $('#world'), st = $('#stage'); if (!w || !V) return;
   w.style.transform = `translate(${V.x}px,${V.y}px) scale(${V.z})`;
+  /* acelera só enquanto move; ao parar, o navegador redesenha tudo nítido no zoom atual (sem pixelar) */
+  w.classList.add('moving'); clearTimeout(applyView.t); applyView.t = setTimeout(() => w.classList.remove('moving'), 160);
   st.style.backgroundPosition = `${V.x}px ${V.y}px`; st.style.backgroundSize = `${22 * V.z}px ${22 * V.z}px`;
   const zl = $('#zl'); if (zl) zl.textContent = Math.round(V.z * 100) + '%';
   saveView();
