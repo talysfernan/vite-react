@@ -1,0 +1,18 @@
+// Quintal do CAO(S) — hub de login (meucaos.com) e entrypoint Quintal (SSO dos painéis)
+{
+  "name": "caos-quintal",
+  "account_id": "7555b9666c694118eaab1e89c150e74b",
+  "main": "site.js",
+  "rules": [{ "type": "Text", "globs": ["**/*.html"], "fallthrough": true }],
+  "compatibility_date": "2025-09-01",
+  "workers_dev": true,
+  "preview_urls": true,
+  "routes": [
+    { "pattern": "meucaos.com", "custom_domain": true },
+    { "pattern": "www.meucaos.com", "custom_domain": true }
+  ],
+  "assets": { "directory": "public", "binding": "ASSETS", "run_worker_first": true },
+  "d1_databases": [{ "binding": "DB", "database_name": "caos-quintal-db", "database_id": "b765ae49-0592-409a-877f-e9a0c1e786da" }],
+  "triggers": { "crons": ["52 1 * * *"] }
+  // segredos (SESSION_SECRET, EXPORT_KEY) ficam no Cloudflare: wrangler secret put
+}
