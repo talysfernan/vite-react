@@ -368,6 +368,7 @@ input::-ms-reveal,input::-ms-clear{display:none}
 .abox{padding:6px 14px 8px}
 .ahead{display:flex;align-items:center;gap:9px;padding:8px 0 10px;border-bottom:1px solid var(--line)}
 .ahead b{font-size:13.5px}
+.abox .cline{padding:9px 0;border-bottom:1px solid var(--line)}.abox .cline:last-child{border-bottom:0}
 .aico{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:var(--tt);background:color-mix(in srgb,var(--t1) 14%,#141416);border:1px solid color-mix(in srgb,var(--t1) 30%,transparent);flex:none}
 .prow2{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:11px;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04)}
 .prow2:last-child{border-bottom:0}
@@ -717,23 +718,28 @@ function paint() {
   body.scrollTop = y; tickLock();
 }
 const areaOpts = sel => ADM.cfg.areas.map(a => `<option value="${a.id}" ${a.id === sel ? 'selected' : ''}>${esc(a.name)}</option>`).join('');
-const catOpts = sel => ADM.cfg.areas.map(a => { const cs = ADM.cfg.cats.filter(c => areaOfCat(c) === a.id); return cs.length ? `<optgroup label="${esc(a.name)}">${cs.map(c => `<option value="${esc(c.id)}" ${c.id === sel ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</optgroup>` : ''; }).join('');
+const catOpts = sel => ADM.cfg.areas.map(a => { const cs = ADM.cfg.cats.filter(c => areaOfCat(c) === a.id); return `<optgroup label="${esc(a.name)}">${cs.length ? cs.map(c => `<option value="${esc(c.id)}" ${c.id === sel ? 'selected' : ''}>${esc(c.name)}</option>`).join('') : `<option value="new:${esc(a.id)}">${esc(a.name)} · criar categoria</option>`}</optgroup>`; }).join('');
 const THEMES = [['base', 'Padrão', '#a1a1aa'], ['mkt', 'Rosa & laranja', '#f472b6'], ['gold', 'Dourado', '#facc15'], ['teal', 'Verde-água', '#2dd4bf'], ['blue', 'Azul', '#60a5fa'], ['violet', 'Violeta', '#a78bfa']];
 const AICONS = [['wrench', 'Ferramenta'], ['mega', 'Megafone'], ['crown', 'Coroa'], ['chart', 'Gráfico'], ['star', 'Estrela'], ['users', 'Pessoas'], ['grid', 'Grade'], ['db', 'Dados'], ['brush', 'Pincel'], ['shield', 'Escudo']];
 function secPanels() {
   const P = sharedPanels();
   return `<p class="hint" style="margin-bottom:14px">A categoria define a área (aba) e o grupo do card. Quem vê cada painel você escolhe em <b>Equipes</b> e <b>Usuários</b>. As rotinas pessoais ficam em <b>Rotinas</b>.</p>
-  ${P.map((p, i) => { const ar = areaById(areaOf(p)), nUse = ADM.users.filter(u => effLv(u, p)).length; return `<div class="box"><div class="prow">
+  ${P.map((p, i) => `<div class="box"><div class="prow">
     <input type="color" class="colorin" value="${esc(p.color)}" data-p="${p.id}" data-k="color" aria-label="Cor">
     <div class="fs">
       <input class="inp sm" style="text-align:center" maxlength="2" value="${esc(p.icon)}" data-p="${p.id}" data-k="icon" aria-label="Ícone" title="Ícone (letra ou emoji)">
       <input class="inp sm" value="${esc(p.name)}" data-p="${p.id}" data-k="name" placeholder="Nome">
       <select class="inp sm sel" data-p="${p.id}" data-k="cat" aria-label="Categoria">${catOpts(p.cat)}</select>
-      <input class="inp sm full" value="${esc(p.url)}" data-p="${p.id}" data-k="url" placeholder="https://…">
+      <input class="inp sm half" value="${esc(p.url)}" data-p="${p.id}" data-k="url" placeholder="https://…">
+      <input class="inp sm" value="${esc(p.key || '')}" data-p="${p.id}" data-k="key" placeholder="chave do login (ex.: envios)" title="Chave do login único: a mesma que o painel usa para perguntar ao quintal quem pode entrar" autocomplete="off" autocapitalize="none" spellcheck="false">
       <input class="inp sm full" value="${esc(p.desc)}" data-p="${p.id}" data-k="desc" placeholder="Descrição curta (opcional)"></div>
     <div class="ctl"><button class="pill sm icon ghost" data-act="p-up" data-id="${p.id}" ${i ? '' : 'disabled'} aria-label="Subir">${ic('up')}</button><button class="pill sm icon ghost" data-act="p-down" data-id="${p.id}" ${i < P.length - 1 ? '' : 'disabled'} aria-label="Descer">${ic('down')}</button><button class="pill sm icon ghost danger" data-act="p-del" data-id="${p.id}" aria-label="Excluir">${ic('trash')}</button></div>
-  </div><div class="pmeta"><span class="badge th-${ar?.theme || 'base'}">${ic(ar?.icon || 'grid', 'width:11px;height:11px')}${esc(ar?.name || '')}</span><span class="badge">${nUse ? `${nUse} ${nUse === 1 ? 'pessoa' : 'pessoas'} com acesso` : 'só o mestre'}</span>${p.url ? `<span class="badge">${esc(hostOf(p.url))}</span>` : '<span class="badge" style="color:var(--yellow)">sem link</span>'}</div></div>`; }).join('')}
+  </div><div class="pmeta" data-pm="${p.id}">${pmetaHTML(p)}</div></div>`).join('')}
   <button class="addrow" data-act="p-add">${ic('plus')}Adicionar painel</button>`;
+}
+function pmetaHTML(p) {
+  const ar = areaById(areaOf(p)), nUse = ADM.users.filter(u => effLv(u, p)).length;
+  return `<span class="badge th-${ar?.theme || 'base'}">${ic(ar?.icon || 'grid', 'width:11px;height:11px')}${esc(ar?.name || '')}</span><span class="badge">${nUse ? `${nUse} ${nUse === 1 ? 'pessoa' : 'pessoas'} com acesso` : 'só o mestre'}</span>${p.url ? `<span class="badge">${esc(hostOf(p.url))}</span>` : '<span class="badge" style="color:var(--yellow)">sem link</span>'}${p.key ? '' : '<span class="badge" style="color:var(--yellow)" title="Sem a chave, só o mestre consegue entrar no painel">sem chave · só o mestre entra</span>'}`;
 }
 function secAreas() {
   const A = ADM.cfg.areas;
@@ -751,14 +757,20 @@ function secAreas() {
 }
 function secCats() {
   const C = ADM.cfg.cats;
-  return `<p class="hint" style="margin-bottom:14px">Categorias agrupam os cards dentro de uma área. A ordem aqui é a ordem no quintal.</p>
-  ${C.map((c, i) => { const n = ADM.panels.filter(p => p.cat === c.id).length; return `<div class="box"><div class="crow">
+  return `<p class="hint" style="margin-bottom:14px">Categorias agrupam os cards dentro de uma área. A ordem aqui é a ordem no quintal. Para mudar um painel de categoria, use <b>Painéis</b>.</p>
+  ${ADM.cfg.areas.map(a => { const cs = C.filter(c => areaOfCat(c) === a.id); return `<div class="box abox th-${a.theme}">
+    <div class="ahead"><span class="aico th-${a.theme}">${ic(a.icon, 'width:15px;height:15px')}</span><b>${esc(a.name)}</b><span class="badge">${cs.length} ${cs.length === 1 ? 'categoria' : 'categorias'}</span><span class="sp"></span><button class="pill sm ghost" data-act="c-add" data-a="${a.id}">${ic('plus')}Nova categoria</button></div>
+    ${cs.length ? cs.map((c, i) => { const n = ADM.panels.filter(p => p.cat === c.id).length; return `<div class="crow cline">
     <div class="row"><input class="inp sm" value="${esc(c.name)}" data-cat="${c.id}" data-k="name" placeholder="Nome da categoria"><span class="badge">${n} ${n === 1 ? 'painel' : 'painéis'}</span></div>
-    <select class="inp sm sel" data-cat="${c.id}" data-k="area" aria-label="Área" style="width:170px">${areaOpts(c.area)}</select>
-    <div class="row" style="gap:4px"><button class="pill sm icon ghost" data-act="c-up" data-id="${c.id}" ${i ? '' : 'disabled'} aria-label="Subir">${ic('up')}</button><button class="pill sm icon ghost" data-act="c-down" data-id="${c.id}" ${i < C.length - 1 ? '' : 'disabled'} aria-label="Descer">${ic('down')}</button></div>
+    <select class="inp sm sel" data-cat="${c.id}" data-k="area" aria-label="Área" title="Mover para outra área" style="width:170px">${areaOpts(c.area)}</select>
+    <div class="row" style="gap:4px"><button class="pill sm icon ghost" data-act="c-up" data-id="${c.id}" ${i ? '' : 'disabled'} aria-label="Subir">${ic('up')}</button><button class="pill sm icon ghost" data-act="c-down" data-id="${c.id}" ${i < cs.length - 1 ? '' : 'disabled'} aria-label="Descer">${ic('down')}</button></div>
     <button class="pill sm icon ghost danger" data-act="c-del" data-id="${c.id}" ${C.length > 1 ? '' : 'disabled'} aria-label="Excluir" title="Excluir (os painéis vão para outra categoria da mesma área)">${ic('trash')}</button>
-  </div></div>`; }).join('')}
-  <button class="addrow" data-act="c-add">${ic('plus')}Nova categoria</button>`;
+  </div>`; }).join('') : '<p class="hint" style="padding:10px 0 4px">Nenhuma categoria nesta área ainda.</p>'}</div>`; }).join('')}`;
+}
+/* sobe/desce a categoria só entre as da mesma área */
+function swapCat(id, dir) {
+  const C = ADM.cfg.cats, i = C.findIndex(c => c.id === id); if (i < 0) return; const ar = areaOfCat(C[i]);
+  for (let j = i + dir; j >= 0 && j < C.length; j += dir) if (areaOfCat(C[j]) === ar) { [C[i], C[j]] = [C[j], C[i]]; return; }
 }
 const avColor = s => { let h = 0; for (const ch of String(s)) h = (h * 31 + ch.charCodeAt(0)) % 360; return `hsl(${h} 60% 62%)`; };
 /* ---------- acesso: nível efetivo = maior entre individual e equipes · rotina = só o dono ---------- */
@@ -964,6 +976,13 @@ window.addEventListener('beforeunload', () => { if (saveT && ADM) flush(); });
 /* =================== ações =================== */
 function setPath(o, path, v) { const k = path.split('.'); let x = o; while (k.length > 1) x = x[k.shift()]; x[k[0]] = v; }
 const userById = id => ADM?.users.find(x => x.id === id);
+/* usuário automático sem repetir: primeiro nome, nome completo, depois primeiro nome + número */
+function freeUser(u, name) {
+  const used = new Set(ADM.users.filter(x => x !== u).map(x => x.user).concat(ADM.cfg.masterUser || 'mestre')), b = slug(firstName(name));
+  if (!b) return '';
+  for (const c of [b, slug(name)]) if (c && !used.has(c)) return c;
+  for (let i = 2; ; i++) if (!used.has(b + i)) return b + i;
+}
 const swap = (arr, id, dir) => { const i = arr.findIndex(x => x.id === id), j = i + dir; if (j < 0 || j >= arr.length) return; [arr[i], arr[j]] = [arr[j], arr[i]]; };
 const both = () => { save(); paint(); render(); };
 const genPass = () => { const A = 'abcdefghjkmnpqrstuvwxyz', N = '23456789', r = n => crypto.getRandomValues(new Uint32Array(1))[0] % n; let s = ''; for (let i = 0; i < 5; i++) s += A[r(A.length)]; for (let i = 0; i < 3; i++) s += N[r(N.length)]; return s[0].toUpperCase() + s.slice(1); };
@@ -980,7 +999,7 @@ function addPanel(areaId) {
 function goNext() {
   if (!NEXT || !ME) return false;
   const n = new URL(NEXT), at = n.host + n.pathname.replace(/\/?$/, '/'), p = HUB.panels.find(x => at.startsWith((x.at || x.host).replace(/\/?$/, '/')));
-  if (p) { location.replace(NEXT); return true; }
+  if (p || isAdmin()) { location.replace(NEXT); return true; }
   history.replaceState(null, '', location.pathname); toast('Você não tem acesso a esse painel', 'r'); return false;
 }
 const ACT = {
@@ -1006,8 +1025,8 @@ const ACT = {
   'a-add': () => { ADM.cfg.areas.push({ id: 'a_' + uid(), name: 'Nova área', theme: 'blue', icon: 'grid', sub: '' }); both(); const ins = $$('#console [data-area][data-k="name"]'); ins[ins.length - 1]?.select(); },
   'a-up': a => { swap(ADM.cfg.areas, a.dataset.id, -1); both(); }, 'a-down': a => { swap(ADM.cfg.areas, a.dataset.id, 1); both(); },
   'a-del': async a => { if (!(await ask({ title: `Excluir a área “${areaById(a.dataset.id)?.name}”?`, text: 'As categorias dela vão para a primeira área.' }))) return; const id = a.dataset.id; ADM.cfg.areas = ADM.cfg.areas.filter(x => x.id !== id); const to = ADM.cfg.areas[0].id; ADM.cfg.cats.forEach(c => { if (c.area === id) c.area = to; }); if (AREA === id) AREA = to; both(); },
-  'c-add': () => { ADM.cfg.cats.push({ id: 'c_' + uid(), name: 'Nova categoria', area: areaById(AREA) ? AREA : ADM.cfg.areas[0].id }); both(); const ins = $$('#console [data-cat][data-k="name"]'); ins[ins.length - 1]?.select(); },
-  'c-up': a => { swap(ADM.cfg.cats, a.dataset.id, -1); both(); }, 'c-down': a => { swap(ADM.cfg.cats, a.dataset.id, 1); both(); },
+  'c-add': a => { const c = { id: 'c_' + uid(), name: 'Nova categoria', area: areaById(a.dataset.a) ? a.dataset.a : areaById(AREA) ? AREA : ADM.cfg.areas[0].id }; ADM.cfg.cats.push(c); both(); $(`#console [data-cat="${c.id}"][data-k="name"]`)?.select(); },
+  'c-up': a => { swapCat(a.dataset.id, -1); both(); }, 'c-down': a => { swapCat(a.dataset.id, 1); both(); },
   'c-del': async a => { if (!(await ask({ title: `Excluir a categoria “${catById(a.dataset.id)?.name}”?`, text: 'Os painéis dela vão para outra categoria da mesma área.' }))) return; const id = a.dataset.id, old = catById(id); ADM.cfg.cats = ADM.cfg.cats.filter(c => c.id !== id); const to = (ADM.cfg.cats.find(c => c.area === old.area) || ADM.cfg.cats[0]).id; ADM.panels.forEach(p => { if (p.cat === id) p.cat = to; }); both(); },
   'u-add': () => { const u = { id: uid(), name: '', user: '', cargo: '', email: '', note: '', teams: [], access: [], admin: [], active: true, has: false, seen: false }; ADM.users.push(u); editU = u.id; save(); paint(); $('#console [data-u][data-k="name"]')?.focus(); },
   'u-edit': a => { editU = a.dataset.id; paint(); $('#console .cbody').scrollTop = 0; },
@@ -1042,14 +1061,19 @@ document.addEventListener('click', e => { const a = e.target.closest('[data-act]
 function onField(e) {
   const t = e.target; if (!ADM || !t.dataset) return;
   const sel = t.tagName === 'SELECT';
-  if (t.dataset.p && t.dataset.k) { const p = ADM.panels.find(x => x.id === t.dataset.p); if (!p) return; p[t.dataset.k] = t.value; save(); render(); if (sel) paint(); return; }
+  if (t.dataset.p && t.dataset.k) {
+    const p = ADM.panels.find(x => x.id === t.dataset.p); if (!p) return; let v = t.value;
+    if (t.dataset.k === 'cat' && v.startsWith('new:')) { const ar = areaById(v.slice(4)); if (!ar) return; const nc = { id: 'c_' + uid(), name: ar.name, area: ar.id }; ADM.cfg.cats.push(nc); v = nc.id; }
+    if (t.dataset.k === 'key') { v = v.toLowerCase().replace(/[^a-z0-9:_-]/g, '').slice(0, 30); if (t.value !== v) t.value = v; }
+    p[t.dataset.k] = v; save(); render(); if (sel) paint(); return;
+  }
   if (t.dataset.area) { const a = areaById(t.dataset.area); if (!a) return; a[t.dataset.k] = t.value; save(); render(); if (sel) paint(); return; }
   if (t.dataset.team) { const tm = teamById(t.dataset.team); if (!tm) return; tm[t.dataset.k] = t.value; save(); return; }
   if (t.dataset.cat) { const c = catById(t.dataset.cat); if (!c) return; c[t.dataset.k] = t.value; save(); render(); if (sel) paint(); return; }
   if (t.dataset.u && t.dataset.k && t.dataset.k !== 'pass') {
     const u = userById(t.dataset.u); let v = t.value;
     if (t.dataset.k === 'user') { v = slug(v); if (t.value !== v && !/[.\-_]$/.test(t.value)) t.value = v; }
-    if (t.dataset.k === 'name' && !u._userTouched && (!u.user || u.user === u._autoUser)) { u.user = u._autoUser = slug(firstName(v)); const ui = $(`#console input[data-u="${u.id}"][data-k="user"]`); if (ui) ui.value = u.user; }
+    if (t.dataset.k === 'name' && !u._userTouched && (!u.user || u.user === u._autoUser)) { u.user = u._autoUser = freeUser(u, v); const ui = $(`#console input[data-u="${u.id}"][data-k="user"]`); if (ui) ui.value = u.user; }
     if (t.dataset.k === 'user') u._userTouched = true;
     u[t.dataset.k] = t.dataset.k === 'user' ? v : v; save();
     const h = $('#console .chead h2'), sb = $('#console .chead .sub'); if (h && t.dataset.k === 'name') h.textContent = v || 'Nova pessoa'; if (sb) sb.textContent = u.user ? '@' + u.user : 'Cadastro';
@@ -1060,6 +1084,7 @@ function onField(e) {
 }
 document.addEventListener('input', e => { if (e.target.tagName !== 'SELECT') onField(e); });
 document.addEventListener('change', e => { if (e.target.tagName === 'SELECT') onField(e); });
+document.addEventListener('change', e => { const t = e.target, p = ADM && t.dataset?.p && ADM.panels.find(x => x.id === t.dataset.p), m = p && $(`#console [data-pm="${p.id}"]`); if (m) m.innerHTML = pmetaHTML(p); });
 document.addEventListener('keydown', e => {
   const t = e.target;
   if (e.key === 'Enter' && t.dataset?.u && t.dataset.k === 'pass') { const v = t.value.trim(); if (!v) return; if (v.length < 4) return toast('Senha precisa de pelo menos 4 caracteres', 'r'); setUserPass(userById(t.dataset.u), v); }

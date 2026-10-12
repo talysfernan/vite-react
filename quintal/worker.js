@@ -8,7 +8,7 @@ function json(d, s = 200, h = {}) {
   const H = new Headers({ "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
   for (const [k, v] of Object.entries(h)) {
     if (k === "set-cookie") {
-      H.append("set-cookie", clearHostCookie);
+      if (DOM) H.append("set-cookie", clearHostCookie);
       H.append("set-cookie", v);
     } else H.set(k, v);
   }
@@ -266,6 +266,7 @@ async function snapshot(env) {
 }
 __name(snapshot, "snapshot");
 var clean = /* @__PURE__ */ __name((v, n) => String(v ?? "").slice(0, n), "clean");
+var KEYC = /* @__PURE__ */ __name((v) => String(v || "").trim().toLowerCase().replace(/[^a-z0-9:_-]/g, "").slice(0, 30), "KEYC");
 var COLOR = /* @__PURE__ */ __name((c) => /^#[0-9a-fA-F]{6}$/.test(c) ? c : "#60a5fa", "COLOR");
 async function api(req, env, url) {
   const p = url.pathname, method = req.method, ip = req.headers.get("cf-connecting-ip") || "x";
@@ -386,7 +387,8 @@ async function api(req, env, url) {
           o.key = "r:" + sl;
           o.url = ROT_BASE + sl + "/";
         }
-      } else if (!old && x.key) o.key = clean(x.key, 20);
+      } else if (typeof x.key === "string") o.key = KEYC(x.key);
+      if (o.key && panels.some((y) => y.key === o.key)) return json({ error: `chave "${o.key}" repetida` }, 400);
       panels.push(o);
     }
     const ids = new Set(panels.filter((x) => x.kind !== "rotina").map((x) => x.id)), users = [], seenU = /* @__PURE__ */ new Set([cfg.masterUser]);
