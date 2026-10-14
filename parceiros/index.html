@@ -389,6 +389,8 @@ textarea.inp{height:auto;min-height:84px;padding:10px 12px;resize:vertical;line-
 /* ---------- operação ---------- */
 .op-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:16px;flex-wrap:wrap}
 .mseg{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:5px;border-radius:15px;background:rgba(25,25,28,.7);border:1px solid var(--line);min-width:min(620px,100%)}
+.mseg.m3{grid-template-columns:repeat(3,minmax(0,1fr));min-width:min(860px,100%)}
+@media (max-width:760px){.mseg.m3{grid-template-columns:1fr}}
 .mseg button{display:flex;align-items:center;gap:12px;padding:9px 14px;border-radius:11px;text-align:left;color:var(--text-2);transition:all .25s var(--ease);min-width:0}
 .mseg button:hover{background:var(--node-2);color:var(--text)}
 .mseg button.on{background:#26262b;color:var(--text);box-shadow:0 0 0 1px color-mix(in srgb,var(--c) 45%,transparent) inset,0 10px 28px -16px var(--c)}
@@ -414,6 +416,11 @@ textarea.inp{height:auto;min-height:84px;padding:10px 12px;resize:vertical;line-
 .tpill .tp-fill{position:absolute;left:0;top:0;bottom:0;width:var(--p);z-index:-1;transition:width .9s var(--ease)}
 .tpill .tp-b{height:20px;min-width:20px;padding:0 5px;border-radius:999px;display:inline-grid;place-items:center;font-size:10.5px;font-weight:700;font-variant-numeric:tabular-nums;flex:none}
 .tpill .tp-h{overflow:hidden;text-overflow:ellipsis}
+.tpill .tp-rv{display:inline-grid;place-items:center;width:16px;height:16px;border-radius:50%;background:#facc15;color:#1a1500;flex:none;margin-left:-2px}
+.rvb{display:inline-flex;align-items:center;gap:4px;height:18px;padding:0 7px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(250,204,21,.12);color:#facc15;border:1px solid rgba(250,204,21,.3);margin-left:6px;white-space:nowrap}
+.rvb.big{height:24px;padding:0 10px;font-size:11.5px;margin-left:0}
+.rvb svg{fill:currentColor}
+.pa.pa-rv .pa-i{color:#facc15}
 .tpill.st-open{background:#2c1d11;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.55)}
 .tpill.st-open .tp-fill{background:linear-gradient(90deg,#f97316,#fb923c);box-shadow:4px 0 12px rgba(251,146,60,.55)}
 .tpill.st-open .tp-b{background:rgba(0,0,0,.32);color:#fff}
@@ -694,7 +701,7 @@ const mondayOf = k => { const d = dparse(k); return addDays(k, -((d.getDay() + 6
 /* =================== fluxos (etapas) =================== */
 const FLOW = {
   A: {
-    tag: 'A', name: 'Produto por conteúdo', short: 'Conteúdo',
+    tag: 'A', name: 'Conteúdo · envio direto', short: 'Envio direto',
     steps: [
       { k: 'contato', l: 'Contato iniciado', d: 'Conversa aberta no chat do Social Media.' },
       { k: 'aceite', l: 'Aceite e dados', d: 'Parceiro aceitou e passou endereço e dados do pet.', req: p => [!p.address && 'Endereço de entrega', !p.productId && 'Produto escolhido'] },
@@ -715,12 +722,21 @@ const FLOW = {
     ]
   }
 };
+/* C = produto por conteúdo via marketplace: parceiro compra no canal, recebe reembolso e entrega o conteúdo (collab) */
+FLOW.C = { tag: 'C', name: 'Conteúdo · via marketplace', short: 'Marketplace',
+  steps: [FLOW.B.steps[0], { ...FLOW.B.steps[1], d: 'Parceiro aceitou e definiu em qual canal vai comprar.' }, FLOW.B.steps[2], FLOW.B.steps[3], FLOW.B.steps[4], FLOW.A.steps[4]] };
+/* selo “Apto para review”: acrescenta a etapa de review no fim das pills de conteúdo (A e C) */
+const REVIEW_STEP = { ...FLOW.B.steps[5], d: 'Avaliação deixada no canal (selo Apto para review).' };
+const MODELS = ['A', 'B', 'C'];
+const MLAB = { A: 'A · Envio direto', B: 'B · Review', C: 'C · Marketplace' };
+const isBuy = p => p.model !== 'A';
+const metaOf = m => num(state.cfg['meta' + m]);
 const NETWORKS = { instagram: 'Instagram', tiktok: 'TikTok' };
 const CONTENT_TYPES = { ugc: 'UGC', pfp: 'PFP', collab: 'Collab' };
-const COL = { open: '#fb923c', done: '#4ade80', dead: '#6b6b75', A: '#a78bfa', B: '#22d3ee' };
+const COL = { open: '#fb923c', done: '#4ade80', dead: '#6b6b75', A: '#a78bfa', B: '#22d3ee', C: '#f472b6' };
 /* cor que evolui com a etapa: laranja → âmbar → amarelo → lima */
 function stageColor(frac) { const h = 24 + frac * 62; return `hsl(${h.toFixed(0)} 92% ${(58 + frac * 4).toFixed(0)}%)`; }
-const stepsOf = p => FLOW[p.model].steps;
+const stepsOf = p => (p.reviewOk && p.model !== 'B' ? FLOW[p.model].steps.concat(REVIEW_STEP) : FLOW[p.model].steps);
 const doneSteps = p => stepsOf(p).filter(s => p.steps?.[s.k]).length;
 const curStepIdx = p => Math.min(stepsOf(p).length - 1, doneSteps(p));
 function pillColor(p) { return p.status === 'done' ? COL.done : p.status === 'dead' ? COL.dead : COL.open; }
@@ -743,7 +759,7 @@ const channelsOf = bid => state.channels.filter(c => c.brandId === bid);
 function defaultState() {
   return {
     app: 'caos-parceiros', schema: SCHEMA,
-    cfg: { title: { text: 'Projeto Parceiros', color: '#26262b', size: 14 }, logo: '', logoSize: 74, adminHash: '', metaA: 15, metaB: 10, workdays: [1, 2, 3, 4, 5], cmvB: true, createdAt: Date.now() },
+    cfg: { title: { text: 'Projeto Parceiros', color: '#26262b', size: 14 }, logo: '', logoSize: 74, adminHash: '', metaA: 15, metaB: 10, metaC: 0, workdays: [1, 2, 3, 4, 5], cmvB: true, createdAt: Date.now() },
     brands: [{ id: 'b_coco', name: 'Coco & Luna', accent: '#f472b6', country: 'BR', order: 0 }, { id: 'b_yuca', name: 'Yucaloo', accent: '#4ade80', country: 'BR', order: 1 }],
     products: [], channels: [...defaultChannels('b_coco'), ...defaultChannels('b_yuca')], operators: [{ id: uid(), name: 'Operador 1', active: true, order: 0 }], partners: []
   };
@@ -764,7 +780,7 @@ function normalize(s) {
     s.channels = out;
   }
   s.partners.forEach(p => {
-    p.id ||= uid(); p.model = p.model === 'B' ? 'B' : 'A'; p.status = ['open', 'done', 'dead'].includes(p.status) ? p.status : 'open';
+    p.id ||= uid(); p.model = MODELS.includes(p.model) ? p.model : 'A'; p.status = ['open', 'done', 'dead'].includes(p.status) ? p.status : 'open';
     p.steps ||= { contato: p.createdAt || Date.now() }; p.log = Array.isArray(p.log) ? p.log : [];
     ['purchasePrints', 'refundProofs', 'reviewPrints', 'contentPrints'].forEach(k => { if (!Array.isArray(p[k])) p[k] = []; });
   });
@@ -800,9 +816,9 @@ function costB(p) {
   const cmv = state.cfg.cmvB ? unitCostOf(p) + extrasCost(p) : 0;
   return { refund, fee, sellerShip, back, cmv, total: refund - back + cmv, real: !!p.steps?.compra };
 }
-const costOf = p => (p.model === 'A' ? costA(p) : costB(p));
+const costOf = p => (isBuy(p) ? costB(p) : costA(p));
 /* data em que o custo acontece: envio (A) ou compra (B) */
-const costDate = p => (p.model === 'A' ? (p.steps?.envio ? (p.shipDate || tsDay(p.steps.envio)) : null) : (p.steps?.compra ? (p.orderDate || tsDay(p.steps.compra)) : null));
+const costDate = p => (!isBuy(p) ? (p.steps?.envio ? (p.shipDate || tsDay(p.steps.envio)) : null) : (p.steps?.compra ? (p.orderDate || tsDay(p.steps.compra)) : null));
 
 /* =================== persistência: servidor (Cloudflare) ou local =================== */
 const LS_KEY = 'caos-parceiros:dados', LS_UI = 'caos-parceiros:ui';
@@ -1316,25 +1332,25 @@ function viewDays() {
   const openDays = days.filter(k => dayStatus(byDay[k]) === 'open').length;
   const pend = {}; all.filter(p => p.status === 'open').forEach(p => (pend[p.day] ||= []).push(p));
   const pendDays = Object.keys(pend).sort();
-  const meta = num(state.cfg.metaA) + num(state.cfg.metaB);
+  const meta = MODELS.reduce((s, m) => s + metaOf(m), 0);
   const [y, mo] = m.split('-').map(Number), nd = new Date(y, mo, 0).getDate(), startW = (dparse(`${m}-01`).getDay() + 6) % 7;
   let cells = ''; for (let i = 0; i < startW; i++) cells += '<div class="dcell blank" aria-hidden="true"></div>';
   for (let d = 1; d <= nd; d++) {
     const k = `${m}-${pad(d)}`, list = (byDay[k] || []).sort((a, z) => a.createdAt - z.createdAt), st = dayStatus(list), fut = k > t;
     const wd = dparse(k).getDay(), work = state.cfg.workdays.includes(wd);
-    const nA = list.filter(p => p.model === 'A').length, nB = list.length - nA, nOpen = list.filter(p => p.status === 'open').length;
+    const nA = list.filter(p => p.model === 'A').length, nB = list.filter(p => p.model === 'B').length, nC = list.filter(p => p.model === 'C').length, nOpen = list.filter(p => p.status === 'open').length;
     const chip = st === 'closed' ? `<span class="dchip g">${ic('lock', 'width:11px;height:11px')}Fechado</span>` : st === 'open' ? `<span class="dchip o">${nOpen} em aberto</span>` : !fut && work && k !== t ? `<span class="dchip m">sem contatos</span>` : '';
     const fill = meta ? Math.min(1, list.length / meta) : 0;
     cells += `<button class="node dcell st-${st} ${k === t ? 'today' : ''} ${fut ? 'fut' : ''} ${work ? '' : 'off'}" data-act="open-day" data-v="${k}" style="--d:${Math.min(d, 20)}" aria-label="${dayLabel(k)}: ${list.length} contatos">
       <div class="dc-h"><span class="dc-n">${d}</span>${chip}</div>
       <div class="dc-dots">${list.slice(0, 28).map(p => `<i style="background:${pillColor(p)}" title="@${esc(p.handle)}"></i>`).join('')}${list.length > 28 ? `<span>+${list.length - 28}</span>` : ''}</div>
-      <div class="dc-f">${list.length ? `<span><b style="color:${COL.A}">A</b> ${nA}</span><span><b style="color:${COL.B}">B</b> ${nB}</span>` : '<span>&nbsp;</span>'}<span class="sp"></span>${list.length || (work && !fut) ? `<span class="dc-bar" title="${list.length} de ${meta} da meta"><i style="width:${fill * 100}%;background:${fill >= 1 ? COL.done : COL.open}"></i></span>` : ''}</div></button>`;
+      <div class="dc-f">${list.length ? `<span><b style="color:${COL.A}">A</b> ${nA}</span><span><b style="color:${COL.B}">B</b> ${nB}</span>${nC ? `<span><b style="color:${COL.C}">C</b> ${nC}</span>` : ''}` : '<span>&nbsp;</span>'}<span class="sp"></span>${list.length || (work && !fut) ? `<span class="dc-bar" title="${list.length} de ${meta} da meta"><i style="width:${fill * 100}%;background:${fill >= 1 ? COL.done : COL.open}"></i></span>` : ''}</div></button>`;
   }
   const total = inMonth.length, wdays = days.filter(k => state.cfg.workdays.includes(dparse(k).getDay())).length;
   return `<div class="between mb"><div><h1>Dias · ${mlabel(m)}</h1><div class="sub">${esc(b.name)} — um dia só fecha quando todas as pills estiverem finalizadas ou baixadas.</div></div>
     <button class="pill white" data-act="open-day" data-v="${t}">${ic('play', 'width:13px;height:13px')}Abrir hoje</button></div>
   ${kpiHTML([
-    ['Contatos no mês', fmt.int(total), `<span class="muted">A ${fmt.int(inMonth.filter(p => p.model === 'A').length)} · B ${fmt.int(inMonth.filter(p => p.model === 'B').length)}</span>`, 'w'],
+    ['Contatos no mês', fmt.int(total), `<span class="muted">${MODELS.map(m => `${m} ${fmt.int(inMonth.filter(p => p.model === m).length)}`).join(' · ')}</span>`, 'w'],
     ['Média por dia com contato', days.length ? DEC1.format(total / days.length) : '—', `<span class="muted">meta ${fmt.int(meta)} por dia útil</span>`, 'b'],
     ['Dias fechados', fmt.int(closed), `<span class="muted">de ${fmt.int(days.length)} com contatos</span>`, 'g'],
     ['Dias em aberto', fmt.int(openDays), `<span class="muted">${pendDays.length} no total da marca</span>`, 'o'],
@@ -1344,16 +1360,16 @@ function viewDays() {
     <div class="cal-h">${['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'].map(x => `<span>${x}</span>`).join('')}</div>
     <div class="cal">${cells}</div></div>
   ${pendDays.length ? `<div class="mt2 rise" style="--d:4"><div class="label"><span class="dot o"></span>Pendências <span class="dim">· ${pendDays.length} ${pendDays.length === 1 ? 'dia' : 'dias'} para concluir</span></div>
-    <div class="node pend-box"><div class="pend">${pendDays.map(k => { const l = pend[k]; const nA = l.filter(p => p.model === 'A').length; return `<button class="pchip ${k < t ? 'late' : ''}" data-act="open-day" data-v="${k}"><b>${fmtD(k)}</b><span class="pc-n">${l.length} em aberto</span><span class="pc-ab muted">A ${nA} · B ${l.length - nA}</span><span class="age">${k < t ? ddiff(k, t) + 'd' : ''}</span></button>`; }).join('')}</div></div></div>` : ''}`;
+    <div class="node pend-box"><div class="pend">${pendDays.map(k => { const l = pend[k]; return `<button class="pchip ${k < t ? 'late' : ''}" data-act="open-day" data-v="${k}"><b>${fmtD(k)}</b><span class="pc-n">${l.length} em aberto</span><span class="pc-ab muted">${MODELS.map(m => [m, l.filter(p => p.model === m).length]).filter(x => x[1]).map(x => x.join(' ')).join(' · ')}</span><span class="age">${k < t ? ddiff(k, t) + 'd' : ''}</span></button>`; }).join('')}</div></div></div>` : ''}`;
 }
 
 /* =================== OPERAÇÃO =================== */
 function viewOp() {
   const b = curBrand(), day = ui.day, model = ui.model;
   const all = dayPartners(day, null), list = all.filter(p => p.model === model);
-  const counts = { A: all.filter(p => p.model === 'A').length, B: all.filter(p => p.model === 'B').length };
+  const counts = Object.fromEntries(MODELS.map(m => [m, all.filter(p => p.model === m).length]));
   const done = list.filter(p => p.status === 'done').length, dead = list.filter(p => p.status === 'dead').length, open = list.length - done - dead;
-  const meta = num(model === 'A' ? state.cfg.metaA : state.cfg.metaB);
+  const meta = metaOf(model);
   const st = dayStatus(all);
   const ops = activeOps();
   return `<div class="node tree-node branded rise" style="--d:1;--mc:${COL[model]};--bc:${b.accent}">
@@ -1363,7 +1379,7 @@ function viewOp() {
       <div class="tf-row"><span class="legend"><span><i style="background:${COL.done}"></i>${done} ${done === 1 ? 'finalizada' : 'finalizadas'}</span><span><i style="background:${COL.open}"></i>${open} em aberto</span><span><i style="background:${COL.dead}"></i>${dead} ${dead === 1 ? 'baixada' : 'baixadas'}</span></span>
         <span class="sp"></span>${meta ? `<span class="metab"><span class="hint">meta do dia</span><b class="num ${list.length >= meta ? 'pos' : ''}">${list.length}/${meta}</b><span class="mbar"><i style="width:${Math.min(100, list.length / meta * 100)}%;background:${list.length >= meta ? COL.done : COL.open}"></i></span></span>` : ''}</div></div>
   </div>
-  <div class="op-head op-below rise" style="--d:2"><div class="mseg" role="tablist">${['A', 'B'].map(k => `<button class="${model === k ? 'on' : ''}" data-act="model" data-v="${k}" role="tab" aria-selected="${model === k}" style="--c:${COL[k]}"><span class="mtag">${k}</span><span class="mtx"><b><span class="lg">${FLOW[k].name}</span><span class="sh">${FLOW[k].short}</span></b><small>${counts[k]} ${counts[k] === 1 ? 'contato' : 'contatos'} neste dia</small></span></button>`).join('')}</div>
+  <div class="op-head op-below rise" style="--d:2"><div class="mseg m3" role="tablist">${MODELS.map(k => `<button class="${model === k ? 'on' : ''}" data-act="model" data-v="${k}" role="tab" aria-selected="${model === k}" style="--c:${COL[k]}"><span class="mtag">${k}</span><span class="mtx"><b><span class="lg">${FLOW[k].name}</span><span class="sh">${FLOW[k].short}</span></b><small>${counts[k]} ${counts[k] === 1 ? 'contato' : 'contatos'} neste dia</small></span></button>`).join('')}</div>
     <button class="pill white" data-act="new-partner">${ic('plus')}Novo parceiro</button></div>
   <div class="mt2 rise" style="--d:2"><div class="label"><span class="dot" style="background:${COL[model]}"></span>Parceiros do dia · ${FLOW[model].name}</div>
     <div class="node pad scroll-x">${list.length ? opTableHTML(list) : `<div class="empty"><h3>Nenhum contato de ${FLOW[model].short.toLowerCase()} neste dia</h3>Registre cada conversa iniciada no chat com “Novo parceiro”.</div>`}</div></div>`;
@@ -1376,9 +1392,9 @@ function stageChip(p) {
 function opTableHTML(list) {
   return `<table class="tbl"><thead><tr><th>Hora</th><th style="text-align:left">Parceiro</th><th style="text-align:left">Etapa</th><th style="text-align:left">${list[0].model === 'A' ? 'Produto' : 'Canal · produto'}</th><th>Custo</th><th style="text-align:left">Operador</th></tr></thead><tbody>
     ${list.map(p => { const c = costOf(p), pr = productById(p.productId); return `<tr class="click" data-act="open-p" data-v="${p.id}"><td class="muted num">${tsTime(p.createdAt)}</td>
-      <td><div class="nm"><span class="dot" style="background:${pillColor(p)};box-shadow:0 0 8px ${pillColor(p)}"></span>${netIc(p.network)}<b style="font-weight:500">@${esc(p.handle)}</b>${p.name ? `<span class="muted">${esc(p.name)}</span>` : ''}</div></td>
+      <td><div class="nm"><span class="dot" style="background:${pillColor(p)};box-shadow:0 0 8px ${pillColor(p)}"></span>${netIc(p.network)}<b style="font-weight:500">@${esc(p.handle)}</b>${p.reviewOk ? rvBadge() : ''}${p.name ? `<span class="muted">${esc(p.name)}</span>` : ''}</div></td>
       <td style="text-align:left">${stageChip(p)}</td>
-      <td style="text-align:left" class="muted">${p.model === 'B' ? `${esc(channelById(p.channelId)?.name || '—')} · ` : ''}${esc(pr?.name || '—')}</td>
+      <td style="text-align:left" class="muted">${isBuy(p) ? `${esc(channelById(p.channelId)?.name || '—')} · ` : ''}${esc(pr?.name || '—')}</td>
       <td class="num">${c.real ? fmt.brl(c.total) : `<span class="dim">${fmt.brl(c.total)}</span>`}</td>
       <td style="text-align:left" class="muted">${esc(operatorById(p.operatorId)?.name || '—')}</td></tr>`; }).join('')}</tbody></table>`;
 }
@@ -1430,7 +1446,7 @@ function drawTree(animate) {
     const badge = p.status === 'done' ? ic('check', 'width:11px;height:11px;stroke-width:2.6') : p.status === 'dead' ? ic('skull', 'width:12px;height:12px') : `${d}/${n2}`;
     const pct = p.status === 'done' ? 100 : Math.round(d / n2 * 100);
     html += `<button class="tpill st-${p.status} ${animate ? 'in' : ''} ${ui.fresh === p.id ? 'fresh' : ''} ${pendingReq(p) ? 'hasreq' : ''}" data-act="open-p" data-v="${p.id}" data-tip="${p.id}" style="left:${x}px;top:${y}px;--d:${Math.min(i, 40)};--bc:${branchColor(p)};--p:${pct}%" aria-label="@${esc(p.handle)} — ${esc(stageLabel(p))}">
-      <span class="tp-fill"></span><span class="tp-b">${badge}</span><span class="tp-h">@${esc(p.handle)}</span></button>`;
+      <span class="tp-fill"></span><span class="tp-b">${badge}</span><span class="tp-h">@${esc(p.handle)}</span>${p.reviewOk ? `<span class="tp-rv" title="Apto para review">${ic('star', 'width:10px;height:10px')}</span>` : ''}</button>`;
   });
   if (!n) html += `<div class="tempty" style="${vert ? `left:${mid}px;top:${lineT0 + 90}px` : `left:${(lineT0 + lineT1) / 2}px;top:${mid - 70}px`}">Nenhum contato iniciado ainda.<br><span class="muted">Clique no + para registrar o primeiro parceiro do dia.</span></div>`;
   tree.innerHTML = html;
@@ -1489,7 +1505,8 @@ function createPartner(open) {
 
 /* =================== CARD DO PARCEIRO =================== */
 const curP = () => state.partners.find(x => x.id === ui.sel);
-const ATT_STEP = { 'A:conteudo': 'contentPrints', 'B:compra': 'purchasePrints', 'B:reembolso': 'refundProofs', 'B:review': 'reviewPrints' };
+const ATT_STEP = { 'A:conteudo': 'contentPrints', 'B:compra': 'purchasePrints', 'B:reembolso': 'refundProofs', 'B:review': 'reviewPrints', 'C:compra': 'purchasePrints', 'C:reembolso': 'refundProofs', 'C:conteudo': 'contentPrints', 'A:review': 'reviewPrints', 'C:review': 'reviewPrints' };
+const rvBadge = big => `<span class="rvb ${big ? 'big' : ''}" title="Apto para review">${ic('star', 'width:10px;height:10px')}${big ? 'Apto para review' : 'review'}</span>`;
 function openPartner(id, step) {
   const p = state.partners.find(x => x.id === id); if (!p) return;
   ui.sel = id;
@@ -1501,7 +1518,7 @@ function openPartner(id, step) {
 function centerStep() { const nav = $('.pc-steps'), on = $('.stp.on'); if (nav && on && nav.scrollWidth > nav.clientWidth) nav.scrollLeft = on.offsetLeft - nav.clientWidth / 2 + on.offsetWidth / 2; }
 function partnerTitle(p) {
   return `<span class="row" style="gap:10px;flex-wrap:wrap"><span class="tpill static st-${p.status}" style="--bc:${branchColor(p)};--p:${p.status === 'done' ? 100 : Math.round(doneSteps(p) / stepsOf(p).length * 100)}%"><span class="tp-fill"></span><span class="tp-b">${p.status === 'done' ? ic('check', 'width:11px;height:11px;stroke-width:2.6') : p.status === 'dead' ? ic('skull', 'width:12px;height:12px') : `${doneSteps(p)}/${stepsOf(p).length}`}</span><span class="tp-h">@${esc(p.handle)}</span></span>
-    <span class="tag" style="color:${COL[p.model]};border-color:${COL[p.model]}55">${p.model} · ${FLOW[p.model].name}</span><span class="brand-tag sm" style="--bc:${brandById(p.brandId)?.accent || '#85858e'}"><span class="dot"></span>${esc(brandById(p.brandId)?.name || '')}</span></span>`;
+    <span class="tag" style="color:${COL[p.model]};border-color:${COL[p.model]}55">${p.model} · ${FLOW[p.model].name}</span>${p.reviewOk ? rvBadge(true) : ''}<span class="brand-tag sm" style="--bc:${brandById(p.brandId)?.accent || '#85858e'}"><span class="dot"></span>${esc(brandById(p.brandId)?.name || '')}</span></span>`;
 }
 function refreshCard(full = true) {
   const p = curP(), sc = $('#scrim'); if (!p || !sc) return;
@@ -1552,7 +1569,7 @@ function fAtt(p, k, label, req) {
 function stepFormHTML(p) {
   const s = stepsOf(p), i = s.findIndex(x => x.k === ui.step), st = s[i], d = doneSteps(p);
   let f = '';
-  const k = st.k, M = p.model;
+  const k = st.k, M = k === 'review' ? 'B' : p.model === 'C' ? (k === 'conteudo' ? 'A' : 'B') : p.model;
   if (k === 'contato') f = `${fText(p, 'handle', 'Perfil', { pre: '@' })}
     <div class="field"><span>Rede</span><div class="seg">${Object.entries(NETWORKS).map(([v, l]) => `<button class="pill sm ${p.network === v ? 'on' : ''}" data-act="p-net" data-v="${v}" ${DIS(p)}>${netIc(v)}${l}</button>`).join('')}</div></div>
     ${fText(p, 'name', 'Nome')}${fText(p, 'followers', 'Seguidores', { im: 'numeric', ph: 'Ex.: 12.400' })}
@@ -1587,7 +1604,7 @@ function stepFormHTML(p) {
   else if (M === 'B' && k === 'review') f = `<div class="field"><span>Nota do review</span><div class="stars">${[1, 2, 3, 4, 5].map(n => `<button class="${num(p.reviewStars) >= n ? 'on' : ''}" data-act="p-star" data-v="${n}" aria-label="${n} estrelas" ${DIS(p)}>${ic('star')}</button>`).join('')}</div></div>
     ${fDate(p, 'reviewDate', 'Data do review')}${fText(p, 'reviewUrl', 'Link do review', { full: true, ph: 'https://' })}
     ${fAtt(p, 'reviewPrints', 'Print do review', false)}
-    ${fText(p, 'contentUrl', 'Conteúdo gravado', { full: true, hint: 'opcional', ph: 'https://' })}`;
+    ${p.model === 'B' ? fText(p, 'contentUrl', 'Conteúdo gravado', { full: true, hint: 'opcional', ph: 'https://' }) : ''}`;
   const ok = !!p.steps?.[k], isNext = i === d && p.status === 'open';
   const lastDone = s.slice().reverse().find(x => p.steps?.[x.k]);
   const missing = isNext && st.req ? st.req(p).filter(Boolean) : [];
@@ -1604,7 +1621,7 @@ function stepFormHTML(p) {
 function sideHTML(p) {
   const s = stepsOf(p), d = doneSteps(p), c = costOf(p);
   const age = ddiff(p.day, p.status === 'done' && p.doneAt ? tsDay(p.doneAt) : today());
-  const costRows = p.model === 'A'
+  const costRows = !isBuy(p)
     ? `<div class="li"><span class="lk">${esc(productById(p.productId)?.name || 'Produto')} ${Math.max(1, num(p.qty) || 1)} × ${fmt.brl(unitCostOf(p))}</span><span class="num">${fmt.brl(unitCostOf(p) * Math.max(1, num(p.qty) || 1))}</span></div>${extrasOf(p).map(x => `<div class="li"><span class="lk">${esc(productById(x.productId)?.name || 'Produto')} ${Math.max(1, num(x.qty) || 1)} × ${fmt.brl(exUnit(x))}</span><span class="num">${fmt.brl(exUnit(x) * Math.max(1, num(x.qty) || 1))}</span></div>`).join('')}<div class="li"><span class="lk">Frete do envio</span><span class="num">${fmt.brl(c.ship)}</span></div><div class="li"><span class="lk">Logística do envio</span><span class="num">${fmt.brl(c.logi)}</span></div>`
     : `<div class="li"><span class="lk">Reembolso pago</span><span class="num">${fmt.brl(c.refund)}</span></div>
        <div class="li"><span class="lk">Repasse do canal<small class="hint" style="display:block">${esc(channelById(p.channelId)?.name || 'sem canal definido')}</small></span><span class="num pos">−${fmt.brl(c.back)}</span></div>
@@ -1630,9 +1647,11 @@ function actsHTML(p) {
       <p>${esc(rsn(r.reasonType, r.reason))}</p><small>${esc(r.by)} · ${tsFull(r.ts)}</small>
       <div class="row" style="gap:6px;margin-top:8px;flex-wrap:wrap">${adm ? `<button class="pill sm white" data-act="req-ok">${ic('check')}Aprovar</button><button class="pill sm" data-act="req-no">Recusar</button>` : `<button class="pill sm ghost" data-act="req-cancel">Cancelar solicitação</button>`}</div></div>` : ''}
     ${p.status === 'dead' ? b('p-revive', 'revive', adm ? 'Restaurar' : 'Pedir restauração', adm ? 'volta a ficar aberta' : 'o admin aprova') : b('p-kill', 'skull', adm ? 'Dar baixa' : 'Solicitar baixa', adm ? 'encerra mantendo o histórico' : 'o admin aprova', 'pa-w')}
+    ${p.model !== 'B' && p.status !== 'dead' ? (adm ? b('p-rv', 'star', p.reviewOk ? 'Tirar selo de review' : 'Marcar apto para review', p.reviewOk ? 'remove a etapa de review' : 'acrescenta a etapa de review', 'pa-rv') : !p.reviewOk ? b('p-rv', 'star', 'Pedir selo de review', 'o admin aprova', 'pa-rv') : '') : ''}
+    ${p.model === 'C' && p.status === 'open' && !p.steps?.compra ? b('p-toA', 'truck', 'Mudar para envio direto', 'não quis comprar antes') : ''}
     ${b('p-del', 'trash', adm ? 'Excluir registro' : 'Solicitar exclusão', adm ? 'apaga de vez, com anexos' : 'o admin aprova', 'pa-d')}</div>`;
 }
-const REQ_L = { dead: 'Baixa solicitada', restore: 'Restauração solicitada', delete: 'Exclusão solicitada' };
+const REQ_L = { dead: 'Baixa solicitada', restore: 'Restauração solicitada', delete: 'Exclusão solicitada', review: 'Selo de review solicitado' };
 /* =================== ocorrências e solicitações =================== */
 const OCC = { tentativa: ['Tentativa sem retorno', '#fb923c'], retorno: ['Retorno recebido', '#60a5fa'], impedimento: ['Impedimento', '#f87171'], nota: ['Observação', '#9a9aa3'] };
 const occCount = (p, k) => (p.occ || []).filter(o => o.kind === k).length;
@@ -1649,7 +1668,7 @@ const pendingReq = p => (p.reqs || []).find(r => r.status === 'pending') || null
 function addReq(p, type, reasonType, reason) {
   const by = whoName() || 'equipe';
   (p.reqs ||= []).push({ id: uid(), type, reasonType, reason, by, ts: Date.now(), status: 'pending' });
-  logP(p, type === 'dead' ? `Solicitou baixa: ${rsn(reasonType, reason)}` : type === 'delete' ? `Solicitou exclusão: ${reason}` : `Solicitou restauração: ${reason}`, by);
+  logP(p, type === 'dead' ? `Solicitou baixa: ${rsn(reasonType, reason)}` : type === 'delete' ? `Solicitou exclusão: ${reason}` : type === 'review' ? `Pediu o selo Apto para review${reason ? ': ' + reason : ''}` : `Solicitou restauração: ${reason}`, by);
 }
 function restoreP(p, by) {
   p.status = 'open'; delete p.deadAt; logP(p, 'Restaurada', by);
@@ -1661,14 +1680,34 @@ function decideReq(p, rid, accept, note, by) {
   r.status = accept ? 'accepted' : 'rejected'; r.decidedAt = Date.now(); r.decidedBy = by; if (note) r.note = note;
   if (accept && r.type === 'dead') { p.status = 'dead'; p.deadAt = Date.now(); p.deadReasonType = r.reasonType || ''; p.deadReason = rsn(r.reasonType, r.reason); p.deadBy = r.by; logP(p, `Baixa aprovada: ${p.deadReason}`, by); }
   else if (accept && r.type === 'restore') restoreP(p, by);
+  else if (accept && r.type === 'review') setReviewOk(p, true, by);
   else if (accept && r.type === 'delete') { deleteP(p); return 'deleted'; }
   else logP(p, `Solicitação recusada${note ? ': ' + note : ''}`, by);
 }
 function reqBoxHTML(p) {
   const r = pendingReq(p); if (!r) return '';
-  return `<div class="side-b reqbox"><div class="between"><b>${r.type === 'dead' ? 'Baixa solicitada' : 'Restauração solicitada'}</b><span class="spill st-req">aguardando</span></div>
+  return `<div class="side-b reqbox"><div class="between"><b>${REQ_L[r.type] || 'Solicitação'}</b><span class="spill st-req">aguardando</span></div>
     <p class="mt" style="font-size:13px">${esc(rsn(r.reasonType, r.reason))}</p><p class="hint">${esc(r.by)} · ${tsFull(r.ts)}</p>
     <div class="row mt" style="gap:6px;flex-wrap:wrap">${isAdmin() ? `<button class="pill sm white" data-act="req-ok">${ic('check')}Aprovar</button><button class="pill sm" data-act="req-no">Recusar</button>` : `<button class="pill sm ghost" data-act="req-cancel">Cancelar solicitação</button>`}</div></div>`;
+}
+/* selo Apto para review: liga/desliga a etapa extra de review (A e C) */
+function setReviewOk(p, on, by) {
+  if (on) {
+    if (p.reviewOk) return true;
+    p.reviewOk = true; p.reviewOkAt = Date.now(); logP(p, 'Selo Apto para review ativado', by);
+    if (p.status === 'done') { p.status = 'open'; delete p.doneAt; logP(p, 'Reaberta para a etapa de review', by); }
+    return true;
+  }
+  if (p.steps?.review) return false;
+  delete p.reviewOk; delete p.reviewOkAt; logP(p, 'Selo Apto para review removido', by);
+  if (p.status === 'open' && stepsOf(p).every(s => p.steps?.[s.k])) { p.status = 'done'; p.doneAt = Date.now(); }
+  return true;
+}
+function openReviewAsk(p) {
+  const pid = p.id;
+  openModal({ title: `Pedir selo de review para @${esc(p.handle)}`, body: `<p class="muted mb">Com o selo, a pill ganha a etapa “Review publicado” depois do conteúdo. O admin aprova pela caixa de Pedidos.</p><label class="field"><span>Por que é apto? <em>opcional</em></span><textarea class="inp" id="rv-txt" rows="3" placeholder="Ex.: amou o produto, conteúdo ficou ótimo"></textarea></label>`,
+    actions: [{ label: 'Cancelar' }, { label: 'Enviar solicitação', primary: true, act: () => { p = livePartner(p); if (!p) { toast('Esta pill não existe mais', 'r'); return; } addReq(p, 'review', '', $('#rv-txt').value.trim()); commit(); toast('Pedido de selo enviado para o admin', 'g'); } }],
+    onClose: () => setTimeout(() => openPartner(pid), 0) });
 }
 function deleteP(p) {
   [...(p.purchasePrints || []), ...(p.refundProofs || []), ...(p.reviewPrints || []), ...(p.contentPrints || [])].forEach(removeAttachment);
@@ -1695,7 +1734,7 @@ function concludeStep() {
   const miss = st.req ? st.req(p).filter(Boolean) : [];
   if (miss.length) { toast('Falta: ' + miss.join(', '), 'r'); $('.pc-foot .req')?.classList.add('shake'); return; }
   p.steps[st.k] = Date.now();
-  if ((p.model === 'A' && st.k === 'envio') || (p.model === 'B' && st.k === 'compra')) { p.unitCost = num(productById(p.productId)?.cost); extrasOf(p).forEach(x => (x.unitCost = num(productById(x.productId)?.cost))); }
+  if ((p.model === 'A' && st.k === 'envio') || (isBuy(p) && st.k === 'compra')) { p.unitCost = num(productById(p.productId)?.cost); extrasOf(p).forEach(x => (x.unitCost = num(productById(x.productId)?.cost))); }
   if (p.model === 'A' && st.k === 'envio') p.logiCost = brandLogi(p.brandId);
   logP(p, `Etapa concluída: ${st.l}`);
   if (d + 1 >= s.length) { p.status = 'done'; p.doneAt = Date.now(); logP(p, 'Parceria finalizada'); toast(`@${p.handle} finalizada`, 'g'); ui.fresh = p.id; }
@@ -1707,7 +1746,7 @@ function undoStep() {
   const s = stepsOf(p), last = s.slice().reverse().find(x => p.steps?.[x.k]);
   if (!last || last.k === 'contato') return;
   delete p.steps[last.k];
-  if ((p.model === 'A' && last.k === 'envio') || (p.model === 'B' && last.k === 'compra')) { delete p.unitCost; extrasOf(p).forEach(x => delete x.unitCost); }
+  if ((p.model === 'A' && last.k === 'envio') || (isBuy(p) && last.k === 'compra')) { delete p.unitCost; extrasOf(p).forEach(x => delete x.unitCost); }
   if (p.status === 'done') { p.status = 'open'; delete p.doneAt; }
   logP(p, `Conclusão desfeita: ${last.l}`); ui.step = last.k;
   commit(); refreshCard();
@@ -1758,13 +1797,13 @@ function periodLabel(a, z) { if (ui.per === 'month') return mlabel(mkey(a)); if 
 const inR = (k, a, z) => k && k >= a && k <= z;
 function viewSum() {
   const b = curBrand(), [a, z] = periodRange(), t = today();
-  const models = ui.pModel === 'all' ? ['A', 'B'] : [ui.pModel];
+  const models = ui.pModel === 'all' ? MODELS : [ui.pModel];
   const P = brandPartners(b.id).filter(p => models.includes(p.model));
   const C = P.filter(p => inR(p.day, a, z));
   const costEv = P.filter(p => inR(costDate(p), a, z));
   const doneEv = C.filter(p => p.status === 'done');
   const costTotal = costEv.reduce((s, p) => s + costOf(p).total, 0);
-  const meta = models.reduce((s, m) => s + num(m === 'A' ? state.cfg.metaA : state.cfg.metaB), 0);
+  const meta = models.reduce((s, m) => s + metaOf(m), 0);
   /* dias do período */
   const nDays = ddiff(a, z) + 1, weekly = nDays > 92;
   const days = []; for (let k = a; k <= z && days.length < 800; k = addDays(k, 1)) days.push(k);
@@ -1773,19 +1812,19 @@ function viewSum() {
   const workPast = days.filter(k => isWork(k) && k <= t);
   const avg = workPast.length ? workPast.reduce((s, k) => s + (byDay[k]?.length || 0), 0) / workPast.length : 0;
   const lowDays = workPast.filter(k => (byDay[k]?.length || 0) < meta);
-  let labels, titles, sA, sB, low, dim, keys;
+  let labels, titles, sM, low, dim, keys;
   if (!weekly) {
     keys = days; labels = days.map(k => (nDays > 14 ? String(dparse(k).getDate()) : `${WDS[dparse(k).getDay()]} ${dparse(k).getDate()}`)); titles = days.map(dayLabel);
-    sA = days.map(k => (byDay[k] || []).filter(p => p.model === 'A').length); sB = days.map(k => (byDay[k] || []).filter(p => p.model === 'B').length);
+    sM = Object.fromEntries(MODELS.map(m => [m, days.map(k => (byDay[k] || []).filter(p => p.model === m).length)]));
     low = days.map(k => isWork(k) && k <= t && (byDay[k]?.length || 0) < meta); dim = days.map(k => !isWork(k) || k > t);
   } else {
     keys = []; for (let k = mondayOf(a); k <= z; k = addDays(k, 7)) keys.push(k);
     labels = keys.map(fmtD); titles = keys.map(k => `Semana de ${fmtD(k)}`);
     const wk = k => C.filter(p => p.day >= k && p.day <= addDays(k, 6));
-    sA = keys.map(k => wk(k).filter(p => p.model === 'A').length); sB = keys.map(k => wk(k).filter(p => p.model === 'B').length); low = []; dim = [];
+    sM = Object.fromEntries(MODELS.map(m => [m, keys.map(k => wk(k).filter(p => p.model === m).length)])); low = []; dim = [];
   }
   charts.contacts = { labels, titles, low, dim, meta: weekly ? 0 : meta, avg: weekly ? 0 : avg,
-    series: models.map(m => ({ name: m === 'A' ? 'A · Conteúdo' : 'B · Review', color: COL[m], values: m === 'A' ? sA : sB })),
+    series: models.map(m => ({ name: MLAB[m], color: COL[m], values: sM[m] })),
     extra: i => { if (weekly) return ''; const l = byDay[keys[i]] || []; const ops = {}; l.forEach(p => { const n = operatorById(p.operatorId)?.name || '—'; ops[n] = (ops[n] || 0) + 1; });
       return `${Object.entries(ops).map(([n, v]) => `<div class="tr"><span class="muted">${esc(n)}</span><b class="num">${v}</b></div>`).join('')}${meta && isWork(keys[i]) && keys[i] <= t ? `<div class="tr" style="border-top:1px solid var(--line);margin-top:5px;padding-top:5px"><span>Meta ${meta}</span><b class="${l.length >= meta ? 'pos' : 'neg'}">${l.length >= meta ? 'batida' : `faltaram ${meta - l.length}`}</b></div>` : ''}<div class="hint" style="margin-top:4px">Clique para abrir o dia</div>`; },
     onClick: i => { if (weekly) return; ui.day = keys[i]; ui.view = 'op'; render(); scrollTo({ top: 0 }); } };
@@ -1794,27 +1833,28 @@ function viewSum() {
   const cs = ckeys.map(cbucket);
   charts.costs = { labels, titles, money: true, dim,
     series: [...(models.includes('A') ? [{ name: 'A · produto', color: '#a78bfa', values: cs.map(l => l.filter(p => p.model === 'A').reduce((s, p) => s + costA(p).prod, 0)) }, { name: 'A · frete', color: '#6d5bd0', values: cs.map(l => l.filter(p => p.model === 'A').reduce((s, p) => s + costA(p).ship, 0)) }, { name: 'A · logística', color: '#4c3fa3', values: cs.map(l => l.filter(p => p.model === 'A').reduce((s, p) => s + costA(p).logi, 0)) }] : []),
-      ...(models.includes('B') ? [{ name: 'B · custo líquido', color: '#22d3ee', values: cs.map(l => l.filter(p => p.model === 'B').reduce((s, p) => s + costB(p).total, 0)) }] : [])] };
-  const cA = costEv.filter(p => p.model === 'A'), cB = costEv.filter(p => p.model === 'B');
+      ...['B', 'C'].filter(m => models.includes(m)).map(m => ({ name: `${m} · custo líquido`, color: COL[m], values: cs.map(l => l.filter(p => p.model === m).reduce((s, p) => s + costB(p).total, 0)) }))] };
+  const cA = costEv.filter(p => p.model === 'A'), cB = costEv.filter(p => p.model === 'B'), cC = costEv.filter(p => p.model === 'C');
   const sum = (l, f) => l.reduce((s, p) => s + f(p), 0);
   const aProd = sum(cA, p => costA(p).prod), aShip = sum(cA, p => costA(p).ship), aLogi = sum(cA, p => costA(p).logi);
   const bRef = sum(cB, p => costB(p).refund), bBack = sum(cB, p => costB(p).back), bCmv = sum(cB, p => costB(p).cmv);
-  const aDone = doneEv.filter(p => p.model === 'A').length, bDone = doneEv.filter(p => p.model === 'B').length;
+  const aDone = doneEv.filter(p => p.model === 'A').length, bDone = doneEv.filter(p => p.model === 'B').length, cDone = doneEv.filter(p => p.model === 'C').length;
+  const buyNet = l => sum(l, p => costB(p).total);
   const dead = C.filter(p => p.status === 'dead');
   const kp = [
     ['Contatos iniciados', fmt.int(C.length), `<span class="muted">média ${DEC1.format(avg)}/dia útil</span>`, 'w'],
     ['Dias abaixo da meta', fmt.int(lowDays.length), `<span class="muted">de ${fmt.int(workPast.length)} dias úteis · meta ${meta}</span>`, lowDays.length ? 'r' : 'g'],
     ['Finalizadas no período', fmt.int(doneEv.length), `<span class="muted">${fmt.pct(div(doneEv.length, C.length))} dos contatos</span>`, 'g'],
     ['Em aberto', fmt.int(C.filter(p => p.status === 'open').length), `<span class="muted">${fmt.int(dead.length)} baixadas</span>`, 'o'],
-    ['Custo no período', fmt.brl(costTotal), `<span class="muted">${models.includes('A') ? `A ${fmt.brl(aProd + aShip + aLogi)}` : ''}${models.length > 1 ? ' · ' : ''}${models.includes('B') ? `B ${fmt.brl(bRef - bBack + bCmv)}` : ''}</span>`, 'y'],
+    ['Custo no período', fmt.brl(costTotal), `<span class="muted">${models.map(m => `${m} ${fmt.brl(m === 'A' ? aProd + aShip + aLogi : buyNet(m === 'B' ? cB : cC))}`).join(' · ')}</span>`, 'y'],
     ['Custo por finalização', doneEv.length ? fmt.brl(costTotal / doneEv.length) : '—', `<span class="muted">custo ÷ finalizadas</span>`, 'b']
   ];
   const weak = workPast.map(k => [k, byDay[k]?.length || 0]).sort((x, y) => x[1] - y[1] || (x[0] < y[0] ? 1 : -1)).slice(0, 6);
-  return `<div class="between mb" style="flex-wrap:wrap;gap:12px"><div><h1>Resumo · ${periodLabel(a, z)}</h1><div class="sub">${esc(b.name)} — contatos pelo dia do contato · custos pela data do envio (A) ou da compra (B)</div></div>
-    <div class="seg">${[['all', 'A + B'], ['A', 'A · Conteúdo'], ['B', 'B · Review']].map(([k, l]) => `<button class="pill sm ${ui.pModel === k ? 'on' : ''}" data-act="pmodel" data-v="${k}">${k !== 'all' ? `<span class="dot" style="background:${COL[k]}"></span>` : ''}${l}</button>`).join('')}</div></div>
+  return `<div class="between mb" style="flex-wrap:wrap;gap:12px"><div><h1>Resumo · ${periodLabel(a, z)}</h1><div class="sub">${esc(b.name)} — contatos pelo dia do contato · custos pela data do envio (A) ou da compra (B e C)</div></div>
+    <div class="seg">${[['all', 'Todas'], ...MODELS.map(m => [m, MLAB[m]])].map(([k, l]) => `<button class="pill sm ${ui.pModel === k ? 'on' : ''}" data-act="pmodel" data-v="${k}">${k !== 'all' ? `<span class="dot" style="background:${COL[k]}"></span>` : ''}${l}</button>`).join('')}</div></div>
   ${kpiHTML(kp)}
-  <div class="mt2 rise" style="--d:2"><div class="label"><span class="dot y"></span>Enviados por produto <span class="dim">· ${periodLabel(a, z)} · pela data do envio (A) ou da compra (B)</span></div><div class="node pad scroll-x">${sentByProductHTML(costEv)}</div></div>
-  <div class="mt2 rise" style="--d:2"><div class="label"><span class="dot"></span>Contatos iniciados por ${weekly ? 'semana' : 'dia'} <span class="sp"></span><span class="legend">${models.map(m => `<span><i style="background:${COL[m]}"></i>${m === 'A' ? 'A · Conteúdo' : 'B · Review'}</span>`).join('')}${weekly ? '' : `<span><i style="background:transparent;border:1px dashed #f87171"></i>abaixo da meta</span><span><i style="background:#facc15;height:2px"></i>média</span>`}</span></div>
+  <div class="mt2 rise" style="--d:2"><div class="label"><span class="dot y"></span>Enviados por produto <span class="dim">· ${periodLabel(a, z)} · pela data do envio (A) ou da compra (B e C)</span></div><div class="node pad scroll-x">${sentByProductHTML(costEv)}</div></div>
+  <div class="mt2 rise" style="--d:2"><div class="label"><span class="dot"></span>Contatos iniciados por ${weekly ? 'semana' : 'dia'} <span class="sp"></span><span class="legend">${models.map(m => `<span><i style="background:${COL[m]}"></i>${MLAB[m]}</span>`).join('')}${weekly ? '' : `<span><i style="background:transparent;border:1px dashed #f87171"></i>abaixo da meta</span><span><i style="background:#facc15;height:2px"></i>média</span>`}</span></div>
     <div class="node pad"><div class="chart" data-chart="contacts" style="height:260px"></div></div></div>
   <div class="grid g2 mt2 eq">
     <div class="col-node rise" style="--d:3"><div class="label"><span class="dot r"></span>Dias mais fracos <span class="dim">· dias úteis com menos contatos</span></div>
@@ -1822,16 +1862,19 @@ function viewSum() {
         <span class="wbar"><i style="width:${meta ? Math.min(100, v / meta * 100) : 0}%;background:${v >= meta ? COL.done : v >= meta * .6 ? '#facc15' : '#f87171'}"></i></span><b class="num">${v}${meta ? `<span class="dim">/${meta}</span>` : ''}</b><span class="muted wop">${esc(ops.join(', ') || 'sem operador')}</span></button>`; }).join('')}</div>` : `<div class="empty">Sem dias úteis no período</div>`}</div></div>
     <div class="col-node rise" style="--d:4"><div class="label"><span class="dot"></span>Por operador</div><div class="node pad fill scroll-x">${opsTableHTML(C, days, byDay, isWork, t)}</div></div>
   </div>
-  <div class="grid ${models.length > 1 ? 'g2' : ''} mt2 eq">${models.map((m, i) => `<div class="col-node rise" style="--d:${5 + i}"><div class="label"><span class="dot" style="background:${COL[m]}"></span>Funil · ${FLOW[m].name}</div><div class="node pad fill">${funnelHTML(C.filter(p => p.model === m), m)}</div></div>`).join('')}</div>
+  <div class="grid ${models.length > 2 ? 'g3' : models.length > 1 ? 'g2' : ''} mt2 eq">${models.map((m, i) => `<div class="col-node rise" style="--d:${5 + i}"><div class="label"><span class="dot" style="background:${COL[m]}"></span>Funil · ${FLOW[m].name}</div><div class="node pad fill">${funnelHTML(C.filter(p => p.model === m), m)}</div></div>`).join('')}</div>
   <div class="grid g2 mt2 eq">
     <div class="col-node rise" style="--d:7"><div class="label"><span class="dot y"></span>Custos por ${weekly ? 'semana' : 'dia'} <span class="sp"></span><span class="legend">${charts.costs.series.map(s => `<span><i style="background:${s.color}"></i>${s.name}</span>`).join('')}</span></div><div class="node pad fill"><div class="chart" data-chart="costs" style="height:230px"></div></div></div>
     <div class="col-node rise" style="--d:8"><div class="label"><span class="dot y"></span>Composição dos custos</div><div class="node pad fill">
-      ${models.includes('A') ? `<div class="cat-h"><span class="dot" style="background:${COL.A}"></span>A · Produto por conteúdo<span class="ln"></span></div><div class="stat-list">
+      ${models.includes('A') ? `<div class="cat-h"><span class="dot" style="background:${COL.A}"></span>A · Conteúdo via envio direto<span class="ln"></span></div><div class="stat-list">
         <div class="li"><span class="lk">Envios no período</span><span class="num">${fmt.int(cA.length)}</span></div><div class="li"><span class="lk">Produtos enviados</span><span class="num">${fmt.brl(aProd)}</span></div><div class="li"><span class="lk">Fretes</span><span class="num">${fmt.brl(aShip)}</span></div><div class="li"><span class="lk">Logística (preparação e embalagem)</span><span class="num">${fmt.brl(aLogi)}</span></div>
         <div class="li"><span class="lk">Custo médio por envio</span><span class="num">${cA.length ? fmt.brl((aProd + aShip + aLogi) / cA.length) : '—'}</span></div><div class="li"><span class="lk">Custo por conteúdo finalizado</span><span class="num">${aDone ? fmt.brl((aProd + aShip + aLogi) / aDone) : '—'}</span></div></div>` : ''}
       ${models.includes('B') ? `<div class="cat-h ${models.includes('A') ? 'mt2' : ''}"><span class="dot" style="background:${COL.B}"></span>B · Produto por review<span class="ln"></span></div><div class="stat-list">
         <div class="li"><span class="lk">Compras no período</span><span class="num">${fmt.int(cB.length)}</span></div><div class="li"><span class="lk">Reembolsos (produto + frete)</span><span class="num">${fmt.brl(bRef)}</span></div><div class="li"><span class="lk">Repasse estimado dos canais</span><span class="num pos">−${fmt.brl(bBack)}</span></div>
         ${state.cfg.cmvB ? `<div class="li"><span class="lk">CMV dos produtos</span><span class="num">${fmt.brl(bCmv)}</span></div>` : ''}<div class="li"><span class="lk">Custo líquido</span><span class="num"><b>${fmt.brl(bRef - bBack + bCmv)}</b></span></div><div class="li"><span class="lk">Custo por review finalizado</span><span class="num">${bDone ? fmt.brl((bRef - bBack + bCmv) / bDone) : '—'}</span></div></div>` : ''}
+      ${models.includes('C') ? `<div class="cat-h ${models.length > 1 ? 'mt2' : ''}"><span class="dot" style="background:${COL.C}"></span>C · Conteúdo via marketplace<span class="ln"></span></div><div class="stat-list">
+        <div class="li"><span class="lk">Compras no período</span><span class="num">${fmt.int(cC.length)}</span></div><div class="li"><span class="lk">Reembolsos (produto + frete)</span><span class="num">${fmt.brl(sum(cC, p => costB(p).refund))}</span></div><div class="li"><span class="lk">Repasse estimado dos canais</span><span class="num pos">−${fmt.brl(sum(cC, p => costB(p).back))}</span></div>
+        ${state.cfg.cmvB ? `<div class="li"><span class="lk">CMV dos produtos</span><span class="num">${fmt.brl(sum(cC, p => costB(p).cmv))}</span></div>` : ''}<div class="li"><span class="lk">Custo líquido</span><span class="num"><b>${fmt.brl(buyNet(cC))}</b></span></div><div class="li"><span class="lk">Custo por conteúdo finalizado</span><span class="num">${cDone ? fmt.brl(buyNet(cC) / cDone) : '—'}</span></div></div>` : ''}
     </div></div>
   </div>
   <div class="grid g2 mt2 eq">
@@ -1839,7 +1882,15 @@ function viewSum() {
     <div class="col-node rise" style="--d:10"><div class="label"><span class="dot" style="background:${COL.dead}"></span>Motivos de baixa</div><div class="node pad fill">${deadHTML(dead)}</div></div>
   </div>
   <div class="mt2 rise" style="--d:11"><div class="label"><span class="dot"></span>Envios e compras no período</div><div class="node pad scroll-x">${shipTableHTML(costEv)}</div></div>
-  ${models.includes('B') ? `<div class="mt2 rise" style="--d:13"><div class="label"><span class="dot" style="background:${COL.B}"></span>Por canal · review</div><div class="node pad scroll-x">${chanTableHTML(cB, C.filter(p => p.model === 'B'))}</div></div>` : ''}`;
+  ${models.some(m => m !== 'A') ? `<div class="mt2 rise" style="--d:13"><div class="label"><span class="dot" style="background:${COL.B}"></span>Por canal · compras (B e C)</div><div class="node pad scroll-x">${chanTableHTML(costEv.filter(isBuy), C.filter(isBuy))}</div></div>` : ''}
+  ${rvListHTML(brandPartners(b.id).filter(p => p.reviewOk))}`;
+}
+/* pills com o selo Apto para review (todas da marca, não só do período) */
+function rvListHTML(l) {
+  if (!l.length) return '';
+  const st = p => p.steps?.review ? ['publicado', COL.done] : p.status === 'dead' ? ['baixada', COL.dead] : ['aguardando review', COL.open];
+  return `<div class="mt2 rise" style="--d:14"><div class="label"><span class="dot" style="background:#facc15"></span>Aptos para review <span class="dim">· ${l.length} ${l.length === 1 ? 'parceiro' : 'parceiros'} com o selo</span></div><div class="node pad scroll-x"><table class="tbl"><thead><tr><th style="text-align:left">Parceiro</th><th style="text-align:left">Frente</th><th style="text-align:left">Canal</th><th style="text-align:left">Review</th><th>Nota</th></tr></thead><tbody>
+    ${l.slice().sort((a, b) => (b.reviewOkAt || 0) - (a.reviewOkAt || 0)).map(p => { const [t, c] = st(p); return `<tr class="click" data-act="open-p-day" data-v="${p.id}"><td><div class="nm"><span class="dot" style="background:${pillColor(p)}"></span>@${esc(p.handle)}</div></td><td style="text-align:left"><span class="tag" style="color:${COL[p.model]}">${p.model}</span></td><td style="text-align:left" class="muted">${esc(channelById(p.channelId)?.name || '—')}</td><td style="text-align:left"><span class="tag" style="color:${c}">${t}</span></td><td class="num">${num(p.reviewStars) ? '★ ' + num(p.reviewStars) : '—'}</td></tr>`; }).join('')}</tbody></table></div></div>`;
 }
 /* unidades e custo por produto (para lançar no fechamento mensal) */
 function sentByProductHTML(ev) {
@@ -1853,10 +1904,10 @@ function sentByProductHTML(ev) {
   if (!rows.length) return `<div class="empty">Nenhum produto enviado ou comprado no período</div>`;
   const T = rows.reduce((s, [, x]) => ({ a: s.a + x.a, b: s.b + x.b, prod: s.prod + x.prod, ship: s.ship + x.ship, logi: s.logi + x.logi, tot: s.tot + x.tot }), { a: 0, b: 0, prod: 0, ship: 0, logi: 0, tot: 0 });
   const hasA = T.a > 0, hasB = T.b > 0;
-  return `<table class="tbl sbp"><thead><tr><th>Produto</th>${hasA ? '<th>Enviados (A)</th>' : ''}${hasB ? '<th>Comprados (B)</th>' : ''}<th>Total de itens</th>${hasA ? '<th>Custo dos produtos</th><th>Frete</th><th>Logística</th>' : ''}<th>Custo total</th></tr></thead><tbody>
+  return `<table class="tbl sbp"><thead><tr><th>Produto</th>${hasA ? '<th>Enviados (A)</th>' : ''}${hasB ? '<th>Comprados (B e C)</th>' : ''}<th>Total de itens</th>${hasA ? '<th>Custo dos produtos</th><th>Frete</th><th>Logística</th>' : ''}<th>Custo total</th></tr></thead><tbody>
     ${rows.map(([id, x]) => `<tr><td>${esc(productById(id)?.name || 'Sem produto definido')}</td>${hasA ? `<td class="num">${fmt.int(x.a)}</td>` : ''}${hasB ? `<td class="num">${fmt.int(x.b)}</td>` : ''}<td class="num"><b>${fmt.int(x.a + x.b)}</b></td>${hasA ? `<td class="num">${fmt.brl(x.prod)}</td><td class="num">${fmt.brl(x.ship)}</td><td class="num">${fmt.brl(x.logi)}</td>` : ''}<td class="num"><b>${fmt.brl(x.tot)}</b></td></tr>`).join('')}
     <tr class="sum"><td>Total</td>${hasA ? `<td class="num">${fmt.int(T.a)}</td>` : ''}${hasB ? `<td class="num">${fmt.int(T.b)}</td>` : ''}<td class="num"><b>${fmt.int(T.a + T.b)}</b></td>${hasA ? `<td class="num">${fmt.brl(T.prod)}</td><td class="num">${fmt.brl(T.ship)}</td><td class="num">${fmt.brl(T.logi)}</td>` : ''}<td class="num"><b>${fmt.brl(T.tot)}</b></td></tr></tbody></table>
-    <p class="hint mt">No fechamento mensal (Investimento de marca › Seeding), lance a coluna “Total de itens” de cada produto e o custo total do mês.${hasB ? ' No modelo B o custo é o líquido: reembolso − repasse do canal' + (state.cfg.cmvB ? ' + CMV' : '') + '.' : ''}</p>`;
+    <p class="hint mt">No fechamento mensal (Investimento de marca › Seeding), lance a coluna “Total de itens” de cada produto e o custo total do mês.${hasB ? ' Nos modelos B e C o custo é o líquido: reembolso − repasse do canal' + (state.cfg.cmvB ? ' + CMV' : '') + '.' : ''}</p>`;
 }
 function funnelHTML(list, m) {
   if (!list.length) return `<div class="empty">Sem contatos no período</div>`;
@@ -1869,7 +1920,7 @@ function timesHTML(list, m, label) {
   const s = FLOW[m].steps;
   const rows = s.slice(1).map((st, i) => { const prev = s[i]; const v = list.filter(p => p.steps?.[st.k] && p.steps?.[prev.k]).map(p => (p.steps[st.k] - p.steps[prev.k]) / 864e5); return [prev.l, st.l, v.length ? v.reduce((x, y) => x + y, 0) / v.length : null, v.length]; });
   const full = list.filter(p => p.status === 'done' && p.doneAt).map(p => (p.doneAt - p.createdAt) / 864e5);
-  return `${label ? `<div class="cat-h ${m === 'B' ? 'mt2' : ''}"><span class="dot" style="background:${COL[m]}"></span>${FLOW[m].name}<span class="ln"></span></div>` : ''}<div class="stat-list">${rows.map(([f, to, v, n]) => `<div class="li"><span class="lk">${esc(f)} → ${esc(to)}</span><span class="num">${v == null ? '<span class="dim">—</span>' : fmt.days(v)} <span class="dim">· ${n}</span></span></div>`).join('')}
+  return `${label ? `<div class="cat-h ${m !== 'A' ? 'mt2' : ''}"><span class="dot" style="background:${COL[m]}"></span>${FLOW[m].name}<span class="ln"></span></div>` : ''}<div class="stat-list">${rows.map(([f, to, v, n]) => `<div class="li"><span class="lk">${esc(f)} → ${esc(to)}</span><span class="num">${v == null ? '<span class="dim">—</span>' : fmt.days(v)} <span class="dim">· ${n}</span></span></div>`).join('')}
     <div class="li"><span class="lk"><b style="color:var(--text)">Contato → finalização</b></span><span class="num"><b>${full.length ? fmt.days(full.reduce((x, y) => x + y, 0) / full.length) : '—'}</b></span></div></div>`;
 }
 function deadHTML(dead) {
@@ -1888,7 +1939,7 @@ function opsTableHTML(C, days, byDay, isWork, t) {
     ${rows.map(([id, l]) => `<tr><td><div class="nm"><span class="dot w"></span>${esc(operatorById(id)?.name || 'Sem operador')}</div></td><td class="num">${l.length}</td><td class="num">${new Set(l.map(p => p.day)).size}</td><td class="num">${DEC1.format(l.length / wd)}</td><td class="num">${l.filter(p => p.status === 'done').length}</td><td class="num">${l.filter(p => p.status === 'dead').length}</td></tr>`).join('')}</tbody></table>`;
 }
 function shipTableHTML(ev) {
-  if (!ev.length) return `<div class="empty"><h3>Nenhum envio ou compra no período</h3>Os registros entram aqui quando a etapa de envio (A) ou de compra (B) é concluída.</div>`;
+  if (!ev.length) return `<div class="empty"><h3>Nenhum envio ou compra no período</h3>Os registros entram aqui quando a etapa de envio (A) ou de compra (B e C) é concluída.</div>`;
   const l = ev.slice().sort((a, b) => (costDate(b) > costDate(a) ? 1 : -1));
   return `<table class="tbl"><thead><tr><th>Data</th><th>Parceiro</th><th style="text-align:left">Modelo</th><th style="text-align:left">Produto</th><th style="text-align:left">Canal · pedido / rastreio</th><th>Produto</th><th>Frete, logística / taxas</th><th>Custo</th><th style="text-align:left">Etapa</th></tr></thead><tbody>
     ${l.map(p => { const c = costOf(p); return `<tr class="click" data-act="open-p-day" data-v="${p.id}"><td class="muted num">${fmtD(costDate(p))}</td><td><div class="nm"><span class="dot" style="background:${pillColor(p)}"></span>@${esc(p.handle)}</div></td>
@@ -1903,7 +1954,7 @@ function prodTableHTML(ev) {
   const rows = Object.entries(g).sort((a, b) => b[1].cost - a[1].cost);
   if (!rows.length) return `<div class="empty">Sem envios ou compras no período</div>`;
   const T = rows.reduce((s, [, x]) => s + x.cost, 0);
-  return `<table class="tbl"><thead><tr><th>Produto</th><th>Envios A</th><th>Compras B</th><th>Custo</th><th style="text-align:left">Participação</th></tr></thead><tbody>
+  return `<table class="tbl"><thead><tr><th>Produto</th><th>Envios A</th><th>Compras B e C</th><th>Custo</th><th style="text-align:left">Participação</th></tr></thead><tbody>
     ${rows.map(([id, x], i) => `<tr><td>${esc(productById(id)?.name || 'Sem produto')}</td><td class="num">${x.a}</td><td class="num">${x.b}</td><td class="num">${fmt.brl(x.cost)}</td><td style="min-width:130px"><div class="row"><div class="bar-track" style="flex:1"><div class="bar-fill" style="width:${T ? x.cost / T * 100 : 0}%;background:#facc15;--d:${i}"></div></div><span class="muted num" style="width:42px;text-align:right">${fmt.pct(div(x.cost, T), 0)}</span></div></td></tr>`).join('')}</tbody></table>`;
 }
 function chanTableHTML(ev, contacts) {
@@ -1944,9 +1995,9 @@ function viewSet() {
           <span class="hint rl-ex">Venda de ${fmt.brl(ex)} → repasse ${fmt.brl(Math.max(0, ex - ex * num(c.feePct) / 100 - num(c.fixedFee) - num(c.sellerShip)))}</span></div>`).join('')}
         <button class="addrow" data-act="set-add" data-set="channels">${ic('plus')}Adicionar canal</button></div></div>
       <div><div class="label"><span class="dot"></span>Metas e regras</div><div class="node pad">
-        <div class="fgrid"><label class="field"><span>Meta diária · A (contatos)</span><input class="inp r" inputmode="numeric" value="${cfg.metaA}" data-cfg="metaA" data-n="1"></label><label class="field"><span>Meta diária · B (contatos)</span><input class="inp r" inputmode="numeric" value="${cfg.metaB}" data-cfg="metaB" data-n="1"></label></div>
+        <div class="fgrid"><label class="field"><span>Meta diária · A (contatos)</span><input class="inp r" inputmode="numeric" value="${cfg.metaA}" data-cfg="metaA" data-n="1"></label><label class="field"><span>Meta diária · B (contatos)</span><input class="inp r" inputmode="numeric" value="${cfg.metaB}" data-cfg="metaB" data-n="1"></label><label class="field"><span>Meta diária · C (contatos)</span><input class="inp r" inputmode="numeric" value="${cfg.metaC ?? ''}" data-cfg="metaC" data-n="1"></label></div>
         <div class="field mt"><span>Dias úteis da operação <em>contam para meta e dias fracos</em></span><div class="wdays">${[1, 2, 3, 4, 5, 6, 0].map(d => `<button class="pill sm ${cfg.workdays.includes(d) ? 'on' : ''}" data-act="wday" data-v="${d}">${WDS[d]}</button>`).join('')}</div></div>
-        <div class="between mt2"><div><div>Somar CMV no custo do modelo B</div><div class="hint">O produto sai do estoque do canal, então o custo dele entra na conta.</div></div>${sw(cfg.cmvB, 'cmvb')}</div></div></div>
+        <div class="between mt2"><div><div>Somar CMV no custo dos modelos B e C</div><div class="hint">O produto sai do estoque do canal, então o custo dele entra na conta.</div></div>${sw(cfg.cmvB, 'cmvb')}</div></div></div>
     </div>
     <div class="grid">
       <div><div class="label"><span class="dot"></span>Marcas · projetos</div><div class="node pad">
@@ -2061,6 +2112,13 @@ const ACT = {
   'p-net': a => { const p = curP(); if (!p || p.status === 'dead') return; p.network = a.dataset.v; commit(); refreshCard(); },
   'p-star': a => { const p = curP(); if (!p || p.status === 'dead') return; p.reviewStars = +a.dataset.v; commit(); refreshCard(); },
   'p-today': a => { const p = curP(); if (!p) return; p[a.dataset.v] = today(); commit(); refreshCard(); },
+  'p-rv': () => { const p = curP(); if (!p || p.model === 'B') return;
+    if (!isAdmin()) { if (pendingReq(p)) return toast('Já existe uma solicitação aguardando o admin', 'y'); return openReviewAsk(p); }
+    if (!setReviewOk(p, !p.reviewOk, 'admin')) return toast('Desfaça a conclusão do review antes de tirar o selo', 'r');
+    commit(); refreshCard(); toast(p.reviewOk ? 'Selo Apto para review ativado' : 'Selo removido', 'g'); },
+  'p-toA': () => { const p = curP(); if (!p || p.model !== 'C' || p.steps?.compra) return;
+    p.model = 'A'; logP(p, 'Mudou para A · envio direto (não quis comprar antes)');
+    const s = stepsOf(p); ui.step = s[curStepIdx(p)].k; commit(); refreshCard(); toast('Agora é envio direto', 'g'); },
   'p-kill': () => { const p = curP(); if (pendingReq(p)) return toast('Já existe uma solicitação aguardando o admin', 'y'); openKill(p, !isAdmin()); },
   'p-revive': () => { const p = curP(); if (isAdmin()) { restoreP(p, 'admin'); commit(); refreshCard(); toast(`@${p.handle} restaurada`, 'g'); return; } if (pendingReq(p)) return toast('Já existe uma solicitação aguardando o admin', 'y'); openRestoreAsk(p); },
   'req-ok': () => { const p = curP(), r = pendingReq(p); if (!r || !isAdmin()) return; const res = decideReq(p, r.id, true, '', 'admin'); commit(); if (res === 'deleted') { closeModal(); softRender(); toast('Registro excluído', 'w'); return; } refreshCard(); toast('Solicitação aprovada', 'g'); },

@@ -238,7 +238,9 @@ var index_default = {
     ctx.waitUntil(snapshot(env));
   }
 };
-var STEPS = { A: ["contato", "aceite", "envio", "entrega", "conteudo"], B: ["contato", "aceite", "compra", "reembolso", "recebido", "review"] };
+var STEPS = { A: ["contato", "aceite", "envio", "entrega", "conteudo"], B: ["contato", "aceite", "compra", "reembolso", "recebido", "review"], C: ["contato", "aceite", "compra", "reembolso", "recebido", "conteudo"] };
+/* selo "Apto para review" acrescenta a etapa de review nas frentes A e C */
+var stepsK = (p) => (STEPS[p.model] || []).concat(p.reviewOk && p.model !== "B" ? ["review"] : []);
 var STEP_L = { contato: "Contato iniciado", aceite: "Aceite", envio: "Produto enviado", entrega: "Produto entregue", conteudo: "Conte\xFAdo publicado", compra: "Compra realizada", reembolso: "Reembolso feito", recebido: "Produto recebido", review: "Review publicado" };
 async function getDoc(env, path) {
   const r = await env.DB.prepare("SELECT body FROM docs WHERE path=?").bind(path).first();
@@ -272,9 +274,20 @@ function decideReq(p, rid, accept, note, by) {
     p.status = "open";
     delete p.deadAt;
     log("Restaurada");
-    if ((STEPS[p.model] || []).every((k) => p.steps?.[k])) {
+    if (stepsK(p).every((k) => p.steps?.[k])) {
       p.status = "done";
       p.doneAt ||= Date.now();
+    }
+  } else if (accept && r.type === "review") {
+    if (!p.reviewOk) {
+      p.reviewOk = true;
+      p.reviewOkAt = Date.now();
+      log("Selo Apto para review ativado");
+      if (p.status === "done") {
+        p.status = "open";
+        delete p.doneAt;
+        log("Reaberta para a etapa de review");
+      }
     }
   } else log(`Solicita\xE7\xE3o recusada${note ? ": " + note : ""}`);
   return true;
@@ -302,8 +315,8 @@ var Inbox = class extends WorkerEntrypoint {
     const items = [], week = Date.now() - 7 * 864e5;
     for (const p of ps) for (const r of p.reqs || []) {
       if (r.status !== "pending" && !(r.decidedAt > week)) continue;
-      const done = (STEPS[p.model] || []).filter((k) => p.steps?.[k]);
-      items.push({ id: p.id, rid: r.id, title: "@" + (p.handle || ""), brand: (brands[p.brandId] || "") + (b === "us" ? " \xB7 EUA" : ""), model: p.model, stage: p.status === "dead" ? "Baixada" : STEP_L[done[done.length - 1]] || "", type: r.type, label: r.type === "dead" ? "Dar baixa" : r.type === "delete" ? "Excluir registro" : "Restaurar", reason: rsn(r.reasonType, r.reason), by: r.by || "", ts: r.ts, status: r.status, decidedAt: r.decidedAt || null, note: r.note || "", occ: (p.occ || []).length, link: "/?pais=" + b + "&p=" + p.id });
+      const done = stepsK(p).filter((k) => p.steps?.[k]);
+      items.push({ id: p.id, rid: r.id, title: "@" + (p.handle || ""), brand: (brands[p.brandId] || "") + (b === "us" ? " \xB7 EUA" : ""), model: p.model, stage: p.status === "dead" ? "Baixada" : STEP_L[done[done.length - 1]] || "", type: r.type, label: r.type === "dead" ? "Dar baixa" : r.type === "delete" ? "Excluir registro" : r.type === "review" ? "Selo Apto para review" : "Restaurar", reason: rsn(r.reasonType, r.reason), by: r.by || "", ts: r.ts, status: r.status, decidedAt: r.decidedAt || null, note: r.note || "", occ: (p.occ || []).length, link: "/?pais=" + b + "&p=" + p.id });
     }
     return items;
   }
