@@ -128,6 +128,66 @@ main{padding:22px var(--gut) 120px}
 .cp{height:26px;padding:0 10px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text-2);background:rgba(30,30,34,.85);border:1px solid var(--glass-b);backdrop-filter:blur(8px);transition:background .2s,color .2s}
 .cp:hover{color:var(--text);background:#2a2a30}
 .cp svg{width:12px;height:12px}
+.sec .callout{display:block;gap:10px;padding:12px 16px;border-radius:14px;background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.2);color:var(--text-2);margin:14px 0}
+.sec .callout.ok{display:flex;align-items:flex-start;background:rgba(74,222,128,.06);border-color:rgba(74,222,128,.22)}
+.sec .callout svg{color:var(--green);margin-top:3px}
+.sec .cards{display:grid;gap:12px;margin:14px 0}.sec .cards.c3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.sec .card{padding:16px;border-radius:16px;background:var(--glass);border:1px solid var(--glass-b);transition:transform .25s var(--ease),border-color .25s}
+.sec .card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.2)}
+.sec .card h4{font-size:14px;color:var(--text);margin:10px 0 4px;font-weight:600}
+.sec .card p{margin:0;font-size:13px;line-height:1.55}
+.sec .ic{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.07);border:1px solid var(--glass-b);color:var(--text)}
+.sec .ic svg{width:17px;height:17px}
+.sec .vs2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.sec .fr{position:relative;padding:18px;border-radius:18px;background:var(--well);border:1px solid var(--line);overflow:hidden}
+.sec .fr::before{content:"";position:absolute;inset:0 0 auto 0;height:3px}
+.sec .fr.A::before{background:linear-gradient(90deg,#60a5fa,#818cf8)}.sec .fr.B::before{background:linear-gradient(90deg,#f472b6,#fb923c)}
+.sec .fr .k{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;font-weight:700;font-size:13px}
+.sec .fr.A .k{background:#60a5fa;color:#06121f}.sec .fr.B .k{background:#f472b6;color:#1f0614}
+.sec .fr h4{font-size:15px;color:var(--text);margin:10px 0 4px;font-weight:600}
+.sec .fr .sm{font-size:13px;margin:0 0 12px}
+.sec .fr dl{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:12.5px;margin:0;padding-top:12px;border-top:1px solid var(--line)}
+.sec .fr dt{color:var(--muted)}.sec .fr dd{color:var(--text);margin:0}
+.sec ol.tl{list-style:none;margin:16px 0;padding:0;counter-reset:tl;position:relative}
+.sec ol.tl li{counter-increment:tl;position:relative;display:grid;grid-template-columns:1fr auto;column-gap:12px;padding:0 0 18px 46px;margin:0}
+.sec ol.tl li::before{content:counter(tl);position:absolute;left:0;top:-2px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--text);background:#26262b;border:1px solid var(--line-2);z-index:1}
+.sec ol.tl li::after{content:"";position:absolute;left:15px;top:28px;bottom:0;width:1px;background:linear-gradient(var(--line-2),transparent)}
+.sec ol.tl li:last-child{padding-bottom:0}.sec ol.tl li:last-child::after{display:none}
+.sec ol.tl li:last-child::before{background:var(--green);color:#06210f;border-color:var(--green)}
+.sec ol.tl b{grid-column:1;color:var(--text);font-size:14px}
+.sec ol.tl span{grid-column:1;font-size:13px;color:var(--muted)}
+.sec ol.tl em{grid-column:2;grid-row:1/3;align-self:center;font-style:normal;font-size:11px;padding:4px 10px;border-radius:999px;background:var(--glass);border:1px solid var(--glass-b);color:var(--text-2);white-space:nowrap}
+.sec ol.hs{list-style:none;display:flex;margin:16px 0;padding:0;counter-reset:hs}
+.sec ol.hs li{flex:1;position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:0 4px;margin:0;min-width:0}
+.sec ol.hs li::before{display:none}
+.sec ol.hs li:not(:last-child)::after{content:"";position:absolute;top:14px;left:calc(50% + 18px);right:calc(-50% + 18px);height:1px;background:var(--line-2)}
+.sec ol.hs .n{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;background:#26262b;border:1px solid var(--line-2);color:var(--text)}
+.sec ol.hs li:last-child .n{background:var(--green);color:#06210f;border-color:var(--green)}
+.sec ol.hs .t{font-size:12px;line-height:1.35;color:var(--text-2)}
+.sec ul.chk{list-style:none;margin:10px 0;display:grid;grid-template-columns:1fr 1fr;gap:6px 18px}
+.sec ul.chk li{padding-left:28px;margin:0}
+.sec ul.chk li::before{content:"";left:0;top:.18em;width:18px;height:18px;border-radius:6px;background:rgba(74,222,128,.12) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234ade80' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/12px no-repeat;border:1px solid rgba(74,222,128,.25)}
+.sec .chips{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.sec .chips span{height:28px;padding:0 12px;border-radius:999px;display:inline-flex;align-items:center;font-size:12.5px;background:var(--glass);border:1px solid var(--glass-b);color:var(--text)}
+.sec .dd{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.sec .dd>div{padding:14px 16px;border-radius:16px;border:1px solid}
+.sec .dd .do{background:rgba(74,222,128,.05);border-color:rgba(74,222,128,.2)}
+.sec .dd .dont{background:rgba(248,113,113,.05);border-color:rgba(248,113,113,.2)}
+.sec .dd h4{display:flex;align-items:center;gap:6px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin:0 0 8px;font-weight:600}
+.sec .dd .do h4{color:var(--green)}.sec .dd .dont h4{color:var(--red)}
+.sec .dd h4 svg{width:13px;height:13px}
+.sec .dd ul{margin:0}.sec .dd li{font-size:13px;margin:5px 0}
+.sec .dd .do li::before{background:var(--green)}.sec .dd .dont li::before{background:var(--red)}
+.sec .clock{display:flex;gap:14px;align-items:flex-start;padding:18px;border-radius:18px;margin:16px 0;background:linear-gradient(135deg,rgba(250,204,21,.08),rgba(251,146,60,.04));border:1px solid rgba(250,204,21,.22)}
+.sec .clock .ic{background:rgba(250,204,21,.12);border-color:rgba(250,204,21,.25);color:var(--yellow);flex:none}
+.sec .clock b{display:block;color:var(--text);font-size:15px}
+.sec .clock span{display:block;font-size:20px;font-weight:650;color:var(--yellow);letter-spacing:-.01em;margin:2px 0 4px}
+.sec .clock p{margin:0;font-size:13px}
+.sec table.cmp td{color:var(--text-2)}.sec table.cmp td[colspan]{text-align:center;color:var(--muted)}
+.sec .jump .go{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 14px;border-radius:999px;background:var(--glass);border:1px solid var(--glass-b);color:var(--text);font-size:12.5px;text-decoration:none;transition:transform .25s var(--ease),background .25s}
+.sec .jump .go:hover{transform:translateY(-3px);background:rgba(255,255,255,.09)}
+.sec .jump .go svg{width:14px;height:14px}
+@media (max-width:760px){.sec .cards.c3,.sec .vs2,.sec .dd,.sec ul.chk{grid-template-columns:1fr}.sec ol.hs{flex-direction:column;gap:10px}.sec ol.hs li{flex-direction:row;text-align:left}.sec ol.hs li::after{display:none}}
 body.editing .sec{box-shadow:0 0 0 1px rgba(255,255,255,.08) inset}
 body.editing .sec:focus-within{box-shadow:0 0 0 1px rgba(74,222,128,.35) inset}
 .sec[contenteditable=true]{outline:none}
@@ -402,18 +462,91 @@ function setView(t) {
 }
 
 /* =================== MANUAL =================== */
+const SV = d => `<svg class="i" viewBox="0 0 24 24">${d}</svg>`;
+const MI = {
+  book: IC.book, chat: IC.chat, spark: IC.spark, file: IC.file, fork: IC.fork, paw: IC.paw,
+  gift: '<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M5 12v9h14v-9M12 8S10.5 3 8 3a2.5 2.5 0 0 0 0 5M12 8s1.5-5 4-5a2.5 2.5 0 0 1 0 5"/>',
+  cart: '<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a1.5 1.5 0 0 0 1.5 1.1h8.6a1.5 1.5 0 0 0 1.5-1.2L21 7H6"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  truck: '<path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  flag: '<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
+  check: IC.check
+};
+const mi = n => SV(MI[n]);
 const msgBox = t => `<div class="msg"><p>${t}</p></div>`;
-const flowRow = a => `<div class="flow">${a.map(s => `<span class="st">${s}</span>`).join('<span class="ar">→</span>')}</div>`;
+const goTab = (v, i, t) => `<a href="#" class="go" data-tab-go="${v}">${mi(i)}${t}</a>`;
+const chk = a => `<ul class="chk">${a.map(x => `<li>${x}</li>`).join('')}</ul>`;
+const hsteps = a => `<ol class="hs">${a.map((x, i) => `<li><span class="n">${i + 1}</span><span class="t">${x}</span></li>`).join('')}</ol>`;
 const MANUAL0 = [
-  { id: 'visao', h: `<h2>01 · Entenda o programa</h2><p>O Programa Parceiros conecta a marca a microinfluenciadores e tutores de pets, oferecendo produtos e construindo relacionamentos que gerem conteúdo e experiências PPP (Pessoa para Pessoa).</p><div class="tw"><table><thead><tr><th>Frente</th><th>Nome interno</th><th>Proposta ao parceiro</th></tr></thead><tbody><tr><td>A</td><td>Produto por <b>conteúdo</b></td><td>Receber um produto gratuitamente para produzir conteúdo sobre sua experiência.</td></tr><tr><td>B</td><td>Produto por <b>reviews</b></td><td>Participar de uma experiência de compra e uso, com reembolso do produto e do frete, e compartilhar sua experiência com a gente.</td></tr></tbody></table></div><p><strong>O frete é sempre por conta da marca!</strong></p><p>O colaborador acompanha toda a jornada: descoberta do perfil, conversa, proposta, envio ou compra, entrega e conclusão no painel.</p>${flowRow(['Encontrar perfil', 'Analisar', 'Convidar', 'Conversar no direct', 'Definir frente A ou B', 'Executar e acompanhar', 'Concluir no painel'])}` },
-  { id: 'captacao', h: `<h2>02 · Descoberta e convite</h2><p>Procure vídeos de grandes contas do nicho pet com participação de pequenos perfis nos comentários. Esses comentários são uma fonte de descoberta.</p><h3>Antes de abordar</h3><ul><li>Abra o perfil e observe a presença de pets e a afinidade com o produto.</li><li>Confira publicações próprias, atividade recente e naturalidade da comunicação.</li><li>Identifique país e região. (disponível para envio)</li><li>Avalie o potencial para produzir conteúdo ou participar da experiência de compra.</li></ul><p>O número de seguidores não é critério. Um perfil pequeno tende a ter uma forte afinidade com a marca.</p><h3>Convite inicial</h3><p>Responda de maneira breve, contextual e individual. O objetivo é despertar interesse e permitir que a pessoa escolha continuar a conversa no direct.</p>${msgBox('Oi! Vi o perfil de vocês e acho que a gente deu match! Se tiver interesse, chama a gente no direct pra receber um mimo especial. 😊')}<p class="warn"><b>Nunca use a mesma abordagem em sequência</b> nem insista com quem não demonstrou interesse.</p><p class="jump"><a href="#" data-tab-go="gerador">Gerar mensagens iniciais →</a></p>` },
-  { id: 'direct', h: `<h2>03 · Atendimento no direct</h2>${msgBox('')}<p>Confirme país, região, pet e interesse em participar. Em seguida, apresente a frente adequada e registre o contato no painel.</p><p>Explique o que o parceiro receberá, o que será esperado dele e quais são os prazos. Os nomes internos ajudam na organização; a proposta apresentada deve ser natural e clara.</p><p class="jump"><a href="#" data-tab-go="fluxos">Ver os fluxos do direct →</a></p>` },
-  { id: 'conteudo', h: `<h2>04 · Frente A — criação de conteúdo</h2><p>O parceiro recebe o produto gratuitamente, com frete pago pela marca, e produz a entrega combinada.</p><div class="tw"><table><thead><tr><th>Formato</th><th>Entrega</th></tr></thead><tbody><tr><td>Collab</td><td>Publicar o conteúdo e convidar o perfil da marca como colaborador.</td></tr><tr><td>Envio do arquivo</td><td>Gravar e enviar o conteúdo à marca, sem obrigação de publicar no próprio perfil.</td></tr><tr><td>Collab e arquivo</td><td>Publicar em colaboração e enviar o material para os usos posteriores.</td></tr></tbody></table></div>${msgBox('')}<h3>Antes do envio</h3><ul><li>Defina produto e quantidade.</li><li>Combine formato e quantidade de conteúdos.</li><li>Defina publicação em collab, envio do arquivo ou ambos.</li><li>Estabeleça o prazo após o recebimento.</li><li>Envie as orientações necessárias de uso do produto.</li><li>Combine a identificação da parceria e a autorização de uso.</li></ul><p>A autorização deve especificar canais, prazo, possibilidade de edição e se inclui anúncios pagos.</p>${flowRow(['Aceite e autorização', 'Envio e rastreamento', 'Recebimento', 'Produção', 'Arquivo / collab'])}<h3>Após o envio</h3><p>Envie o rastreamento, confirme o recebimento e acompanhe o prazo combinado.</p>${msgBox('Oi, [nome]! O produto chegou direitinho? Se precisar de alguma orientação para começar, estamos por aqui 😊')}<p>Ao receber o conteúdo, confira a entrega e arquive o material junto da autorização. Se houver collab, acompanhe a publicação e o aceite pelo perfil da marca.</p>` },
-  { id: 'experiencia', h: `<h2>05 · Frente B — experiência de compra e uso</h2><p>O parceiro compra o produto no canal indicado, envia o comprovante e recebe o reembolso do produto e do frete. Depois do recebimento e de um período adequado de uso, conta sua experiência no direct.</p><div><span class="tag">Mercado Livre</span><span class="tag">Shopee</span><span class="tag">TikTok Shop</span><span class="tag">Amazon</span></div>${msgBox('Queremos convidar você para participar de uma experiência de compra e uso de [produto]. Você compra pelo link que vamos enviar, nos encaminha o comprovante e nós reembolsamos o produto e o frete. Depois que receber e usar, queremos ouvir como foi sua experiência, desde a compra até o uso do produto.')}<h3>Reembolso imediato</h3><p><strong>Compras realizadas de segunda a sexta-feira, das 09h às 17h, mediante recebimento e conferência do comprovante.</strong></p><p>O colaborador deve combinar a compra previamente e estar disponível para acompanhar o processo.</p>${msgBox('Vamos combinar sua compra dentro do nosso horário de atendimento: de segunda a sexta, das 09h às 17h. Assim que você finalizar e nos enviar o comprovante, conferimos e fazemos o reembolso do produto e do frete imediatamente.')}<p class="note">A definir antes da operação: fuso horário e tratamento de compras fora dessa janela.</p><h3>Conferência do comprovante</h3><ul><li>Produto e quantidade combinados.</li><li>Canal de compra e confirmação do pedido.</li><li>Valor do produto e valor do frete.</li></ul><p>Realize o reembolso, envie a confirmação e registre a operação no painel. <strong>O reembolso não depende de elogios ou da publicação de uma avaliação.</strong></p>${flowRow(['Link e condições', 'Compra', 'Comprovante', 'Reembolso', 'Recebimento e uso', 'Feedback'])}<h3>Feedback no direct</h3><p>Primeiro, pergunte sobre a compra:</p>${msgBox('Como foi comprar pelo [canal]? Foi fácil finalizar o pedido? A entrega e a embalagem chegaram bem?')}<p>Depois, pergunte sobre o produto:</p>${msgBox('E como foi a experiência de vocês com o produto? Gostaram?')}<p>Registre a resposta com fidelidade. Se houver algum problema, encaminhe ao responsável e acompanhe o atendimento.</p><h3>Convite para avaliação</h3><p>Após o uso, o convite deverá ser feito em caso de experiência positiva:</p>${msgBox('')}<p>A avaliação do produto deve tratar da experiência com o produto. Entrega e atendimento devem ser registrados nos campos próprios, quando disponíveis.</p><p>Não forneça um elogio pronto para copiar, não determine estrelas e não peça que o parceiro esconda a parceria.</p>` },
-  { id: 'paises', h: `<h2>06 · Brasil e Estados Unidos</h2><p>A estrutura do programa é a mesma nos dois países. Adapte a comunicação e a operação ao parceiro.</p><div class="tw"><table><tbody><tr><th>Idioma</th><td>Português no Brasil e inglês nos EUA.</td></tr><tr><th>Produto</th><td>Item disponível e adequado ao mercado atendido.</td></tr><tr><th>Canal</th><td>Link correto para o país do parceiro.</td></tr><tr><th>Valores</th><td>Moeda e valor total da compra.</td></tr><tr><th>Logística</th><td>Endereço, frete e acompanhamento local.</td></tr><tr><th>Reembolso</th><td>Método de pagamento e horário previamente informados.</td></tr></tbody></table></div>` },
-  { id: 'rotina', h: `<h2>07 · Rotina diária</h2><ul><li><strong>No início do dia:</strong> conferir directs, reembolsos, entregas e prazos pendentes.</li><li><strong>Durante o dia:</strong> analisar perfis, realizar convites individuais, apresentar propostas e acompanhar parcerias.</li><li><strong>Ao concluir cada atendimento:</strong> atualizar o painel com o que aconteceu, quem é o responsável e qual será a próxima ação.</li></ul>` }
+  { id: 'painel', h: `<h2>01 · Como usar este painel</h2><p>Este painel é o seu kit para o Programa Parceiros. São três abas, e cada uma tem um papel na rotina:</p>
+<div class="cards c3">
+<div class="card"><span class="ic">${mi('book')}</span><h4>Manual</h4><p>Aqui. O passo a passo do programa: o que fazer, em que ordem e por quê.</p></div>
+<div class="card"><span class="ic">${mi('chat')}</span><h4>Fluxos do direct</h4><p>As conversas prontas para depois que o parceiro chama. Quando a resposta dele muda, escolha o caminho <b>A</b> ou <b>B</b>.</p></div>
+<div class="card"><span class="ic">${mi('spark')}</span><h4>Gerador</h4><p>Mensagens curtas para o primeiro contato, sempre diferentes. Em <b>Modelos</b> ficam as mensagens prontas aprovadas.</p></div>
+</div>
+<p class="callout">A bandeira no canto troca entre <b>Brasil</b> e <b>USA</b>. Cada país tem seus próprios fluxos, modelos e mensagens no idioma certo.</p>` },
+  { id: 'programa', h: `<h2>02 · O programa em 1 minuto</h2><p>O Programa Parceiros conecta a marca a microinfluenciadores e tutores de pets. A gente oferece produto e constrói relacionamento; eles geram conteúdo e experiências reais, de <b>pessoa para pessoa</b>.</p>
+<div class="vs2">
+<div class="fr A"><span class="k">A</span><h4>Produto por conteúdo</h4><p class="sm">O parceiro recebe o produto de presente e produz conteúdo sobre a experiência.</p><dl><dt>Ele recebe</dt><dd>Produto grátis</dd><dt>Ele entrega</dt><dd>Collab, arquivo de vídeo ou os dois</dd></dl></div>
+<div class="fr B"><span class="k">B</span><h4>Produto por review</h4><p class="sm">O parceiro compra pelo nosso link, recebe o reembolso e conta como foi a experiência.</p><dl><dt>Ele recebe</dt><dd>Reembolso do produto + frete</dd><dt>Ele entrega</dt><dd>Feedback da compra e do uso</dd></dl></div>
+</div>
+<p class="callout ok">${mi('truck')}<span><b>O frete é sempre por conta da marca.</b> Nas duas frentes.</span></p>` },
+  { id: 'jornada', h: `<h2>03 · A jornada do parceiro</h2><p>Todo parceiro passa pelo mesmo caminho. Ao lado de cada etapa, onde ela acontece:</p>
+<ol class="tl">
+<li><b>Encontrar o perfil</b><span>Nos comentários de vídeos de grandes contas pet.</span></li>
+<li><b>Analisar</b><span>Pet, afinidade, atividade e país.</span></li>
+<li><b>Convidar</b><span>Comentário curto e individual.</span><em>Gerador</em></li>
+<li><b>Conversar no direct</b><span>O parceiro chama e a conversa segue o fluxo.</span><em>Fluxos</em></li>
+<li><b>Definir a frente</b><span>A (conteúdo) ou B (review).</span><em>Fluxos</em></li>
+<li><b>Executar e acompanhar</b><span>Envio ou compra, entrega e prazos.</span></li>
+<li><b>Concluir</b><span>Registrar o que aconteceu e a próxima ação.</span><em>Projeto Parceiros</em></li>
+</ol>` },
+  { id: 'convite', h: `<h2>04 · Encontrar e convidar</h2><p>A melhor fonte de perfis são os <b>comentários</b> em vídeos de grandes contas do nicho pet. Quem comenta ali já gosta do assunto.</p>
+<h3>Antes de abordar, confira</h3>${chk(['Tem pet no perfil e afinidade com o produto', 'Publica conteúdo próprio, com atividade recente', 'Comunicação natural, sem cara de perfil comprado', 'País e região onde a gente consegue enviar', 'Potencial para conteúdo (A) ou para a experiência de compra (B)'])}
+<p class="callout">O número de seguidores <b>não é critério</b>. Perfil pequeno costuma ter mais afinidade com a marca.</p>
+<h3>O convite</h3><p>Um comentário curto, no tom da marca, que faz a pessoa querer chamar no direct. Exemplo:</p>
+${msgBox('Oi! Vi o perfil de vocês e acho que a gente deu match! Se tiver interesse, chama a gente no direct pra receber um mimo especial. 😊')}
+<div class="dd"><div class="do"><h4>${mi('check')}Faça</h4><ul><li>Uma mensagem diferente a cada perfil</li><li>Cite algo do perfil ou do pet</li><li>Deixe a pessoa escolher chamar</li></ul></div><div class="dont"><h4>Não faça</h4><ul><li>Repetir a mesma abordagem em sequência</li><li>Insistir com quem não respondeu</li><li>Prometer algo antes da conversa</li></ul></div></div>
+<p class="jump">${goTab('gerador', 'spark', 'Gerar mensagens de convite')}</p>` },
+  { id: 'direct', h: `<h2>05 · A conversa no direct</h2><p>Quando o parceiro chama, a conversa já está pronta na aba <b>Fluxos do direct</b>. Siga os balões da marca (clique para copiar) e, quando o parceiro responder de um jeito diferente, escolha o caminho <b>A</b> ou <b>B</b>.</p>
+<h3>Durante a conversa, confirme</h3><div class="chips"><span>País</span><span>Região</span><span>Pet</span><span>Interesse em participar</span></div>
+<p>Depois apresente a frente certa e deixe claro <b>o que ele recebe</b>, <b>o que esperamos</b> e <b>os prazos</b>. Os nomes "Frente A" e "Frente B" são internos: para o parceiro a proposta tem que soar natural.</p>
+<p class="jump">${goTab('fluxos', 'chat', 'Abrir os fluxos do direct')}</p>` },
+  { id: 'frentea', h: `<h2>06 · Frente A · conteúdo</h2><p>O parceiro recebe o produto de presente, com frete pago pela marca, e produz a entrega combinada.</p>
+<h3>Formatos de entrega</h3>
+<div class="cards c3"><div class="card"><span class="ic">${mi('chat')}</span><h4>Collab</h4><p>Publica e convida o perfil da marca como colaborador.</p></div><div class="card"><span class="ic">${mi('file')}</span><h4>Arquivo</h4><p>Grava e envia o vídeo, sem precisar publicar.</p></div><div class="card"><span class="ic">${mi('spark')}</span><h4>Collab + arquivo</h4><p>Publica em collab e envia o material para usarmos depois.</p></div></div>
+<h3>Antes de enviar, combine</h3>${chk(['Produto e quantidade', 'Formato e quantidade de conteúdos', 'Collab, arquivo ou os dois', 'Prazo de entrega depois do recebimento', 'Orientações de uso do produto', 'Identificação da parceria e autorização de uso'])}
+<p class="callout">A autorização de uso diz <b>canais</b>, <b>prazo</b>, se pode <b>editar</b> e se vale para <b>anúncios pagos</b>.</p>
+<h3>Do aceite à entrega</h3>${hsteps(['Aceite e autorização', 'Envio e rastreio', 'Recebimento', 'Produção', 'Arquivo / collab'])}
+<h3>Depois do envio</h3><p>Mande o rastreio, confirme o recebimento e acompanhe o prazo:</p>
+${msgBox('Oi, [nome]! O produto chegou direitinho? Se precisar de alguma orientação para começar, estamos por aqui 😊')}
+<p>Ao receber o conteúdo, confira a entrega e arquive o material junto da autorização. Se for collab, acompanhe a publicação e o aceite no perfil da marca.</p>` },
+  { id: 'frenteb', h: `<h2>07 · Frente B · experiência de compra</h2><p>O parceiro compra no canal indicado, manda o comprovante e recebe o reembolso do produto e do frete. Depois de usar, conta como foi.</p>
+<div class="chips"><span>Mercado Livre</span><span>Shopee</span><span>TikTok Shop</span><span>Amazon</span></div>
+<h3>Do link ao feedback</h3>${hsteps(['Link e condições', 'Compra', 'Comprovante', 'Reembolso', 'Recebimento e uso', 'Feedback'])}
+<div class="clock"><span class="ic">${mi('clock')}</span><div><b>Reembolso imediato</b><span>Segunda a sexta · 09h às 17h</span><p>A compra é combinada antes, dentro desse horário, e o colaborador fica disponível para conferir o comprovante na hora.</p></div></div>
+${msgBox('Vamos combinar sua compra dentro do nosso horário de atendimento: de segunda a sexta, das 09h às 17h. Assim que você finalizar e nos enviar o comprovante, conferimos e fazemos o reembolso do produto e do frete imediatamente.')}
+<p class="note">A definir antes da operação: fuso horário e o que fazer com compras fora dessa janela.</p>
+<h3>Conferência do comprovante</h3>${chk(['Produto e quantidade combinados', 'Canal de compra e confirmação do pedido', 'Valor do produto e valor do frete'])}
+<p class="callout ok">${mi('check')}<span>Reembolse, mande a confirmação e registre no painel. <b>O reembolso não depende de elogio nem de avaliação publicada.</b></span></p>
+<h3>Feedback, em duas perguntas</h3><p>Primeiro sobre a compra:</p>${msgBox('Como foi comprar pelo [canal]? Foi fácil finalizar o pedido? A entrega e a embalagem chegaram bem?')}<p>Depois sobre o produto:</p>${msgBox('E como foi a experiência de vocês com o produto? Gostaram?')}
+<p>Registre a resposta com fidelidade. Se tiver problema, encaminhe ao responsável e acompanhe.</p>
+<h3>Convite para avaliação</h3><p>Só quando a experiência foi positiva. A mensagem está no fluxo da Frente B.</p>
+<div class="dd"><div class="do"><h4>${mi('check')}Pode</h4><ul><li>Convidar a avaliar o produto</li><li>Pedir que fale da experiência real</li></ul></div><div class="dont"><h4>Não pode</h4><ul><li>Dar um elogio pronto para copiar</li><li>Dizer quantas estrelas dar</li><li>Pedir para esconder a parceria</li></ul></div></div>
+<p class="note">Entrega e atendimento vão nos campos próprios da avaliação, quando existirem.</p>` },
+  { id: 'paises', h: `<h2>08 · Brasil e EUA</h2><p>O programa é o mesmo nos dois países. O que muda é a operação. Use a bandeira no canto para trocar de quadro.</p>
+<div class="tw"><table class="cmp"><thead><tr><th></th><th>Brasil</th><th>EUA</th></tr></thead><tbody>
+<tr><th>Idioma</th><td>Português</td><td>Inglês</td></tr>
+<tr><th>Produto</th><td colspan="2">Item disponível e adequado ao mercado do parceiro</td></tr>
+<tr><th>Canal</th><td colspan="2">Link certo para o país do parceiro</td></tr>
+<tr><th>Valores</th><td>R$</td><td>US$</td></tr>
+<tr><th>Logística</th><td colspan="2">Endereço, frete e acompanhamento locais</td></tr>
+<tr><th>Reembolso</th><td colspan="2">Método de pagamento e horário combinados antes</td></tr>
+</tbody></table></div>` },
+  { id: 'rotina', h: `<h2>09 · Rotina diária</h2>
+<div class="cards c3"><div class="card"><span class="ic">${mi('sun')}</span><h4>Ao começar</h4><p>Conferir directs, reembolsos, entregas e prazos pendentes.</p></div><div class="card"><span class="ic">${mi('paw')}</span><h4>Durante o dia</h4><p>Analisar perfis, convidar, apresentar propostas e acompanhar parcerias.</p></div><div class="card"><span class="ic">${mi('flag')}</span><h4>Ao fechar cada conversa</h4><p>Atualizar o painel: o que aconteceu, quem é o responsável e a próxima ação.</p></div></div>` }
 ];
-
 const manual = () => (D('app/manual') && D('app/manual').secs) || MANUAL0;
 const secTitle = h => { const d = document.createElement('div'); d.innerHTML = h; return (d.querySelector('h2,h3')?.textContent || 'Seção').trim() || 'Seção'; };
 const navItem = (s, i) => { const t = secTitle(s.h), m = t.match(/^(\d+)\s*[·.\-—]\s*(.*)$/); return `<a href="#s-${s.id}" data-go="${s.id}"><b>${m ? m[1] : String(i + 1).padStart(2, '0')}</b><span>${esc(m ? m[2] : t)}</span></a>`; };
@@ -424,7 +557,7 @@ function viewManual() {
     <div class="man-body">
       <div class="man-tools glass">${ed
         ? `<button class="gb" data-act="bold">${ic('bold')}Negrito</button><button class="gb" data-act="ins-msg">${ic('msg')}Caixa de mensagem</button><button class="gb" data-act="add-sec">${ic('sec')}Nova seção</button><span class="vs"></span><span class="hint">clique no texto para editar · salva sozinho</span><span class="sp"></span><button class="gb on" data-act="edit">${ic('check')}Concluir</button>`
-        : `<span class="hint">Manual do colaborador · da descoberta do perfil à conclusão da parceria</span><span class="sp"></span><button class="gb" data-act="print">${ic('print')}Imprimir</button>${isAdmin() ? `<span class="vs"></span><button class="gb" data-act="edit">${ic('edit')}Editar</button>` : ''}`}</div>
+        : `<span class="hint">Manual do colaborador · da descoberta do perfil à conclusão da parceria</span><span class="sp"></span>${isAdmin() ? `<button class="gb" data-act="edit">${ic('edit')}Editar</button>` : ''}`}</div>
       ${secs.map(s => `<section class="node sec" id="s-${s.id}" data-id="${s.id}">${s.h}</section>`).join('')}
     </div></div>`;
 }
@@ -644,7 +777,6 @@ document.addEventListener('click', async e => {
   const a = b.dataset.act, A = isAdmin();
   if (a === 'view') return setView(b.dataset.v);
   if (a === 'board') return setBoard(b.dataset.v);
-  if (a === 'print') return window.print();
   // manual
   if (a === 'edit') { if (UI.editing) { stopEditing(); renderView(); toast('Manual salvo'); } else startEditing(); return; }
   if (a === 'bold') { document.execCommand('bold'); return; }
