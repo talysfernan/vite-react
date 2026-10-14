@@ -138,12 +138,12 @@ main{padding:22px var(--gut) 120px}
 .sec .card p{margin:0;font-size:13px;line-height:1.55}
 .sec .ic{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.07);border:1px solid var(--glass-b);color:var(--text)}
 .sec .ic svg{width:17px;height:17px}
-.sec .vs2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.sec .vs2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}.sec .vs2.v3{grid-template-columns:repeat(3,minmax(0,1fr))}.sec .cards.c2{grid-template-columns:repeat(2,minmax(0,1fr))}
 .sec .fr{position:relative;padding:18px;border-radius:18px;background:var(--well);border:1px solid var(--line);overflow:hidden}
 .sec .fr::before{content:"";position:absolute;inset:0 0 auto 0;height:3px}
-.sec .fr.A::before{background:linear-gradient(90deg,#60a5fa,#818cf8)}.sec .fr.B::before{background:linear-gradient(90deg,#f472b6,#fb923c)}
+.sec .fr.A::before{background:linear-gradient(90deg,#a78bfa,#7c5cff)}.sec .fr.B::before{background:linear-gradient(90deg,#22d3ee,#3b82f6)}.sec .fr.C::before{background:linear-gradient(90deg,#f472b6,#fb923c)}
 .sec .fr .k{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;font-weight:700;font-size:13px}
-.sec .fr.A .k{background:#60a5fa;color:#06121f}.sec .fr.B .k{background:#f472b6;color:#1f0614}
+.sec .fr.A .k{background:#a78bfa;color:#140a2e}.sec .fr.B .k{background:#22d3ee;color:#04161b}.sec .fr.C .k{background:#f472b6;color:#1f0614}
 .sec .fr h4{font-size:15px;color:var(--text);margin:10px 0 4px;font-weight:600}
 .sec .fr .sm{font-size:13px;margin:0 0 12px}
 .sec .fr dl{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:12.5px;margin:0;padding-top:12px;border-top:1px solid var(--line)}
@@ -187,7 +187,7 @@ main{padding:22px var(--gut) 120px}
 .sec .jump .go{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 14px;border-radius:999px;background:var(--glass);border:1px solid var(--glass-b);color:var(--text);font-size:12.5px;text-decoration:none;transition:transform .25s var(--ease),background .25s}
 .sec .jump .go:hover{transform:translateY(-3px);background:rgba(255,255,255,.09)}
 .sec .jump .go svg{width:14px;height:14px}
-@media (max-width:760px){.sec .cards.c3,.sec .vs2,.sec .dd,.sec ul.chk{grid-template-columns:1fr}.sec ol.hs{flex-direction:column;gap:10px}.sec ol.hs li{flex-direction:row;text-align:left}.sec ol.hs li::after{display:none}}
+@media (max-width:760px){.sec .cards.c3,.sec .cards.c2,.sec .vs2,.sec .vs2.v3,.sec .dd,.sec ul.chk{grid-template-columns:1fr}.sec ol.hs{flex-direction:column;gap:10px}.sec ol.hs li{flex-direction:row;text-align:left}.sec ol.hs li::after{display:none}}
 body.editing .sec{box-shadow:0 0 0 1px rgba(255,255,255,.08) inset}
 body.editing .sec:focus-within{box-shadow:0 0 0 1px rgba(74,222,128,.35) inset}
 .sec[contenteditable=true]{outline:none}
@@ -211,6 +211,12 @@ body.editing .sec:focus-within{box-shadow:0 0 0 1px rgba(74,222,128,.35) inset}
 .fit b{font-weight:600;font-size:13px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .fit small{font-size:11.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .fn{font-size:10.5px;color:var(--muted);min-width:22px;height:20px;padding:0 6px;border-radius:999px;background:rgba(255,255,255,.06);display:grid;place-items:center;font-variant-numeric:tabular-nums;flex:none}
+.fg-h{display:flex;align-items:center;gap:6px;padding:10px 10px 4px;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.fg-h .cnt{color:var(--dim)}
+.fcan{display:inline-block;font-size:10px;padding:0 6px;border-radius:999px;background:rgba(244,114,182,.14);color:#f9a8d4;margin-right:6px;font-weight:600}
+.dm-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.msel{height:26px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid var(--glass-b);color:var(--text-2);font-size:11.5px;padding:0 8px;outline:none;max-width:100%}
+.msel:focus{border-color:var(--line-2)}
 .fl-empty{padding:18px 10px;color:var(--dim);font-size:12px;text-align:center}
 .fmain{min-width:0}
 .dm-back{display:none;width:32px;height:32px;border-radius:10px;place-items:center;color:var(--text-2);margin-left:-6px}
@@ -496,23 +502,25 @@ const MANUAL0 = [
   { id: 'painel', h: `<h2>01 · Como usar este painel</h2><p>Este painel é o seu kit para o Programa Parceiros. São três abas, e cada uma tem um papel na rotina:</p>
 <div class="cards c3">
 <div class="card"><span class="ic">${mi('book')}</span><h4>Manual</h4><p>Aqui. O passo a passo do programa: o que fazer, em que ordem e por quê.</p></div>
-<div class="card"><span class="ic">${mi('chat')}</span><h4>Fluxos do direct</h4><p>As conversas prontas para depois que o parceiro chama. Quando a resposta dele muda, escolha o caminho <b>A</b> ou <b>B</b>.</p></div>
+<div class="card"><span class="ic">${mi('chat')}</span><h4>Fluxos do direct</h4><p>As conversas prontas para depois que o parceiro chama, separadas por marca e frente. Quando a resposta dele muda, escolha o caminho <b>A</b> ou <b>B</b>.</p></div>
 <div class="card"><span class="ic">${mi('spark')}</span><h4>Gerador</h4><p>Mensagens curtas para o primeiro contato, sempre diferentes. Em <b>Modelos</b> ficam as mensagens prontas aprovadas.</p></div>
 </div>
 <p class="callout">A bandeira no canto troca entre <b>Brasil</b> e <b>USA</b>. Cada país tem seus próprios fluxos, modelos e mensagens no idioma certo.</p>` },
   { id: 'programa', h: `<h2>02 · O programa em 1 minuto</h2><p>O Programa Parceiros conecta a marca a microinfluenciadores e tutores de pets. A gente oferece produto e constrói relacionamento; eles geram conteúdo e experiências reais, de <b>pessoa para pessoa</b>.</p>
-<div class="vs2">
-<div class="fr A"><span class="k">A</span><h4>Produto por conteúdo</h4><p class="sm">O parceiro recebe o produto de presente e posta um vídeo em collab com a marca.</p><dl><dt>Ele recebe</dt><dd>Produto grátis</dd><dt>Ele entrega</dt><dd>Vídeo postado em collab com a marca</dd></dl></div>
-<div class="fr B"><span class="k">B</span><h4>Produto por review</h4><p class="sm">O parceiro compra pelo nosso link, recebe o reembolso e conta como foi a experiência.</p><dl><dt>Ele recebe</dt><dd>Reembolso do produto + frete</dd><dt>Ele entrega</dt><dd>Feedback da compra e do uso</dd></dl></div>
+<div class="vs2 v3">
+<div class="fr A"><span class="k">A</span><h4>Conteúdo via envio direto</h4><p class="sm">A marca envia o produto de presente e o parceiro posta um vídeo em collab.</p><dl><dt>Ele recebe</dt><dd>Produto em casa</dd><dt>Ele entrega</dt><dd>Vídeo em collab</dd></dl></div>
+<div class="fr B"><span class="k">B</span><h4>Produto por review</h4><p class="sm">O parceiro compra pelo nosso link, recebe o reembolso e conta como foi a experiência.</p><dl><dt>Ele recebe</dt><dd>Reembolso do produto + frete</dd><dt>Ele entrega</dt><dd>Feedback e avaliação</dd></dl></div>
+<div class="fr C"><span class="k">C</span><h4>Conteúdo via marketplace</h4><p class="sm">O parceiro compra no canal, recebe o reembolso na hora e posta um vídeo em collab.</p><dl><dt>Ele recebe</dt><dd>Reembolso do produto + frete</dd><dt>Ele entrega</dt><dd>Vídeo em collab</dd></dl></div>
 </div>
-<p class="callout ok">${mi('truck')}<span><b>O frete é sempre por conta da marca.</b> Nas duas frentes.</span></p>` },
+<p class="callout ok">${mi('truck')}<span><b>O frete é sempre por conta da marca.</b> Nas três frentes.</span></p>
+<p class="callout">Prioridade: a <b>Frente C</b>. A compra no canal deixa a experiência igual à de qualquer cliente. Se a pessoa não quiser comprar antes, vira <b>Frente A</b> e a gente envia direto.</p>` },
   { id: 'jornada', h: `<h2>03 · A jornada do parceiro</h2><p>Todo parceiro passa pelo mesmo caminho. Ao lado de cada etapa, onde ela acontece:</p>
 <ol class="tl">
 <li><b>Encontrar o perfil</b><span>Nos comentários de vídeos de grandes contas pet.</span></li>
 <li><b>Analisar</b><span>Pet, afinidade, atividade e país.</span></li>
 <li><b>Convidar</b><span>Comentário curto e individual.</span><em>Gerador</em></li>
 <li><b>Conversar no direct</b><span>O parceiro chama e a conversa segue o fluxo.</span><em>Fluxos</em></li>
-<li><b>Definir a frente</b><span>A (conteúdo) ou B (review).</span><em>Fluxos</em></li>
+<li><b>Definir a frente</b><span>C (compra no canal), A (envio direto) ou B (review).</span><em>Fluxos</em></li>
 <li><b>Executar e acompanhar</b><span>Envio ou compra, entrega e prazos.</span></li>
 <li><b>Concluir</b><span>Registrar o que aconteceu e a próxima ação.</span><em>Projeto Parceiros</em></li>
 </ol>` },
@@ -523,11 +531,13 @@ const MANUAL0 = [
 ${msgBox('Oi! Vi o perfil de vocês e acho que a gente deu match! Se tiver interesse, chama a gente no direct pra receber um mimo especial. 😊')}
 <div class="dd"><div class="do"><h4>${mi('check')}Faça</h4><ul><li>Uma mensagem diferente a cada perfil</li><li>Cite algo do perfil ou do pet</li><li>Deixe a pessoa escolher chamar</li></ul></div><div class="dont"><h4>Não faça</h4><ul><li>Repetir a mesma abordagem em sequência</li><li>Insistir com quem não respondeu</li><li>Prometer algo antes da conversa</li></ul></div></div>
 <p class="jump">${goTab('gerador', 'spark', 'Gerar mensagens de convite')}</p>` },
-  { id: 'direct', h: `<h2>05 · A conversa no direct</h2><p>Quando o parceiro chama, a conversa já está pronta na aba <b>Fluxos do direct</b>. Siga os balões da marca (clique para copiar) e, quando o parceiro responder de um jeito diferente, escolha o caminho <b>A</b> ou <b>B</b>.</p>
+  { id: 'direct', h: `<h2>05 · A conversa no direct</h2><p>Quando o parceiro chama, a conversa já está pronta na aba <b>Fluxos do direct</b>, separada por marca e frente (na C, um fluxo para cada canal). Siga os balões da marca (clique para copiar) e, quando o parceiro responder de um jeito diferente, escolha o caminho <b>A</b> ou <b>B</b>.</p>
+<h3>O tom de cada marca</h3>
+<div class="cards c2"><div class="card"><span class="ic">${mi('paw')}</span><h4>Yucaloo</h4><p>Brincalhona e autêntica, com a atitude do gato de óculos: sabe o que é bom e não precisa gritar. Leve, com humor, mas ponderada.</p></div><div class="card"><span class="ic">${mi('gift')}</span><h4>Coco &amp; Luna</h4><p>Calorosa e cuidadosa, como quem cuida da saúde do pet de verdade. Gentil, próxima e leve.</p></div></div>
 <h3>Durante a conversa, confirme</h3><div class="chips"><span>País</span><span>Região</span><span>Pet</span><span>Interesse em participar</span></div>
 <p>Depois apresente a frente certa e deixe claro <b>o que ele recebe</b>, <b>o que esperamos</b> e <b>os prazos</b>. Os nomes "Frente A" e "Frente B" são internos: para o parceiro a proposta tem que soar natural.</p>
 <p class="jump">${goTab('fluxos', 'chat', 'Abrir os fluxos do direct')}</p>` },
-  { id: 'frentea', h: `<h2>06 · Frente A · conteúdo</h2><p>O parceiro recebe o produto de presente, com frete pago pela marca, e posta um vídeo em collab com a gente.</p>
+  { id: 'frentea', h: `<h2>06 · Frente A · conteúdo via envio direto</h2><p>O parceiro recebe o produto de presente, com frete pago pela marca, e posta um vídeo em collab com a gente.</p>
 <h3>A entrega é sempre em collab</h3>
 <div class="clock"><span class="ic">${mi('chat')}</span><div><b>Padrão</b><span>Vídeo postado em collab</span><p>O parceiro publica o vídeo e convida o perfil da marca como colaborador. É isso que a gente propõe em toda conversa.</p></div></div>
 <p class="note">Exceção rara: só se a pessoa não quiser postar de jeito nenhum, dá para combinar o envio do vídeo para a marca, sem publicar. Não oferecer de início.</p>
@@ -537,7 +547,7 @@ ${msgBox('Oi! Vi o perfil de vocês e acho que a gente deu match! Se tiver inter
 <h3>Depois do envio</h3><p>Mande o rastreio, confirme o recebimento e acompanhe o prazo:</p>
 ${msgBox('Oi, [nome]! O produto chegou direitinho? Se precisar de alguma orientação para começar, estamos por aqui 😊')}
 <p>Quando o vídeo for publicado, aceite o convite de collab no perfil da marca, confira a entrega e arquive o material junto da autorização.</p>` },
-  { id: 'frenteb', h: `<h2>07 · Frente B · experiência de compra</h2><p>O parceiro compra no canal indicado, manda o comprovante e recebe o reembolso do produto e do frete. Depois de usar, conta como foi.</p>
+  { id: 'frenteb', h: `<h2>07 · Frente B · produto por review</h2><p>O parceiro compra no canal indicado, manda o comprovante e recebe o reembolso do produto e do frete. Depois de usar, conta como foi.</p>
 <div class="chips"><span>Mercado Livre</span><span>Shopee</span><span>TikTok Shop</span><span>Amazon</span></div>
 <h3>Do link ao feedback</h3>${hsteps(['Link e condições', 'Compra', 'Comprovante', 'Reembolso', 'Recebimento e uso', 'Feedback'])}
 <div class="clock"><span class="ic">${mi('clock')}</span><div><b>Reembolso imediato</b><span>Segunda a sexta · 09h às 17h</span><p>A compra é combinada antes, dentro desse horário, e o colaborador fica disponível para conferir o comprovante na hora.</p></div></div>
@@ -550,7 +560,16 @@ ${msgBox('Vamos combinar sua compra dentro do nosso horário de atendimento: de 
 <h3>Convite para avaliação</h3><p>Só quando a experiência foi positiva. A mensagem está no fluxo da Frente B.</p>
 <div class="dd"><div class="do"><h4>${mi('check')}Pode</h4><ul><li>Convidar a avaliar o produto</li><li>Pedir que fale da experiência real</li></ul></div><div class="dont"><h4>Não pode</h4><ul><li>Dar um elogio pronto para copiar</li><li>Dizer quantas estrelas dar</li><li>Pedir para esconder a parceria</li></ul></div></div>
 <p class="note">Entrega e atendimento vão nos campos próprios da avaliação, quando existirem.</p>` },
-  { id: 'paises', h: `<h2>08 · Brasil e EUA</h2><p>O programa é o mesmo nos dois países. O que muda é a operação. Use a bandeira no canto para trocar de quadro.</p>
+  { id: 'frentec', h: `<h2>08 · Frente C · conteúdo via marketplace</h2><p>A frente prioritária. O parceiro compra pelo nosso link no canal, manda o comprovante, recebe o reembolso do produto e do frete na hora e, depois de usar, posta um vídeo em collab. Não pedimos review aqui.</p>
+<div class="chips"><span>Mercado Livre</span><span>Shopee</span><span>Amazon</span><span>TikTok Shop</span></div>
+<p>Cada canal tem o seu fluxo, com o passo a passo de compra e de onde tirar o comprovante.</p>
+<h3>Da compra ao post</h3>${hsteps(['Aceite e canal', 'Compra no canal', 'Comprovante', 'Reembolso', 'Recebimento', 'Post em collab'])}
+<div class="clock"><span class="ic">${mi('clock')}</span><div><b>Reembolso imediato</b><span>Segunda a sexta · 09h às 17h</span><p>A compra é combinada antes, dentro desse horário, para conferir o comprovante e reembolsar na hora.</p></div></div>
+<p class="callout ok">${mi('truck')}<span><b>Não quis comprar antes?</b> Sem problema: no Projeto Parceiros, use “Mudar para envio direto” na pill (ela vira Frente A, sem perder o que já foi feito) e siga o caminho B do fluxo.</span></p>
+<h3>Selo “Apto para review”</h3>
+<div class="cards c2"><div class="card"><span class="ic">${mi('flag')}</span><h4>Quem ganha o selo</h4><p>Parceiros de conteúdo (A ou C) com experiência muito boa. O admin marca direto ou o operador pede na pill, e o pedido vai para o admin aprovar.</p></div><div class="card"><span class="ic">${mi('check')}</span><h4>O que muda</h4><p>A pill ganha a etapa “Review publicado” depois do conteúdo. Só aí entra o convite para avaliar, no fim do fluxo.</p></div></div>
+<div class="dd"><div class="do"><h4>${mi('check')}Pode</h4><ul><li>Convidar quem tem o selo a avaliar</li><li>Pedir a experiência real</li></ul></div><div class="dont"><h4>Não pode</h4><ul><li>Convidar quem não tem o selo</li><li>Dar elogio pronto ou dizer quantas estrelas</li><li>Pedir para esconder a parceria</li></ul></div></div>` },
+  { id: 'paises', h: `<h2>09 · Brasil e EUA</h2><p>O programa é o mesmo nos dois países. O que muda é a operação. Use a bandeira no canto para trocar de quadro.</p>
 <div class="tw"><table class="cmp"><thead><tr><th></th><th>Brasil</th><th>EUA</th></tr></thead><tbody>
 <tr><th>Idioma</th><td>Português</td><td>Inglês</td></tr>
 <tr><th>Produto</th><td colspan="2">Item disponível e adequado ao mercado do parceiro</td></tr>
@@ -559,7 +578,7 @@ ${msgBox('Vamos combinar sua compra dentro do nosso horário de atendimento: de 
 <tr><th>Logística</th><td colspan="2">Endereço, frete e acompanhamento locais</td></tr>
 <tr><th>Reembolso</th><td colspan="2">Método de pagamento e horário combinados antes</td></tr>
 </tbody></table></div>` },
-  { id: 'rotina', h: `<h2>09 · Rotina diária</h2>
+  { id: 'rotina', h: `<h2>10 · Rotina diária</h2>
 <div class="cards c3"><div class="card"><span class="ic">${mi('sun')}</span><h4>Ao começar</h4><p>Conferir directs, reembolsos, entregas e prazos pendentes.</p></div><div class="card"><span class="ic">${mi('paw')}</span><h4>Durante o dia</h4><p>Analisar perfis, convidar, apresentar propostas e acompanhar parcerias.</p></div><div class="card"><span class="ic">${mi('flag')}</span><h4>Ao fechar cada conversa</h4><p>Atualizar o painel: o que aconteceu, quem é o responsável e a próxima ação.</p></div></div>` }
 ];
 const manual = () => (D('app/manual') && D('app/manual').secs) || MANUAL0;
@@ -619,17 +638,23 @@ const listAt = (f, p) => { let l = f.steps; if (!p) return l; const a = p.split(
 const firstMsg = st => { for (const x of st || []) { if (x.k === 'fork') return firstMsg((x.opts[0] || {}).steps); if (x.w !== 'p' && x.x && x.x.trim()) return x.x; } return ''; };
 const FAV = ['#7c5cff,#3b82f6', '#f472b6,#fb923c', '#2dd4bf,#38bdf8', '#facc15,#f59e0b', '#a78bfa,#f472b6', '#4ade80,#2dd4bf'];
 const favBg = t => { let h = 0; for (const c of String(t || '')) h = (h * 31 + c.charCodeAt(0)) >>> 0; return FAV[h % FAV.length]; };
-const fItem = (x, on) => `<button class="fi ${on ? 'on' : ''}" data-act="ftab" data-id="${x.id}" ${isAdmin() ? 'draggable="true"' : ''}><span class="fav" style="background:linear-gradient(135deg,${favBg(x.t || x.id)})">${esc(((x.t || 'N').trim()[0] || 'N').toUpperCase())}</span><span class="fit"><b>${esc(x.t || 'Novo fluxo')}</b><small>${esc(firstMsg(x.steps) || 'Sem mensagens')}</small></span><span class="fn">${countMsgs(x.steps)}</span></button>`;
+const fItem = (x, on) => `<button class="fi ${on ? 'on' : ''}" data-act="ftab" data-id="${x.id}" ${isAdmin() ? 'draggable="true"' : ''}><span class="fav" style="background:${FRENTE[x.frente] ? FRENTE[x.frente].bg : `linear-gradient(135deg,${favBg(x.t || x.id)})`}">${esc(FRENTE[x.frente] ? x.frente : ((x.t || 'N').trim()[0] || 'N').toUpperCase())}</span><span class="fit"><b>${esc(x.t || 'Novo fluxo')}</b><small>${x.canal ? `<span class="fcan">${esc(canalName(x.canal))}</span>` : ''}${esc(firstMsg(x.steps) || 'Sem mensagens')}</small></span><span class="fn">${countMsgs(x.steps)}</span></button>`;
+/* marca, frente e canal de cada fluxo (a lista agrupa por marca) */
+const FMARCAS = [['yucaloo', 'Yucaloo'], ['coco', 'Coco & Luna'], ['', 'Geral']];
+const FRENTE = { A: { n: 'A · Conteúdo via envio direto', bg: 'linear-gradient(135deg,#a78bfa,#7c5cff)' }, B: { n: 'B · Produto por review', bg: 'linear-gradient(135deg,#22d3ee,#3b82f6)' }, C: { n: 'C · Conteúdo via marketplace', bg: 'linear-gradient(135deg,#f472b6,#fb923c)' } };
+const CANAIS = () => store.board === 'us' ? [['amazon', 'Amazon US'], ['walmart', 'Walmart'], ['tiktok', 'TikTok Shop US']] : [['ml', 'Mercado Livre'], ['shopee', 'Shopee'], ['amazon', 'Amazon'], ['tiktok', 'TikTok Shop']];
+const canalName = k => (CANAIS().find(c => c[0] === k) || [k, k])[1];
 function flist(all, f) {
   const q = (UI.fq || '').trim().toLowerCase(), l = q ? all.filter(x => JSON.stringify([x.t, x.steps]).toLowerCase().includes(q)) : all;
-  return l.length ? l.map(x => fItem(x, f && x.id === f.id)).join('') : `<div class="fl-empty">Nenhum fluxo encontrado.</div>`;
+  if (!l.length) return `<div class="fl-empty">Nenhum fluxo encontrado.</div>`;
+  return FMARCAS.map(([k, n]) => { const g = l.filter(x => (x.marca || '') === k); return g.length ? `<div class="fg-h"><span>${n}</span><span class="cnt">${g.length}</span></div>${g.map(x => fItem(x, f && x.id === f.id)).join('')}` : ''; }).join('');
 }
 function dmHTML(f) {
   const A = isAdmin();
   if (!f) return `<div class="empty node">${ic('chat')}<div>${A ? 'Crie o primeiro fluxo em <b>Novo</b> e monte a conversa do direct.' : 'Nenhum fluxo ainda.'}</div></div>`;
   return `<div class="dm node" data-fid="${f.id}">
       <div class="dm-h"><button class="dm-back" data-act="fback" aria-label="Voltar para os fluxos">${ic('left')}</button><span class="dm-av"><span>${ic('paw')}</span></span>
-        <div class="dm-who">${A ? `<input class="dm-t" id="fl-t" placeholder="Nome do fluxo" value="${esc(f.t || '')}" autocomplete="off">` : `<b>${esc(f.t || 'Fluxo')}</b>`}<small>${A ? 'clique nos balões para editar' : 'clique numa mensagem da marca para copiar'}</small></div>
+        <div class="dm-who">${A ? `<input class="dm-t" id="fl-t" placeholder="Nome do fluxo" value="${esc(f.t || '')}" autocomplete="off">` : `<b>${esc(f.t || 'Fluxo')}</b>`}${A ? `<div class="dm-meta"><select class="msel" data-fm="marca" aria-label="Marca">${FMARCAS.map(([k, n]) => `<option value="${k}" ${(f.marca || '') === k ? 'selected' : ''}>${n}</option>`).join('')}</select><select class="msel" data-fm="frente" aria-label="Frente"><option value="">Sem frente</option>${Object.entries(FRENTE).map(([k, v]) => `<option value="${k}" ${f.frente === k ? 'selected' : ''}>${v.n}</option>`).join('')}</select>${f.frente === 'C' ? `<select class="msel" data-fm="canal" aria-label="Canal"><option value="">Canal…</option>${CANAIS().map(([k, n]) => `<option value="${k}" ${f.canal === k ? 'selected' : ''}>${n}</option>`).join('')}</select>` : ''}</div>` : `<small>${[FMARCAS.find(m => m[0] === (f.marca || ''))?.[1], FRENTE[f.frente]?.n, f.canal && canalName(f.canal)].filter(Boolean).map(esc).join(' · ') || 'clique numa mensagem da marca para copiar'}</small>`}</div>
         ${A ? `<button class="gb danger" data-act="del-flow" title="Excluir fluxo">${ic('trash')}</button>` : ''}
       </div>
       <div class="dm-b" id="dm-b">${level(f.steps || [], '')}</div>
@@ -851,6 +876,7 @@ document.addEventListener('input', e => {
   const t = e.target;
   if (t.id === 'g-nome') { UI.g = { ...(UI.g || {}), nome: t.value }; saveUI(); clearTimeout(generate.t); generate.t = setTimeout(() => { generate(); $('#ggrid').innerHTML = gcards(new Set(used())); }, 350); return; }
   if (t.id === 'fq') { UI.fq = t.value; $('#flist').innerHTML = flist(flows(), curFlow()); return; }
+  if (t.dataset && t.dataset.fm) { const f = curFlow(); if (f) { const body = clone(D('fluxo/' + f.id)); body[t.dataset.fm] = t.value; if (t.dataset.fm === 'frente' && t.value !== 'C') delete body.canal; commit('fluxo/' + f.id, body); $('#flist').innerHTML = flist(flows(), curFlow()); if (t.dataset.fm === 'frente') $('#fmain').innerHTML = dmHTML(curFlow()); } return; }
   if (t.id === 'fl-t') { const f = curFlow(); if (f) { const body = clone(D('fluxo/' + f.id)); body.t = t.value; commit('fluxo/' + f.id, body); updTab(); } return; }
   if (t.dataset && 'bub' in t.dataset) { const p = t.dataset.p, i = +t.dataset.i, x = t.innerText.replace(/\n$/, ''); mutFlow(f => { listAt(f, p)[i].x = x; }, false); updTab(); return; }
   if (t.dataset && 'cond' in t.dataset) { const p = t.dataset.p, i = +t.dataset.i, j = +t.dataset.j, x = t.innerText.trim(); mutFlow(f => { listAt(f, p)[i].opts[j].c = x; }, false); return; }
