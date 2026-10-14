@@ -82,8 +82,7 @@ svg.i{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6;stro
 .brand-tag .dot{width:9px;height:9px;border-radius:50%;background:var(--bc);box-shadow:0 0 10px var(--bc)}
 .brand-tag small{font-size:11.5px;font-weight:400;color:var(--muted)}.brand-tag small:empty{display:none}
 .brand-tag.sm{height:24px;padding:0 9px;font-size:12px;border-radius:8px;gap:7px}.brand-tag.sm .dot{width:7px;height:7px}
-@media (max-width:600px){.op-acts{flex-wrap:wrap}.op-acts .op-sel{flex:1 1 100%}.op-acts .op-sel .inp{width:100%}.op-acts>.pill.white{flex:1 1 100%;justify-content:center}}
-.np-b{margin-left:8px;padding:2px 8px;border-radius:7px;font-size:12px;font-weight:600;color:#fff;background:var(--bc)}
+
 ._unused{}
 .logo-slot{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;height:74px;min-width:260px;padding:0 22px;border-radius:16px;border:1px dashed var(--line-2);color:var(--muted);background:rgba(25,25,28,.5);transition:all .25s var(--ease);cursor:pointer}
 .logo-slot:hover{color:var(--text);border-color:#55555e}
@@ -1354,7 +1353,7 @@ function viewOp() {
   return `<div class="op-head">
     <div class="mseg" role="tablist">${['A', 'B'].map(k => `<button class="${model === k ? 'on' : ''}" data-act="model" data-v="${k}" role="tab" aria-selected="${model === k}" style="--c:${COL[k]}"><span class="mtag">${k}</span><span class="mtx"><b><span class="lg">${FLOW[k].name}</span><span class="sh">${FLOW[k].short}</span></b><small>${counts[k]} ${counts[k] === 1 ? 'contato' : 'contatos'} neste dia</small></span></button>`).join('')}</div>
     <div class="op-acts"><label class="field op-sel"><span>Operador</span><select class="inp sm" data-ui="op">${ops.length ? ops.map(o => `<option value="${o.id}" ${ui.op === o.id ? 'selected' : ''}>${esc(o.name)}</option>`).join('') : '<option value="">Cadastre em Ajustes</option>'}</select></label>
-      <button class="pill white" data-act="new-partner">${ic('plus')}Novo parceiro<span class="np-b" style="--bc:${b.accent}">${esc(b.name)}</span></button></div></div>
+      <button class="pill white" data-act="new-partner">${ic('plus')}Novo parceiro</button></div></div>
   <div class="node tree-node branded rise" style="--d:1;--mc:${COL[model]};--bc:${b.accent}">
     <div class="tree-top"><span class="brand-tag" style="--bc:${b.accent}"><span class="dot"></span>${esc(b.name)}<small>${PAIS[store.board]?.name && isApi() ? PAIS[store.board].name : ''}</small></span><span class="sp"></span><span class="tag ${st === 'closed' ? 'g' : st === 'open' ? 'o' : ''}">${st === 'closed' ? `${ic('lock', 'width:11px;height:11px')}dia fechado` : st === 'open' ? 'dia em aberto' : 'sem contatos'}</span></div>
     <div class="tree-scroll" id="tree-scroll"><div class="tree" id="tree" data-n="${list.length}"></div></div>
@@ -2021,7 +2020,11 @@ let rsz, lastW = innerWidth; window.addEventListener('resize', () => { clearTime
 function setIn(coll, id) { return state[coll].find(x => x.id === id); }
 const ACT = {
   view: a => { const go = () => { ui.view = a.dataset.v; render(); scrollTo({ top: 0 }); }; a.dataset.v === 'set' && !isAdmin() ? requireAdmin(go, 'Senha para abrir os Ajustes') : go(); },
-  brand: a => { ui.brand = a.dataset.v; render(); },
+  brand: a => {
+    const to = brandById(a.dataset.v), from = curBrand(); if (!to || to.id === from?.id) return;
+    openModal({ title: 'Deseja mudar de marca?', body: `<p>Você está em <span class="brand-tag sm" style="--bc:${from.accent}"><span class="dot"></span>${esc(from.name)}</span> e vai para <span class="brand-tag sm" style="--bc:${to.accent}"><span class="dot"></span>${esc(to.name)}</span>.</p>`,
+      actions: [{ label: 'Cancelar' }, { label: 'Mudar de marca', primary: true, act: () => { ui.brand = to.id; render(); } }] });
+  },
   board: a => setBoard(a.dataset.v),
   unlock: () => requireAdmin(() => render(), 'Senha para abrir os Ajustes'),
   lock: async () => { ssDel('parc:admin'); if (isApi()) return ACT.logout(); ui.view = 'days'; render(); toast('Modo administrador encerrado', 'w'); },
