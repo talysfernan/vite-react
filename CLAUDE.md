@@ -176,6 +176,8 @@ users  = [{ id, name, user, cargo, email, note, pass(hash), passEnc, active,
   - Anexos: `POST /api/files` (corpo = arquivo, cabeçalhos `x-name`, `x-board`), `GET /api/blob/:id?b=br|us[&dl=1]`, `DELETE /api/files/:id`; guardados em partes de 1,8 MB nas tabelas `files`/`file_parts` do Durable Object do país (fora da foto diária e do export).
   - Teste local com o servidor real: `.dev.vars` com `SESSION_SECRET=...` e `npx wrangler dev`; login local pela senha de emergência padrão.
   - Antes de publicar, anotar a versão atual (`/workers/scripts/caos-constelacao/deployments`) para poder voltar.
+- `parceiros/` — **Projeto Parceiros** (worker `caos-parceiros`, parceiros-do.meucaos.com), cópia do que está no ar. Um painel por país com bandeiras BR/US no topo: banco `DB` (Brasil) e `DB_US` (caos-parceiros-us-db), chaves `parceiros-br`/`parceiros-us` no Quintal; país pelo `x-board`, `?b=`/`?pais=` ou cookie `prt_b`. Publicar: `python3 parceiros/deploy.py` (só o código, mantém assets e bindings).
+- `quintal/` — **Quintal** (worker `caos-quintal`), cópia do que está no ar. Publicar: `python3 quintal/deploy.py`.
 - Fluxo das correções:
   1. Uma correção por vez, só o que foi pedido.
   2. Testar no navegador (Playwright) com a API simulada.
