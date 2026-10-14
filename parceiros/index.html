@@ -399,7 +399,7 @@ textarea.inp{height:auto;min-height:84px;padding:10px 12px;resize:vertical;line-
 .op-sel{width:190px}
 .tree-node{padding:0;overflow:hidden;background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1.2px),linear-gradient(180deg,#19191c,#141417);background-size:20px 20px,100% 100%}
 .tree-top{display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:16px 18px 0;flex-wrap:wrap}
-.tree-top .mseg{min-width:min(560px,100%)}
+.op-below{margin:16px 0 0;align-items:center}
 .brandbar .op-sel{display:flex;align-items:center;gap:10px;width:auto;color:var(--muted);font-size:12px}.brandbar .op-sel .inp{width:180px}
 .tree-scroll{overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;scrollbar-color:#35353c transparent}
 .tree{position:relative;margin:0 auto;min-height:420px}
@@ -1357,13 +1357,14 @@ function viewOp() {
   const st = dayStatus(all);
   const ops = activeOps();
   return `<div class="node tree-node branded rise" style="--d:1;--mc:${COL[model]};--bc:${b.accent}">
-    <div class="tree-top"><div class="mseg" role="tablist">${['A', 'B'].map(k => `<button class="${model === k ? 'on' : ''}" data-act="model" data-v="${k}" role="tab" aria-selected="${model === k}" style="--c:${COL[k]}"><span class="mtag">${k}</span><span class="mtx"><b><span class="lg">${FLOW[k].name}</span><span class="sh">${FLOW[k].short}</span></b><small>${counts[k]} ${counts[k] === 1 ? 'contato' : 'contatos'} neste dia</small></span></button>`).join('')}</div>
-      <span class="sp"></span><span class="tag ${st === 'closed' ? 'g' : st === 'open' ? 'o' : ''}">${st === 'closed' ? `${ic('lock', 'width:11px;height:11px')}dia fechado` : st === 'open' ? 'dia em aberto' : 'sem contatos'}</span><button class="pill white" data-act="new-partner">${ic('plus')}Novo parceiro</button></div>
+    <div class="tree-top"><span class="sp"></span><span class="tag ${st === 'closed' ? 'g' : st === 'open' ? 'o' : ''}">${st === 'closed' ? `${ic('lock', 'width:11px;height:11px')}dia fechado` : st === 'open' ? 'dia em aberto' : 'sem contatos'}</span></div>
     <div class="tree-scroll" id="tree-scroll"><div class="tree" id="tree" data-n="${list.length}"></div></div>
     <div class="tree-foot">
       <div class="tf-row"><span class="legend"><span><i style="background:${COL.done}"></i>${done} ${done === 1 ? 'finalizada' : 'finalizadas'}</span><span><i style="background:${COL.open}"></i>${open} em aberto</span><span><i style="background:${COL.dead}"></i>${dead} ${dead === 1 ? 'baixada' : 'baixadas'}</span></span>
         <span class="sp"></span>${meta ? `<span class="metab"><span class="hint">meta do dia</span><b class="num ${list.length >= meta ? 'pos' : ''}">${list.length}/${meta}</b><span class="mbar"><i style="width:${Math.min(100, list.length / meta * 100)}%;background:${list.length >= meta ? COL.done : COL.open}"></i></span></span>` : ''}</div></div>
   </div>
+  <div class="op-head op-below rise" style="--d:2"><div class="mseg" role="tablist">${['A', 'B'].map(k => `<button class="${model === k ? 'on' : ''}" data-act="model" data-v="${k}" role="tab" aria-selected="${model === k}" style="--c:${COL[k]}"><span class="mtag">${k}</span><span class="mtx"><b><span class="lg">${FLOW[k].name}</span><span class="sh">${FLOW[k].short}</span></b><small>${counts[k]} ${counts[k] === 1 ? 'contato' : 'contatos'} neste dia</small></span></button>`).join('')}</div>
+    <button class="pill white" data-act="new-partner">${ic('plus')}Novo parceiro</button></div>
   <div class="mt2 rise" style="--d:2"><div class="label"><span class="dot" style="background:${COL[model]}"></span>Parceiros do dia · ${FLOW[model].name}</div>
     <div class="node pad scroll-x">${list.length ? opTableHTML(list) : `<div class="empty"><h3>Nenhum contato de ${FLOW[model].short.toLowerCase()} neste dia</h3>Registre cada conversa iniciada no chat com “Novo parceiro”.</div>`}</div></div>`;
 }
