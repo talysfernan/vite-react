@@ -1206,7 +1206,7 @@ function render() {
   <div class="titlebar" id="titlebar">${titlePillHTML()}</div>
   <header class="top">
     <div class="top-l"><nav class="seg">${views.map(([k, l]) => `<button class="pill ${ui.view === k ? 'on' : ''}" data-act="view" data-v="${k}">${l}${k === 'set' ? (isAdmin() ? ic('unlock', 'width:13px;height:13px;color:var(--muted)') : ic('lock', 'width:13px;height:13px;color:var(--dim)')) : ''}</button>`).join('')}</nav>
-      <div class="hcheck${hcOpen && hcVal ? ' open' : ''}" id="hcheck"><div class="affix"><span class="pre">@</span><input class="inp" id="hc-in" value="${esc(hcVal)}" placeholder="verificar @" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Verificar @ de parceiro"></div><div class="hc-res" id="hc-res">${hcHTML(hcVal)}</div></div></div>
+      <div class="hcheck${hcOpen && hcVal ? ' open' : ''}" id="hcheck"><div class="affix"><span class="pre">@</span><input class="inp" id="hc-in" value="${esc(hcVal)}" placeholder="verificador de usuário" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Verificar @ de parceiro"></div><div class="hc-res" id="hc-res">${hcHTML(hcVal)}</div></div></div>
     <div class="month" id="topc">${centerHTML()}</div>
     <div class="top-r"><div class="save-st" id="savest"></div></div>
   </header>
