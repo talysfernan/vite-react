@@ -66,7 +66,7 @@ async function session(req, env) {
   const own = await ownSession(req, env);
   if (own) return own;
   try {
-    const r = await env.QUINTAL.check(req.headers.get("cookie") || "", PANEL_KEY, false);
+    const r = await env.QUINTAL.check(req.headers.get("cookie") || "", env.PANEL_KEY || PANEL_KEY, false);
     return r && r.role ? { role: r.role, name: r.name } : null;
   } catch (e) {
     return null;
@@ -123,13 +123,13 @@ async function api(req, env, url) {
   if (p === "/api/export" && method === "GET") {
     const key = url.searchParams.get("key") || "";
     if (!env.EXPORT_KEY || !safeEq(key, env.EXPORT_KEY)) return json({ error: "forbidden" }, 403);
-    return json({ format: "painel-caos-docs-v1", app: "caos-parceiros", exportedAt: (/* @__PURE__ */ new Date()).toISOString(), docs: await allDocs(env) });
+    return json({ format: "painel-caos-docs-v1", app: "caos-parceiros", board: env.BOARD || "br", exportedAt: (/* @__PURE__ */ new Date()).toISOString(), docs: await allDocs(env) });
   }
   if (p === "/api/session") {
     const own = await ownSession(req, env);
     if (own) return json({ role: own.role, name: "emerg\xEAncia" });
     try {
-      const r = await env.QUINTAL.check(req.headers.get("cookie") || "", PANEL_KEY, true);
+      const r = await env.QUINTAL.check(req.headers.get("cookie") || "", env.PANEL_KEY || PANEL_KEY, true);
       return json({ role: r?.role || null, name: r?.name || null, reason: r?.reason || null, sso: true, glitch: r?.glitch !== false });
     } catch (e) {
       return json({ role: null, down: true });
@@ -280,12 +280,17 @@ function decideReq(p, rid, accept, note, by) {
   return true;
 }
 __name(decideReq, "decideReq");
+var dbsOf = /* @__PURE__ */ __name((env) => env.DB_US ? { br: env.DB, us: env.DB_US } : { br: env.DB }, "dbsOf");
 var Inbox = class extends WorkerEntrypoint {
   static {
     __name(this, "Inbox");
   }
   async list() {
-    const env = this.env;
+    const items = [];
+    for (const [b, db] of Object.entries(dbsOf(this.env))) items.push(...await this.list1({ DB: db }, b));
+    return { key: "parceiros", name: "Projeto Parceiros", url: "https://parceiros-do.meucaos.com", items };
+  }
+  async list1(env, b) {
     const { results } = await env.DB.prepare(`SELECT path, body FROM docs WHERE (path LIKE 'partners/%' AND body LIKE '%"reqs"%') OR path LIKE 'brands/%'`).all();
     const brands = {}, ps = [];
     for (const r of results) {
@@ -298,22 +303,27 @@ var Inbox = class extends WorkerEntrypoint {
     for (const p of ps) for (const r of p.reqs || []) {
       if (r.status !== "pending" && !(r.decidedAt > week)) continue;
       const done = (STEPS[p.model] || []).filter((k) => p.steps?.[k]);
-      items.push({ id: p.id, rid: r.id, title: "@" + (p.handle || ""), brand: brands[p.brandId] || "", model: p.model, stage: p.status === "dead" ? "Baixada" : STEP_L[done[done.length - 1]] || "", type: r.type, label: r.type === "dead" ? "Dar baixa" : r.type === "delete" ? "Excluir registro" : "Restaurar", reason: rsn(r.reasonType, r.reason), by: r.by || "", ts: r.ts, status: r.status, decidedAt: r.decidedAt || null, note: r.note || "", occ: (p.occ || []).length, link: "/?p=" + p.id });
+      items.push({ id: p.id, rid: r.id, title: "@" + (p.handle || ""), brand: (brands[p.brandId] || "") + (b === "us" ? " \xB7 EUA" : ""), model: p.model, stage: p.status === "dead" ? "Baixada" : STEP_L[done[done.length - 1]] || "", type: r.type, label: r.type === "dead" ? "Dar baixa" : r.type === "delete" ? "Excluir registro" : "Restaurar", reason: rsn(r.reasonType, r.reason), by: r.by || "", ts: r.ts, status: r.status, decidedAt: r.decidedAt || null, note: r.note || "", occ: (p.occ || []).length, link: "/?pais=" + b + "&p=" + p.id });
     }
-    return { key: "parceiros", name: "Projeto Parceiros", url: "https://parceiros-do.meucaos.com", items };
+    return items;
   }
   async decide(id, rid, accept, note, by) {
-    const path = "partners/" + id, p = await getDoc(this.env, path);
+    const path = "partners/" + id;
+    for (const db of Object.values(dbsOf(this.env))) if (await getDoc({ DB: db }, path)) return this.decide1({ DB: db }, path, rid, accept, note, by);
+    return { ok: false, error: "n\xE3o encontrado" };
+  }
+  async decide1(env, path, rid, accept, note, by) {
+    const p = await getDoc(env, path);
     if (!p) return { ok: false, error: "n\xE3o encontrado" };
     if (!decideReq(p, rid, !!accept, String(note || "").slice(0, 300), String(by || "admin").slice(0, 60))) return { ok: false, error: "j\xE1 decidida" };
     const r = p.reqs.find((z) => z.id === rid);
     if (r && r.deleted) {
       const ids = ["purchasePrints", "refundProofs", "reviewPrints", "contentPrints"].flatMap((k) => (p[k] || []).filter((a) => a && a.k === "a").map((a) => a.id));
-      for (const id2 of ids) await this.env.DB.batch([this.env.DB.prepare("DELETE FROM file_parts WHERE id=?").bind(id2), this.env.DB.prepare("DELETE FROM files WHERE id=?").bind(id2)]);
-      await this.env.DB.prepare("UPDATE docs SET body=?, updated=? WHERE path=?").bind("null", Date.now(), path).run();
+      for (const id2 of ids) await env.DB.batch([env.DB.prepare("DELETE FROM file_parts WHERE id=?").bind(id2), env.DB.prepare("DELETE FROM files WHERE id=?").bind(id2)]);
+      await env.DB.prepare("UPDATE docs SET body=?, updated=? WHERE path=?").bind("null", Date.now(), path).run();
       return { ok: true, deleted: true };
     }
-    await putDoc(this.env, path, p);
+    await putDoc(env, path, p);
     return { ok: true };
   }
 };

@@ -74,6 +74,16 @@ svg.i{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6;stro
 .hc-st{flex:none;margin-left:auto;font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(255,255,255,.12);white-space:nowrap}
 .save-st{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);padding:0 6px;white-space:nowrap}
 .brandbar{display:flex;align-items:center;gap:10px;padding:16px var(--gut) 0}
+.c-flags .pill{padding:0 9px}.c-flags svg{width:22px;height:15px;border-radius:3px;display:block;opacity:.45;filter:saturate(.5);transition:opacity .2s,filter .2s}.c-flags .pill.on svg,.c-flags .pill:hover svg{opacity:1;filter:none}
+.bpill.on{background:color-mix(in srgb,var(--bc) 16%,#1c1c20);border-color:color-mix(in srgb,var(--bc) 60%,transparent);box-shadow:0 0 0 1px color-mix(in srgb,var(--bc) 25%,transparent),0 8px 26px -10px color-mix(in srgb,var(--bc) 55%,transparent);color:#fff;font-weight:600}
+.bpill:not(.on){opacity:.7}.bpill:not(.on):hover{opacity:1}
+.tree-node.branded{border-color:color-mix(in srgb,var(--bc) 45%,var(--line));box-shadow:0 0 0 1px color-mix(in srgb,var(--bc) 14%,transparent),0 0 60px -24px color-mix(in srgb,var(--bc) 70%,transparent),0 24px 48px -28px rgba(0,0,0,.85)}
+.brand-tag{display:inline-flex;align-items:center;gap:9px;height:32px;padding:0 14px;border-radius:11px;font-size:14px;font-weight:600;color:#fff;background:color-mix(in srgb,var(--bc) 18%,rgba(255,255,255,.03));border:1px solid color-mix(in srgb,var(--bc) 55%,transparent);backdrop-filter:blur(10px) saturate(1.4);-webkit-backdrop-filter:blur(10px) saturate(1.4)}
+.brand-tag .dot{width:9px;height:9px;border-radius:50%;background:var(--bc);box-shadow:0 0 10px var(--bc)}
+.brand-tag small{font-size:11.5px;font-weight:400;color:var(--muted)}.brand-tag small:empty{display:none}
+.brand-tag.sm{height:24px;padding:0 9px;font-size:12px;border-radius:8px;gap:7px}.brand-tag.sm .dot{width:7px;height:7px}
+@media (max-width:600px){.op-acts{flex-wrap:wrap}.op-acts .op-sel{flex:1 1 100%}.op-acts .op-sel .inp{width:100%}.op-acts>.pill.white{flex:1 1 100%;justify-content:center}}
+.np-b{margin-left:8px;padding:2px 8px;border-radius:7px;font-size:12px;font-weight:600;color:#fff;background:var(--bc)}
 ._unused{}
 .logo-slot{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;height:74px;min-width:260px;padding:0 22px;border-radius:16px;border:1px dashed var(--line-2);color:var(--muted);background:rgba(25,25,28,.5);transition:all .25s var(--ease);cursor:pointer}
 .logo-slot:hover{color:var(--text);border-color:#55555e}
@@ -795,7 +805,11 @@ const costDate = p => (p.model === 'A' ? (p.steps?.envio ? (p.shipDate || tsDay(
 
 /* =================== persistência: servidor (Cloudflare) ou local =================== */
 const LS_KEY = 'caos-parceiros:dados', LS_UI = 'caos-parceiros:ui';
-const store = { mode: 'boot', role: null, assets: null, dl: null, dirty: false, saving: false, lastSave: null, error: null, readonly: false, sent: {}, timer: null, running: false, again: false, pendingRemote: false, pendingRender: false, since: 0, poll: null };
+/* um painel por país: BR e US têm dados e acessos separados (bandeiras no canto superior direito) */
+const BOARD0 = (() => { const q = new URLSearchParams(location.search).get('pais'); if (q === 'br' || q === 'us') return q; try { const v = localStorage.getItem('prt:board'); if (v === 'br' || v === 'us') return v; } catch (e) {} return ((document.cookie.match(/(?:^|;\s*)prt_b=(br|us)/) || [])[1]) || 'br'; })();
+document.cookie = 'prt_b=' + BOARD0 + '; Path=/; Secure; SameSite=Lax; Max-Age=31536000';
+const PAIS = { br: { name: 'Brasil', c: 'BR' }, us: { name: 'USA', c: 'US' } };
+const store = { board: BOARD0, mode: 'boot', role: null, assets: null, dl: null, dirty: false, saving: false, lastSave: null, error: null, readonly: false, sent: {}, timer: null, running: false, again: false, pendingRemote: false, pendingRender: false, since: 0, poll: null };
 function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
 function lsSet(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } }
 function ssGet(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } }
@@ -816,7 +830,7 @@ function fromDocs(d) {
   return normalize(s);
 }
 async function apiFetch(url, opt = {}) {
-  const r = await fetch(url, { credentials: 'same-origin', ...opt, headers: { 'content-type': 'application/json', ...(opt.headers || {}) } });
+  const r = await fetch(url, { credentials: 'same-origin', ...opt, headers: { 'content-type': 'application/json', 'x-board': store.board, ...(opt.headers || {}) } });
   let data = {}; try { data = await r.json(); } catch (e) {}
   return { ok: r.ok, status: r.status, data };
 }
@@ -880,6 +894,24 @@ async function apiLoad() {
   if (!store.poll) store.poll = setInterval(apiPoll, 12000);
   return true;
 }
+function rememberBoard(b) { try { localStorage.setItem('prt:board', b); } catch (e) {} document.cookie = 'prt_b=' + b + '; Path=/; Secure; SameSite=Lax; Max-Age=31536000'; const u = new URL(location.href); u.searchParams.set('pais', b); history.replaceState(null, '', u); }
+async function setBoard(b) {
+  if (b === store.board || store.switching || store.mode !== 'cloud') return; store.switching = true;
+  try {
+    clearTimeout(store.timer); if (store.dirty) await flush();
+    for (let i = 0; i < 40 && (store.running || store.dirty); i++) { await new Promise(r => setTimeout(r, 150)); if (store.dirty && !store.running) await flush(); }
+    if (store.dirty) { toast('Ainda salvando. Tente de novo em instantes.', 'r'); return; }
+    const s = await apiFetch('/api/session', { headers: { 'x-board': b } }).catch(() => null);
+    if (!s || !s.data.role) { toast(`Você não tem acesso ao Projeto Parceiros · ${PAIS[b].name}. Peça a liberação no Quintal.`, 'r'); return; }
+    closeModal(); closePop(); ui.sel = null;
+    (ui.brandBy ||= {})[store.board] = ui.brand;
+    store.board = b; store.role = s.data.role; store.name = s.data.name || ''; rememberBoard(b);
+    if (!(await apiLoad())) { toast(`Não foi possível abrir ${PAIS[b].name}`, 'r'); return; }
+    ui.brand = ui.brandBy[b] || null; hcVal = ''; hcOpen = false;
+    if (ui.view === 'set' && !isAdmin()) ui.view = 'days';
+    render();
+  } finally { store.switching = false; }
+}
 async function apiPoll() {
   if (!store.role || document.hidden) return;
   const r = await apiFetch('/api/changes?since=' + store.since).catch(() => null);
@@ -895,13 +927,13 @@ async function apiPoll() {
 document.addEventListener('visibilitychange', () => { if (!document.hidden && store.mode === 'cloud') apiPoll(); });
 const apiAssets = {
   async upload(blob) {
-    const r = await fetch('/api/files', { method: 'POST', credentials: 'same-origin', headers: { 'content-type': blob.type || 'application/octet-stream' }, body: blob });
+    const r = await fetch('/api/files', { method: 'POST', credentials: 'same-origin', headers: { 'content-type': blob.type || 'application/octet-stream', 'x-board': store.board }, body: blob });
     let d = {}; try { d = await r.json(); } catch (e) {}
     if (r.status === 413) throw { code: 'too_large' };
     if (!r.ok) throw { code: 'fail' };
     return { id: d.id };
   },
-  async delete(id) { await fetch('/api/files/' + encodeURIComponent(id), { method: 'DELETE', credentials: 'same-origin' }); }
+  async delete(id) { await fetch('/api/files/' + encodeURIComponent(id), { method: 'DELETE', credentials: 'same-origin', headers: { 'x-board': store.board } }); }
 };
 async function bootStore() {
   if (/^https?:$/.test(location.protocol)) {
@@ -953,7 +985,7 @@ async function saveAttachment(file) {
 async function removeAttachment(att) {
   try { if (att.k === 'a' && store.assets) await store.assets.delete(att.id); else if (att.k === 'l') await idb.del(att.id); } catch (e) {}
 }
-function attUrl(att) { if (!att) return ''; if (att.k === 'a') return '/_blob/' + att.id; return urlCache[att.id] || ''; }
+function attUrl(att) { if (!att) return ''; if (att.k === 'a') return '/_blob/' + att.id + '?b=' + store.board; return urlCache[att.id] || ''; }
 async function hydrateAtts(root = document) {
   for (const el of $$('[data-att]', root)) {
     if (el.dataset.ok) continue;
@@ -1038,13 +1070,14 @@ const netIc = n => ic(n === 'tiktok' ? 'tt' : 'ig');
 let ui = { view: 'days', brand: null, day: null, model: 'A', month: null, op: null, per: 'week', pRef: null, pFrom: null, pTo: null, pModel: 'all', sel: null, step: null, fresh: null, dMetric: 'contacts' };
 function loadUi() {
   try { Object.assign(ui, JSON.parse(lsGet(LS_UI) || '{}')); } catch (e) {}
+  if (ui.brandBy && store.board in ui.brandBy) ui.brand = ui.brandBy[store.board];
   if (!validD(ui.day)) ui.day = today();
   if (!/^\d{4}-\d{2}$/.test(ui.month || '')) ui.month = mkey(today());
   if (!validD(ui.pRef)) ui.pRef = today();
   if (!validD(ui.pFrom) || !validD(ui.pTo)) { ui.pTo = today(); ui.pFrom = addDays(today(), -29); }
   ui.sel = null; ui.fresh = null;
 }
-function saveUi() { lsSet(LS_UI, JSON.stringify({ view: ui.view, brand: ui.brand, day: ui.day, model: ui.model, month: ui.month, op: ui.op, per: ui.per, pRef: ui.pRef, pFrom: ui.pFrom, pTo: ui.pTo, pModel: ui.pModel, dMetric: ui.dMetric })); }
+function saveUi() { (ui.brandBy ||= {})[store.board] = ui.brand; lsSet(LS_UI, JSON.stringify({ view: ui.view, brandBy: ui.brandBy, brand: ui.brand, day: ui.day, model: ui.model, month: ui.month, op: ui.op, per: ui.per, pRef: ui.pRef, pFrom: ui.pFrom, pTo: ui.pTo, pModel: ui.pModel, dMetric: ui.dMetric })); }
 const curBrand = () => brandById(ui.brand) || state.brands[0];
 const activeOps = () => state.operators.filter(o => o.active !== false);
 function currentOperatorName() { return operatorById(ui.op)?.name || ''; }
@@ -1200,7 +1233,7 @@ function render() {
   if (ui.op && !operatorById(ui.op)) ui.op = null;
   if (!ui.op) ui.op = activeOps()[0]?.id || null;
   const views = [['days', 'Dias'], ['op', 'Operação'], ['sum', 'Resumo']];
-  const b = curBrand(); CURC = b?.country === 'US' ? 'US' : 'BR';
+  const b = curBrand(); CURC = isApi() ? PAIS[store.board].c : b?.country === 'US' ? 'US' : 'BR';
   $('#app').innerHTML = `
   ${state.cfg.logo ? `<div class="hero"><img src="${state.cfg.logo}" alt="Logo" id="hero-logo" style="height:${state.cfg.logoSize}px"></div>` : ''}
   <div class="titlebar" id="titlebar">${titlePillHTML()}</div>
@@ -1208,10 +1241,10 @@ function render() {
     <div class="top-l"><nav class="seg">${views.map(([k, l]) => `<button class="pill ${ui.view === k ? 'on' : ''}" data-act="view" data-v="${k}">${l}${k === 'set' ? (isAdmin() ? ic('unlock', 'width:13px;height:13px;color:var(--muted)') : ic('lock', 'width:13px;height:13px;color:var(--dim)')) : ''}</button>`).join('')}</nav>
       <div class="hcheck${hcOpen && hcVal ? ' open' : ''}" id="hcheck"><div class="affix"><span class="pre">@</span><input class="inp" id="hc-in" value="${esc(hcVal)}" placeholder="verificador de usuário" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Verificar @ de parceiro"></div><div class="hc-res" id="hc-res">${hcHTML(hcVal)}</div></div></div>
     <div class="month" id="topc">${centerHTML()}</div>
-    <div class="top-r"><div class="save-st" id="savest"></div></div>
+    <div class="top-r"><div class="save-st" id="savest"></div>${isApi() ? `<nav class="seg c-flags" aria-label="País">${Object.keys(PAIS).map(k => `<button class="pill ${store.board === k ? 'on' : ''}" data-act="board" data-v="${k}" title="Projeto Parceiros · ${PAIS[k].name}" aria-label="Projeto Parceiros · ${PAIS[k].name}" aria-pressed="${store.board === k}">${flagSVG(PAIS[k].c, 15)}</button>`).join('')}</nav>` : ''}</div>
   </header>
-  <div class="brandbar">${state.brands.map(s => { const n = brandPartners(s.id).filter(p => p.status === 'open').length; return `<button class="pill sm ${ui.brand === s.id ? 'on' : ''}" data-act="brand" data-v="${s.id}"><span class="dot" style="background:${s.accent};box-shadow:0 0 10px ${s.accent}80"></span>${flagOf(s)}${esc(s.name)}${n ? `<span class="bcount">${n}</span>` : ''}</button>`; }).join('')}
-    <span class="sp"></span><span class="sub">projeto de parceiros · ${esc(b?.name || '')}</span></div>
+  <div class="brandbar">${state.brands.map(s => { const n = brandPartners(s.id).filter(p => p.status === 'open').length; return `<button class="pill sm bpill ${b && b.id === s.id ? 'on' : ''}" data-act="brand" data-v="${s.id}" style="--bc:${s.accent}"><span class="dot" style="background:${s.accent};box-shadow:0 0 10px ${s.accent}80"></span>${esc(s.name)}${n ? `<span class="bcount">${n}</span>` : ''}</button>`; }).join('')}
+    <span class="sp"></span>${b ? `<span class="sub">projeto de parceiros · ${esc(b.name)}</span>` : ''}</div>
   <main id="main"></main>`;
   if (hcF != null) { const i = $('#hc-in'); i.focus(); i.setSelectionRange(hcF, hcF); }
   renderMain();
@@ -1227,7 +1260,7 @@ function hcHTML(h) {
   const v = run ? ['run', 'Conversa em andamento'] : done ? ['no', 'Já é parceiro'] : ['no', 'Já conversamos'];
   return `<div class="hc-v ${v[0]}">${ic('user', 'width:14px;height:14px')}${v[1]}<span class="sub">${prev.length} ${prev.length === 1 ? 'contato' : 'contatos'}</span></div>
   ${prev.map(p => { const b = brandById(p.brandId), c = pillColor(p), op = operatorById(p.operatorId);
-    return `<button class="hc-row" data-act="hc-open" data-v="${p.id}"><span class="dot" style="background:${c};box-shadow:0 0 8px ${c}"></span><span class="hc-b"><span class="hc-l">${flagOf(b)}<b style="font-weight:500;color:var(--text)">${esc(b?.name || '')}</b><span class="muted">· ${FLOW[p.model]?.short || p.model}</span><span class="hc-st" style="color:${c}">${esc(stageLabel(p))}</span></span><small>${fmtDY(p.day)}${op ? ' · ' + esc(op.name) : ''}${p.status === 'dead' && p.deadReason ? ' · ' + esc(p.deadReason) : ''}</small></span></button>`; }).join('')}`;
+    return `<button class="hc-row" data-act="hc-open" data-v="${p.id}"><span class="dot" style="background:${c};box-shadow:0 0 8px ${c}"></span><span class="hc-b"><span class="hc-l"><b style="font-weight:500;color:var(--text)">${esc(b?.name || '')}</b><span class="muted">· ${FLOW[p.model]?.short || p.model}</span><span class="hc-st" style="color:${c}">${esc(stageLabel(p))}</span></span><small>${fmtDY(p.day)}${op ? ' · ' + esc(op.name) : ''}${p.status === 'dead' && p.deadReason ? ' · ' + esc(p.deadReason) : ''}</small></span></button>`; }).join('')}`;
 }
 function hcPaint() { const r = $('#hc-res'); if (r) r.innerHTML = hcHTML(hcVal); $('#hcheck')?.classList.toggle('open', hcOpen && !!hcVal); }
 function centerHTML() {
@@ -1247,7 +1280,7 @@ function titlePillHTML() {
 }
 function renderMain(keep) {
   const y = scrollY;
-  if (!curBrand()) { $('#main').innerHTML = `<div class="node pad empty"><h3>Nenhuma marca cadastrada</h3>Cadastre uma marca em Ajustes.</div>`; return; }
+  if (!curBrand()) { $('#main').innerHTML = `<div class="node pad empty"><h3>Nenhuma marca cadastrada${isApi() ? ` · ${PAIS[store.board].name}` : ''}</h3>Cadastre uma marca em Ajustes.${isAdmin() ? `<div style="margin-top:14px"><button class="pill white" data-act="set-add" data-set="brands">${ic('plus')}Adicionar marca</button></div>` : ''}</div>`; return; }
   const V = { days: viewDays, op: viewOp, sum: viewSum, set: viewSet }[ui.view] || viewDays;
   $('#main').innerHTML = `<div class="view${keep ? ' static' : ''}">${V()}</div>`;
   if (keep) scrollTo(0, y);
@@ -1321,9 +1354,9 @@ function viewOp() {
   return `<div class="op-head">
     <div class="mseg" role="tablist">${['A', 'B'].map(k => `<button class="${model === k ? 'on' : ''}" data-act="model" data-v="${k}" role="tab" aria-selected="${model === k}" style="--c:${COL[k]}"><span class="mtag">${k}</span><span class="mtx"><b><span class="lg">${FLOW[k].name}</span><span class="sh">${FLOW[k].short}</span></b><small>${counts[k]} ${counts[k] === 1 ? 'contato' : 'contatos'} neste dia</small></span></button>`).join('')}</div>
     <div class="op-acts"><label class="field op-sel"><span>Operador</span><select class="inp sm" data-ui="op">${ops.length ? ops.map(o => `<option value="${o.id}" ${ui.op === o.id ? 'selected' : ''}>${esc(o.name)}</option>`).join('') : '<option value="">Cadastre em Ajustes</option>'}</select></label>
-      <button class="pill white" data-act="new-partner">${ic('plus')}Novo parceiro</button></div></div>
-  <div class="node tree-node rise" style="--d:1;--mc:${COL[model]}">
-    <div class="tree-top"><span class="tag ${st === 'closed' ? 'g' : st === 'open' ? 'o' : ''}">${st === 'closed' ? `${ic('lock', 'width:11px;height:11px')}dia fechado` : st === 'open' ? 'dia em aberto' : 'sem contatos'}</span></div>
+      <button class="pill white" data-act="new-partner">${ic('plus')}Novo parceiro<span class="np-b" style="--bc:${b.accent}">${esc(b.name)}</span></button></div></div>
+  <div class="node tree-node branded rise" style="--d:1;--mc:${COL[model]};--bc:${b.accent}">
+    <div class="tree-top"><span class="brand-tag" style="--bc:${b.accent}"><span class="dot"></span>${esc(b.name)}<small>${PAIS[store.board]?.name && isApi() ? PAIS[store.board].name : ''}</small></span><span class="sp"></span><span class="tag ${st === 'closed' ? 'g' : st === 'open' ? 'o' : ''}">${st === 'closed' ? `${ic('lock', 'width:11px;height:11px')}dia fechado` : st === 'open' ? 'dia em aberto' : 'sem contatos'}</span></div>
     <div class="tree-scroll" id="tree-scroll"><div class="tree" id="tree" data-n="${list.length}"></div></div>
     <div class="tree-foot">
       <div class="tf-row"><span class="legend"><span><i style="background:${COL.done}"></i>${done} ${done === 1 ? 'finalizada' : 'finalizadas'}</span><span><i style="background:${COL.open}"></i>${open} em aberto</span><span><i style="background:${COL.dead}"></i>${dead} ${dead === 1 ? 'baixada' : 'baixadas'}</span></span>
@@ -1419,7 +1452,8 @@ let npDraft = null;
 function openNewPartner() {
   if (!activeOps().length) return toast('Cadastre ao menos um operador em Ajustes', 'r');
   npDraft = { handle: '', network: npDraft?.network || 'instagram', name: '', notes: '' };
-  openModal({ title: `Novo parceiro · ${FLOW[ui.model].name}`, body: npHTML(), actions: [{ label: 'Cancelar' }, { label: 'Adicionar e abrir card', act: () => createPartner(true) }, { label: 'Adicionar à árvore', primary: true, act: () => createPartner(false) }] });
+  const b = curBrand();
+  openModal({ title: `<span class="row" style="gap:10px;flex-wrap:wrap">Novo parceiro<span class="brand-tag sm" style="--bc:${b.accent}"><span class="dot"></span>${esc(b.name)}</span><span class="tag" style="color:${COL[ui.model]};border-color:${COL[ui.model]}55">${ui.model} · ${FLOW[ui.model].name}</span></span>`, body: npHTML(), actions: [{ label: 'Cancelar' }, { label: 'Adicionar e abrir card', act: () => createPartner(true) }, { label: 'Adicionar à árvore', primary: true, act: () => createPartner(false) }] });
   setTimeout(() => $('#np-h')?.focus(), 60);
 }
 function npHTML() {
@@ -1464,7 +1498,7 @@ function openPartner(id, step) {
 function centerStep() { const nav = $('.pc-steps'), on = $('.stp.on'); if (nav && on && nav.scrollWidth > nav.clientWidth) nav.scrollLeft = on.offsetLeft - nav.clientWidth / 2 + on.offsetWidth / 2; }
 function partnerTitle(p) {
   return `<span class="row" style="gap:10px;flex-wrap:wrap"><span class="tpill static st-${p.status}" style="--bc:${branchColor(p)};--p:${p.status === 'done' ? 100 : Math.round(doneSteps(p) / stepsOf(p).length * 100)}%"><span class="tp-fill"></span><span class="tp-b">${p.status === 'done' ? ic('check', 'width:11px;height:11px;stroke-width:2.6') : p.status === 'dead' ? ic('skull', 'width:12px;height:12px') : `${doneSteps(p)}/${stepsOf(p).length}`}</span><span class="tp-h">@${esc(p.handle)}</span></span>
-    <span class="tag" style="color:${COL[p.model]};border-color:${COL[p.model]}55">${p.model} · ${FLOW[p.model].name}</span><span class="tag">${esc(brandById(p.brandId)?.name || '')}</span></span>`;
+    <span class="tag" style="color:${COL[p.model]};border-color:${COL[p.model]}55">${p.model} · ${FLOW[p.model].name}</span><span class="brand-tag sm" style="--bc:${brandById(p.brandId)?.accent || '#85858e'}"><span class="dot"></span>${esc(brandById(p.brandId)?.name || '')}</span></span>`;
 }
 function refreshCard(full = true) {
   const p = curP(), sc = $('#scrim'); if (!p || !sc) return;
@@ -1913,7 +1947,7 @@ function viewSet() {
     </div>
     <div class="grid">
       <div><div class="label"><span class="dot"></span>Marcas · projetos</div><div class="node pad">
-        ${state.brands.map(x => `<div class="rowline rl-brand"><span class="dot" style="background:${x.accent}"></span><input class="inp sm" value="${esc(x.name)}" data-set="brands" data-id="${x.id}" data-k="name"><label class="ctry">${flagOf(x)}<select class="inp sm" data-set="brands" data-id="${x.id}" data-k="country" aria-label="País">${Object.entries(COUNTRIES).map(([k, c]) => `<option value="${k}" ${x.country === k ? 'selected' : ''}>${c.short} · ${c.sym}</option>`).join('')}</select></label><input type="color" value="${x.accent}" data-set="brands" data-id="${x.id}" data-k="accent" class="colorin" aria-label="Cor">
+        ${state.brands.map(x => `<div class="rowline rl-brand"><span class="dot" style="background:${x.accent}"></span><input class="inp sm" value="${esc(x.name)}" data-set="brands" data-id="${x.id}" data-k="name">${isApi() ? `<span class="ctry muted">${flagSVG(PAIS[store.board].c)}${COUNTRIES[PAIS[store.board].c].short} · ${COUNTRIES[PAIS[store.board].c].sym}</span>` : `<label class="ctry">${flagOf(x)}<select class="inp sm" data-set="brands" data-id="${x.id}" data-k="country" aria-label="País">${Object.entries(COUNTRIES).map(([k, c]) => `<option value="${k}" ${x.country === k ? 'selected' : ''}>${c.short} · ${c.sym}</option>`).join('')}</select></label>`}<input type="color" value="${x.accent}" data-set="brands" data-id="${x.id}" data-k="accent" class="colorin" aria-label="Cor">
           <button class="pill sm icon ghost" data-act="set-del" data-set="brands" data-id="${x.id}" ${used.brand(x.id) || state.brands.length < 2 ? 'disabled title="Marca com produtos ou parcerias"' : ''} aria-label="Excluir">${ic('trash')}</button></div>`).join('')}
         <button class="addrow" data-act="set-add" data-set="brands">${ic('plus')}Adicionar marca</button></div></div>
       <div><div class="label"><span class="dot"></span>Operadores</div><div class="node pad">
@@ -1988,6 +2022,7 @@ function setIn(coll, id) { return state[coll].find(x => x.id === id); }
 const ACT = {
   view: a => { const go = () => { ui.view = a.dataset.v; render(); scrollTo({ top: 0 }); }; a.dataset.v === 'set' && !isAdmin() ? requireAdmin(go, 'Senha para abrir os Ajustes') : go(); },
   brand: a => { ui.brand = a.dataset.v; render(); },
+  board: a => setBoard(a.dataset.v),
   unlock: () => requireAdmin(() => render(), 'Senha para abrir os Ajustes'),
   lock: async () => { ssDel('parc:admin'); if (isApi()) return ACT.logout(); ui.view = 'days'; render(); toast('Modo administrador encerrado', 'w'); },
   'pin-change': a => changePin(a.dataset.v),
@@ -2044,8 +2079,8 @@ const ACT = {
   'modal-x': () => closeModal(),
   'modal-a': async a => { const x = modalActs[+a.dataset.i]; const r = x?.act ? await x.act() : undefined; if (r !== false) closeModal(); },
   'set-add': a => { const c = a.dataset.set; const b = curBrand();
-    const o = c === 'products' ? { id: uid(), brandId: b.id, name: 'Novo produto', sku: '', cost: 0, active: true } : c === 'channels' ? { id: uid(), brandId: b.id, name: 'Novo canal', feePct: 0, fixedFee: 0, sellerShip: 0, active: true } : c === 'operators' ? { id: uid(), name: 'Novo operador', active: true } : { id: uid(), name: 'Nova marca', accent: '#60a5fa', country: 'BR' };
-    o.order = state[c].length; state[c].push(o); if (c === 'brands') state.channels.push(...defaultChannels(o.id, 'BR')); commit(); renderMain(true); const ins = $$(`[data-set="${c}"][data-k="name"]`); ins[ins.length - 1]?.select(); },
+    const o = c === 'products' ? { id: uid(), brandId: b.id, name: 'Novo produto', sku: '', cost: 0, active: true } : c === 'channels' ? { id: uid(), brandId: b.id, name: 'Novo canal', feePct: 0, fixedFee: 0, sellerShip: 0, active: true } : c === 'operators' ? { id: uid(), name: 'Novo operador', active: true } : { id: uid(), name: 'Nova marca', accent: '#60a5fa', country: PAIS[store.board].c };
+    o.order = state[c].length; state[c].push(o); if (c === 'brands') state.channels.push(...defaultChannels(o.id, o.country)); commit(); renderMain(true); const ins = $$(`[data-set="${c}"][data-k="name"]`); ins[ins.length - 1]?.select(); },
   'set-del': a => { const c = a.dataset.set; const x = setIn(c, a.dataset.id); if (!x) return; openModal({ title: 'Excluir', body: `<p>Excluir <b>${esc(x.name)}</b>?</p>`, actions: [{ label: 'Cancelar' }, { label: 'Excluir', danger: true, act: () => { state[c] = state[c].filter(y => y.id !== x.id); if (c === 'brands') state.channels = state.channels.filter(z => z.brandId !== x.id); commit(); if (c === 'brands') render(); else renderMain(true); } }] }); },
   'set-active': a => { const x = setIn(a.dataset.set, a.dataset.id); x.active = x.active === false; commit(); renderMain(true); },
   wday: a => { const d = +a.dataset.v, w = state.cfg.workdays; state.cfg.workdays = w.includes(d) ? w.filter(x => x !== d) : [...w, d]; commit(); renderMain(true); },
