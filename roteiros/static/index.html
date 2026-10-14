@@ -194,15 +194,29 @@ body.editing .sec:focus-within{box-shadow:0 0 0 1px rgba(74,222,128,.35) inset}
 .sec .del{position:absolute;top:14px;right:14px}
 
 /* ---------- fluxos ---------- */
-.fx{max-width:980px;margin:0 auto}
-.ftabs{display:flex;align-items:center;gap:4px;padding:5px;border-radius:15px;overflow-x:auto;scrollbar-width:none;margin-bottom:18px}
-.ftab{height:34px;padding:0 14px;border-radius:10px;display:inline-flex;align-items:center;gap:8px;color:var(--muted);white-space:nowrap;flex:none;transition:color .25s,background .25s,transform .25s var(--ease)}
-.ftab:hover{color:var(--text);transform:translateY(-3px)}
-.ftab.on{background:rgba(255,255,255,.1);color:var(--text)}
-.ftab .n{font-size:10.5px;color:var(--dim);font-variant-numeric:tabular-nums}
-.ftab.add{color:var(--text-2)}
-.ftabs .vs{width:1px;height:18px;background:var(--glass-b);margin:0 4px;flex:none}
-.dm{max-width:640px;margin:0 auto;border-radius:26px;overflow:hidden;animation:pop .45s var(--ease) both}
+.fx{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:300px minmax(0,1fr);gap:20px;align-items:start}
+.fside{position:sticky;top:92px;border-radius:20px;padding:10px;display:flex;flex-direction:column;gap:8px;max-height:calc(100vh - 120px)}
+.fs-h{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 2px 2px 8px}
+.fs-h .cnt{color:var(--dim);margin-left:4px}
+.fside .inp{background:rgba(0,0,0,.25)}
+.fl{overflow-y:auto;display:flex;flex-direction:column;gap:2px;margin:0 -4px;padding:0 4px;scrollbar-width:thin;scrollbar-color:#2a2a30 transparent}
+.fi{min-width:0;max-width:100%;display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:14px;text-align:left;color:var(--text-2);transition:background .2s,box-shadow .2s;width:100%}
+.fi:hover{background:rgba(255,255,255,.05)}
+.fi.on{background:rgba(255,255,255,.1)}
+.fi[draggable=true]{cursor:pointer}
+.fi.drag{opacity:.35}
+.fi.over{box-shadow:inset 0 2px 0 var(--green)}
+.fav{width:38px;height:38px;border-radius:50%;flex:none;display:grid;place-items:center;font-weight:700;font-size:14px;color:#fff;background:linear-gradient(135deg,#7c5cff,#3b82f6)}
+.fit{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.fit b{font-weight:600;font-size:13px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fit small{font-size:11.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fn{font-size:10.5px;color:var(--muted);min-width:22px;height:20px;padding:0 6px;border-radius:999px;background:rgba(255,255,255,.06);display:grid;place-items:center;font-variant-numeric:tabular-nums;flex:none}
+.fl-empty{padding:18px 10px;color:var(--dim);font-size:12px;text-align:center}
+.fmain{min-width:0}
+.dm-back{display:none;width:32px;height:32px;border-radius:10px;place-items:center;color:var(--text-2);margin-left:-6px}
+.dm-back:hover{background:rgba(255,255,255,.06)}
+@media (max-width:860px){.fx{grid-template-columns:minmax(0,1fr)}.fside{position:static;max-height:none}.fx.mchat .fside{display:none}.fx:not(.mchat) .fmain{display:none}.dm-back{display:grid}}
+.dm{max-width:680px;margin:0 auto;border-radius:26px;overflow:hidden;animation:pop .45s var(--ease) both}
 .dm-h{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.015)}
 .dm-av{width:38px;height:38px;border-radius:50%;flex:none;display:grid;place-items:center;background:conic-gradient(from 210deg,#f472b6,#fb923c,#facc15,#a78bfa,#f472b6);padding:2px}
 .dm-av span{width:100%;height:100%;border-radius:50%;background:#17171a;display:grid;place-items:center;color:var(--text-2)}
@@ -346,7 +360,7 @@ const IC = {
   plus: '<path d="M12 5v14M5 12h14"/>',
   edit: '<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>',
   trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
-  up: '<path d="m6 15 6-6 6 6"/>', down: '<path d="m6 9 6 6 6-6"/>',
+  up: '<path d="m6 15 6-6 6 6"/>', left: '<path d="m15 6-6 6 6 6"/>', down: '<path d="m6 9 6 6 6-6"/>',
   swap: '<path d="M7 7h12l-3-3M17 17H5l3 3"/>',
   fork: '<circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="12" r="2"/><path d="M6 7v10M6 12h4a4 4 0 0 0 4-4V7.5M16 12h-2"/>',
   bold: '<path d="M7 4h6a4 4 0 0 1 0 8H7zM7 12h7a4 4 0 0 1 0 8H7z"/>',
@@ -416,7 +430,7 @@ async function setBoard(b) {
 }
 
 /* =================== interface =================== */
-const UI = (() => { let u = {}; try { u = JSON.parse(localStorage.getItem('rot:ui')) || {}; } catch (e) {} return { view: 'manual', g: {}, gm: 'gen', fl: {}, ...u, fk: {}, editing: false }; })();
+const UI = (() => { let u = {}; try { u = JSON.parse(localStorage.getItem('rot:ui')) || {}; } catch (e) {} return { view: 'manual', g: {}, gm: 'gen', fl: {}, ...u, fk: {}, editing: false, fq: '', mchat: false }; })();
 const saveUI = () => { try { localStorage.setItem('rot:ui', JSON.stringify({ view: UI.view === 'set' ? 'manual' : UI.view, g: UI.g, gm: UI.gm, fl: UI.fl })); } catch (e) {} };
 const VIEWS = [['manual', 'Manual', 'book'], ['fluxos', 'Fluxos do direct', 'chat'], ['gerador', 'Gerador', 'spark']];
 const CFG0 = () => ({ title: { text: 'Roteiros · ' + PAIS[store.board].name, color: '#26262b', size: 14 }, logo: '', logoSize: 70 });
@@ -602,19 +616,36 @@ const curFlow = () => { const all = flows(), id = UI.fl[store.board]; return all
 const countMsgs = st => (st || []).reduce((n, s) => n + (s.k === 'fork' ? (s.opts || []).reduce((m, o) => Math.max(m, countMsgs(o.steps)), 0) : 1), 0);
 // caminho de uma lista: '' = raiz; '2.1' = steps[2].opts[1].steps; '2.1.4.0' = ...
 const listAt = (f, p) => { let l = f.steps; if (!p) return l; const a = p.split('.').map(Number); for (let i = 0; i < a.length; i += 2) l = l[a[i]].opts[a[i + 1]].steps; return l; };
-function viewFluxos() {
-  const all = flows(), f = curFlow(), A = isAdmin();
-  const tabs = `<div class="ftabs glass">${all.map(x => `<button class="ftab ${f && x.id === f.id ? 'on' : ''}" data-act="ftab" data-id="${x.id}">${esc(x.t || 'Novo fluxo')}<span class="n">${countMsgs(x.steps)}</span></button>`).join('')}${A ? `${all.length ? '<span class="vs"></span>' : ''}<button class="ftab add" data-act="new-flow">${ic('plus')}Novo fluxo</button>` : ''}</div>`;
-  if (!f) return `<div class="fx">${tabs}<div class="empty node">${ic('chat')}<div>${A ? 'Crie o primeiro fluxo em <b>Novo fluxo</b> e monte a conversa do direct.' : 'Nenhum fluxo ainda.'}</div></div></div>`;
-  return `<div class="fx">${tabs}
-    <div class="dm node" data-fid="${f.id}">
-      <div class="dm-h"><span class="dm-av"><span>${ic('paw')}</span></span>
+const firstMsg = st => { for (const x of st || []) { if (x.k === 'fork') return firstMsg((x.opts[0] || {}).steps); if (x.w !== 'p' && x.x && x.x.trim()) return x.x; } return ''; };
+const FAV = ['#7c5cff,#3b82f6', '#f472b6,#fb923c', '#2dd4bf,#38bdf8', '#facc15,#f59e0b', '#a78bfa,#f472b6', '#4ade80,#2dd4bf'];
+const favBg = t => { let h = 0; for (const c of String(t || '')) h = (h * 31 + c.charCodeAt(0)) >>> 0; return FAV[h % FAV.length]; };
+const fItem = (x, on) => `<button class="fi ${on ? 'on' : ''}" data-act="ftab" data-id="${x.id}" ${isAdmin() ? 'draggable="true"' : ''}><span class="fav" style="background:linear-gradient(135deg,${favBg(x.t || x.id)})">${esc(((x.t || 'N').trim()[0] || 'N').toUpperCase())}</span><span class="fit"><b>${esc(x.t || 'Novo fluxo')}</b><small>${esc(firstMsg(x.steps) || 'Sem mensagens')}</small></span><span class="fn">${countMsgs(x.steps)}</span></button>`;
+function flist(all, f) {
+  const q = (UI.fq || '').trim().toLowerCase(), l = q ? all.filter(x => JSON.stringify([x.t, x.steps]).toLowerCase().includes(q)) : all;
+  return l.length ? l.map(x => fItem(x, f && x.id === f.id)).join('') : `<div class="fl-empty">Nenhum fluxo encontrado.</div>`;
+}
+function dmHTML(f) {
+  const A = isAdmin();
+  if (!f) return `<div class="empty node">${ic('chat')}<div>${A ? 'Crie o primeiro fluxo em <b>Novo</b> e monte a conversa do direct.' : 'Nenhum fluxo ainda.'}</div></div>`;
+  return `<div class="dm node" data-fid="${f.id}">
+      <div class="dm-h"><button class="dm-back" data-act="fback" aria-label="Voltar para os fluxos">${ic('left')}</button><span class="dm-av"><span>${ic('paw')}</span></span>
         <div class="dm-who">${A ? `<input class="dm-t" id="fl-t" placeholder="Nome do fluxo" value="${esc(f.t || '')}" autocomplete="off">` : `<b>${esc(f.t || 'Fluxo')}</b>`}<small>${A ? 'clique nos balões para editar' : 'clique numa mensagem da marca para copiar'}</small></div>
         ${A ? `<button class="gb danger" data-act="del-flow" title="Excluir fluxo">${ic('trash')}</button>` : ''}
       </div>
       <div class="dm-b" id="dm-b">${level(f.steps || [], '')}</div>
       <div class="dm-f"><span class="fake">${store.board === 'us' ? 'Message…' : 'Mensagem…'}</span></div>
-    </div></div>`;
+    </div>`;
+}
+function viewFluxos() {
+  const all = flows(), f = curFlow(), A = isAdmin();
+  return `<div class="fx ${UI.mchat && f ? 'mchat' : ''}">
+    <aside class="fside glass">
+      <div class="fs-h"><span class="ttl">Fluxos<span class="cnt">${all.length}</span></span>${A ? `<button class="gb" data-act="new-flow">${ic('plus')}Novo</button>` : ''}</div>
+      ${all.length ? `<input class="inp sm" id="fq" placeholder="Buscar fluxo ou mensagem…" value="${esc(UI.fq || '')}" autocomplete="off">` : ''}
+      <div class="fl" id="flist">${all.length ? flist(all, f) : `<div class="fl-empty">Nenhum fluxo ainda.</div>`}</div>
+    </aside>
+    <section class="fmain" id="fmain">${dmHTML(f)}</section>
+  </div>`;
 }
 function level(steps, p) {
   const A = isAdmin(); let h = '', fork = false;
@@ -643,7 +674,7 @@ function mutFlow(fn, rerender = true) {
   body.steps = body.steps || []; fn(body); commit('fluxo/' + id, body);
   if (rerender) { const b = $('#dm-b'); if (b) b.innerHTML = level(body.steps, ''); updTab(); }
 }
-const updTab = () => { const f = curFlow(), t = f && $(`.ftab[data-id="${f.id}"]`); if (t) t.innerHTML = `${esc(f.t || 'Novo fluxo')}<span class="n">${countMsgs(f.steps)}</span>`; };
+const updTab = () => { const f = curFlow(), t = f && $(`.fi[data-id="${f.id}"]`); if (t) t.outerHTML = fItem(f, true); };
 const focusLast = p => { const l = $$(`.bub[data-p="${p}"]`); const el = l[l.length - 1]; if (el) { el.focus(); placeEnd(el); } };
 const placeEnd = el => { const r = document.createRange(); r.selectNodeContents(el); r.collapse(false); const s = getSelection(); s.removeAllRanges(); s.addRange(r); };
 
@@ -790,9 +821,10 @@ document.addEventListener('click', async e => {
   if (a === 'del-sec') { const sec = b.closest('.sec'); if (!(await ask('Excluir a seção “' + secTitle(sec.innerHTML) + '”?'))) return; sec.remove(); saveManual(); toast('Seção excluída'); return; }
   if (a === 'copy-msg') { const m = b.closest('.msg').cloneNode(true); $$('[data-x]', m).forEach(x => x.remove()); if (await copyText(m.innerText.trim())) { b.innerHTML = ic('check') + 'Copiada'; setTimeout(() => b.innerHTML = ic('copy') + 'Copiar', 1800); } return; }
   // fluxos
-  if (a === 'ftab') { UI.fl[store.board] = b.dataset.id; saveUI(); $$('.ftab[data-id]').forEach(x => x.classList.toggle('on', x === b)); const dm = $('.dm'); if (dm) { const tmp = document.createElement('div'); tmp.innerHTML = viewFluxos(); dm.replaceWith($('.dm', tmp)); } return; }
-  if (a === 'new-flow' && A) { const id = uid(); commit('fluxo/' + id, { t: '', n: Date.now(), steps: [] }); UI.fl[store.board] = id; saveUI(); renderView(); $('#fl-t')?.focus(); return; }
-  if (a === 'del-flow' && A) { const f = curFlow(); if (!f || !(await ask('Excluir o fluxo “' + (f.t || 'Novo fluxo') + '”?'))) return; commit('fluxo/' + f.id, null); delete UI.fl[store.board]; renderView(); toast('Fluxo excluído'); return; }
+  if (a === 'ftab') { UI.fl[store.board] = b.dataset.id; UI.mchat = true; saveUI(); $$('.fi[data-id]').forEach(x => x.classList.toggle('on', x === b)); $('#fmain').innerHTML = dmHTML(curFlow()); $('.fx').classList.add('mchat'); if (matchMedia('(max-width:860px)').matches) scrollTo(0, 0); return; }
+  if (a === 'fback') { UI.mchat = false; $('.fx').classList.remove('mchat'); return; }
+  if (a === 'new-flow' && A) { const id = uid(); commit('fluxo/' + id, { t: '', n: Math.max(0, ...flows().map(x => x.n || 0)) + 1, steps: [] }); UI.fl[store.board] = id; UI.mchat = true; UI.fq = ''; saveUI(); renderView(); $('#fl-t')?.focus(); return; }
+  if (a === 'del-flow' && A) { const f = curFlow(); if (!f || !(await ask('Excluir o fluxo “' + (f.t || 'Novo fluxo') + '”?'))) return; commit('fluxo/' + f.id, null); delete UI.fl[store.board]; UI.mchat = false; renderView(); toast('Fluxo excluído'); return; }
   if (a === 'fsel') { UI.fk[b.dataset.fid] = +b.dataset.j; const f = curFlow(); const body = $('#dm-b'); if (f && body) body.innerHTML = level(f.steps || [], ''); return; }
   if (a === 'b-copy') { const f = curFlow(), s = f && listAt(f, b.dataset.p)[+b.dataset.i]; if (s && s.x && await copyText(s.x)) toast('Mensagem copiada'); return; }
   if (A && /^(add-p|add-m|add-fork)$/.test(a)) {
@@ -818,6 +850,7 @@ document.addEventListener('click', async e => {
 document.addEventListener('input', e => {
   const t = e.target;
   if (t.id === 'g-nome') { UI.g = { ...(UI.g || {}), nome: t.value }; saveUI(); clearTimeout(generate.t); generate.t = setTimeout(() => { generate(); $('#ggrid').innerHTML = gcards(new Set(used())); }, 350); return; }
+  if (t.id === 'fq') { UI.fq = t.value; $('#flist').innerHTML = flist(flows(), curFlow()); return; }
   if (t.id === 'fl-t') { const f = curFlow(); if (f) { const body = clone(D('fluxo/' + f.id)); body.t = t.value; commit('fluxo/' + f.id, body); updTab(); } return; }
   if (t.dataset && 'bub' in t.dataset) { const p = t.dataset.p, i = +t.dataset.i, x = t.innerText.replace(/\n$/, ''); mutFlow(f => { listAt(f, p)[i].x = x; }, false); updTab(); return; }
   if (t.dataset && 'cond' in t.dataset) { const p = t.dataset.p, i = +t.dataset.i, j = +t.dataset.j, x = t.innerText.trim(); mutFlow(f => { listAt(f, p)[i].opts[j].c = x; }, false); return; }
@@ -840,6 +873,20 @@ document.addEventListener('keydown', e => {
   if (t.closest && t.closest('.fopt') && (e.key === 'Enter' || e.key === ' ') && !t.isContentEditable) { e.preventDefault(); t.click(); }
 });
 window.addEventListener('beforeunload', () => { if (UI.editing) saveManual(); if (Object.keys(store.queue).length) { const ops = Object.entries(store.queue).map(([path, body]) => ({ path, body })); try { fetch('/api/docs', { method: 'POST', keepalive: true, credentials: 'same-origin', headers: { 'content-type': 'application/json', 'x-board': store.board }, body: JSON.stringify({ ops }) }); } catch (er) {} } });
+
+/* arrastar para reordenar os fluxos (admin) */
+let dragId = null;
+document.addEventListener('dragstart', e => { const it = e.target.closest && e.target.closest('.fi[draggable=true]'); if (!it) return; dragId = it.dataset.id; it.classList.add('drag'); e.dataTransfer.effectAllowed = 'move'; try { e.dataTransfer.setData('text/plain', dragId); } catch (er) {} });
+document.addEventListener('dragover', e => { const it = dragId && e.target.closest && e.target.closest('.fi'); if (!it) return; e.preventDefault(); $$('.fi.over').forEach(x => x !== it && x.classList.remove('over')); if (it.dataset.id !== dragId) it.classList.add('over'); });
+document.addEventListener('dragend', () => { dragId = null; $$('.fi.drag,.fi.over').forEach(x => x.classList.remove('drag', 'over')); });
+document.addEventListener('drop', e => {
+  const it = dragId && e.target.closest && e.target.closest('.fi'); if (!it) return; e.preventDefault();
+  const all = flows(), from = all.findIndex(x => x.id === dragId), to = all.findIndex(x => x.id === it.dataset.id); dragId = null;
+  if (from < 0 || to < 0 || from === to) return $$('.fi.drag,.fi.over').forEach(x => x.classList.remove('drag', 'over'));
+  const [m] = all.splice(from, 1); all.splice(to, 0, m);
+  all.forEach((x, i) => { const d = D('fluxo/' + x.id); if (d && d.n !== i + 1) commit('fluxo/' + x.id, { ...d, n: i + 1 }); });
+  $('#flist').innerHTML = flist(flows(), curFlow());
+});
 
 /* =================== utilidades =================== */
 function toast(msg, k = 'w') { const t = document.createElement('div'); t.className = 'toast ' + k; t.innerHTML = `<span class="dot"></span>${esc(msg)}`; $('#toasts').appendChild(t); setTimeout(() => { t.style.transition = 'opacity .3s'; t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 2400); }
