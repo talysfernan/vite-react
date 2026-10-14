@@ -9,22 +9,26 @@ out = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else root / 'preview.html'
 MOCK = r"""<script>
 /* ===== MODO TESTE: API simulada no navegador (nada vai para o servidor) ===== */
 (() => {
-  const KEY = 'roteiros-teste-docs1';
+  const KEY = 'roteiros-teste-docs2';
   const SEED = {
-    'fluxo/ex1': { t: 'Frente A · primeiro contato', f: 'A', n: 1, steps: [
+    'fluxo/ex1': { t: 'Primeiro contato', n: 1, steps: [
       { w: 'p', x: 'Oii! Vi o comentário de vocês, como funciona?' },
-      { w: 'm', x: 'Oiii! Que bom que você chamou 💚 A gente amou o perfil de vocês! Queremos mandar um produto nosso de presente pra vocês testarem e mostrarem como foi. O frete é por nossa conta!' },
-      { w: 'm', x: 'Me conta: vocês são de qual cidade? E qual o nome do pet?' } ] },
-    'fluxo/ex2': { t: 'Frente B · convite', f: 'B', n: 2, steps: [ { w: 'm', x: 'Queremos te convidar pra uma experiência de compra e uso: você compra pelo link, manda o comprovante e a gente reembolsa produto + frete na hora 🫶' } ] }
+      { w: 'm', x: 'Oiii! Que bom que você chamou 💚 A gente amou o perfil de vocês!' },
+      { w: 'm', x: 'Queremos mandar um produto nosso de presente pra vocês testarem. O frete é por nossa conta!' },
+      { k: 'fork', id: 'fk1', opts: [
+        { c: 'Se aceitar na hora', steps: [{ w: 'p', x: 'Amei! Topo sim 😍' }, { w: 'm', x: 'Aaaa que demais! Me passa seu CEP e o nome do pet?' }] },
+        { c: 'Se perguntar o que precisa fazer', steps: [{ w: 'p', x: 'E o que eu preciso fazer em troca?' }, { w: 'm', x: 'Só mostrar como foi a experiência de vocês com o produto, do jeitinho de vocês 💚' }] } ] } ] },
+    'fluxo/ex2': { t: 'Frente B · convite', n: 2, steps: [ { w: 'm', x: 'Queremos te convidar pra uma experiência de compra e uso: você compra pelo link, manda o comprovante e a gente reembolsa produto + frete na hora 🫶' } ] },
+    'modelo/m1': { t: 'Primeiro contato', x: 'Oi! Vi o perfil de vocês e acho que a gente deu match! Se tiver interesse, chama a gente no direct pra receber um mimo especial. 😊', n: 1 }
   };
-  let docs; try { docs = JSON.parse(localStorage.getItem(KEY)) || null; } catch (e) {}
-  if (!docs) docs = JSON.parse(JSON.stringify(SEED));
-  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(docs)); } catch (e) {} };
-  window.__resetTeste = () => { try { localStorage.removeItem(KEY); localStorage.removeItem('rot:usadas'); } catch (e) {} location.reload(); };
+  let all; try { all = JSON.parse(localStorage.getItem(KEY)) || null; } catch (e) {}
+  if (!all) all = { br: JSON.parse(JSON.stringify(SEED)), us: { 'fluxo/u1': { t: 'First contact', n: 1, steps: [{ w: 'p', x: 'Hi! How does it work?' }, { w: 'm', x: 'Hiii! We loved your page 💚 We would love to send you a gift!' }] } } };
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(all)); } catch (e) {} };
+  window.__resetTeste = () => { try { localStorage.removeItem(KEY); localStorage.removeItem('rot:usadas:br'); localStorage.removeItem('rot:usadas:us'); } catch (e) {} location.reload(); };
   const res = (o, s = 200) => Promise.resolve(new Response(JSON.stringify(o), { status: s, headers: { 'content-type': 'application/json' } }));
   window.fetch = (url, opt = {}) => {
-    const p = String(url).split('?')[0];
-    if (p === '/api/session') return res({ role: new URLSearchParams(location.search).get('papel') === 'uso' ? 'view' : 'admin', name: 'Teste' });
+    const p = String(url).split('?')[0], b = (opt.headers || {})['x-board'] === 'us' ? 'us' : 'br', docs = all[b];
+    if (p === '/api/session') return res({ role: new URLSearchParams(location.search).get('papel') === 'uso' ? 'view' : 'admin', name: 'Teste', board: b });
     if (p === '/api/ver') return res({ v: 'teste' });
     if (p === '/api/docs' && (opt.method || 'GET') === 'GET') return res({ docs, now: Date.now() });
     if (p === '/api/changes') return res({ docs: {}, now: Date.now() });

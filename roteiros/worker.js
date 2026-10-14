@@ -2,9 +2,8 @@
 import { WorkerEntrypoint, DurableObject } from 'cloudflare:workers';
 
 const enc = new TextEncoder();
-const PATH_RE = /^(app|fluxo)\/[A-Za-z0-9_\-.~:@+]{1,200}$/;
+const PATH_RE = /^(app|fluxo|modelo)\/[A-Za-z0-9_\-.~:@+]{1,200}$/;
 const VIEW_RE = /^$/; // papel "uso" só lê
-const PANEL_KEY = 'roteiros';
 const json = (d, s = 200, h = {}) => new Response(JSON.stringify(d), { status: s, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', ...h } });
 const b64u = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 const sha = async s => b64u(await crypto.subtle.digest('SHA-256', enc.encode(s)));
@@ -29,7 +28,7 @@ async function ownSession(req, env) {
 }
 async function session(req, env) {
   const own = await ownSession(req, env); if (own) return own;
-  try { const r = await env.QUINTAL.check(req.headers.get('cookie') || '', PANEL_KEY, false); return r && r.role ? { role: r.role, name: r.name } : null; } catch (e) { return null; }
+  try { const r = await env.QUINTAL.check(req.headers.get('cookie') || '', env.PANEL_KEY, false); return r && r.role ? { role: r.role, name: r.name } : null; } catch (e) { return null; }
 }
 async function tooMany(env, ip) { const r = await env.DB.prepare('SELECT COUNT(*) AS n FROM attempts WHERE ip=? AND ts>?').bind(ip, Date.now() - 10 * 6e4).first(); return (r?.n || 0) >= 40; }
 const dayBR = (t = Date.now()) => new Date(t - 3 * 36e5).toISOString().slice(0, 10);
@@ -68,14 +67,14 @@ async function api(req, env, url) {
   if (p === '/api/export' && method === 'GET') {
     const key = url.searchParams.get('key') || '';
     if (!env.EXPORT_KEY || !safeEq(key, env.EXPORT_KEY)) return json({ error: 'forbidden' }, 403);
-    return json({ format: 'painel-caos-docs-v1', app: 'caos-roteiros', exportedAt: new Date().toISOString(), docs: await allDocs(env) });
+    return json({ format: 'painel-caos-docs-v1', app: 'caos-roteiros', board: env.BOARD, exportedAt: new Date().toISOString(), docs: await allDocs(env) });
   }
   if (p === '/api/session') {
     const own = await ownSession(req, env);
-    if (own) return json({ role: own.role, name: 'emergência' });
+    if (own) return json({ role: own.role, name: 'emergência', board: env.BOARD });
     try {
-      const r = await env.QUINTAL.check(req.headers.get('cookie') || '', PANEL_KEY, true);
-      return json({ role: r?.role || null, name: r?.name || null, reason: r?.reason || null, sso: true, glitch: r?.glitch !== false });
+      const r = await env.QUINTAL.check(req.headers.get('cookie') || '', env.PANEL_KEY, true);
+      return json({ role: r?.role || null, name: r?.name || null, reason: r?.reason || null, sso: true, glitch: r?.glitch !== false, board: env.BOARD });
     } catch (e) { return json({ role: null, down: true }); }
   }
   const s = await session(req, env);
@@ -144,9 +143,15 @@ function d1(storage) {
 
 export class Store extends DurableObject {
   constructor(ctx, env) { super(ctx, env); for (const q of SCHEMA) ctx.storage.sql.exec(q); this.e = { ...env, DB: d1(ctx.storage) }; }
-  async fetch(req) { try { return await api(req, this.e, new URL(req.url)); } catch (e) { return json({ error: String(e && e.message || e) }, 500); } }
+  async fetch(req) { const b = req.headers.get('x-board') === 'us' ? 'us' : 'br'; try { return await api(req, { ...this.e, BOARD: b, PANEL_KEY: 'roteiros-' + b }, new URL(req.url)); } catch (e) { return json({ error: String(e && e.message || e) }, 500); } }
   async tick(t) { const d = new Date(t || Date.now()); if (d.getUTCHours() === 1 && d.getUTCMinutes() >= 50 && d.getUTCMinutes() < 55) await snapshot(this.e); return true; }
 }
-const store = env => env.STORE.get(env.STORE.idFromName('main'));
-export default { fetch: (req, env) => store(env).fetch(req) };
-export class Tick extends WorkerEntrypoint { async run(t) { await store(this.env).tick(t); return true; } }
+// um quadro por país: o Brasil fica no objeto original ('main'), os EUA em 'us'
+const BOARDS = ['br', 'us'];
+const store = (env, b) => env.STORE.get(env.STORE.idFromName(b === 'us' ? 'us' : 'main'));
+const boardOf = (url, req) => {
+  const h = req.headers.get('x-board') || url.searchParams.get('b'), c = ((req.headers.get('cookie') || '').match(/(?:^|;\s*)rot_b=(br|us)/) || [])[1];
+  return h === 'us' || h === 'br' ? h : c || 'br';
+};
+export default { fetch(req, env) { const b = boardOf(new URL(req.url), req), r = new Request(req); r.headers.set('x-board', b); return store(env, b).fetch(r); } };
+export class Tick extends WorkerEntrypoint { async run(t) { for (const b of BOARDS) await store(this.env, b).tick(t); return true; } }
