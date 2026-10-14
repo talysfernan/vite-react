@@ -723,20 +723,22 @@ const FLOW = {
   }
 };
 /* C = produto por conteúdo via marketplace: parceiro compra no canal, recebe reembolso e entrega o conteúdo (collab) */
-FLOW.C = { tag: 'C', name: 'Conteúdo · via marketplace', short: 'Marketplace',
-  steps: [FLOW.B.steps[0], { ...FLOW.B.steps[1], d: 'Parceiro aceitou e definiu em qual canal vai comprar.' }, FLOW.B.steps[2], FLOW.B.steps[3], FLOW.B.steps[4], FLOW.A.steps[4]] };
+/* letras: A e B são conteúdo (lado a lado), C é review */
+FLOW.C = { ...FLOW.B, tag: 'C' };
+FLOW.B = { tag: 'B', name: 'Conteúdo · via marketplace', short: 'Marketplace',
+  steps: [FLOW.C.steps[0], { ...FLOW.C.steps[1], d: 'Parceiro aceitou e definiu em qual canal vai comprar.' }, FLOW.C.steps[2], FLOW.C.steps[3], FLOW.C.steps[4], FLOW.A.steps[4]] };
 /* selo “Apto para review”: acrescenta a etapa de review no fim das pills de conteúdo (A e C) */
-const REVIEW_STEP = { ...FLOW.B.steps[5], d: 'Avaliação deixada no canal (selo Apto para review).' };
+const REVIEW_STEP = { ...FLOW.C.steps[5], d: 'Avaliação deixada no canal (selo Apto para review).' };
 const MODELS = ['A', 'B', 'C'];
-const MLAB = { A: 'A · Envio direto', B: 'B · Review', C: 'C · Marketplace' };
+const MLAB = { A: 'A · Envio direto', B: 'B · Marketplace', C: 'C · Review' };
 const isBuy = p => p.model !== 'A';
 const metaOf = m => num(state.cfg['meta' + m]);
 const NETWORKS = { instagram: 'Instagram', tiktok: 'TikTok' };
 const CONTENT_TYPES = { ugc: 'UGC', pfp: 'PFP', collab: 'Collab' };
-const COL = { open: '#fb923c', done: '#4ade80', dead: '#6b6b75', A: '#a78bfa', B: '#22d3ee', C: '#f472b6' };
+const COL = { open: '#fb923c', done: '#4ade80', dead: '#6b6b75', A: '#a78bfa', B: '#f472b6', C: '#22d3ee' };
 /* cor que evolui com a etapa: laranja → âmbar → amarelo → lima */
 function stageColor(frac) { const h = 24 + frac * 62; return `hsl(${h.toFixed(0)} 92% ${(58 + frac * 4).toFixed(0)}%)`; }
-const stepsOf = p => (p.reviewOk && p.model !== 'B' ? FLOW[p.model].steps.concat(REVIEW_STEP) : FLOW[p.model].steps);
+const stepsOf = p => (p.reviewOk && p.model !== 'C' ? FLOW[p.model].steps.concat(REVIEW_STEP) : FLOW[p.model].steps);
 const doneSteps = p => stepsOf(p).filter(s => p.steps?.[s.k]).length;
 const curStepIdx = p => Math.min(stepsOf(p).length - 1, doneSteps(p));
 function pillColor(p) { return p.status === 'done' ? COL.done : p.status === 'dead' ? COL.dead : COL.open; }
@@ -759,7 +761,7 @@ const channelsOf = bid => state.channels.filter(c => c.brandId === bid);
 function defaultState() {
   return {
     app: 'caos-parceiros', schema: SCHEMA,
-    cfg: { title: { text: 'Projeto Parceiros', color: '#26262b', size: 14 }, logo: '', logoSize: 74, adminHash: '', metaA: 15, metaB: 10, metaC: 0, workdays: [1, 2, 3, 4, 5], cmvB: true, createdAt: Date.now() },
+    cfg: { title: { text: 'Projeto Parceiros', color: '#26262b', size: 14 }, logo: '', logoSize: 74, adminHash: '', metaA: 15, metaB: 0, metaC: 10, workdays: [1, 2, 3, 4, 5], cmvB: true, createdAt: Date.now() },
     brands: [{ id: 'b_coco', name: 'Coco & Luna', accent: '#f472b6', country: 'BR', order: 0 }, { id: 'b_yuca', name: 'Yucaloo', accent: '#4ade80', country: 'BR', order: 1 }],
     products: [], channels: [...defaultChannels('b_coco'), ...defaultChannels('b_yuca')], operators: [{ id: uid(), name: 'Operador 1', active: true, order: 0 }], partners: []
   };
@@ -1505,7 +1507,7 @@ function createPartner(open) {
 
 /* =================== CARD DO PARCEIRO =================== */
 const curP = () => state.partners.find(x => x.id === ui.sel);
-const ATT_STEP = { 'A:conteudo': 'contentPrints', 'B:compra': 'purchasePrints', 'B:reembolso': 'refundProofs', 'B:review': 'reviewPrints', 'C:compra': 'purchasePrints', 'C:reembolso': 'refundProofs', 'C:conteudo': 'contentPrints', 'A:review': 'reviewPrints', 'C:review': 'reviewPrints' };
+const ATT_STEP = { 'A:conteudo': 'contentPrints', 'B:compra': 'purchasePrints', 'B:reembolso': 'refundProofs', 'B:review': 'reviewPrints', 'C:compra': 'purchasePrints', 'C:reembolso': 'refundProofs', 'B:conteudo': 'contentPrints', 'C:conteudo': 'contentPrints', 'A:review': 'reviewPrints', 'C:review': 'reviewPrints' };
 const rvBadge = big => `<span class="rvb ${big ? 'big' : ''}" title="Apto para review">${ic('star', 'width:10px;height:10px')}${big ? 'Apto para review' : 'review'}</span>`;
 function openPartner(id, step) {
   const p = state.partners.find(x => x.id === id); if (!p) return;
@@ -1569,7 +1571,7 @@ function fAtt(p, k, label, req) {
 function stepFormHTML(p) {
   const s = stepsOf(p), i = s.findIndex(x => x.k === ui.step), st = s[i], d = doneSteps(p);
   let f = '';
-  const k = st.k, M = k === 'review' ? 'B' : p.model === 'C' ? (k === 'conteudo' ? 'A' : 'B') : p.model;
+  const k = st.k, M = k === 'review' || p.model === 'C' ? 'B' : p.model === 'B' ? (k === 'conteudo' ? 'A' : 'B') : 'A'; /* família de campos: A = envio/conteúdo, B = compra/review */
   if (k === 'contato') f = `${fText(p, 'handle', 'Perfil', { pre: '@' })}
     <div class="field"><span>Rede</span><div class="seg">${Object.entries(NETWORKS).map(([v, l]) => `<button class="pill sm ${p.network === v ? 'on' : ''}" data-act="p-net" data-v="${v}" ${DIS(p)}>${netIc(v)}${l}</button>`).join('')}</div></div>
     ${fText(p, 'name', 'Nome')}${fText(p, 'followers', 'Seguidores', { im: 'numeric', ph: 'Ex.: 12.400' })}
@@ -1604,7 +1606,7 @@ function stepFormHTML(p) {
   else if (M === 'B' && k === 'review') f = `<div class="field"><span>Nota do review</span><div class="stars">${[1, 2, 3, 4, 5].map(n => `<button class="${num(p.reviewStars) >= n ? 'on' : ''}" data-act="p-star" data-v="${n}" aria-label="${n} estrelas" ${DIS(p)}>${ic('star')}</button>`).join('')}</div></div>
     ${fDate(p, 'reviewDate', 'Data do review')}${fText(p, 'reviewUrl', 'Link do review', { full: true, ph: 'https://' })}
     ${fAtt(p, 'reviewPrints', 'Print do review', false)}
-    ${p.model === 'B' ? fText(p, 'contentUrl', 'Conteúdo gravado', { full: true, hint: 'opcional', ph: 'https://' }) : ''}`;
+    ${p.model === 'C' ? fText(p, 'contentUrl', 'Conteúdo gravado', { full: true, hint: 'opcional', ph: 'https://' }) : ''}`;
   const ok = !!p.steps?.[k], isNext = i === d && p.status === 'open';
   const lastDone = s.slice().reverse().find(x => p.steps?.[x.k]);
   const missing = isNext && st.req ? st.req(p).filter(Boolean) : [];
@@ -1647,8 +1649,8 @@ function actsHTML(p) {
       <p>${esc(rsn(r.reasonType, r.reason))}</p><small>${esc(r.by)} · ${tsFull(r.ts)}</small>
       <div class="row" style="gap:6px;margin-top:8px;flex-wrap:wrap">${adm ? `<button class="pill sm white" data-act="req-ok">${ic('check')}Aprovar</button><button class="pill sm" data-act="req-no">Recusar</button>` : `<button class="pill sm ghost" data-act="req-cancel">Cancelar solicitação</button>`}</div></div>` : ''}
     ${p.status === 'dead' ? b('p-revive', 'revive', adm ? 'Restaurar' : 'Pedir restauração', adm ? 'volta a ficar aberta' : 'o admin aprova') : b('p-kill', 'skull', adm ? 'Dar baixa' : 'Solicitar baixa', adm ? 'encerra mantendo o histórico' : 'o admin aprova', 'pa-w')}
-    ${p.model !== 'B' && p.status !== 'dead' ? (adm ? b('p-rv', 'star', p.reviewOk ? 'Tirar selo de review' : 'Marcar apto para review', p.reviewOk ? 'remove a etapa de review' : 'acrescenta a etapa de review', 'pa-rv') : !p.reviewOk ? b('p-rv', 'star', 'Pedir selo de review', 'o admin aprova', 'pa-rv') : '') : ''}
-    ${p.model === 'C' && p.status === 'open' && !p.steps?.compra ? b('p-toA', 'truck', 'Mudar para envio direto', 'não quis comprar antes') : ''}
+    ${p.model !== 'C' && p.status !== 'dead' ? (adm ? b('p-rv', 'star', p.reviewOk ? 'Tirar selo de review' : 'Marcar apto para review', p.reviewOk ? 'remove a etapa de review' : 'acrescenta a etapa de review', 'pa-rv') : !p.reviewOk ? b('p-rv', 'star', 'Pedir selo de review', 'o admin aprova', 'pa-rv') : '') : ''}
+    ${p.model === 'B' && p.status === 'open' && !p.steps?.compra ? b('p-toA', 'truck', 'Mudar para envio direto', 'não quis comprar antes') : ''}
     ${b('p-del', 'trash', adm ? 'Excluir registro' : 'Solicitar exclusão', adm ? 'apaga de vez, com anexos' : 'o admin aprova', 'pa-d')}</div>`;
 }
 const REQ_L = { dead: 'Baixa solicitada', restore: 'Restauração solicitada', delete: 'Exclusão solicitada', review: 'Selo de review solicitado' };
@@ -1837,8 +1839,8 @@ function viewSum() {
   const cA = costEv.filter(p => p.model === 'A'), cB = costEv.filter(p => p.model === 'B'), cC = costEv.filter(p => p.model === 'C');
   const sum = (l, f) => l.reduce((s, p) => s + f(p), 0);
   const aProd = sum(cA, p => costA(p).prod), aShip = sum(cA, p => costA(p).ship), aLogi = sum(cA, p => costA(p).logi);
-  const bRef = sum(cB, p => costB(p).refund), bBack = sum(cB, p => costB(p).back), bCmv = sum(cB, p => costB(p).cmv);
-  const aDone = doneEv.filter(p => p.model === 'A').length, bDone = doneEv.filter(p => p.model === 'B').length, cDone = doneEv.filter(p => p.model === 'C').length;
+  const bRef = sum(cC, p => costB(p).refund), bBack = sum(cC, p => costB(p).back), bCmv = sum(cC, p => costB(p).cmv); /* review (C) */
+  const aDone = doneEv.filter(p => p.model === 'A').length, bDone = doneEv.filter(p => p.model === 'C').length, cDone = doneEv.filter(p => p.model === 'B').length;
   const buyNet = l => sum(l, p => costB(p).total);
   const dead = C.filter(p => p.status === 'dead');
   const kp = [
@@ -1869,12 +1871,12 @@ function viewSum() {
       ${models.includes('A') ? `<div class="cat-h"><span class="dot" style="background:${COL.A}"></span>A · Conteúdo via envio direto<span class="ln"></span></div><div class="stat-list">
         <div class="li"><span class="lk">Envios no período</span><span class="num">${fmt.int(cA.length)}</span></div><div class="li"><span class="lk">Produtos enviados</span><span class="num">${fmt.brl(aProd)}</span></div><div class="li"><span class="lk">Fretes</span><span class="num">${fmt.brl(aShip)}</span></div><div class="li"><span class="lk">Logística (preparação e embalagem)</span><span class="num">${fmt.brl(aLogi)}</span></div>
         <div class="li"><span class="lk">Custo médio por envio</span><span class="num">${cA.length ? fmt.brl((aProd + aShip + aLogi) / cA.length) : '—'}</span></div><div class="li"><span class="lk">Custo por conteúdo finalizado</span><span class="num">${aDone ? fmt.brl((aProd + aShip + aLogi) / aDone) : '—'}</span></div></div>` : ''}
-      ${models.includes('B') ? `<div class="cat-h ${models.includes('A') ? 'mt2' : ''}"><span class="dot" style="background:${COL.B}"></span>B · Produto por review<span class="ln"></span></div><div class="stat-list">
+      ${models.includes('B') ? `<div class="cat-h ${models.includes('A') ? 'mt2' : ''}"><span class="dot" style="background:${COL.B}"></span>B · Conteúdo via marketplace<span class="ln"></span></div><div class="stat-list">
+        <div class="li"><span class="lk">Compras no período</span><span class="num">${fmt.int(cB.length)}</span></div><div class="li"><span class="lk">Reembolsos (produto + frete)</span><span class="num">${fmt.brl(sum(cB, p => costB(p).refund))}</span></div><div class="li"><span class="lk">Repasse estimado dos canais</span><span class="num pos">−${fmt.brl(sum(cB, p => costB(p).back))}</span></div>
+        ${state.cfg.cmvB ? `<div class="li"><span class="lk">CMV dos produtos</span><span class="num">${fmt.brl(sum(cB, p => costB(p).cmv))}</span></div>` : ''}<div class="li"><span class="lk">Custo líquido</span><span class="num"><b>${fmt.brl(buyNet(cB))}</b></span></div><div class="li"><span class="lk">Custo por conteúdo finalizado</span><span class="num">${cDone ? fmt.brl(buyNet(cB) / cDone) : '—'}</span></div></div>` : ''}
+      ${models.includes('C') ? `<div class="cat-h ${models.length > 1 ? 'mt2' : ''}"><span class="dot" style="background:${COL.C}"></span>C · Produto por review<span class="ln"></span></div><div class="stat-list">
         <div class="li"><span class="lk">Compras no período</span><span class="num">${fmt.int(cB.length)}</span></div><div class="li"><span class="lk">Reembolsos (produto + frete)</span><span class="num">${fmt.brl(bRef)}</span></div><div class="li"><span class="lk">Repasse estimado dos canais</span><span class="num pos">−${fmt.brl(bBack)}</span></div>
         ${state.cfg.cmvB ? `<div class="li"><span class="lk">CMV dos produtos</span><span class="num">${fmt.brl(bCmv)}</span></div>` : ''}<div class="li"><span class="lk">Custo líquido</span><span class="num"><b>${fmt.brl(bRef - bBack + bCmv)}</b></span></div><div class="li"><span class="lk">Custo por review finalizado</span><span class="num">${bDone ? fmt.brl((bRef - bBack + bCmv) / bDone) : '—'}</span></div></div>` : ''}
-      ${models.includes('C') ? `<div class="cat-h ${models.length > 1 ? 'mt2' : ''}"><span class="dot" style="background:${COL.C}"></span>C · Conteúdo via marketplace<span class="ln"></span></div><div class="stat-list">
-        <div class="li"><span class="lk">Compras no período</span><span class="num">${fmt.int(cC.length)}</span></div><div class="li"><span class="lk">Reembolsos (produto + frete)</span><span class="num">${fmt.brl(sum(cC, p => costB(p).refund))}</span></div><div class="li"><span class="lk">Repasse estimado dos canais</span><span class="num pos">−${fmt.brl(sum(cC, p => costB(p).back))}</span></div>
-        ${state.cfg.cmvB ? `<div class="li"><span class="lk">CMV dos produtos</span><span class="num">${fmt.brl(sum(cC, p => costB(p).cmv))}</span></div>` : ''}<div class="li"><span class="lk">Custo líquido</span><span class="num"><b>${fmt.brl(buyNet(cC))}</b></span></div><div class="li"><span class="lk">Custo por conteúdo finalizado</span><span class="num">${cDone ? fmt.brl(buyNet(cC) / cDone) : '—'}</span></div></div>` : ''}
     </div></div>
   </div>
   <div class="grid g2 mt2 eq">
@@ -1984,8 +1986,8 @@ function viewSet() {
         <p class="hint mb">Custo padrão de cada envio (separado do frete): preparação, embalagem de envio e outros. Soma sozinho em todo envio do modelo A e fica congelado quando a etapa de envio é concluída.</p>
         <div class="fgrid" style="grid-template-columns:repeat(3,minmax(0,1fr))">${LOGI_K.map(([k, l]) => `<label class="field"><span>${l}</span><div class="affix"><span class="pre">${curSym()}</span><input class="inp r" inputmode="decimal" value="${inVal(b.logi?.[k])}" data-blogi="${k}" placeholder="0,00"></div></label>`).join('')}</div>
         <div class="between mt"><span class="hint">Total por envio</span><b class="num" id="logi-tot">${fmt.brl(brandLogi(b.id))}</b></div></div></div>
-      <div><div class="label"><span class="dot" style="background:${COL.B}"></span>Canais de compra · modelo B <span class="dim" style="display:inline-flex;align-items:center;gap:6px">· ${flagOf(b)} ${esc(b.name)}</span></div><div class="node pad">
-        <p class="hint mb">Cada marca tem os seus canais e custos (produtos e pesos diferentes mudam o custo). Valores em ${COUNTRIES[b.country].cur} — ajuste por canal. Custo B = reembolso (produto + frete) − repasse do canal${cfg.cmvB ? ' + CMV' : ''}. Repasse = valor − comissão − taxa fixa − frete do vendedor.</p>
+      <div><div class="label"><span class="dot" style="background:${COL.B}"></span>Canais de compra · modelos B e C <span class="dim" style="display:inline-flex;align-items:center;gap:6px">· ${flagOf(b)} ${esc(b.name)}</span></div><div class="node pad">
+        <p class="hint mb">Cada marca tem os seus canais e custos (produtos e pesos diferentes mudam o custo). Valores em ${COUNTRIES[b.country].cur} — ajuste por canal. Custo B e C = reembolso (produto + frete) − repasse do canal${cfg.cmvB ? ' + CMV' : ''}. Repasse = valor − comissão − taxa fixa − frete do vendedor.</p>
         <div class="rowline hint rl-ch"><span>Canal</span><span>Comissão</span><span>Taxa fixa</span><span>Frete vendedor</span><span>Ativo</span><span></span></div>
         ${channelsOf(b.id).map(c => `<div class="rowline rl-ch"><input class="inp sm" value="${esc(c.name)}" data-set="channels" data-id="${c.id}" data-k="name">
           <div class="affix s"><input class="inp sm r" inputmode="decimal" value="${inVal(c.feePct)}" data-set="channels" data-id="${c.id}" data-k="feePct" data-n="1"><span class="suf">%</span></div>
@@ -2112,11 +2114,11 @@ const ACT = {
   'p-net': a => { const p = curP(); if (!p || p.status === 'dead') return; p.network = a.dataset.v; commit(); refreshCard(); },
   'p-star': a => { const p = curP(); if (!p || p.status === 'dead') return; p.reviewStars = +a.dataset.v; commit(); refreshCard(); },
   'p-today': a => { const p = curP(); if (!p) return; p[a.dataset.v] = today(); commit(); refreshCard(); },
-  'p-rv': () => { const p = curP(); if (!p || p.model === 'B') return;
+  'p-rv': () => { const p = curP(); if (!p || p.model === 'C') return;
     if (!isAdmin()) { if (pendingReq(p)) return toast('Já existe uma solicitação aguardando o admin', 'y'); return openReviewAsk(p); }
     if (!setReviewOk(p, !p.reviewOk, 'admin')) return toast('Desfaça a conclusão do review antes de tirar o selo', 'r');
     commit(); refreshCard(); toast(p.reviewOk ? 'Selo Apto para review ativado' : 'Selo removido', 'g'); },
-  'p-toA': () => { const p = curP(); if (!p || p.model !== 'C' || p.steps?.compra) return;
+  'p-toA': () => { const p = curP(); if (!p || p.model !== 'B' || p.steps?.compra) return;
     p.model = 'A'; logP(p, 'Mudou para A · envio direto (não quis comprar antes)');
     const s = stepsOf(p); ui.step = s[curStepIdx(p)].k; commit(); refreshCard(); toast('Agora é envio direto', 'g'); },
   'p-kill': () => { const p = curP(); if (pendingReq(p)) return toast('Já existe uma solicitação aguardando o admin', 'y'); openKill(p, !isAdmin()); },

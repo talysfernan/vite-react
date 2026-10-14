@@ -238,9 +238,9 @@ var index_default = {
     ctx.waitUntil(snapshot(env));
   }
 };
-var STEPS = { A: ["contato", "aceite", "envio", "entrega", "conteudo"], B: ["contato", "aceite", "compra", "reembolso", "recebido", "review"], C: ["contato", "aceite", "compra", "reembolso", "recebido", "conteudo"] };
-/* selo "Apto para review" acrescenta a etapa de review nas frentes A e C */
-var stepsK = (p) => (STEPS[p.model] || []).concat(p.reviewOk && p.model !== "B" ? ["review"] : []);
+var STEPS = { A: ["contato", "aceite", "envio", "entrega", "conteudo"], B: ["contato", "aceite", "compra", "reembolso", "recebido", "conteudo"], C: ["contato", "aceite", "compra", "reembolso", "recebido", "review"] };
+/* selo "Apto para review" acrescenta a etapa de review nas frentes de conteúdo (A e B) */
+var stepsK = (p) => (STEPS[p.model] || []).concat(p.reviewOk && p.model !== "C" ? ["review"] : []);
 var STEP_L = { contato: "Contato iniciado", aceite: "Aceite", envio: "Produto enviado", entrega: "Produto entregue", conteudo: "Conte\xFAdo publicado", compra: "Compra realizada", reembolso: "Reembolso feito", recebido: "Produto recebido", review: "Review publicado" };
 async function getDoc(env, path) {
   const r = await env.DB.prepare("SELECT body FROM docs WHERE path=?").bind(path).first();
