@@ -112,6 +112,8 @@ main{padding:22px var(--gut) 120px}
 .mls th{font-weight:500;color:var(--muted);text-align:left;padding:4px 6px;white-space:nowrap;font-size:11px}
 .mls td .inp{height:30px;padding:0 8px;font-size:12px;border-radius:8px}
 .mls .inp.chg{border-color:rgba(250,204,21,.55);color:#facc15;background:rgba(250,204,21,.06)}
+.ltpl{display:flex;flex-wrap:wrap;align-items:center;gap:5px}.ltpl .hint{margin-right:4px;font-size:11.5px}
+.chip{height:24px;padding:0 9px;border-radius:999px;font-size:11px;background:var(--glass);border:1px solid var(--glass-b);color:var(--muted);transition:all .2s}.chip:hover{color:var(--text)}.chip.on{background:rgba(96,165,250,.14);border-color:rgba(96,165,250,.4);color:#93c5fd}
 .ltot{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--line)}.ltot b{font-size:16px}
 .pill.star.on{color:#facc15;border-color:rgba(250,204,21,.4);background:rgba(250,204,21,.1)}
 .pill.star svg{fill:none}.pill.star.on svg{fill:currentColor}
@@ -395,10 +397,10 @@ const EXTRA_FIELDS = { shopify: [['shipAvg', 'Frete médio por pedido', 'R$'], [
 const US_DEFAULT = () => ({ custom: [{ id: uid(), name: 'Amazon US', feePct: 15, fixedFee: 0, shipUnit: 0 }, { id: uid(), name: 'Walmart', feePct: 15, fixedFee: 0, shipUnit: 0 }, { id: uid(), name: 'TikTok Shop US', feePct: 6, fixedFee: 0, shipUnit: 0 }] });
 const LOGI_DEFAULT = () => [{ id: uid(), name: 'Galpão', man: 0, emb: 0, out: 0 }];
 const USES = [
-  ['Análise mensal', 'analise-mensal.meucaos.com', 'Tarifas de todos os canais, tabelas Mercado Envios e FBA, perfis de logística'],
-  ['Análise semanal', 'analise-semanal.meucaos.com', 'Tarifas, tabelas Mercado Envios e FBA, perfis de logística'],
+  ['Análise mensal', 'analise-mensal.meucaos.com', 'Tarifas de todos os canais, tabelas Mercado Envios e FBA, perfis de logística', 1],
+  ['Análise semanal', 'analise-semanal.meucaos.com', 'Tarifas, tabelas Mercado Envios e FBA, perfis de logística', 1],
   ['Projeto Parceiros', 'parceiros-do.meucaos.com', 'Custo das compras (frentes B e C) e logística do envio direto (frente A)', 1],
-  ['Árvore de Sustentabilidade', 'arvore.meucaos.com', 'Tarifas por conta, frete médio, devoluções e logística']
+  ['Árvore de Sustentabilidade', 'arvore.meucaos.com', 'Tarifas por conta, frete médio, devoluções e logística', 1]
 ];
 const brands = () => (D('app/brands') || []).slice().sort((a, b) => (a.order || 0) - (b.order || 0));
 const curBrand = () => { const l = brands(); return l.find(b => b.id === UI.brand) || l[0] || null; };
@@ -467,9 +469,10 @@ function viewTabelas() {
 function viewLogistica() {
   const b = curBrand(); if (!b) return noBrands(); const v = curVer(b); if (!v) return emptyBrand(b);
   const L = v.logi || [], def = v.logiDefault || (L[0] && L[0].id);
-  return `<div class="note">${ic('box')}<span>Custo por unidade enviada em cada galpão ou operador logístico de ${esc(b.name)}. O perfil com a estrela é o usado nos envios diretos (frente A do Projeto Parceiros).</span></div>
+  return `<div class="note">${ic('box')}<span>Custo por unidade enviada em cada galpão ou operador logístico de ${esc(b.name)}. A estrela marca o perfil dos envios diretos (frente A do Projeto Parceiros); “Canais que usam” diz qual perfil vale em cada canal na Árvore de Sustentabilidade.</span></div>
   <div class="cgrid">${L.map((p, i) => `<section class="node chc"><div class="chh"><input class="inp sm cname" data-lg="${i}.name" value="${esc(p.name)}" ${dis()}><button class="pill sm icon star ${p.id === def ? 'on' : ''}" data-act="lg-def" data-i="${i}" title="Padrão para envio direto" ${dis()}>${ic('star')}</button>${isAdmin() ? `<button class="pill sm icon danger" data-act="lg-del" data-i="${i}" title="Excluir perfil">${ic('trash')}</button>` : ''}</div>
     <div class="fgrid">${field(`data-lg="${i}.man"`, 'Preparação / manuseio', 'R$', p.man)}${field(`data-lg="${i}.emb"`, 'Embalagem de envio', 'R$', p.emb)}${field(`data-lg="${i}.out"`, 'Saída / outros', 'R$', p.out)}</div>
+    ${CTRY() === 'BR' ? `<div class="ltpl"><span class="hint">Canais que usam</span>${TPL_ORDER.map(t => `<button class="chip ${(p.tpls || []).includes(t) ? 'on' : ''}" data-act="lg-tpl" data-i="${i}" data-t="${t}" ${dis()}>${TPL_NAME[t].replace(' + Mercado Pago', '')}</button>`).join('')}</div>` : ''}
     <div class="ltot"><span class="hint">Total por envio</span><b id="lt-${i}">${fmt.brl(num(p.man) + num(p.emb) + num(p.out))}</b></div></section>`).join('')}
     ${isAdmin() ? `<button class="node chc add" data-act="lg-add">${ic('plus')}Novo perfil</button>` : ''}</div>`;
 }
@@ -530,6 +533,7 @@ document.addEventListener('click', async e => {
   if (a === 'cu-del') { const i = +b.dataset.i, c = curVer(br).rates.custom[i]; if (!(await ask('Excluir o canal “' + c.name + '”?'))) return; mutVer(v => v.rates.custom.splice(i, 1)); renderView(); return; }
   if (a === 'lg-add') { mutVer(v => (v.logi ||= []).push({ id: uid(), name: 'Novo perfil', man: 0, emb: 0, out: 0 })); renderView(); return; }
   if (a === 'lg-del') { const i = +b.dataset.i, p = curVer(br).logi[i]; if (!(await ask('Excluir o perfil “' + p.name + '”?'))) return; mutVer(v => { const [x] = v.logi.splice(i, 1); if (v.logiDefault === x.id) delete v.logiDefault; }); renderView(); return; }
+  if (a === 'lg-tpl') { const i = +b.dataset.i, t = b.dataset.t; mutVer(v => { v.logi.forEach((x, j) => { x.tpls = (x.tpls || []).filter(y => y !== t); if (j === i && !b.classList.contains('on')) x.tpls.push(t); }); }); renderView(); return; }
   if (a === 'lg-def') { const i = +b.dataset.i; mutVer(v => { v.logiDefault = v.logi[i].id; }); renderView(); return; }
 });
 document.addEventListener('input', e => {
