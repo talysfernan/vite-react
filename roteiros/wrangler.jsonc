@@ -1,0 +1,18 @@
+// Roteiros · Parceiros — manual do colaborador, fluxos do direct e gerador de mensagens
+{
+  "name": "caos-roteiros",
+  "account_id": "7555b9666c694118eaab1e89c150e74b",
+  "main": "site.js",
+  "rules": [
+    { "type": "Text", "globs": ["**/*.html", "**/*.svg"], "fallthrough": true },
+    { "type": "Data", "globs": ["**/*.png"], "fallthrough": true }
+  ],
+  "compatibility_date": "2025-09-01",
+  "workers_dev": true,
+  "routes": [{ "pattern": "roteiros.meucaos.com", "custom_domain": true }],
+  "version_metadata": { "binding": "CF_VERSION_METADATA" },
+  "durable_objects": { "bindings": [{ "name": "STORE", "class_name": "Store" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Store"] }],
+  "services": [{ "binding": "QUINTAL", "service": "caos-quintal", "entrypoint": "Quintal" }]
+  // segredos (SESSION_SECRET, EXPORT_KEY) ficam no Cloudflare: wrangler secret put
+}
