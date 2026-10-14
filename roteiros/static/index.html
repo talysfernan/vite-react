@@ -488,7 +488,7 @@ const MANUAL0 = [
 <p class="callout">A bandeira no canto troca entre <b>Brasil</b> e <b>USA</b>. Cada país tem seus próprios fluxos, modelos e mensagens no idioma certo.</p>` },
   { id: 'programa', h: `<h2>02 · O programa em 1 minuto</h2><p>O Programa Parceiros conecta a marca a microinfluenciadores e tutores de pets. A gente oferece produto e constrói relacionamento; eles geram conteúdo e experiências reais, de <b>pessoa para pessoa</b>.</p>
 <div class="vs2">
-<div class="fr A"><span class="k">A</span><h4>Produto por conteúdo</h4><p class="sm">O parceiro recebe o produto de presente e produz conteúdo sobre a experiência.</p><dl><dt>Ele recebe</dt><dd>Produto grátis</dd><dt>Ele entrega</dt><dd>Collab, arquivo de vídeo ou os dois</dd></dl></div>
+<div class="fr A"><span class="k">A</span><h4>Produto por conteúdo</h4><p class="sm">O parceiro recebe o produto de presente e posta um vídeo em collab com a marca.</p><dl><dt>Ele recebe</dt><dd>Produto grátis</dd><dt>Ele entrega</dt><dd>Vídeo postado em collab com a marca</dd></dl></div>
 <div class="fr B"><span class="k">B</span><h4>Produto por review</h4><p class="sm">O parceiro compra pelo nosso link, recebe o reembolso e conta como foi a experiência.</p><dl><dt>Ele recebe</dt><dd>Reembolso do produto + frete</dd><dt>Ele entrega</dt><dd>Feedback da compra e do uso</dd></dl></div>
 </div>
 <p class="callout ok">${mi('truck')}<span><b>O frete é sempre por conta da marca.</b> Nas duas frentes.</span></p>` },
@@ -513,15 +513,16 @@ ${msgBox('Oi! Vi o perfil de vocês e acho que a gente deu match! Se tiver inter
 <h3>Durante a conversa, confirme</h3><div class="chips"><span>País</span><span>Região</span><span>Pet</span><span>Interesse em participar</span></div>
 <p>Depois apresente a frente certa e deixe claro <b>o que ele recebe</b>, <b>o que esperamos</b> e <b>os prazos</b>. Os nomes "Frente A" e "Frente B" são internos: para o parceiro a proposta tem que soar natural.</p>
 <p class="jump">${goTab('fluxos', 'chat', 'Abrir os fluxos do direct')}</p>` },
-  { id: 'frentea', h: `<h2>06 · Frente A · conteúdo</h2><p>O parceiro recebe o produto de presente, com frete pago pela marca, e produz a entrega combinada.</p>
-<h3>Formatos de entrega</h3>
-<div class="cards c3"><div class="card"><span class="ic">${mi('chat')}</span><h4>Collab</h4><p>Publica e convida o perfil da marca como colaborador.</p></div><div class="card"><span class="ic">${mi('file')}</span><h4>Arquivo</h4><p>Grava e envia o vídeo, sem precisar publicar.</p></div><div class="card"><span class="ic">${mi('spark')}</span><h4>Collab + arquivo</h4><p>Publica em collab e envia o material para usarmos depois.</p></div></div>
-<h3>Antes de enviar, combine</h3>${chk(['Produto e quantidade', 'Formato e quantidade de conteúdos', 'Collab, arquivo ou os dois', 'Prazo de entrega depois do recebimento', 'Orientações de uso do produto', 'Identificação da parceria e autorização de uso'])}
+  { id: 'frentea', h: `<h2>06 · Frente A · conteúdo</h2><p>O parceiro recebe o produto de presente, com frete pago pela marca, e posta um vídeo em collab com a gente.</p>
+<h3>A entrega é sempre em collab</h3>
+<div class="clock"><span class="ic">${mi('chat')}</span><div><b>Padrão</b><span>Vídeo postado em collab</span><p>O parceiro publica o vídeo e convida o perfil da marca como colaborador. É isso que a gente propõe em toda conversa.</p></div></div>
+<p class="note">Exceção rara: só se a pessoa não quiser postar de jeito nenhum, dá para combinar o envio do vídeo para a marca, sem publicar. Não oferecer de início.</p>
+<h3>Antes de enviar, combine</h3>${chk(['Produto e quantidade', 'Quantidade de vídeos em collab', 'Prazo de entrega depois do recebimento', 'Orientações de uso do produto', 'Identificação da parceria e autorização de uso'])}
 <p class="callout">A autorização de uso diz <b>canais</b>, <b>prazo</b>, se pode <b>editar</b> e se vale para <b>anúncios pagos</b>.</p>
-<h3>Do aceite à entrega</h3>${hsteps(['Aceite e autorização', 'Envio e rastreio', 'Recebimento', 'Produção', 'Arquivo / collab'])}
+<h3>Do aceite à entrega</h3>${hsteps(['Aceite e autorização', 'Envio e rastreio', 'Recebimento', 'Produção', 'Post em collab'])}
 <h3>Depois do envio</h3><p>Mande o rastreio, confirme o recebimento e acompanhe o prazo:</p>
 ${msgBox('Oi, [nome]! O produto chegou direitinho? Se precisar de alguma orientação para começar, estamos por aqui 😊')}
-<p>Ao receber o conteúdo, confira a entrega e arquive o material junto da autorização. Se for collab, acompanhe a publicação e o aceite no perfil da marca.</p>` },
+<p>Quando o vídeo for publicado, aceite o convite de collab no perfil da marca, confira a entrega e arquive o material junto da autorização.</p>` },
   { id: 'frenteb', h: `<h2>07 · Frente B · experiência de compra</h2><p>O parceiro compra no canal indicado, manda o comprovante e recebe o reembolso do produto e do frete. Depois de usar, conta como foi.</p>
 <div class="chips"><span>Mercado Livre</span><span>Shopee</span><span>TikTok Shop</span><span>Amazon</span></div>
 <h3>Do link ao feedback</h3>${hsteps(['Link e condições', 'Compra', 'Comprovante', 'Reembolso', 'Recebimento e uso', 'Feedback'])}
