@@ -6,7 +6,8 @@ meta = {
   'main_module': 'site.js', 'compatibility_date': '2025-09-01',
   'keep_assets': True, 'assets': {'config': {'run_worker_first': True}},
   'keep_bindings': ['secret_text', 'd1', 'service', 'version_metadata', 'assets'],
-  'bindings': [{'type': 'd1', 'name': 'DB_US', 'id': '0eec82b2-4178-487d-8168-2f3e6bbd23da'}],  # banco dos EUA (DB = Brasil)
+  'bindings': [{'type': 'd1', 'name': 'DB_US', 'id': '0eec82b2-4178-487d-8168-2f3e6bbd23da'},  # banco dos EUA (DB = Brasil)
+               {'type': 'service', 'name': 'AJUSTES', 'service': 'caos-ajustes', 'entrypoint': 'Ajustes'}],  # tarifas e logística (Ajustes Globais)
 }
 mp = os.path.join(d, '.meta.json'); open(mp, 'w').write(json.dumps(meta))
 r = subprocess.run(['curl', '-sS', '-X', 'PUT', f'https://api.cloudflare.com/client/v4/accounts/{A}/workers/scripts/caos-parceiros',

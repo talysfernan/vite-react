@@ -103,6 +103,7 @@ main{padding:22px var(--gut) 120px}
 .inp.r{text-align:right;font-variant-numeric:tabular-nums}
 .inp:disabled{opacity:.7;cursor:default}
 .tag{display:inline-flex;align-items:center;height:22px;padding:0 9px;border-radius:999px;font-size:11px;font-weight:600;background:rgba(255,255,255,.06);color:var(--text-2);border:1px solid var(--glass-b)}
+.tag.g{background:rgba(74,222,128,.12);color:#4ade80;border-color:rgba(74,222,128,.3)}
 .tag.y{background:rgba(250,204,21,.12);color:#facc15;border-color:rgba(250,204,21,.3)}
 .tsec{padding:18px;margin-bottom:16px;display:flex;flex-direction:column;gap:10px}
 .tsh{display:flex;align-items:center;gap:10px}.tsh>div{flex:1}.tsh .hint{color:var(--muted);font-size:12px}
@@ -396,7 +397,7 @@ const LOGI_DEFAULT = () => [{ id: uid(), name: 'Galpão', man: 0, emb: 0, out: 0
 const USES = [
   ['Análise mensal', 'analise-mensal.meucaos.com', 'Tarifas de todos os canais, tabelas Mercado Envios e FBA, perfis de logística'],
   ['Análise semanal', 'analise-semanal.meucaos.com', 'Tarifas, tabelas Mercado Envios e FBA, perfis de logística'],
-  ['Projeto Parceiros', 'parceiros-do.meucaos.com', 'Custo das compras (frentes B e C) e logística do envio direto (frente A)'],
+  ['Projeto Parceiros', 'parceiros-do.meucaos.com', 'Custo das compras (frentes B e C) e logística do envio direto (frente A)', 1],
   ['Árvore de Sustentabilidade', 'arvore.meucaos.com', 'Tarifas por conta, frete médio, devoluções e logística']
 ];
 const brands = () => (D('app/brands') || []).slice().sort((a, b) => (a.order || 0) - (b.order || 0));
@@ -474,7 +475,7 @@ function viewLogistica() {
 }
 function viewUso() {
   return `<div class="note">${ic('link')}<span>Painéis que leem estes ajustes. Neles, os custos dos canais e a logística aparecem só para consulta, com um link para cá.</span></div>
-  <div class="cgrid">${USES.map(([n, u, w]) => `<section class="node chc"><div class="chh"><b>${esc(n)}</b><span class="tag">a ligar</span></div><p class="src">${esc(w)}</p><a class="lnk" href="https://${u}" target="_blank" rel="noopener">${esc(u)}</a></section>`).join('')}</div>`;
+  <div class="cgrid">${USES.map(([n, u, w, on]) => `<section class="node chc"><div class="chh"><b>${esc(n)}</b><span class="tag ${on ? 'g' : ''}">${on ? 'ligado' : 'a ligar'}</span></div><p class="src">${esc(w)}</p><a class="lnk" href="https://${u}" target="_blank" rel="noopener">${esc(u)}</a></section>`).join('')}</div>`;
 }
 const noBrands = () => `<div class="empty node">${ic('cart')}<div>Nenhuma marca cadastrada.</div></div>`;
 /* =================== AJUSTES =================== */

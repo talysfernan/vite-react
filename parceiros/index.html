@@ -417,6 +417,8 @@ textarea.inp{height:auto;min-height:84px;padding:10px 12px;resize:vertical;line-
 .tpill .tp-b{height:20px;min-width:20px;padding:0 5px;border-radius:999px;display:inline-grid;place-items:center;font-size:10.5px;font-weight:700;font-variant-numeric:tabular-nums;flex:none}
 .tpill .tp-h{overflow:hidden;text-overflow:ellipsis}
 .tpill .tp-rv{display:inline-grid;place-items:center;width:16px;height:16px;border-radius:50%;background:#facc15;color:#1a1500;flex:none;margin-left:-2px}
+.rowline.rl-ch.rl-g{grid-template-columns:minmax(0,1fr) minmax(0,1.7fr) 40px;align-items:center}.rl-g .gname{display:flex;flex-direction:column;font-weight:500}.rl-g .gname small{font-weight:400;color:var(--muted);font-size:11px}.rl-gx{font-size:12px}
+.gro{padding:12px 14px;border-radius:12px;background:var(--well);border:1px solid var(--line)}.glink{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--blue);text-decoration:none}
 .rvb{display:inline-flex;align-items:center;gap:4px;height:18px;padding:0 7px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(250,204,21,.12);color:#facc15;border:1px solid rgba(250,204,21,.3);margin-left:6px;white-space:nowrap}
 .rvb.big{height:24px;padding:0 10px;font-size:11.5px;margin-left:0}
 .rvb svg{fill:currentColor}
@@ -540,7 +542,7 @@ img.missing{opacity:.2}
 .ell{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%;font-size:12px}
 /* ajustes */
 .set-grid{grid-template-columns:minmax(0,1.35fr) minmax(320px,1fr);align-items:start}
-.rl-prod{grid-template-columns:minmax(0,1fr) 120px 130px 40px 32px}
+.rl-prod{grid-template-columns:minmax(0,1fr) 110px 120px 90px 40px 32px}
 .rl-ch{grid-template-columns:minmax(0,1fr) 92px 112px 112px 40px 32px}
 .rl-ex{grid-column:1/-1;margin-top:-4px}
 .rl-brand{grid-template-columns:14px minmax(0,1fr) 190px 56px 32px}.ctry{display:flex;align-items:center;gap:8px}.ctry .inp{flex:1;min-width:0}.flag{flex:none;border-radius:2px;box-shadow:0 0 0 1px rgba(255,255,255,.12);display:inline-block;vertical-align:middle}.brandbar .pill .flag{margin-right:-1px}
@@ -790,6 +792,130 @@ function normalize(s) {
 }
 let state = defaultState();
 
+/* =================== Ajustes Globais (tarifas e logística por marca e país; só leitura aqui) =================== */
+/* mesmas tabelas e contas do Análise mensal — a fonte é ajustes.meucaos.com */
+const RESEARCHED_AT = '08/10/2026';
+/* Mercado Livre — custo de envio/operacional para MercadoLíderes, reputação verde ou sem reputação (vigente desde 02/03/2026).
+   Abaixo de R$ 79: custo operacional por unidade. A partir de R$ 79: custo do frete grátis pago pelo vendedor. */
+const ML_PRICE_BANDS = [18.99, 48.99, 78.99, 99.99, 119.99, 149.99, 199.99, Infinity];
+const ML_TABLE = [
+  [0.3, [5.65, 6.55, 7.75, 12.35, 14.35, 16.45, 18.45, 20.95]],
+  [0.5, [5.95, 6.65, 7.85, 13.25, 15.45, 17.65, 19.85, 22.55]],
+  [1, [6.05, 6.75, 7.95, 13.85, 16.15, 18.45, 20.75, 23.65]],
+  [1.5, [6.15, 6.85, 8.05, 14.15, 16.45, 18.85, 21.15, 24.65]],
+  [2, [6.25, 6.95, 8.15, 14.45, 16.85, 19.25, 21.65, 24.65]],
+  [3, [6.35, 7.95, 8.55, 15.75, 18.35, 21.05, 23.65, 26.25]],
+  [4, [6.45, 8.15, 8.95, 17.05, 19.85, 22.65, 25.55, 28.35]],
+  [5, [6.55, 8.35, 9.75, 18.45, 21.55, 24.65, 27.75, 30.75]],
+  [6, [6.65, 8.55, 9.95, 25.45, 28.55, 32.65, 35.75, 39.75]],
+  [7, [6.75, 8.75, 10.15, 27.05, 31.05, 36.05, 40.05, 44.05]],
+  [8, [6.85, 8.95, 10.35, 28.85, 33.65, 38.45, 43.25, 48.05]],
+  [9, [6.95, 9.15, 10.55, 29.65, 34.55, 39.55, 44.45, 49.35]],
+  [11, [7.05, 9.55, 10.95, 41.25, 48.05, 54.95, 61.75, 68.65]],
+  [13, [7.15, 9.95, 11.35, 42.15, 49.25, 56.25, 63.25, 70.25]],
+  [15, [7.25, 10.15, 11.55, 45.05, 52.45, 59.95, 67.45, 74.95]],
+  [17, [7.35, 10.35, 11.75, 48.55, 56.05, 63.55, 70.75, 78.65]],
+  [20, [7.45, 10.55, 11.95, 54.75, 63.85, 72.95, 82.05, 91.15]],
+  [25, [7.65, 10.95, 12.15, 64.05, 75.05, 84.75, 95.35, 105.95]],
+  [30, [7.75, 11.15, 12.35, 65.95, 75.45, 85.55, 96.25, 106.95]]
+];
+/* Amazon FBA — tarifa de logística por unidade (tabela vigente desde 01/08/2025). Abaixo de R$ 79: tarifa fixa por faixa de preço. */
+const AMZ_LOW = [[29.99, 5.65], [49.99, 5.85], [78.99, 6.05]];
+const AMZ_PRICE_BANDS = [99.99, 119.99, 149.99, 199.99, Infinity];
+const AMZ_TABLE = [
+  [0.1, [10.05, 12.05, 14.05, 15.05, 15.55]], [0.2, [10.45, 12.45, 14.45, 15.45, 16.05]], [0.3, [10.95, 12.95, 14.95, 15.95, 16.55]],
+  [0.4, [11.45, 13.45, 15.45, 16.95, 17.15]], [0.5, [11.95, 13.95, 15.95, 17.05, 17.85]], [0.75, [12.05, 14.05, 16.05, 18.45, 18.55]],
+  [1, [12.45, 14.45, 16.45, 19.05, 19.25]], [1.5, [12.95, 14.95, 16.95, 19.45, 20.35]], [2, [13.05, 15.05, 17.05, 19.95, 21.35]],
+  [3, [14.05, 16.05, 18.05, 20.05, 22.35]], [4, [15.05, 17.05, 19.05, 21.95, 23.35]], [5, [16.05, 18.05, 20.05, 22.95, 24.35]],
+  [6, [24.05, 27.05, 29.05, 30.05, 30.35]], [7, [25.05, 28.05, 30.05, 31.05, 33.35]], [8, [26.05, 29.05, 31.05, 32.05, 35.35]],
+  [9, [27.05, 30.05, 32.05, 33.05, 37.35]], [10, [35.05, 40.05, 46.05, 51.05, 51.35]]
+];
+const AMZ_EXTRA_KG = [3.05, 3.05, 3.05, 3.50, 3.50];
+const FULL_SIZES = { P: 'Pequeno · até 12×15×25 cm', M: 'Médio · até 28×36×51 cm', G: 'Grande · até 60×60×70 cm', XG: 'Extragrande' };
+
+function bandIdx(bands, p) { const i = bands.findIndex(b => p <= b + 1e-9); return i < 0 ? bands.length - 1 : i; }
+function mlTableCost(price, kg, tbl) {
+  let i = ML_TABLE.findIndex(([w]) => kg <= w + 1e-9); if (i < 0) i = ML_TABLE.length - 1; const ci = bandIdx(ML_PRICE_BANDS, price);
+  const own = Array.isArray(tbl) && Array.isArray(tbl[i]) ? tbl[i][ci] : null;
+  return own != null && own !== '' && isFinite(own) ? num(own) : ML_TABLE[i][1][ci];
+}
+const ovr = (o, d) => (o != null && o !== '' && isFinite(o) ? num(o) : d);
+function amzFbaFee(price, kg, ov) {
+  ov = ov || {};
+  if (price < 79) { let k = AMZ_LOW.findIndex(([p]) => price <= p); if (k < 0) k = AMZ_LOW.length - 1; return ovr(ov.low?.[k], AMZ_LOW[k][1]); }
+  const i = bandIdx(AMZ_PRICE_BANDS, price), cell = r => ovr(ov.tbl?.[r]?.[i], AMZ_TABLE[r][1][i]);
+  if (kg <= 10) { let r = AMZ_TABLE.findIndex(([w]) => kg <= w + 1e-9); if (r < 0) r = AMZ_TABLE.length - 1; return cell(r); }
+  return cell(AMZ_TABLE.length - 1) + Math.ceil(kg - 10) * ovr(ov.extra?.[i], AMZ_EXTRA_KG[i]);
+}
+/* tarifa fixa legada do ML (envio próprio / Flex): até R$ 12,50 = 50% do preço */
+function mlLegacyFixed(price, cfg) {
+  if (price >= 79) return 0;
+  if (price < 12.5) return price * 0.5;
+  if (price < 29) return num(cfg.legacy1); if (price < 50) return num(cfg.legacy2); return num(cfg.legacy3);
+}
+const SHOPEE_MAX = [79.99, 99.99, 199.99, 499.99, Infinity];
+function defaultChannelCfg() {
+  return {
+    shopify: { txPct: 2, pixFee: 0.99, cardNow: 4.98, card14: 4.49, card30: 3.99, payDays: 0, fixedMonth: 0, notes: '' },
+    amazon: { refPct: 12, refMin: 2, parcelPct: 1.5, storageM3: 75, storageM3Big: 37.5, payDays: 16, fixedMonth: 19, notes: '' },
+    tiktok: { lowPct: 10, lowFix: 4, highPct: 6, highFix: 6, threshold: 50, sfpPct: 6, sfpCap: 50, payDays: 10, fixedMonth: 0, notes: '' },
+    ml: { classic: 12, premium: 17, legacy1: 6.25, legacy2: 6.50, legacy3: 6.75, payDays: 11, fixedMonth: 0, notes: '' },
+    mlfull: { classic: 12, premium: 17, stP: 0.007, stM: 0.015, stG: 0.050, stXG: 0.107, payDays: 10, fixedMonth: 0, notes: '' },
+    shopee: { p1: 20, f1: 4, p2: 14, f2: 16, p3: 14, f3: 20, p4: 14, f4: 26, p5: 14, f5: 28, destPct: 2.5, payDays: 15, fixedMonth: 0, notes: '' }
+  };
+}
+
+const CH_OPT_DEF = { ml: { listing: 'premium', logi: 'me' }, mlfull: { listing: 'premium' }, tiktok: { sfp: true }, amazon: { parcel: true } };
+const EST = {
+  mlCom: (L, c, o) => L.reduce((s, z) => s + z.r * num(o.listing === 'classic' ? c.classic : c.premium) / 100, 0),
+  mlShip: (L, c, o, all) => L.reduce((s, z) => s + z.u * mlTableCost(z.price, z.kg, all?.ml?.ship), 0),
+  shpCom: (L, c) => L.reduce((s, z) => { const i = SHOPEE_MAX.findIndex(m => z.price <= m + 1e-9) + 1; return s + z.r * num(c['p' + i]) / 100; }, 0),
+  shpFix: (L, c) => L.reduce((s, z) => { const i = SHOPEE_MAX.findIndex(m => z.price <= m + 1e-9) + 1; return s + z.u * num(c['f' + i]); }, 0),
+  amzRef: (L, c) => L.reduce((s, z) => s + Math.max(num(c.refMin) * z.u, z.r * num(c.refPct) / 100), 0),
+  amzParc: (L, c, o) => (o.parcel ? L.reduce((s, z) => s + (z.price >= 40 ? z.r * num(c.parcelPct) / 100 : 0), 0) : 0),
+  amzFba: (L, c) => L.reduce((s, z) => s + z.u * amzFbaFee(z.price, z.kg + 0.02, c.fba), 0),
+  ttCom: (L, c) => L.reduce((s, z) => s + z.r * num(z.price < num(c.threshold) ? c.lowPct : c.highPct) / 100, 0),
+  ttFix: (L, c) => L.reduce((s, z) => s + z.u * num(z.price < num(c.threshold) ? c.lowFix : c.highFix), 0),
+  ttSfp: (L, c, o) => (o.sfp ? L.reduce((s, z) => s + z.u * Math.min(num(c.sfpCap), z.price * num(c.sfpPct) / 100), 0) : 0),
+  shopTx: (L, c) => L.reduce((s, z) => s + z.r * num(c.txPct) / 100, 0)
+};
+/* o que entra em "tarifas" e o que entra em "envio / operacional" em cada canal */
+const TPL_FEE = { ml: [['mlCom'], ['mlShip']], mlfull: [['mlCom'], ['mlShip']], shopee: [['shpCom', 'shpFix'], []], amazon: [['amzRef', 'amzParc'], ['amzFba']], tiktok: [['ttCom', 'ttFix', 'ttSfp'], []], shopify: [['shopTx'], []] };
+const TPL_NAME = { ml: 'Mercado Livre', mlfull: 'Mercado Livre Full', shopee: 'Shopee', amazon: 'Amazon FBA', tiktok: 'TikTok Shop', shopify: 'Shopify' };
+let GLOBAL = null;
+const normName = x => String(x || '').toLowerCase().replace(/™|®/g, '').replace(/\band\b|&/g, '').replace(/[^a-z0-9]/g, '');
+const G = () => (GLOBAL && GLOBAL.country === PAIS[store.board].c ? GLOBAL : null);
+function gBrand(brandId) { const g = G(); if (!g) return null; const n = normName(brandById(brandId)?.name); return (g.brands || []).find(x => [x.name, ...(x.aliases || [])].some(a => normName(a) === n)) || null; }
+function gVer(brandId, date) {
+  const b = gBrand(brandId); if (!b) return null;
+  const vs = ((G().tar[b.id] || {}).versions || []).slice().sort((x, y) => (x.from < y.from ? -1 : 1)); if (!vs.length) return null;
+  const d = date || today(); let v = vs[0]; for (const x of vs) if (x.from <= d) v = x; return v;
+}
+const tplOf = ch => { if (!ch || PAIS[store.board].c !== 'BR') return null; const n = String(ch.name || '').toLowerCase(); return /full/.test(n) ? 'mlfull' : /mercado/.test(n) ? 'ml' : /shopee/.test(n) ? 'shopee' : /amazon/.test(n) ? 'amazon' : /tiktok/.test(n) ? 'tiktok' : /shopify/.test(n) ? 'shopify' : null; };
+const usCh = (v, ch) => (v && ch ? ((v.rates || {}).custom || []).find(x => normName(x.name) === normName(ch.name)) || null : null);
+const prodKgOf = id => num(productById(id)?.weightKg);
+/* tarifas do canal numa venda: { fee, ship, src } — src 'global' (Ajustes Globais) ou 'manual' (campos antigos do canal) */
+function chanFees(brandId, channelId, val, qty, productId, date) {
+  const ch = channelById(channelId), v = gVer(brandId, date), u = Math.max(1, num(qty) || 1);
+  if (v && ch) {
+    const c = usCh(v, ch);
+    if (c) return { fee: val * num(c.feePct) / 100 + num(c.fixedFee) * u, ship: num(c.shipUnit) * u, src: 'global', from: v.from, label: c.name };
+    const t = tplOf(ch);
+    if (t && v.rates && v.rates[t]) {
+      const L = val > 0 ? [{ u, r: val, price: val / u, kg: prodKgOf(productId) || 0.5 }] : [], o = CH_OPT_DEF[t] || {}, r = v.rates[t];
+      const sum = ks => ks.reduce((s2, k) => s2 + num(EST[k](L, r, o, v.rates)), 0);
+      return { fee: sum(TPL_FEE[t][0]), ship: sum(TPL_FEE[t][1]), src: 'global', from: v.from, label: TPL_NAME[t], noKg: !prodKgOf(productId) };
+    }
+  }
+  const m = ch || { feePct: 0, fixedFee: 0, sellerShip: 0 };
+  return { fee: val * num(m.feePct) / 100 + num(m.fixedFee), ship: num(m.sellerShip), src: 'manual' };
+}
+async function loadGlobal() {
+  if (!isApi()) return; const b = store.board;
+  try { const r = await fetch('/api/ajustes', { credentials: 'same-origin', headers: { 'x-board': b } }); if (!r.ok) return; const d = await r.json(); if (b !== store.board) return; GLOBAL = d; } catch (e) { return; }
+  if (!$('.scrim') && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || '')) softRender();
+}
+
 /* =================== custos =================== */
 const brandById = id => state.brands.find(b => b.id === id);
 const productById = id => state.products.find(p => p.id === id);
@@ -804,19 +930,19 @@ const extrasCost = p => extrasOf(p).reduce((s, x) => s + exUnit(x) * Math.max(1,
 const prodNames = p => [productById(p.productId)?.name, ...extrasOf(p).map(x => productById(x.productId)?.name)].filter(Boolean);
 /* logística por envio (modelo A): preparação + embalagem de envio + outros, padrão da marca; congelada no envio */
 const LOGI_K = [['prep', 'Preparação'], ['pack', 'Embalagem de envio'], ['other', 'Outros']];
-const brandLogi = id => { const L = brandById(id)?.logi || {}; return LOGI_K.reduce((s, [k]) => s + num(L[k]), 0); };
+const gLogi = id => { const v = gVer(id); if (!v || !(v.logi || []).length) return null; return v.logi.find(x => x.id === v.logiDefault) || v.logi[0]; };
+const brandLogi = id => { const g = gLogi(id); if (g) return num(g.man) + num(g.emb) + num(g.out); const L = brandById(id)?.logi || {}; return LOGI_K.reduce((s, [k]) => s + num(L[k]), 0); };
 const logiOf = p => (has(p.logiCost) ? num(p.logiCost) : brandLogi(p.brandId));
 function costA(p) {
   const qty = Math.max(1, num(p.qty) || 1), prod = unitCostOf(p) * qty + extrasCost(p), ship = num(p.shipCost), logi = logiOf(p);
   return { prod, ship, logi, total: prod + ship + logi, real: !!p.steps?.envio };
 }
 function costB(p) {
-  const ch = channelById(p.channelId) || { feePct: 0, fixedFee: 0, sellerShip: 0 };
   const val = num(p.orderValue), refund = refundOf(p);
-  const fee = val * num(ch.feePct) / 100 + num(ch.fixedFee), sellerShip = num(ch.sellerShip);
+  const cf = chanFees(p.brandId, p.channelId, val, p.qty, p.productId, p.orderDate), fee = cf.fee, sellerShip = cf.ship;
   const back = Math.max(0, val - fee - sellerShip);
   const cmv = state.cfg.cmvB ? unitCostOf(p) + extrasCost(p) : 0;
-  return { refund, fee, sellerShip, back, cmv, total: refund - back + cmv, real: !!p.steps?.compra };
+  return { refund, fee, sellerShip, back, cmv, total: refund - back + cmv, real: !!p.steps?.compra, src: cf.src, from: cf.from, noKg: cf.noKg };
 }
 const costOf = p => (isBuy(p) ? costB(p) : costA(p));
 /* data em que o custo acontece: envio (A) ou compra (B) */
@@ -911,6 +1037,7 @@ async function apiLoad() {
   if (docs['cfg/app']) { state = fromDocs(docs); store.sent = Object.fromEntries(Object.entries(toDocs(state)).map(([p, b]) => [p, JSON.stringify(b)])); store.dirty = false; }
   else { state = defaultState(); store.sent = {}; store.dirty = true; setTimeout(flush, 300); }
   if (!store.poll) store.poll = setInterval(apiPoll, 12000);
+  if (!GLOBAL) setTimeout(loadGlobal, 0);
   return true;
 }
 function rememberBoard(b) { try { localStorage.setItem('prt:board', b); } catch (e) {} document.cookie = 'prt_b=' + b + '; Path=/; Secure; SameSite=Lax; Max-Age=31536000'; const u = new URL(location.href); u.searchParams.set('pais', b); history.replaceState(null, '', u); }
@@ -926,7 +1053,7 @@ async function setBoard(b) {
     (ui.brandBy ||= {})[store.board] = ui.brand;
     store.board = b; store.role = s.data.role; store.name = s.data.name || ''; rememberBoard(b);
     if (!(await apiLoad())) { toast(`Não foi possível abrir ${PAIS[b].name}`, 'r'); return; }
-    ui.brand = ui.brandBy[b] || null; hcVal = ''; hcOpen = false;
+    ui.brand = ui.brandBy[b] || null; hcVal = ''; hcOpen = false; GLOBAL = null;
     if (ui.view === 'set' && !isAdmin()) ui.view = 'days';
     render();
   } finally { store.switching = false; }
@@ -1628,7 +1755,7 @@ function sideHTML(p) {
     : `<div class="li"><span class="lk">Reembolso pago</span><span class="num">${fmt.brl(c.refund)}</span></div>
        <div class="li"><span class="lk">Repasse do canal<small class="hint" style="display:block">${esc(channelById(p.channelId)?.name || 'sem canal definido')}</small></span><span class="num pos">−${fmt.brl(c.back)}</span></div>
        ${state.cfg.cmvB ? `<div class="li"><span class="lk">CMV do produto</span><span class="num">${fmt.brl(c.cmv)}</span></div>` : ''}
-       <div class="hint" style="padding:4px 2px 0">Repasse = valor − comissão − taxa fixa − frete do vendedor (${fmt.brl(c.fee + c.sellerShip)} em taxas)</div>`;
+       <div class="hint" style="padding:4px 2px 0">Repasse = valor − tarifas do canal (${fmt.brl(c.fee)}) − envio/operacional (${fmt.brl(c.sellerShip)})${c.src === 'global' ? ` · pelos <a href="https://ajustes.meucaos.com" target="_blank" rel="noopener">Ajustes Globais</a>, vigência desde ${fmtDY(c.from)}${c.noKg ? ' · produto sem peso cadastrado (usando 0,5 kg)' : ''}` : ''}</div>`;
   return `<div class="side-b">
       <div class="between"><span class="hint">Status</span><span class="spill st-${p.status}">${p.status === 'done' ? 'Finalizada' : p.status === 'dead' ? 'Baixada' : 'Em aberto'}</span></div>
       <div class="segp">${s.map((x, i) => `<i style="background:${p.steps?.[x.k] ? (p.status === 'dead' ? COL.dead : stageColor(i / (s.length - 1))) : 'rgba(255,255,255,.06)'}"></i>`).join('')}</div>
@@ -1977,24 +2104,27 @@ function viewSet() {
     <div class="grid">
       <div><div class="label"><span class="dot"></span>Produtos · ${esc(b.name)}</div><div class="node pad">
         <p class="hint mb">Custo unitário do produto (fabricação + embalagem). No envio (A) ou na compra (B) o custo fica congelado na parceria.</p>
-        ${prods.length ? `<div class="rowline hint rl-prod"><span>Produto</span><span>SKU</span><span>Custo</span><span>Ativo</span><span></span></div>` : ''}
+        ${prods.length ? `<div class="rowline hint rl-prod"><span>Produto</span><span>SKU</span><span>Custo</span><span>Peso</span><span>Ativo</span><span></span></div>` : ''}
         ${prods.map(p => `<div class="rowline rl-prod"><input class="inp sm" value="${esc(p.name)}" data-set="products" data-id="${p.id}" data-k="name" placeholder="Nome do produto"><input class="inp sm" value="${esc(p.sku || '')}" data-set="products" data-id="${p.id}" data-k="sku" placeholder="SKU">
           <div class="affix"><span class="pre">${curSym()}</span><input class="inp sm r" inputmode="decimal" value="${inVal(p.cost)}" data-set="products" data-id="${p.id}" data-k="cost" data-n="1" placeholder="0,00"></div>
+          <div class="affix s"><input class="inp sm r" inputmode="decimal" value="${inVal(p.weightKg)}" data-set="products" data-id="${p.id}" data-k="weightKg" data-n="1" placeholder="0,0" title="Peso (maior entre o real e o cubado) — usado nas tabelas de frete"><span class="suf">kg</span></div>
           ${sw(p.active !== false, 'set-active', `data-set="products" data-id="${p.id}"`)}<button class="pill sm icon ghost" data-act="set-del" data-set="products" data-id="${p.id}" ${used.prod(p.id) ? 'disabled title="Produto com parcerias — desative em vez de excluir"' : ''} aria-label="Excluir">${ic('trash')}</button></div>`).join('')}
         <button class="addrow" data-act="set-add" data-set="products">${ic('plus')}Adicionar produto</button></div></div>
       <div><div class="label"><span class="dot" style="background:${COL.A}"></span>Logística por envio · modelo A <span class="dim">· ${esc(b.name)}</span></div><div class="node pad">
-        <p class="hint mb">Custo padrão de cada envio (separado do frete): preparação, embalagem de envio e outros. Soma sozinho em todo envio do modelo A e fica congelado quando a etapa de envio é concluída.</p>
-        <div class="fgrid" style="grid-template-columns:repeat(3,minmax(0,1fr))">${LOGI_K.map(([k, l]) => `<label class="field"><span>${l}</span><div class="affix"><span class="pre">${curSym()}</span><input class="inp r" inputmode="decimal" value="${inVal(b.logi?.[k])}" data-blogi="${k}" placeholder="0,00"></div></label>`).join('')}</div>
+        <p class="hint mb">${gLogi(b.id) ? 'Perfil marcado com estrela nos Ajustes Globais (só leitura aqui).' : ''} Custo padrão de cada envio (separado do frete): preparação, embalagem de envio e outros. Soma sozinho em todo envio do modelo A e fica congelado quando a etapa de envio é concluída.</p>
+        ${gLogi(b.id) ? (g => `<div class="gro"><div class="between"><b>${esc(g.name)}</b><a class="glink" href="https://ajustes.meucaos.com" target="_blank" rel="noopener">${ic('link', 'width:12px;height:12px')}Ajustes Globais</a></div><div class="stat-list mt">${[['man', 'Preparação / manuseio'], ['emb', 'Embalagem de envio'], ['out', 'Saída / outros']].map(([k, l]) => `<div class="li"><span class="lk">${l}</span><span class="num">${fmt.brl(g[k])}</span></div>`).join('')}</div></div>`)(gLogi(b.id)) : `<div class="fgrid" style="grid-template-columns:repeat(3,minmax(0,1fr))">${LOGI_K.map(([k, l]) => `<label class="field"><span>${l}</span><div class="affix"><span class="pre">${curSym()}</span><input class="inp r" inputmode="decimal" value="${inVal(b.logi?.[k])}" data-blogi="${k}" placeholder="0,00"></div></label>`).join('')}</div>`}
         <div class="between mt"><span class="hint">Total por envio</span><b class="num" id="logi-tot">${fmt.brl(brandLogi(b.id))}</b></div></div></div>
       <div><div class="label"><span class="dot" style="background:${COL.B}"></span>Canais de compra · modelos B e C <span class="dim" style="display:inline-flex;align-items:center;gap:6px">· ${flagOf(b)} ${esc(b.name)}</span></div><div class="node pad">
-        <p class="hint mb">Cada marca tem os seus canais e custos (produtos e pesos diferentes mudam o custo). Valores em ${COUNTRIES[b.country].cur} — ajuste por canal. Custo B e C = reembolso (produto + frete) − repasse do canal${cfg.cmvB ? ' + CMV' : ''}. Repasse = valor − comissão − taxa fixa − frete do vendedor.</p>
-        <div class="rowline hint rl-ch"><span>Canal</span><span>Comissão</span><span>Taxa fixa</span><span>Frete vendedor</span><span>Ativo</span><span></span></div>
-        ${channelsOf(b.id).map(c => `<div class="rowline rl-ch"><input class="inp sm" value="${esc(c.name)}" data-set="channels" data-id="${c.id}" data-k="name">
+        <p class="hint mb">Cada marca tem os seus canais e custos (produtos e pesos diferentes mudam o custo). Valores em ${COUNTRIES[b.country].cur}. Custo B e C = reembolso (produto + frete) − repasse do canal${cfg.cmvB ? ' + CMV' : ''}. Repasse = valor − tarifas do canal − envio/operacional. ${G() ? 'As tarifas vêm dos <a href="https://ajustes.meucaos.com" target="_blank" rel="noopener">Ajustes Globais</a> (só leitura aqui), na vigência da data da compra.' : ''}</p>
+        ${channelsOf(b.id).some(c => { const v = gVer(b.id); return !(v && (usCh(v, c) || (tplOf(c) && v.rates?.[tplOf(c)]))); }) ? `<div class="rowline hint rl-ch"><span>Canal</span><span>Comissão</span><span>Taxa fixa</span><span>Frete vendedor</span><span>Ativo</span><span></span></div>` : ''}
+        ${channelsOf(b.id).map(c => { const v = gVer(b.id), gl = v && (usCh(v, c) || (tplOf(c) && v.rates?.[tplOf(c)])); if (gl) { const pr = productOpts({ brandId: b.id })[0], pid = pr && pr[0], f = chanFees(b.id, c.id, ex, 1, pid); return `<div class="rowline rl-ch rl-g"><span class="gname">${esc(c.name)}<small>${esc(f.label || '')} · Ajustes Globais desde ${fmtDY(f.from)}</small></span>
+          <span class="hint rl-gx">Venda de ${fmt.brl(ex)}${pid ? ` de ${esc(productById(pid)?.name || '')}` : ''} → tarifas ${fmt.brl(f.fee)} · envio ${fmt.brl(f.ship)} · repasse <b>${fmt.brl(Math.max(0, ex - f.fee - f.ship))}</b></span>
+          ${sw(c.active !== false, 'set-active', `data-set="channels" data-id="${c.id}"`)}</div>`; } return `<div class="rowline rl-ch"><input class="inp sm" value="${esc(c.name)}" data-set="channels" data-id="${c.id}" data-k="name">
           <div class="affix s"><input class="inp sm r" inputmode="decimal" value="${inVal(c.feePct)}" data-set="channels" data-id="${c.id}" data-k="feePct" data-n="1"><span class="suf">%</span></div>
           <div class="affix"><span class="pre">${curSym()}</span><input class="inp sm r" inputmode="decimal" value="${inVal(c.fixedFee)}" data-set="channels" data-id="${c.id}" data-k="fixedFee" data-n="1"></div>
           <div class="affix"><span class="pre">${curSym()}</span><input class="inp sm r" inputmode="decimal" value="${inVal(c.sellerShip)}" data-set="channels" data-id="${c.id}" data-k="sellerShip" data-n="1"></div>
           ${sw(c.active !== false, 'set-active', `data-set="channels" data-id="${c.id}"`)}<button class="pill sm icon ghost" data-act="set-del" data-set="channels" data-id="${c.id}" ${used.ch(c.id) ? 'disabled title="Canal com parcerias — desative em vez de excluir"' : ''} aria-label="Excluir">${ic('trash')}</button>
-          <span class="hint rl-ex">Venda de ${fmt.brl(ex)} → repasse ${fmt.brl(Math.max(0, ex - ex * num(c.feePct) / 100 - num(c.fixedFee) - num(c.sellerShip)))}</span></div>`).join('')}
+          <span class="hint rl-ex">Venda de ${fmt.brl(ex)} → repasse ${fmt.brl(Math.max(0, ex - ex * num(c.feePct) / 100 - num(c.fixedFee) - num(c.sellerShip)))}</span></div>`; }).join('')}
         <button class="addrow" data-act="set-add" data-set="channels">${ic('plus')}Adicionar canal</button></div></div>
       <div><div class="label"><span class="dot"></span>Metas e regras</div><div class="node pad">
         <div class="fgrid"><label class="field"><span>Meta diária · A (contatos)</span><input class="inp r" inputmode="numeric" value="${cfg.metaA}" data-cfg="metaA" data-n="1"></label><label class="field"><span>Meta diária · B (contatos)</span><input class="inp r" inputmode="numeric" value="${cfg.metaB}" data-cfg="metaB" data-n="1"></label><label class="field"><span>Meta diária · C (contatos)</span><input class="inp r" inputmode="numeric" value="${cfg.metaC ?? ''}" data-cfg="metaC" data-n="1"></label></div>

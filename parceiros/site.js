@@ -27,6 +27,15 @@ export default {
     if ((req.method === 'GET' || req.method === 'HEAD') && (u.pathname === '/' || u.pathname === '/index.html'))
       return new Response(req.method === 'HEAD' ? null : HTML, { headers: { 'content-type': 'text/html; charset=utf-8', ...SEC } });
     const b = boardOf(req, u);
+    /* tarifas e logística dos Ajustes Globais (só leitura) — só para quem tem sessão neste painel */
+    if (u.pathname === '/api/ajustes' && req.method === 'GET') {
+      const ses = await worker.fetch(new Request(u.origin + '/api/session', { headers: req.headers }), envFor(env, b), ctx).then(r => r.json()).catch(() => ({}));
+      if (!ses.role) return new Response('{"error":"login"}', { status: 401, headers: { 'content-type': 'application/json' } });
+      if (!env.AJUSTES) return new Response('{"error":"sem ajustes"}', { status: 503, headers: { 'content-type': 'application/json' } });
+      const all = await env.AJUSTES.all(), c = b === 'us' ? 'US' : 'BR', tar = {};
+      for (const [k, v] of Object.entries(all)) { const m = k.match(/^tar\/(.+)__(BR|US)$/); if (m && m[2] === c) tar[m[1]] = v; }
+      return new Response(JSON.stringify({ country: c, brands: all['app/brands'] || [], tar }), { headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } });
+    }
     if (b === 'us') await seedUS(env).catch(() => (seeded = false));
     return worker.fetch(req, envFor(env, b), ctx);
   },
