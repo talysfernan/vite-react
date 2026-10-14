@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0b0d"><title>Ajustes Globais</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="icon" href="/favicon-48.png" sizes="48x48" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Ajustes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}
+:root{
+  --bg:#0b0b0d; --node:#19191c; --node-2:#1f1f23; --well:#141416; --line:#2a2a30; --line-2:#36363d;
+  --text:#ededf0; --text-2:#b6b6be; --muted:#85858e; --dim:#5a5a63;
+  --green:#4ade80; --yellow:#facc15; --red:#f87171; --blue:#60a5fa; --pink:#f472b6; --orange:#fb923c; --violet:#a78bfa;
+  --radius:18px; --r-sm:12px; --ease:cubic-bezier(.2,.8,.2,1);
+  --font:"Inter","SF Pro Display","Segoe UI Variable","Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;
+  --glass:rgba(255,255,255,.05); --glass-b:rgba(255,255,255,.11);
+  color-scheme:dark; --gut:max(28px,calc((100vw - 1560px) / 2));
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13px;line-height:1.45;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+  background-image:radial-gradient(rgba(255,255,255,.055) 1px,transparent 1.2px);background-size:22px 22px;background-attachment:fixed}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0}
+::selection{background:rgba(96,165,250,.35)}
+svg.i{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+@keyframes viewIn{from{opacity:0;transform:translateY(10px)}}
+@keyframes inL{from{opacity:0;transform:translateX(-24px)}}
+@keyframes inR{from{opacity:0;transform:translateX(24px)}}
+@keyframes pop{from{opacity:0;transform:translateY(12px) scale(.97)}}
+@keyframes bubIn{from{opacity:0;transform:translateY(8px) scale(.96)}}
+@keyframes fade{from{opacity:0}}
+.sp{flex:1}.sub{color:var(--muted);font-size:12px}
+.row{display:flex;align-items:center;gap:10px}
+
+/* ---------- topo (igual à Constelação) ---------- */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;padding:14px var(--gut);
+  background:linear-gradient(180deg,rgba(11,11,13,.96),rgba(11,11,13,.78));backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.04)}
+.top-l{display:flex;align-items:center;gap:10px;min-width:0}
+.top-r{display:flex;justify-content:flex-end;align-items:center;gap:8px}
+.pill{height:36px;padding:0 15px;border-radius:11px;background:var(--node);border:1px solid var(--line);display:inline-flex;align-items:center;gap:8px;color:var(--text-2);
+  transition:background .25s var(--ease),color .25s,border-color .25s,transform .2s var(--ease);white-space:nowrap}
+.pill:hover{background:var(--node-2);color:var(--text)}
+.pill:active{transform:scale(.97)}
+.pill.on{background:#26262b;color:var(--text);border-color:var(--line-2);box-shadow:0 0 0 1px rgba(255,255,255,.03) inset,0 8px 24px -12px rgba(0,0,0,.8)}
+.pill.white{background:#f4f4f5;color:#111;border-color:#f4f4f5;font-weight:500}
+.pill.white:hover{background:#fff}
+.pill.ghost{background:transparent}
+.pill.sm{height:30px;padding:0 11px;border-radius:9px;font-size:12px}
+.pill.icon{width:36px;padding:0;justify-content:center}.pill.sm.icon{width:30px}
+.pill.danger{color:var(--red)}
+.pill:disabled{opacity:.4;pointer-events:none}
+.seg{display:inline-flex;gap:4px;padding:4px;border-radius:13px;background:rgba(25,25,28,.7);border:1px solid var(--line)}
+.seg .pill{height:30px;border:0;background:transparent;border-radius:9px}
+.seg .pill.on{background:#2a2a30}
+.c-flags .pill{padding:0 9px}.c-flags svg{width:22px;height:15px;border-radius:3px;display:block;opacity:.45;filter:saturate(.5);transition:opacity .2s,filter .2s}.c-flags .pill.on svg,.c-flags .pill:hover svg{opacity:1;filter:none}
+.save-st{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);padding:0 6px;white-space:nowrap}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--dim);flex:none;display:inline-block}
+.dot.g{background:var(--green);box-shadow:0 0 10px rgba(74,222,128,.55)}.dot.o{background:var(--yellow)}.dot.r{background:var(--red)}
+.hero{display:flex;justify-content:center;padding:22px var(--gut) 0}
+.hero img{display:block;width:auto;max-width:min(560px,86vw);animation:viewIn .6s var(--ease) both}
+.titlebar{padding:14px var(--gut) 0;display:flex}
+.titlebar:empty{display:none}
+.title-pill{display:inline-flex;align-items:center;border-radius:999px;font-weight:600;letter-spacing:.01em;line-height:1.2;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border:1px solid rgba(255,255,255,.08);transition:all .3s var(--ease)}
+.node{background:linear-gradient(180deg,#1c1c20,#17171a);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:0 1px 0 rgba(255,255,255,.035) inset,0 24px 48px -28px rgba(0,0,0,.85)}
+.glass{background:var(--glass);border:1px solid var(--glass-b);backdrop-filter:blur(14px) saturate(1.4);-webkit-backdrop-filter:blur(14px) saturate(1.4)}
+.inp{height:38px;border-radius:10px;background:var(--well);border:1px solid var(--line);padding:0 12px;outline:none;width:100%;transition:border-color .2s,box-shadow .2s,background .2s}
+.inp:hover{border-color:var(--line-2)}
+.inp:focus{border-color:#4b4b55;box-shadow:0 0 0 3px rgba(255,255,255,.05);background:#18181b}
+.inp.sm{height:32px;border-radius:8px;padding:0 10px}
+select.inp{appearance:none;-webkit-appearance:none;padding-right:30px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23aaa' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.switch{width:34px;height:20px;border-radius:20px;background:#2a2a30;position:relative;transition:background .25s;flex:none}
+.switch::after{content:"";position:absolute;left:3px;top:3px;width:14px;height:14px;border-radius:50%;background:#85858e;transition:transform .25s var(--ease),background .25s}
+.switch.on{background:var(--green)}.switch.on::after{transform:translateX(14px);background:#0b0b0d}
+.label{display:flex;align-items:center;gap:9px;color:var(--text-2);font-size:12.5px;margin:0 0 10px 4px;min-height:24px}
+.label .dot{background:#fff;width:6px;height:6px}
+.range{width:100%;accent-color:#f4f4f5}
+.colorin{width:44px;height:32px;border:1px solid var(--line);border-radius:8px;background:var(--well);cursor:pointer;flex:none}
+main{padding:22px var(--gut) 120px}
+.view{animation:viewIn .45s var(--ease) both}.view.l{animation-name:inL}.view.r{animation-name:inR}.view.still{animation:none}
+.empty{display:grid;place-items:center;text-align:center;gap:10px;padding:56px 20px;color:var(--muted)}
+.empty svg{width:22px;height:22px;color:var(--dim)}
+.ttl{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+
+.brandbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.inp.vsel{width:auto;height:30px;font-size:12px;padding-right:30px}
+.note{display:flex;align-items:flex-start;gap:10px;padding:12px 16px;border-radius:14px;background:var(--glass);border:1px solid var(--glass-b);color:var(--text-2);margin-bottom:16px;font-size:12.5px;line-height:1.5}
+.note svg{margin-top:1px;color:var(--muted)}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
+.chc{padding:18px;display:flex;flex-direction:column;gap:12px;animation:pop .4s var(--ease) both}
+.chc.add{align-items:center;justify-content:center;flex-direction:row;color:var(--muted);border-style:dashed;background:transparent;box-shadow:none;min-height:120px;transition:color .2s,border-color .2s}
+.chc.add:hover{color:var(--text);border-color:#4a4a52}
+.chh{display:flex;align-items:center;gap:8px}.chh b{flex:1;font-size:14px;font-weight:600}
+.cname{flex:1;font-weight:600}
+.src{font-size:11.5px;color:var(--muted);line-height:1.5;margin:0}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
+.fld{display:flex;flex-direction:column;gap:5px;min-width:0}
+.fld>span{font-size:11.5px;color:var(--muted);display:flex;justify-content:space-between;gap:6px}
+.fld>span em{font-style:normal;color:var(--dim)}
+.aff{position:relative;display:flex;align-items:center}
+.aff i{position:absolute;left:10px;font-style:normal;font-size:11.5px;color:var(--dim);pointer-events:none}
+.aff i.suf{left:auto;right:10px}
+.aff .inp{height:34px;padding-left:34px;padding-right:28px}
+.aff .inp.wide{padding-right:44px}
+.inp.r{text-align:right;font-variant-numeric:tabular-nums}
+.inp:disabled{opacity:.7;cursor:default}
+.tag{display:inline-flex;align-items:center;height:22px;padding:0 9px;border-radius:999px;font-size:11px;font-weight:600;background:rgba(255,255,255,.06);color:var(--text-2);border:1px solid var(--glass-b)}
+.tag.y{background:rgba(250,204,21,.12);color:#facc15;border-color:rgba(250,204,21,.3)}
+.tsec{padding:18px;margin-bottom:16px;display:flex;flex-direction:column;gap:10px}
+.tsh{display:flex;align-items:center;gap:10px}.tsh>div{flex:1}.tsh .hint{color:var(--muted);font-size:12px}
+.tw{overflow-x:auto}
+.mls{border-collapse:separate;border-spacing:3px;min-width:860px;font-size:12px}
+.mls th{font-weight:500;color:var(--muted);text-align:left;padding:4px 6px;white-space:nowrap;font-size:11px}
+.mls td .inp{height:30px;padding:0 8px;font-size:12px;border-radius:8px}
+.mls .inp.chg{border-color:rgba(250,204,21,.55);color:#facc15;background:rgba(250,204,21,.06)}
+.ltot{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--line)}.ltot b{font-size:16px}
+.pill.star.on{color:#facc15;border-color:rgba(250,204,21,.4);background:rgba(250,204,21,.1)}
+.pill.star svg{fill:none}.pill.star.on svg{fill:currentColor}
+.lnk{font-size:12px;color:var(--blue);text-decoration:none}
+.hint{color:var(--muted);font-size:12px}
+@media (max-width:640px){.cgrid{grid-template-columns:1fr}.fgrid{grid-template-columns:1fr}}
+/* ---------- ajustes ---------- */
+.setx{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:6px}
+.spad{padding:16px 18px;margin-bottom:14px;display:flex;flex-direction:column;gap:12px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field>span{color:var(--muted);font-size:11.5px}
+
+/* ---------- modal / toast / gate ---------- */
+.scrim{position:fixed;inset:0;background:rgba(5,5,7,.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:85;display:grid;place-items:center;padding:20px;animation:fade .25s both}
+.s-ask{width:min(380px,100%);padding:22px;animation:pop .3s var(--ease) both}
+.s-ask h3{font-size:14.5px;font-weight:600;margin-bottom:18px;line-height:1.45}
+.s-ask .row{justify-content:flex-end;gap:8px}
+.s-dg{background:#f87171!important;color:#1a0505!important;border-color:#f87171!important;font-weight:600}
+.toasts{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:90;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+.toast{padding:10px 16px;border-radius:12px;background:#222226;border:1px solid var(--line-2);display:flex;gap:9px;align-items:center;box-shadow:0 20px 40px -10px rgba(0,0,0,.7);animation:pop .3s var(--ease) both}
+.toast .dot{background:var(--green)}.toast.r .dot{background:var(--red)}
+.gearfab{position:fixed;right:22px;bottom:calc(22px + env(safe-area-inset-bottom,0px));z-index:60;width:46px;height:46px;border-radius:15px;display:grid;place-items:center;color:#85858e;background:rgba(25,25,28,.85);border:1px solid #2a2a30;backdrop-filter:blur(10px);transition:color .3s,transform .5s var(--ease)}
+.gearfab:hover,.gearfab.on{color:#ededf0;transform:rotate(60deg)}.gearfab svg{width:20px;height:20px}
+#app{transition:filter .5s var(--ease)}
+body.locked #app{filter:blur(18px) saturate(.7);pointer-events:none;user-select:none}
+#gate{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px;background:rgba(8,8,10,.35);animation:fade .35s both}
+.gate-in{width:min(220px,80vw);height:54px;border-radius:16px;background:rgba(25,25,28,.85);border:1px solid var(--line-2);color:var(--text);text-align:center;font-size:22px;letter-spacing:.5em;padding-left:.5em;outline:none;-webkit-text-security:disc;animation:pop .45s var(--ease) both}
+.shake{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+
+@media (max-width:1000px){
+  .top{grid-template-columns:1fr;justify-items:stretch;padding:12px 16px;position:static}.top-l .seg{overflow-x:auto;max-width:calc(100vw - 32px);scrollbar-width:none}.top-r,.top-l{justify-content:space-between;flex-wrap:wrap}
+  main{padding:16px 16px 100px}.hero{padding:16px 16px 4px}.titlebar{padding:12px 16px 0}
+  .man{grid-template-columns:1fr}.man-nav{position:static;flex-direction:row;flex-wrap:wrap}.man-tools{top:8px}.sec{padding:22px 18px;scroll-margin-top:70px}
+  .gbar .inp,.gbar select.inp{width:100%}.gbar .go{width:100%;justify-content:center;margin-left:0}
+}
+@media (max-width:640px){.top-l .seg .pill span{display:none}.fopts{grid-template-columns:1fr}.bub{max-width:86%}.ggrid{grid-template-columns:1fr}.dm{border-radius:20px}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+@media print{.top,.titlebar,.hero,.man-nav,.man-tools,.gearfab,.cp,.toasts{display:none!important}body{background:#fff;color:#111}.man{display:block}.sec{background:none;border:0;box-shadow:none;color:#222;padding:10px 0;break-inside:avoid}.sec h2,.sec b,.sec strong,.msg{color:#111}.msg{background:#f5f5f5;border-color:#ddd}}
+
+/* glitch no logo */
+.glx{position:relative;display:inline-block;line-height:0;isolation:isolate}
+.glx>img{position:relative;z-index:1}
+.glx .gl{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;opacity:0;z-index:2;object-fit:contain}
+.glx .gl1{filter:drop-shadow(3px 0 0 rgba(255,0,110,.95)) drop-shadow(-1px 0 0 rgba(255,0,110,.6));animation:glx1 4.7s steps(1,end) infinite}
+.glx .gl2{filter:drop-shadow(-3px 0 0 rgba(0,255,240,.95)) drop-shadow(1px 0 0 rgba(0,255,240,.6));animation:glx2 6.1s steps(1,end) infinite}
+.glx>img:first-child{animation:glx0 4.7s steps(1,end) infinite}
+.glx:hover .gl1{animation-duration:.9s}.glx:hover .gl2{animation-duration:1.15s}.glx:hover>img:first-child{animation-duration:.9s}
+@keyframes glx0{0%,88%,100%{transform:none}89%{transform:translate(-2px,0) skewX(-4deg)}91%{transform:translate(2px,0)}93%{transform:translate(-1px,1px) skewX(3deg)}95%{transform:none}}
+@keyframes glx1{0%,87%{opacity:0;clip-path:inset(0 0 100% 0)}88%{opacity:1;clip-path:inset(12% 0 70% 0);transform:translate(-6px,0)}90%{clip-path:inset(55% 0 20% 0);transform:translate(5px,0)}92%{clip-path:inset(30% 0 52% 0);transform:translate(-3px,0)}94%{clip-path:inset(78% 0 4% 0);transform:translate(7px,0)}96%{clip-path:inset(4% 0 85% 0);transform:translate(-4px,0)}98%{opacity:0}100%{opacity:0}}
+@keyframes glx2{0%,90%{opacity:0;clip-path:inset(0 0 100% 0)}91%{opacity:1;clip-path:inset(62% 0 18% 0);transform:translate(6px,0)}93%{clip-path:inset(18% 0 66% 0);transform:translate(-5px,0)}95%{clip-path:inset(44% 0 38% 0);transform:translate(4px,0)}97%{clip-path:inset(85% 0 2% 0);transform:translate(-7px,0)}99%{opacity:0}100%{opacity:0}}
+body.noglitch .glx .gl{display:none}body.noglitch .glx>img:first-child{animation:none}
+@media (prefers-reduced-motion:reduce){.glx .gl{display:none}.glx>img:first-child{animation:none}}
+</style></head><body>
+<div id="app"></div><div class="toasts" id="toasts"></div>
+<script>
+'use strict';
+const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const clone = o => JSON.parse(JSON.stringify(o));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const IC = {
+  book: '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/>',
+  chat: '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-5A8 8 0 1 1 21 12z"/>',
+  spark: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/>',
+  copy: '<rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
+  check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  edit: '<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>',
+  trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+  up: '<path d="m6 15 6-6 6 6"/>', left: '<path d="m15 6-6 6 6 6"/>', down: '<path d="m6 9 6 6 6-6"/>',
+  swap: '<path d="M7 7h12l-3-3M17 17H5l3 3"/>',
+  fork: '<circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="12" r="2"/><path d="M6 7v10M6 12h4a4 4 0 0 0 4-4V7.5M16 12h-2"/>',
+  bold: '<path d="M7 4h6a4 4 0 0 1 0 8H7zM7 12h7a4 4 0 0 1 0 8H7z"/>',
+  msg: '<rect x="3" y="5" width="18" height="14" rx="3"/><path d="M7 10h10M7 14h6"/>',
+  sec: '<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M12 9v6M9 12h6"/>',
+  print: '<path d="M7 9V3h10v6M7 17H4v-7a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v7h-3"/><rect x="7" y="14" width="10" height="7" rx="1"/>',
+  refresh: '<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>',
+  paw: '<circle cx="5.5" cy="10" r="1.8"/><circle cx="9.5" cy="6" r="1.8"/><circle cx="14.5" cy="6" r="1.8"/><circle cx="18.5" cy="10" r="1.8"/><path d="M12 11c-3 0-5.5 3.5-5.5 6a2.5 2.5 0 0 0 3 2.4c1-.2 1.6-.4 2.5-.4s1.5.2 2.5.4a2.5 2.5 0 0 0 3-2.4c0-2.5-2.5-6-5.5-6z"/>',
+  file: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>',
+  cart: '<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a1.5 1.5 0 0 0 1.5 1.1h8.6a1.5 1.5 0 0 0 1.5-1.2L21 7H6"/>',
+  grid: '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/>',
+  box: '<path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/>',
+  link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
+  globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+  star: '<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
+  gear: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>'
+};
+const ic = n => `<svg class="i" viewBox="0 0 24 24">${IC[n]}</svg>`;
+
+/* =================== país / estado / sincronização =================== */
+const PAIS = { br: { name: 'Brasil' }, us: { name: 'USA' } };
+const FLAG = {
+  br: '<svg viewBox="0 0 22 15"><rect width="22" height="15" fill="#1f9d55"/><path d="M11 2 20 7.5 11 13 2 7.5z" fill="#facc15"/><circle cx="11" cy="7.5" r="3.3" fill="#1e3a8a"/></svg>',
+  us: '<svg viewBox="0 0 22 15"><rect width="22" height="15" fill="#f4f4f5"/><path d="M0 0h22v1.15H0zM0 2.3h22v1.15H0zM0 4.6h22v1.15H0zM0 6.9h22v1.15H0zM0 9.2h22v1.15H0zM0 11.5h22v1.15H0zM0 13.8h22V15H0z" fill="#dc2626"/><rect width="9.5" height="8.05" fill="#1e3a8a"/></svg>'
+};
+const BOARD0 = (() => { const q = new URLSearchParams(location.search).get('pais'); if (q === 'br' || q === 'us') return q; try { const v = localStorage.getItem('aj:board'); if (v === 'br' || v === 'us') return v; } catch (e) {} return 'br'; })();
+document.cookie = 'aj_b=' + BOARD0 + '; Path=/; Secure; SameSite=Lax; Max-Age=31536000';
+const store = { role: null, name: '', board: BOARD0, docs: {}, since: 0, queue: {}, saving: false, switching: false };
+const isAdmin = () => store.role === 'admin';
+const D = p => store.docs[p];
+async function api(path, opt = {}) {
+  let r; try { r = await fetch(path, { credentials: 'same-origin', ...opt, headers: { 'content-type': 'application/json', 'x-board': store.board, ...(opt.headers || {}) } }); } catch (e) { return { ok: false, status: 0, data: {} }; }
+  let data = {}; try { data = await r.json(); } catch (e) {}
+  if (r.status === 401) { store.role = null; window.lockScreen && lockScreen(); }
+  return { ok: r.ok, status: r.status, data };
+}
+function commit(path, body) {
+  if (body === null) delete store.docs[path]; else store.docs[path] = body;
+  store.queue[path] = body; clearTimeout(commit.t); commit.t = setTimeout(flush, 500); savest('Salvando…');
+}
+async function flush() {
+  if (store.saving) return; const ops = Object.entries(store.queue).map(([path, body]) => ({ path, body })); if (!ops.length) return;
+  store.queue = {}; store.saving = true;
+  const r = await api('/api/docs', { method: 'POST', body: JSON.stringify({ ops }) });
+  store.saving = false;
+  if (!r.ok) { ops.forEach(o => { if (!(o.path in store.queue)) store.queue[o.path] = o.body; }); savest(r.status === 403 ? 'Sem permissão' : 'Erro ao salvar'); if (r.status === 403) toast('Só o admin altera isso', 'r'); else setTimeout(flush, 4000); return; }
+  savest('Salvo'); if (Object.keys(store.queue).length) flush();
+}
+const savest = t => { const el = $('#savest'); if (el) el.innerHTML = t ? `<span class="dot ${/Salvo/.test(t) ? 'g' : /Erro|Sem/.test(t) ? 'r' : 'o'}"></span>${t}` : ''; };
+const busyTyping = () => /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || '') || document.activeElement?.isContentEditable;
+async function poll() {
+  if (document.hidden || store.switching) return;
+  const b = store.board, r = await api('/api/changes?since=' + store.since); if (!r.ok || b !== store.board) return;
+  let ch = false;
+  for (const [k, v] of Object.entries(r.data.docs || {})) { if (k in store.queue) continue; if (v === null) delete store.docs[k]; else store.docs[k] = v; ch = true; }
+  store.since = r.data.now;
+  if (ch && !busyTyping() && !$('.scrim')) renderView();
+}
+function rememberBoard(b) { try { localStorage.setItem('aj:board', b); } catch (e) {} document.cookie = 'aj_b=' + b + '; Path=/; Secure; SameSite=Lax; Max-Age=31536000'; const u = new URL(location.href); u.searchParams.set('pais', b); history.replaceState(null, '', u); }
+
+/* =================== interface =================== */
+const UI = (() => { let u = {}; try { u = JSON.parse(localStorage.getItem('aj:ui')) || {}; } catch (e) {} return { view: 'canais', brand: '', ...u, ver: {}, editing: false }; })();
+const saveUI = () => { try { localStorage.setItem('aj:ui', JSON.stringify({ view: UI.view === 'set' ? 'canais' : UI.view, brand: UI.brand })); } catch (e) {} };
+const VIEWS = [['canais', 'Canais', 'cart'], ['tabelas', 'Tabelas de frete', 'grid'], ['logistica', 'Logística', 'box'], ['uso', 'Onde é usado', 'link']];
+const CFG0 = () => ({ title: { text: 'Ajustes Globais', color: '#26262b', size: 14 }, logo: '', logoSize: 70 });
+const cfg = () => { const c = { ...CFG0(), ...(D('app/cfg') || {}) }; c.title = { ...CFG0().title, ...(typeof c.title === 'object' ? c.title : {}) }; return c; };
+function titlePillHTML() {
+  const t = cfg().title; if (!String(t.text || '').trim()) return '';
+  const c = t.color || '#26262b', rgb = c.match(/[0-9a-f]{2}/gi)?.map(h => parseInt(h, 16)) || [38, 38, 43], Lm = (0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]) / 255, fs = t.size || 14;
+  return `<span class="title-pill" style="background:${c};color:${Lm > .6 ? '#111113' : '#f4f4f5'};font-size:${fs}px;padding:${Math.round(fs * .45)}px ${Math.round(fs * 1.05)}px;box-shadow:0 0 ${Math.round(fs * 1.6)}px ${c}55">${esc(t.text)}</span>`;
+}
+function render() {
+  const c = cfg();
+  document.title = c.title.text || 'Roteiros';
+  $('#app').innerHTML = `
+  ${c.logo ? `<div class="hero"><img src="${esc(c.logo)}" alt="Logo" id="hero-logo" style="height:${+c.logoSize || 70}px"></div>` : ''}
+  <div class="titlebar">${titlePillHTML()}</div>
+  <header class="top">
+    <div class="top-l"><nav class="seg">${VIEWS.map(([k, l, i]) => `<button class="pill ${UI.view === k ? 'on' : ''}" data-act="view" data-v="${k}">${ic(i)}<span>${l}</span></button>`).join('')}</nav></div>
+    <div>${UI.view === 'set' ? `<span class="sub">ajustes</span>` : ''}</div>
+    <div class="top-r"><div class="save-st" id="savest"></div><nav class="seg c-flags" aria-label="País">${Object.keys(PAIS).map(k => `<button class="pill ${store.board === k ? 'on' : ''}" data-act="board" data-v="${k}" title="${PAIS[k].name}" aria-label="${PAIS[k].name}" aria-pressed="${store.board === k}">${FLAG[k]}</button>`).join('')}</nav></div>
+  </header>
+  <main id="view"></main>
+  ${isAdmin() ? `<button class="gearfab ${UI.view === 'set' ? 'on' : ''}" data-act="view" data-v="${UI.view === 'set' ? 'canais' : 'set'}" aria-label="Ajustes" title="Ajustes">${ic('gear')}</button>` : ''}`;
+  renderView(true);
+}
+function renderView(anim, dir) {
+  const v = $('#view'); if (!v) return;
+  const y = scrollY;
+  v.className = 'view' + (anim ? (dir ? ' ' + dir : '') : ' still');
+  v.innerHTML = UI.view === 'set' ? viewSet() : brandbar() + (({ canais: viewCanais, tabelas: viewTabelas, logistica: viewLogistica, uso: viewUso })[UI.view] || viewCanais)();
+  if (!anim) scrollTo(0, y);
+}
+function setView(t) {
+  if (t === UI.view) return;
+  if (t === 'set' && !isAdmin()) return;
+  const order = VIEWS.map(x => x[0]).concat('set'), dir = order.indexOf(t) > order.indexOf(UI.view) ? 'r' : 'l';
+  UI.view = t; saveUI();
+  $$('.top-l .pill').forEach(b => b.classList.toggle('on', b.dataset.v === t));
+  const g = $('.gearfab'); if (g) { g.classList.toggle('on', t === 'set'); g.dataset.v = t === 'set' ? 'canais' : 'set'; }
+  $('.top > div:nth-child(2)').innerHTML = t === 'set' ? `<span class="sub">ajustes</span>` : '';
+  renderView(true, dir); scrollTo(0, 0);
+}
+
+/* =================== AJUSTES GLOBAIS =================== */
+const num = v => { const n = typeof v === 'number' ? v : parseFloat(String(v ?? '').replace(',', '.')); return isFinite(n) ? n : 0; };
+const parseNum = s => { s = String(s ?? '').trim(); if (!s) return null; if (s.includes(',')) s = s.replace(/\./g, '').replace(',', '.'); const n = parseFloat(s); return isFinite(n) ? n : null; };
+const inVal = v => (v == null || v === '' ? '' : String(+(+v).toFixed(4)).replace('.', ','));
+const BRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }), USD = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+const fmt = { brl: v => (CTRY() === 'US' ? USD : BRL).format(num(v)) };
+const CTRY = () => (store.board === 'us' ? 'US' : 'BR');
+const today = () => new Date(Date.now() - 3 * 36e5).toISOString().slice(0, 10);
+const fmtD = k => k ? k.split('-').reverse().join('/') : '';
+const RESEARCHED_AT = '08/10/2026';
+/* Mercado Livre — custo de envio/operacional para MercadoLíderes, reputação verde ou sem reputação (vigente desde 02/03/2026).
+   Abaixo de R$ 79: custo operacional por unidade. A partir de R$ 79: custo do frete grátis pago pelo vendedor. */
+const ML_PRICE_BANDS = [18.99, 48.99, 78.99, 99.99, 119.99, 149.99, 199.99, Infinity];
+const ML_TABLE = [
+  [0.3, [5.65, 6.55, 7.75, 12.35, 14.35, 16.45, 18.45, 20.95]],
+  [0.5, [5.95, 6.65, 7.85, 13.25, 15.45, 17.65, 19.85, 22.55]],
+  [1, [6.05, 6.75, 7.95, 13.85, 16.15, 18.45, 20.75, 23.65]],
+  [1.5, [6.15, 6.85, 8.05, 14.15, 16.45, 18.85, 21.15, 24.65]],
+  [2, [6.25, 6.95, 8.15, 14.45, 16.85, 19.25, 21.65, 24.65]],
+  [3, [6.35, 7.95, 8.55, 15.75, 18.35, 21.05, 23.65, 26.25]],
+  [4, [6.45, 8.15, 8.95, 17.05, 19.85, 22.65, 25.55, 28.35]],
+  [5, [6.55, 8.35, 9.75, 18.45, 21.55, 24.65, 27.75, 30.75]],
+  [6, [6.65, 8.55, 9.95, 25.45, 28.55, 32.65, 35.75, 39.75]],
+  [7, [6.75, 8.75, 10.15, 27.05, 31.05, 36.05, 40.05, 44.05]],
+  [8, [6.85, 8.95, 10.35, 28.85, 33.65, 38.45, 43.25, 48.05]],
+  [9, [6.95, 9.15, 10.55, 29.65, 34.55, 39.55, 44.45, 49.35]],
+  [11, [7.05, 9.55, 10.95, 41.25, 48.05, 54.95, 61.75, 68.65]],
+  [13, [7.15, 9.95, 11.35, 42.15, 49.25, 56.25, 63.25, 70.25]],
+  [15, [7.25, 10.15, 11.55, 45.05, 52.45, 59.95, 67.45, 74.95]],
+  [17, [7.35, 10.35, 11.75, 48.55, 56.05, 63.55, 70.75, 78.65]],
+  [20, [7.45, 10.55, 11.95, 54.75, 63.85, 72.95, 82.05, 91.15]],
+  [25, [7.65, 10.95, 12.15, 64.05, 75.05, 84.75, 95.35, 105.95]],
+  [30, [7.75, 11.15, 12.35, 65.95, 75.45, 85.55, 96.25, 106.95]]
+];
+/* Amazon FBA — tarifa de logística por unidade (tabela vigente desde 01/08/2025). Abaixo de R$ 79: tarifa fixa por faixa de preço. */
+const AMZ_LOW = [[29.99, 5.65], [49.99, 5.85], [78.99, 6.05]];
+const AMZ_PRICE_BANDS = [99.99, 119.99, 149.99, 199.99, Infinity];
+const AMZ_TABLE = [
+  [0.1, [10.05, 12.05, 14.05, 15.05, 15.55]], [0.2, [10.45, 12.45, 14.45, 15.45, 16.05]], [0.3, [10.95, 12.95, 14.95, 15.95, 16.55]],
+  [0.4, [11.45, 13.45, 15.45, 16.95, 17.15]], [0.5, [11.95, 13.95, 15.95, 17.05, 17.85]], [0.75, [12.05, 14.05, 16.05, 18.45, 18.55]],
+  [1, [12.45, 14.45, 16.45, 19.05, 19.25]], [1.5, [12.95, 14.95, 16.95, 19.45, 20.35]], [2, [13.05, 15.05, 17.05, 19.95, 21.35]],
+  [3, [14.05, 16.05, 18.05, 20.05, 22.35]], [4, [15.05, 17.05, 19.05, 21.95, 23.35]], [5, [16.05, 18.05, 20.05, 22.95, 24.35]],
+  [6, [24.05, 27.05, 29.05, 30.05, 30.35]], [7, [25.05, 28.05, 30.05, 31.05, 33.35]], [8, [26.05, 29.05, 31.05, 32.05, 35.35]],
+  [9, [27.05, 30.05, 32.05, 33.05, 37.35]], [10, [35.05, 40.05, 46.05, 51.05, 51.35]]
+];
+const AMZ_EXTRA_KG = [3.05, 3.05, 3.05, 3.50, 3.50];
+const FULL_SIZES = { P: 'Pequeno · até 12×15×25 cm', M: 'Médio · até 28×36×51 cm', G: 'Grande · até 60×60×70 cm', XG: 'Extragrande' };
+
+function bandIdx(bands, p) { const i = bands.findIndex(b => p <= b + 1e-9); return i < 0 ? bands.length - 1 : i; }
+function mlTableCost(price, kg, tbl) {
+  let i = ML_TABLE.findIndex(([w]) => kg <= w + 1e-9); if (i < 0) i = ML_TABLE.length - 1; const ci = bandIdx(ML_PRICE_BANDS, price);
+  const own = Array.isArray(tbl) && Array.isArray(tbl[i]) ? tbl[i][ci] : null;
+  return own != null && own !== '' && isFinite(own) ? num(own) : ML_TABLE[i][1][ci];
+}
+const ovr = (o, d) => (o != null && o !== '' && isFinite(o) ? num(o) : d);
+function amzFbaFee(price, kg, ov) {
+  ov = ov || {};
+  if (price < 79) { let k = AMZ_LOW.findIndex(([p]) => price <= p); if (k < 0) k = AMZ_LOW.length - 1; return ovr(ov.low?.[k], AMZ_LOW[k][1]); }
+  const i = bandIdx(AMZ_PRICE_BANDS, price), cell = r => ovr(ov.tbl?.[r]?.[i], AMZ_TABLE[r][1][i]);
+  if (kg <= 10) { let r = AMZ_TABLE.findIndex(([w]) => kg <= w + 1e-9); if (r < 0) r = AMZ_TABLE.length - 1; return cell(r); }
+  return cell(AMZ_TABLE.length - 1) + Math.ceil(kg - 10) * ovr(ov.extra?.[i], AMZ_EXTRA_KG[i]);
+}
+/* tarifa fixa legada do ML (envio próprio / Flex): até R$ 12,50 = 50% do preço */
+function mlLegacyFixed(price, cfg) {
+  if (price >= 79) return 0;
+  if (price < 12.5) return price * 0.5;
+  if (price < 29) return num(cfg.legacy1); if (price < 50) return num(cfg.legacy2); return num(cfg.legacy3);
+}
+const SHOPEE_MAX = [79.99, 99.99, 199.99, 499.99, Infinity];
+function defaultChannelCfg() {
+  return {
+    shopify: { txPct: 2, pixFee: 0.99, cardNow: 4.98, card14: 4.49, card30: 3.99, payDays: 0, fixedMonth: 0, notes: '' },
+    amazon: { refPct: 12, refMin: 2, parcelPct: 1.5, storageM3: 75, storageM3Big: 37.5, payDays: 16, fixedMonth: 19, notes: '' },
+    tiktok: { lowPct: 10, lowFix: 4, highPct: 6, highFix: 6, threshold: 50, sfpPct: 6, sfpCap: 50, payDays: 10, fixedMonth: 0, notes: '' },
+    ml: { classic: 12, premium: 17, legacy1: 6.25, legacy2: 6.50, legacy3: 6.75, payDays: 11, fixedMonth: 0, notes: '' },
+    mlfull: { classic: 12, premium: 17, stP: 0.007, stM: 0.015, stG: 0.050, stXG: 0.107, payDays: 10, fixedMonth: 0, notes: '' },
+    shopee: { p1: 20, f1: 4, p2: 14, f2: 16, p3: 14, f3: 20, p4: 14, f4: 26, p5: 14, f5: 28, destPct: 2.5, payDays: 15, fixedMonth: 0, notes: '' }
+  };
+}
+
+const CFG_FIELDS = {
+  shopify: [['txPct', 'Taxa Shopify (gateway externo)', '%', 'Basic 2% · Grow 1% · Advanced 0,6%'], ['pixFee', 'Mercado Pago · Pix', '%'], ['cardNow', 'Cartão · na hora', '%'], ['card14', 'Cartão · 14 dias', '%'], ['card30', 'Cartão · 30 dias', '%'], ['payDays', 'Dinheiro na conta', 'dias'], ['fixedMonth', 'Fixo mensal (plano + apps)', 'R$']],
+  amazon: [['refPct', 'Comissão Pet', '%'], ['refMin', 'Comissão mínima', 'R$'], ['parcelPct', 'Parcelamento sem juros', '%'], ['storageM3', 'Armazenagem < 10 mil cm³', 'R$/m³'], ['storageM3Big', 'Armazenagem ≥ 10 mil cm³', 'R$/m³'], ['payDays', 'Dinheiro na conta', 'dias'], ['fixedMonth', 'Plano profissional', 'R$']],
+  tiktok: [['lowPct', 'Comissão abaixo do corte', '%'], ['lowFix', 'Tarifa por item abaixo', 'R$'], ['highPct', 'Comissão acima do corte', '%'], ['highFix', 'Tarifa por item acima', 'R$'], ['threshold', 'Corte de preço', 'R$'], ['sfpPct', 'Programa de frete', '%'], ['sfpCap', 'Teto do programa de frete', 'R$'], ['payDays', 'Dinheiro na conta', 'dias'], ['fixedMonth', 'Fixo mensal', 'R$']],
+  ml: [['classic', 'Comissão Clássico (Pet Shop)', '%'], ['premium', 'Comissão Premium (Pet Shop)', '%'], ['legacy1', 'Fixo envio próprio < R$ 29', 'R$'], ['legacy2', 'Fixo envio próprio R$ 29–50', 'R$'], ['legacy3', 'Fixo envio próprio R$ 50–79', 'R$'], ['payDays', 'Dinheiro na conta', 'dias'], ['fixedMonth', 'Fixo mensal', 'R$']],
+  mlfull: [['classic', 'Comissão Clássico', '%'], ['premium', 'Comissão Premium', '%'], ['stP', 'Armazenagem P / dia', 'R$'], ['stM', 'Armazenagem M / dia', 'R$'], ['stG', 'Armazenagem G / dia', 'R$'], ['stXG', 'Armazenagem XG / dia', 'R$'], ['payDays', 'Dinheiro na conta', 'dias'], ['fixedMonth', 'Fixo mensal', 'R$']],
+  shopee: [['p1', 'Comissão até R$ 79,99', '%'], ['f1', 'Fixo até R$ 79,99', 'R$'], ['p2', 'Comissão R$ 80–99,99', '%'], ['f2', 'Fixo R$ 80–99,99', 'R$'], ['p3', 'Comissão R$ 100–199,99', '%'], ['f3', 'Fixo R$ 100–199,99', 'R$'], ['p4', 'Comissão R$ 200–499,99', '%'], ['f4', 'Fixo R$ 200–499,99', 'R$'], ['p5', 'Comissão ≥ R$ 500', '%'], ['f5', 'Fixo ≥ R$ 500', 'R$'], ['destPct', 'Adicional campanha de destaque', '%'], ['payDays', 'Dinheiro na conta', 'dias'], ['fixedMonth', 'Fixo mensal', 'R$']]
+};
+const SOURCES = {
+  shopify: 'Shopify Payments não existe no Brasil: toda venda paga a taxa do plano (2% no Basic) mais o gateway. Mercado Pago: Pix 0,99%; cartão 4,98% na hora, 4,49% em 14 dias, 3,99% em 30 dias.',
+  amazon: 'Comissão de 12% para pet (mínimo R$ 2). FBA pela tabela oficial de 01/08/2025, por peso (real ou cubado ÷ 6000) e faixa de preço. Armazenagem R$ 75/m³/mês. Plano profissional R$ 19/mês.',
+  tiktok: 'Desde 15/07/2026: abaixo de R$ 50, 10% + R$ 4 por item; a partir de R$ 50, 6% + R$ 6. Programa de frete 6% com teto de R$ 50. Afiliado é custo extra.',
+  ml: 'Comissão 10–14% (Clássico) e 15–19% (Premium) conforme a categoria. Desde 02/03/2026 o custo de envio por unidade varia por peso e preço. Envio próprio/Flex mantém o custo fixo por unidade.',
+  mlfull: 'Mesma comissão e tabela de envio do Mercado Livre, mais armazenagem diária por unidade (P 0,007 · M 0,015 · G 0,050 · XG 0,107).',
+  shopee: 'CNPJ, desde 01/03/2026: até R$ 79,99 = 20% + R$ 4; R$ 80–99,99 = 14% + R$ 16; R$ 100–199,99 = 14% + R$ 20; R$ 200–499,99 = 14% + R$ 26; acima de R$ 500 = 14% + R$ 28. A comissão já inclui frete grátis e transação; campanhas de destaque somam 2,5%.'
+};
+
+
+const TPL_ORDER = ['ml', 'mlfull', 'shopee', 'amazon', 'tiktok', 'shopify'];
+const TPL_NAME = { ml: 'Mercado Livre', mlfull: 'Mercado Livre Full', shopee: 'Shopee', amazon: 'Amazon FBA', tiktok: 'TikTok Shop', shopify: 'Shopify + Mercado Pago' };
+/* campos extras usados pela Árvore de Sustentabilidade (simulação por conta) */
+const EXTRA_FIELDS = { shopify: [['shipAvg', 'Frete médio por pedido', 'R$'], ['returnPct', 'Devoluções', '%']], tiktok: [['shipAvg', 'Frete médio por pedido', 'R$'], ['returnPct', 'Devoluções', '%']] };
+const US_DEFAULT = () => ({ custom: [{ id: uid(), name: 'Amazon US', feePct: 15, fixedFee: 0, shipUnit: 0 }, { id: uid(), name: 'Walmart', feePct: 15, fixedFee: 0, shipUnit: 0 }, { id: uid(), name: 'TikTok Shop US', feePct: 6, fixedFee: 0, shipUnit: 0 }] });
+const LOGI_DEFAULT = () => [{ id: uid(), name: 'Galpão', man: 0, emb: 0, out: 0 }];
+const USES = [
+  ['Análise mensal', 'analise-mensal.meucaos.com', 'Tarifas de todos os canais, tabelas Mercado Envios e FBA, perfis de logística'],
+  ['Análise semanal', 'analise-semanal.meucaos.com', 'Tarifas, tabelas Mercado Envios e FBA, perfis de logística'],
+  ['Projeto Parceiros', 'parceiros-do.meucaos.com', 'Custo das compras (frentes B e C) e logística do envio direto (frente A)'],
+  ['Árvore de Sustentabilidade', 'arvore.meucaos.com', 'Tarifas por conta, frete médio, devoluções e logística']
+];
+const brands = () => (D('app/brands') || []).slice().sort((a, b) => (a.order || 0) - (b.order || 0));
+const curBrand = () => { const l = brands(); return l.find(b => b.id === UI.brand) || l[0] || null; };
+const tarPath = b => 'tar/' + b.id + '__' + CTRY();
+const versions = b => ((D(tarPath(b)) || {}).versions || []).slice().sort((x, y) => (x.from < y.from ? -1 : 1));
+const verKey = b => b.id + '__' + CTRY();
+function curVerIdx(b) {
+  const vs = versions(b); if (!vs.length) return -1;
+  const sel = UI.ver[verKey(b)]; const i = vs.findIndex(v => v.from === sel); if (i >= 0) return i;
+  let k = 0; vs.forEach((v, j) => { if (v.from <= today()) k = j; }); return k;
+}
+const curVer = b => { const i = curVerIdx(b); return i < 0 ? null : versions(b)[i]; };
+function mutVer(fn) {
+  const b = curBrand(), v0 = b && curVer(b); if (!v0) return;
+  const doc = clone(D(tarPath(b))), v = doc.versions.find(x => x.from === v0.from); fn(v); v.updated = Date.now(); commit(tarPath(b), doc);
+}
+const dis = () => (isAdmin() ? '' : 'disabled');
+
+function brandbar() {
+  const l = brands(), b = curBrand();
+  if (!l.length) return '';
+  const vs = b ? versions(b) : [], vi = b ? curVerIdx(b) : -1, live = (() => { let k = -1; vs.forEach((v, j) => { if (v.from <= today()) k = j; }); return k; })();
+  return `<div class="brandbar">${l.map(x => `<button class="pill sm ${b && x.id === b.id ? 'on' : ''}" data-act="brand" data-v="${x.id}"><span class="dot" style="background:${x.color};box-shadow:0 0 10px ${x.color}80"></span>${esc(x.name)}</button>`).join('')}
+    <span class="sp"></span>${vs.length ? `<span class="sub">vigência</span><select class="inp sm vsel" id="ver-sel" aria-label="Vigência">${vs.map((v, j) => `<option value="${v.from}" ${j === vi ? 'selected' : ''}>desde ${fmtD(v.from)}${j === live ? ' · atual' : v.from > today() ? ' · futura' : ''}</option>`).join('')}</select>
+    ${isAdmin() ? `<button class="pill sm" data-act="ver-new" title="Criar nova vigência a partir de uma data">${ic('plus')}Nova vigência</button>${vs.length > 1 ? `<button class="pill sm icon danger" data-act="ver-del" title="Excluir esta vigência">${ic('trash')}</button>` : ''}` : ''}` : ''}</div>`;
+}
+function emptyBrand(b) {
+  return `<div class="empty node">${ic('cart')}<div><b>${esc(b.name)}</b> ainda não tem tarifas para ${CTRY() === 'US' ? 'os EUA' : 'o Brasil'}.</div>${isAdmin() ? `<button class="pill white" data-act="seed">${ic('plus')}Começar com as tarifas padrão</button>` : ''}</div>`;
+}
+const field = (path, label, unit, val, hint) => `<label class="fld"><span>${esc(label)}${hint ? `<em>${esc(hint)}</em>` : ''}</span><div class="aff">${unit === 'R$' || unit === 'R$/m³' ? `<i>${CTRY() === 'US' ? 'US$' : 'R$'}</i>` : ''}<input class="inp r ${unit && unit.length > 3 ? 'wide' : ''}" inputmode="decimal" ${path} value="${inVal(val)}" ${dis()}>${unit === '%' ? '<i class="suf">%</i>' : unit && unit !== 'R$' ? `<i class="suf">${unit.replace('R$', '')}</i>` : ''}</div></label>`;
+
+function viewCanais() {
+  const b = curBrand(); if (!b) return noBrands(); const v = curVer(b); if (!v) return emptyBrand(b);
+  if (CTRY() === 'US') {
+    const L = (v.rates && v.rates.custom) || [];
+    return `<div class="note">${ic('globe')}<span>Tarifas dos canais nos EUA (${esc(b.name)}). Comissão sobre o valor da venda, tarifa fixa e fulfillment por unidade.</span></div>
+    <div class="cgrid">${L.map((c, i) => `<section class="node chc"><div class="chh"><input class="inp sm cname" data-cu="${i}.name" value="${esc(c.name)}" ${dis()}>${isAdmin() ? `<button class="pill sm icon danger" data-act="cu-del" data-i="${i}" title="Excluir canal">${ic('trash')}</button>` : ''}</div>
+      <div class="fgrid">${field(`data-cu="${i}.feePct"`, 'Comissão', '%', c.feePct)}${field(`data-cu="${i}.fixedFee"`, 'Tarifa fixa por item', 'R$', c.fixedFee)}${field(`data-cu="${i}.shipUnit"`, 'Fulfillment / envio por unidade', 'R$', c.shipUnit)}</div></section>`).join('')}
+      ${isAdmin() ? `<button class="node chc add" data-act="cu-add">${ic('plus')}Novo canal</button>` : ''}</div>`;
+  }
+  const R = v.rates || {};
+  return `<div class="note">${ic('info')}<span>Tarifas pesquisadas em ${RESEARCHED_AT}, ajustadas para ${esc(b.name)}. Os painéis de custo leem estes valores; lá eles aparecem só para consulta.</span></div>
+  <div class="cgrid">${TPL_ORDER.map(t => { const r = R[t] || {}; const F = (CFG_FIELDS[t] || []).concat(EXTRA_FIELDS[t] || []);
+    return `<section class="node chc"><div class="chh"><b>${TPL_NAME[t]}</b></div><p class="src">${esc(SOURCES[t] || '')}</p>
+      <div class="fgrid">${F.map(([k, l, u, h]) => field(`data-r="${t}.${k}"`, l, u, r[k], typeof h === 'string' ? h : '')).join('')}</div></section>`; }).join('')}</div>`;
+}
+const ML_BAND_L = ['até 18,99', '19–48,99', '49–78,99', '79–99,99', '100–119,99', '120–149,99', '150–199,99', '200+'];
+const AMZ_BAND_L = ['79–99,99', '100–119,99', '120–149,99', '150–199,99', '200+'];
+const cell = (attr, def, o) => { const ch = o != null && o !== '' && num(o) !== def; return `<input class="inp r ${ch ? 'chg' : ''}" inputmode="decimal" ${attr} value="${inVal(o != null && o !== '' ? o : def)}" title="Pesquisa: ${BRL.format(def)}" ${dis()}>`; };
+function viewTabelas() {
+  const b = curBrand(); if (!b) return noBrands(); const v = curVer(b); if (!v) return emptyBrand(b);
+  if (CTRY() === 'US') return `<div class="empty node">${ic('grid')}<div>Sem tabelas de frete para os EUA. As tarifas por unidade ficam em <b>Canais</b>.</div></div>`;
+  const t = (v.rates?.ml?.ship) || [], o = (v.rates?.amazon?.fba) || {};
+  const nML = ML_TABLE.reduce((n, r, i) => n + r[1].filter((x, j) => t[i] && t[i][j] != null && t[i][j] !== '' && num(t[i][j]) !== x).length, 0);
+  const nA = (o.low || []).filter((x, k) => x != null && x !== '' && num(x) !== AMZ_LOW[k][1]).length + AMZ_TABLE.reduce((s, r, i) => s + r[1].filter((x, j) => o.tbl?.[i]?.[j] != null && o.tbl[i][j] !== '' && num(o.tbl[i][j]) !== x).length, 0) + (o.extra || []).filter((x, j) => x != null && x !== '' && num(x) !== AMZ_EXTRA_KG[j]).length;
+  const kgL = (T, w, i) => (i ? `${String(T[i - 1][0]).replace('.', ',')}–` : 'até ') + String(w).replace('.', ',') + ' kg';
+  return `<section class="node tsec"><div class="tsh"><div><b>Frete Mercado Envios</b><span class="hint"> · custo por unidade pago por você · peso × preço de venda</span></div>${nML ? `<span class="tag y">${nML} ${nML === 1 ? 'valor ajustado' : 'valores ajustados'}</span>` : ''}</div>
+    <p class="src">Abaixo de R$ 79 é o custo operacional por unidade; a partir de R$ 79 é a sua parte do frete grátis. Vale para Coleta, Agência e Full. O peso é o maior entre o real e o cubado (C×L×A ÷ 6000). Valor em amarelo = ajustado; vazio volta para a pesquisa.</p>
+    <div class="tw"><table class="mls"><thead><tr><th>Peso · preço (R$)</th>${ML_BAND_L.map(l => `<th>${l}</th>`).join('')}</tr></thead><tbody>${ML_TABLE.map(([w, row], i) => `<tr><th>${kgL(ML_TABLE, w, i)}</th>${row.map((x, j) => `<td>${cell(`data-mls="${i},${j}"`, x, t[i] && t[i][j])}</td>`).join('')}</tr>`).join('')}</tbody></table></div></section>
+  <section class="node tsec"><div class="tsh"><div><b>Tarifa de logística FBA</b><span class="hint"> · por unidade vendida · separação, embalagem e envio ao cliente</span></div>${nA ? `<span class="tag y">${nA} ${nA === 1 ? 'valor ajustado' : 'valores ajustados'}</span>` : ''}</div>
+    <p class="src">Abaixo de R$ 79 a tarifa é fixa por faixa de preço. A partir de R$ 79 depende do peso e do preço. Acima de 10 kg soma o valor por kg adicional.</p>
+    <div class="tw"><table class="mls" style="min-width:420px"><thead><tr><th>Preço abaixo de R$ 79</th>${['até 29,99', '30–49,99', '50–78,99'].map(l => `<th>${l}</th>`).join('')}</tr></thead><tbody><tr><th>Tarifa fixa</th>${AMZ_LOW.map(([, x], k) => `<td>${cell(`data-fba="low,${k}"`, x, o.low?.[k])}</td>`).join('')}</tr></tbody></table></div>
+    <div class="tw"><table class="mls"><thead><tr><th>Peso · preço (R$)</th>${AMZ_BAND_L.map(l => `<th>${l}</th>`).join('')}</tr></thead><tbody>${AMZ_TABLE.map(([w, row], i) => `<tr><th>${kgL(AMZ_TABLE, w, i)}</th>${row.map((x, j) => `<td>${cell(`data-fba="tbl,${i},${j}"`, x, o.tbl?.[i]?.[j])}</td>`).join('')}</tr>`).join('')}
+    <tr><th>+ cada kg acima de 10</th>${AMZ_EXTRA_KG.map((x, j) => `<td>${cell(`data-fba="extra,${j}"`, x, o.extra?.[j])}</td>`).join('')}</tr></tbody></table></div></section>`;
+}
+function viewLogistica() {
+  const b = curBrand(); if (!b) return noBrands(); const v = curVer(b); if (!v) return emptyBrand(b);
+  const L = v.logi || [], def = v.logiDefault || (L[0] && L[0].id);
+  return `<div class="note">${ic('box')}<span>Custo por unidade enviada em cada galpão ou operador logístico de ${esc(b.name)}. O perfil com a estrela é o usado nos envios diretos (frente A do Projeto Parceiros).</span></div>
+  <div class="cgrid">${L.map((p, i) => `<section class="node chc"><div class="chh"><input class="inp sm cname" data-lg="${i}.name" value="${esc(p.name)}" ${dis()}><button class="pill sm icon star ${p.id === def ? 'on' : ''}" data-act="lg-def" data-i="${i}" title="Padrão para envio direto" ${dis()}>${ic('star')}</button>${isAdmin() ? `<button class="pill sm icon danger" data-act="lg-del" data-i="${i}" title="Excluir perfil">${ic('trash')}</button>` : ''}</div>
+    <div class="fgrid">${field(`data-lg="${i}.man"`, 'Preparação / manuseio', 'R$', p.man)}${field(`data-lg="${i}.emb"`, 'Embalagem de envio', 'R$', p.emb)}${field(`data-lg="${i}.out"`, 'Saída / outros', 'R$', p.out)}</div>
+    <div class="ltot"><span class="hint">Total por envio</span><b id="lt-${i}">${fmt.brl(num(p.man) + num(p.emb) + num(p.out))}</b></div></section>`).join('')}
+    ${isAdmin() ? `<button class="node chc add" data-act="lg-add">${ic('plus')}Novo perfil</button>` : ''}</div>`;
+}
+function viewUso() {
+  return `<div class="note">${ic('link')}<span>Painéis que leem estes ajustes. Neles, os custos dos canais e a logística aparecem só para consulta, com um link para cá.</span></div>
+  <div class="cgrid">${USES.map(([n, u, w]) => `<section class="node chc"><div class="chh"><b>${esc(n)}</b><span class="tag">a ligar</span></div><p class="src">${esc(w)}</p><a class="lnk" href="https://${u}" target="_blank" rel="noopener">${esc(u)}</a></section>`).join('')}</div>`;
+}
+const noBrands = () => `<div class="empty node">${ic('cart')}<div>Nenhuma marca cadastrada.</div></div>`;
+/* =================== AJUSTES =================== */
+function viewSet() {
+  if (!isAdmin()) return '<div class="empty node">Só o admin acessa os ajustes.</div>';
+  const c = cfg();
+  return `<div class="setx">
+    <div class="label"><span class="dot"></span>Título</div>
+    <div class="node spad"><div class="row"><input class="inp sm" data-cfg="title.text" value="${esc(c.title.text)}"><input type="color" class="colorin" data-cfg="title.color" value="${esc(c.title.color)}"></div><label class="field"><span>Tamanho</span><input type="range" class="range" min="10" max="30" data-cfg-num="title.size" value="${c.title.size}"></label></div>
+    <div class="label"><span class="dot"></span>Logo</div>
+    <div class="node spad"><div class="row"><label class="pill sm">${ic('plus')}${c.logo ? 'Trocar logo' : 'Enviar logo'}<input type="file" accept="image/*" id="logo-in" hidden></label>${c.logo ? '<button class="pill sm ghost" data-act="logo-del">Remover</button>' : ''}</div><label class="field"><span>Altura</span><input type="range" class="range" min="28" max="200" data-cfg-num="logoSize" value="${c.logoSize}"></label></div>
+  </div>`;
+}
+function cfgSet(path, v) {
+  const c = clone(D('app/cfg') || {}), ks = path.split('.');
+  if (ks.length === 2) c[ks[0]] = { ...cfg()[ks[0]], ...(typeof c[ks[0]] === 'object' ? c[ks[0]] : {}), [ks[1]]: v }; else c[path] = v;
+  commit('app/cfg', c);
+}
+const repaintHead = () => { const tb = $('.titlebar'); if (tb) tb.innerHTML = titlePillHTML(); const c = cfg(), img = $('#hero-logo'); if (img) { img.style.height = (+c.logoSize || 70) + 'px'; } document.title = c.title.text || 'Roteiros'; };
+
+/* =================== eventos =================== */
+function askDate(title, def) {
+  return new Promise(res => {
+    const s = document.createElement('div'); s.className = 'scrim';
+    s.innerHTML = `<div class="node s-ask"><h3>${esc(title)}</h3><input class="inp" type="date" id="ad-d" value="${def}" style="margin-bottom:16px"><div class="row"><button class="pill" data-a="0">Cancelar</button><button class="pill white" data-a="1">Criar</button></div></div>`;
+    document.body.appendChild(s); const done = v => { s.remove(); res(v); };
+    s.addEventListener('mousedown', ev => { if (ev.target === s) done(null); });
+    s.querySelectorAll('[data-a]').forEach(x => x.addEventListener('click', ev => { ev.stopPropagation(); done(x.dataset.a === '1' ? $('#ad-d', s).value : null); }));
+  });
+}
+document.addEventListener('click', async e => {
+  if (e.target.closest('.scrim')) return;
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const a = b.dataset.act;
+  if (a === 'view') return setView(b.dataset.v);
+  if (a === 'board') { if (store.board === b.dataset.v) return; store.board = b.dataset.v; rememberBoard(store.board); render(); return; }
+  if (a === 'brand') { UI.brand = b.dataset.v; saveUI(); renderView(); return; }
+  if (!isAdmin()) return;
+  const br = curBrand();
+  if (a === 'logo-del') { if (!(await ask('Remover o logo?', 'Remover'))) return; cfgSet('logo', ''); render(); return; }
+  if (a === 'seed' && br) { commit(tarPath(br), { versions: [{ from: '2026-01-01', rates: CTRY() === 'US' ? US_DEFAULT() : defaultChannelCfg(), logi: LOGI_DEFAULT(), updated: Date.now() }] }); renderView(); toast('Tarifas padrão criadas'); return; }
+  if (a === 'ver-new' && br) {
+    const v = curVer(br), d = await askDate('A partir de quando valem as novas tarifas?', today()); if (!d) return;
+    const doc = clone(D(tarPath(br))); if (doc.versions.some(x => x.from === d)) return toast('Já existe uma vigência nessa data', 'r');
+    doc.versions.push({ ...clone(v), from: d, updated: Date.now() }); commit(tarPath(br), doc); UI.ver[verKey(br)] = d; renderView(); toast('Vigência criada desde ' + fmtD(d)); return;
+  }
+  if (a === 'ver-del' && br) {
+    const v = curVer(br); if (!(await ask('Excluir a vigência desde ' + fmtD(v.from) + '?'))) return;
+    const doc = clone(D(tarPath(br))); doc.versions = doc.versions.filter(x => x.from !== v.from); commit(tarPath(br), doc); delete UI.ver[verKey(br)]; renderView(); toast('Vigência excluída'); return;
+  }
+  if (a === 'cu-add') { mutVer(v => ((v.rates ||= {}).custom ||= []).push({ id: uid(), name: 'Novo canal', feePct: 0, fixedFee: 0, shipUnit: 0 })); renderView(); return; }
+  if (a === 'cu-del') { const i = +b.dataset.i, c = curVer(br).rates.custom[i]; if (!(await ask('Excluir o canal “' + c.name + '”?'))) return; mutVer(v => v.rates.custom.splice(i, 1)); renderView(); return; }
+  if (a === 'lg-add') { mutVer(v => (v.logi ||= []).push({ id: uid(), name: 'Novo perfil', man: 0, emb: 0, out: 0 })); renderView(); return; }
+  if (a === 'lg-del') { const i = +b.dataset.i, p = curVer(br).logi[i]; if (!(await ask('Excluir o perfil “' + p.name + '”?'))) return; mutVer(v => { const [x] = v.logi.splice(i, 1); if (v.logiDefault === x.id) delete v.logiDefault; }); renderView(); return; }
+  if (a === 'lg-def') { const i = +b.dataset.i; mutVer(v => { v.logiDefault = v.logi[i].id; }); renderView(); return; }
+});
+document.addEventListener('input', e => {
+  const t = e.target, d = t.dataset || {};
+  if (d.cfg) { cfgSet(d.cfg, t.value); repaintHead(); return; }
+  if (d.cfgNum) { cfgSet(d.cfgNum, +t.value); repaintHead(); return; }
+  if (!isAdmin()) return;
+  const val = String(t.value).trim();
+  if (d.r) { const [tp, k] = d.r.split('.'); mutVer(v => { ((v.rates ||= {})[tp] ||= {})[k] = parseNum(val) ?? 0; }); return; }
+  if (d.mls) { const [i, j] = d.mls.split(',').map(Number); const x = val === '' ? null : parseNum(val); mutVer(v => { const r = ((v.rates ||= {}).ml ||= {}); ((r.ship ||= [])[i] ||= [])[j] = x; }); t.classList.toggle('chg', x != null && x !== ML_TABLE[i][1][j]); return; }
+  if (d.fba) { const [k, a2, c] = d.fba.split(','); const x = val === '' ? null : parseNum(val); let def;
+    mutVer(v => { const o = (((v.rates ||= {}).amazon ||= {}).fba ||= {}); if (k === 'tbl') { ((o.tbl ||= [])[a2] ||= [])[c] = x; def = AMZ_TABLE[a2][1][c]; } else if (k === 'low') { (o.low ||= [])[a2] = x; def = AMZ_LOW[a2][1]; } else { (o.extra ||= [])[a2] = x; def = AMZ_EXTRA_KG[a2]; } });
+    t.classList.toggle('chg', x != null && x !== def); return; }
+  if (d.cu) { const [i, k] = d.cu.split('.'); mutVer(v => { v.rates.custom[+i][k] = k === 'name' ? t.value : (parseNum(val) ?? 0); }); return; }
+  if (d.lg) { const [i, k] = d.lg.split('.'); mutVer(v => { v.logi[+i][k] = k === 'name' ? t.value : (parseNum(val) ?? 0); }); const p = curVer(curBrand()).logi[+i], el = $('#lt-' + i); if (el) el.textContent = fmt.brl(num(p.man) + num(p.emb) + num(p.out)); return; }
+});
+document.addEventListener('change', e => {
+  if (e.target.id === 'ver-sel') { UI.ver[verKey(curBrand())] = e.target.value; renderView(); return; }
+  if (e.target.id === 'logo-in' && e.target.files[0]) { const f = e.target.files[0]; if (f.size > 1e6) return toast('Logo muito grande (máx. 1 MB)', 'r'); const rd = new FileReader(); rd.onload = () => { cfgSet('logo', rd.result); render(); }; rd.readAsDataURL(f); }
+});
+/* =================== utilidades =================== */
+function toast(msg, k = 'w') { const t = document.createElement('div'); t.className = 'toast ' + k; t.innerHTML = `<span class="dot"></span>${esc(msg)}`; $('#toasts').appendChild(t); setTimeout(() => { t.style.transition = 'opacity .3s'; t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 2400); }
+function ask(title, ok = 'Excluir') {
+  return new Promise(res => {
+    const s = document.createElement('div'); s.className = 'scrim';
+    s.innerHTML = `<div class="node s-ask"><h3>${esc(title)}</h3><div class="row"><button class="pill" data-a="0">Cancelar</button><button class="pill s-dg" data-a="1">${esc(ok)}</button></div></div>`;
+    document.body.appendChild(s); const done = v => { s.remove(); document.removeEventListener('keydown', kd, true); res(v); };
+    const kd = ev => { if (ev.key === 'Escape') { ev.stopPropagation(); done(false); } };
+    document.addEventListener('keydown', kd, true);
+    s.addEventListener('mousedown', ev => { if (ev.target === s) done(false); });
+    s.querySelectorAll('[data-a]').forEach(x => x.addEventListener('click', ev => { ev.stopPropagation(); done(x.dataset.a === '1'); }));
+    setTimeout(() => s.querySelector('[data-a="0"]').focus(), 30);
+  });
+}
+
+/* =================== início =================== */
+(async () => {
+  const s = await api('/api/session');
+  if (!s.data.role) { if (window.lockScreen) lockScreen(); return; }
+  store.role = s.data.role; store.name = s.data.name || ''; rememberBoard(store.board);
+  if (s.data.glitch === false) document.body.classList.add('noglitch');
+  const d = await api('/api/docs');
+  store.docs = d.data.docs || {}; store.since = d.data.now || 0;
+  if (!VIEWS.some(v => v[0] === UI.view)) UI.view = 'canais';
+  render();
+  setInterval(poll, 12000);
+})();
+</script>
+<script>
+/* login único pelo Quintal do CAO(S) */
+(function () {
+  if (!/^https?:$/.test(location.protocol)) return;
+  const QUINTAL = 'https://meucaos.com/';
+  const emerg = /[?&]emergencia\b/.test(location.search);
+  const toQuintal = () => location.replace(QUINTAL + '?next=' + encodeURIComponent(location.origin + location.pathname));
+  function emergencyGate(down) {
+    document.getElementById('gate')?.remove();
+    const g = document.createElement('div'); g.id = 'gate';
+    g.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;gap:12px"><input class="gate-in" id="gate-pin" type="text" inputmode="numeric" autocomplete="off" aria-label="Senha de emergência"><div style="font-size:11.5px;color:#85858e">${down ? 'Quintal fora do ar · senha de emergência' : 'Senha de emergência'}</div></div>`;
+    document.body.appendChild(g);
+    const inp = document.getElementById('gate-pin'); setTimeout(() => inp.focus(), 60);
+    const tryPin = async v => { const r = await fetch('/api/login', { method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ kind: 'admin', pin: v }) }).catch(() => null); return !!(r && r.ok); };
+    inp.addEventListener('keydown', async e => { if (e.key !== 'Enter') return; if (await tryPin(inp.value.trim())) location.replace(location.pathname); else { inp.classList.remove('shake'); void inp.offsetWidth; inp.classList.add('shake'); inp.select(); } });
+  }
+  window.lockScreen = function () {
+    document.body.classList.add('locked');
+    if (emerg) return emergencyGate(false);
+    fetch('/api/session', { credentials: 'same-origin' }).then(r => r.json()).catch(() => ({ down: true })).then(d => {
+      if (d.role) { location.reload(); return; }
+      if (d.down) return emergencyGate(true);
+      toQuintal();
+    });
+  };
+})();
+/* glitch: embrulha o logo em camadas */
+(function () {
+  const wrap = () => {
+    const img = document.getElementById('hero-logo');
+    if (!img || img.parentElement.classList.contains('glx')) return;
+    const w = document.createElement('span'); w.className = 'glx';
+    img.replaceWith(w); w.appendChild(img);
+    for (const c of ['gl1', 'gl2']) { const g = img.cloneNode(); g.removeAttribute('id'); g.className = 'gl ' + c; g.alt = ''; g.setAttribute('aria-hidden', 'true'); w.appendChild(g); }
+  };
+  new MutationObserver(wrap).observe(document.body, { childList: true, subtree: true }); wrap();
+})();
+if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('/sw.js').catch(() => {});
+/* atualização automática quando sai versão nova */
+(function () {
+  if (!/^https?:$/.test(location.protocol)) return;
+  let v0 = null, want = false;
+  const idle = () => !document.querySelector('.scrim') && !document.body.classList.contains('editing') && !document.activeElement?.isContentEditable && !/INPUT|SELECT|TEXTAREA/.test(document.activeElement?.tagName || '');
+  const go = () => { if (want && idle()) location.reload(); };
+  const check = async () => { try { const r = await fetch('/api/ver', { cache: 'no-store' }); const d = await r.json(); if (!d.v) return; if (v0 === null) v0 = d.v; else if (d.v !== v0) { want = true; go(); } } catch (e) {} };
+  check(); setInterval(check, 120000); setInterval(go, 5000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) check(); });
+})();
+</script></body></html>
