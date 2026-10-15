@@ -213,7 +213,12 @@ body.editing .sec:focus-within{box-shadow:0 0 0 1px rgba(74,222,128,.35) inset}
 .fn{font-size:10.5px;color:var(--muted);min-width:22px;height:20px;padding:0 6px;border-radius:999px;background:rgba(255,255,255,.06);display:grid;place-items:center;font-variant-numeric:tabular-nums;flex:none}
 .fg-h{display:flex;align-items:center;gap:6px;padding:10px 10px 4px;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
 .fg-h .cnt{color:var(--dim)}
-.fcan{display:inline-block;font-size:10px;padding:0 6px;border-radius:999px;background:rgba(244,114,182,.14);color:#f9a8d4;margin-right:6px;font-weight:600}
+.chbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.01)}
+.chbar .lb{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.chip{height:28px;padding:0 12px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:var(--text-2);font-size:12px;cursor:pointer;backdrop-filter:blur(8px) saturate(1.4);transition:background .25s,border-color .25s,color .25s,transform .25s var(--ease)}
+.chip:hover{transform:translateY(-2px);color:var(--text)}
+.chip.on{background:rgba(244,114,182,.16);border-color:rgba(244,114,182,.45);color:#fbcfe8}
+.tk{border-bottom:1px dashed rgba(244,114,182,.55)}
 .dm-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
 .msel{height:26px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid var(--glass-b);color:var(--text-2);font-size:11.5px;padding:0 8px;outline:none;max-width:100%}
 .msel:focus{border-color:var(--line-2)}
@@ -259,12 +264,12 @@ body.editing .sec:focus-within{box-shadow:0 0 0 1px rgba(74,222,128,.35) inset}
 .fork{margin:16px 0 4px;padding:12px;border-radius:20px;border:1px dashed var(--line-2);background:rgba(255,255,255,.015);animation:bubIn .35s var(--ease) both}
 .fork-h{display:flex;align-items:center;gap:8px;margin:0 2px 10px}
 .fork-h .ttl{flex:1}
-.fopts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.fopts{display:grid;grid-template-columns:repeat(var(--n,2),1fr);gap:8px;margin-bottom:12px}
 .fopt{display:flex;align-items:flex-start;gap:9px;text-align:left;padding:10px 12px;border-radius:14px;background:var(--glass);border:1px solid var(--glass-b);color:var(--text-2);transition:background .25s,border-color .25s,color .25s,transform .25s var(--ease);cursor:pointer;min-width:0}
 .fopt:hover{transform:translateY(-2px);color:var(--text)}
 .fopt.on{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.22);color:var(--text)}
 .fopt .k{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;font-size:11px;font-weight:700;flex:none;background:rgba(255,255,255,.08)}
-.fopt.on .k.A{background:#60a5fa;color:#06121f}.fopt.on .k.B{background:#f472b6;color:#1f0614}
+.fopt.on .k.kA{background:#60a5fa;color:#06121f}.fopt.on .k.kB{background:#f472b6;color:#1f0614}.fopt.on .k.kC{background:#facc15;color:#1f1a06}.fopt.on .k.kD{background:#4ade80;color:#06140b}
 .fopt .c{flex:1;min-width:0;font-size:12.5px;line-height:1.4;outline:none;padding-top:2px;cursor:inherit}
 .fopt .c[contenteditable=true]{cursor:text}
 .fopt .c:empty::before{content:attr(data-ph);color:var(--dim)}
@@ -437,7 +442,7 @@ async function setBoard(b) {
 
 /* =================== interface =================== */
 const UI = (() => { let u = {}; try { u = JSON.parse(localStorage.getItem('rot:ui')) || {}; } catch (e) {} return { view: 'manual', g: {}, gm: 'gen', fl: {}, ...u, fk: {}, editing: false, fq: '', mchat: false }; })();
-const saveUI = () => { try { localStorage.setItem('rot:ui', JSON.stringify({ view: UI.view === 'set' ? 'manual' : UI.view, g: UI.g, gm: UI.gm, fl: UI.fl })); } catch (e) {} };
+const saveUI = () => { try { localStorage.setItem('rot:ui', JSON.stringify({ view: UI.view === 'set' ? 'manual' : UI.view, g: UI.g, gm: UI.gm, fl: UI.fl, ch: UI.ch })); } catch (e) {} };
 const VIEWS = [['manual', 'Manual', 'book'], ['fluxos', 'Fluxos do direct', 'chat'], ['gerador', 'Gerador', 'spark']];
 const CFG0 = () => ({ title: { text: 'Roteiros · ' + PAIS[store.board].name, color: '#26262b', size: 14 }, logo: '', logoSize: 70 });
 const cfg = () => { const c = { ...CFG0(), ...(D('app/cfg') || {}) }; c.title = { ...CFG0().title, ...(typeof c.title === 'object' ? c.title : {}) }; return c; };
@@ -531,7 +536,7 @@ const MANUAL0 = [
 ${msgBox('Oi! Vi o perfil de vocês e acho que a gente deu match! Se tiver interesse, chama a gente no direct pra receber um mimo especial. 😊')}
 <div class="dd"><div class="do"><h4>${mi('check')}Faça</h4><ul><li>Uma mensagem diferente a cada perfil</li><li>Cite algo do perfil ou do pet</li><li>Deixe a pessoa escolher chamar</li></ul></div><div class="dont"><h4>Não faça</h4><ul><li>Repetir a mesma abordagem em sequência</li><li>Insistir com quem não respondeu</li><li>Prometer algo antes da conversa</li></ul></div></div>
 <p class="jump">${goTab('gerador', 'spark', 'Gerar mensagens de convite')}</p>` },
-  { id: 'direct', h: `<h2>05 · A conversa no direct</h2><p>Quando o parceiro chama, a conversa já está pronta na aba <b>Fluxos do direct</b>, separada por marca e frente (na B, um fluxo para cada canal). Siga os balões da marca (clique para copiar) e, quando o parceiro responder de um jeito diferente, escolha o caminho <b>A</b> ou <b>B</b>.</p>
+  { id: 'direct', h: `<h2>05 · A conversa no direct</h2><p>Quando o parceiro chama, a conversa já está pronta na aba <b>Fluxos do direct</b>, separada por marca e frente (na B e na C, escolha o canal no topo da conversa e as mensagens se ajustam). Siga os balões da marca (clique para copiar) e, quando o parceiro responder de um jeito diferente, escolha o caminho <b>A</b> ou <b>B</b>.</p>
 <h3>O tom de cada marca</h3>
 <div class="cards c2"><div class="card"><span class="ic">${mi('paw')}</span><h4>Yucaloo</h4><p>Brincalhona e autêntica, com a atitude do gato de óculos: sabe o que é bom e não precisa gritar. Leve, com humor, mas ponderada.</p></div><div class="card"><span class="ic">${mi('gift')}</span><h4>Coco &amp; Luna</h4><p>Calorosa e cuidadosa, como quem cuida da saúde do pet de verdade. Gentil, próxima e leve.</p></div></div>
 <h3>Durante a conversa, confirme</h3><div class="chips"><span>País</span><span>Região</span><span>Pet</span><span>Interesse em participar</span></div>
@@ -549,18 +554,17 @@ ${msgBox('Oi, [nome]! O produto chegou direitinho? Se precisar de alguma orienta
 <p>Quando o vídeo for publicado, aceite o convite de collab no perfil da marca, confira a entrega e arquive o material junto da autorização.</p>` },
   { id: 'frentec', h: `<h2>07 · Frente B · conteúdo via marketplace</h2><p>A frente prioritária. O parceiro compra pelo nosso link no canal, manda o comprovante, recebe o reembolso do produto e do frete na hora e, depois de usar, posta um vídeo em collab. Não pedimos review aqui.</p>
 <div class="chips"><span>Mercado Livre</span><span>Shopee</span><span>Amazon</span><span>TikTok Shop</span></div>
-<p>Cada canal tem o seu fluxo, com o passo a passo de compra e de onde tirar o comprovante.</p>
+<p>Um fluxo só serve para todos os canais: escolha o canal no topo da conversa e o link, o caminho do comprovante e o da avaliação mudam sozinhos. Pelo canal, chega em até <b>2 dias</b>; pelo envio direto, em até <b>7 dias</b>.</p>
 <h3>Da compra ao post</h3>${hsteps(['Aceite e canal', 'Compra no canal', 'Comprovante', 'Reembolso', 'Recebimento', 'Post em collab'])}
-<div class="clock"><span class="ic">${mi('clock')}</span><div><b>Reembolso imediato</b><span>Segunda a sexta · 09h às 17h</span><p>A compra é combinada antes, dentro desse horário, para conferir o comprovante e reembolsar na hora.</p></div></div>
-<p class="callout ok">${mi('truck')}<span><b>Não quis comprar antes?</b> Sem problema: no Projeto Parceiros, use “Mudar para envio direto” na pill (ela vira Frente A, sem perder o que já foi feito) e siga o caminho B do fluxo.</span></p>
+<div class="clock"><span class="ic">${mi('clock')}</span><div><b>Reembolso imediato</b><span>Segunda a sexta · 09h às 17h</span><p>Horário do colaborador, não vai na mensagem: o parceiro aceitou, o link vai na hora, para aproveitar a empolgação.</p></div></div>
+<p class="callout ok">${mi('truck')}<span><b>Sem dinheiro agora?</b> A gente transfere antes e ele compra pelo link (caminho B do fluxo). <b>Não quer comprar, mas topa receber?</b> No Projeto Parceiros, use “Mudar para envio direto” na pill (ela vira Frente A, sem perder o que já foi feito) e siga o caminho C do fluxo.</span></p>
 <h3>Selo “Apto para review”</h3>
-<div class="cards c2"><div class="card"><span class="ic">${mi('flag')}</span><h4>Quem ganha o selo</h4><p>Parceiros de conteúdo (A ou B) com experiência muito boa. O admin marca direto ou o operador pede na pill, e o pedido vai para o admin aprovar.</p></div><div class="card"><span class="ic">${mi('check')}</span><h4>O que muda</h4><p>A pill ganha a etapa “Review publicado” depois do conteúdo. Só aí entra o convite para avaliar, no fim do fluxo.</p></div></div>
+<div class="cards c2"><div class="card"><span class="ic">${mi('flag')}</span><h4>Quem ganha o selo</h4><p>Parceiros de conteúdo (A ou B) com experiência muito boa. O admin marca direto ou o operador pede na pill, e o pedido vai para o admin aprovar.</p></div><div class="card"><span class="ic">${mi('check')}</span><h4>O que muda</h4><p>A pill ganha a etapa “Review publicado” depois do conteúdo. Só aí entra o pedido de avaliação no fim do fluxo (“vou te pedir mais uma coisa muito importante…”), com o caminho exato no app do canal.</p></div></div>
 <div class="dd"><div class="do"><h4>${mi('check')}Pode</h4><ul><li>Convidar quem tem o selo a avaliar</li><li>Pedir a experiência real</li></ul></div><div class="dont"><h4>Não pode</h4><ul><li>Convidar quem não tem o selo</li><li>Dar elogio pronto ou dizer quantas estrelas</li><li>Pedir para esconder a parceria</li></ul></div></div>` },
   { id: 'frenteb', h: `<h2>08 · Frente C · produto por review</h2><p>O parceiro compra no canal indicado, manda o comprovante e recebe o reembolso do produto e do frete. Depois de usar, conta como foi.</p>
 <div class="chips"><span>Mercado Livre</span><span>Shopee</span><span>TikTok Shop</span><span>Amazon</span></div>
 <h3>Do link ao feedback</h3>${hsteps(['Link e condições', 'Compra', 'Comprovante', 'Reembolso', 'Recebimento e uso', 'Feedback'])}
-<div class="clock"><span class="ic">${mi('clock')}</span><div><b>Reembolso imediato</b><span>Segunda a sexta · 09h às 17h</span><p>A compra é combinada antes, dentro desse horário, e o colaborador fica disponível para conferir o comprovante na hora.</p></div></div>
-${msgBox('Vamos combinar sua compra dentro do nosso horário de atendimento: de segunda a sexta, das 09h às 17h. Assim que você finalizar e nos enviar o comprovante, conferimos e fazemos o reembolso do produto e do frete imediatamente.')}
+<div class="clock"><span class="ic">${mi('clock')}</span><div><b>Reembolso imediato</b><span>Segunda a sexta · 09h às 17h</span><p>Horário do colaborador, não vai na mensagem: o parceiro aceitou, o link vai na hora.</p></div></div>
 <p class="note">A definir antes da operação: fuso horário e o que fazer com compras fora dessa janela.</p>
 <h3>Conferência do comprovante</h3>${chk(['Produto e quantidade combinados', 'Canal de compra e confirmação do pedido', 'Valor do produto e valor do frete'])}
 <p class="callout ok">${mi('check')}<span>Reembolse, mande a confirmação e registre no painel. <b>O reembolso não depende de elogio nem de avaliação publicada.</b></span></p>
@@ -635,15 +639,37 @@ const curFlow = () => { const all = flows(), id = UI.fl[store.board]; return all
 const countMsgs = st => (st || []).reduce((n, s) => n + (s.k === 'fork' ? (s.opts || []).reduce((m, o) => Math.max(m, countMsgs(o.steps)), 0) : 1), 0);
 // caminho de uma lista: '' = raiz; '2.1' = steps[2].opts[1].steps; '2.1.4.0' = ...
 const listAt = (f, p) => { let l = f.steps; if (!p) return l; const a = p.split('.').map(Number); for (let i = 0; i < a.length; i += 2) l = l[a[i]].opts[a[i + 1]].steps; return l; };
-const firstMsg = st => { for (const x of st || []) { if (x.k === 'fork') return firstMsg((x.opts[0] || {}).steps); if (x.w !== 'p' && x.x && x.x.trim()) return x.x; } return ''; };
+const firstMsg = st => { for (const x of st || []) { if (x.k === 'fork') return firstMsg((x.opts[0] || {}).steps); if (x.w !== 'p' && x.x && x.x.trim()) return sub(x.x); } return ''; };
 const FAV = ['#7c5cff,#3b82f6', '#f472b6,#fb923c', '#2dd4bf,#38bdf8', '#facc15,#f59e0b', '#a78bfa,#f472b6', '#4ade80,#2dd4bf'];
 const favBg = t => { let h = 0; for (const c of String(t || '')) h = (h * 31 + c.charCodeAt(0)) >>> 0; return FAV[h % FAV.length]; };
-const fItem = (x, on) => `<button class="fi ${on ? 'on' : ''}" data-act="ftab" data-id="${x.id}" ${isAdmin() ? 'draggable="true"' : ''}><span class="fav" style="background:${FRENTE[x.frente] ? FRENTE[x.frente].bg : `linear-gradient(135deg,${favBg(x.t || x.id)})`}">${esc(FRENTE[x.frente] ? x.frente : ((x.t || 'N').trim()[0] || 'N').toUpperCase())}</span><span class="fit"><b>${esc(x.t || 'Novo fluxo')}</b><small>${x.canal ? `<span class="fcan">${esc(canalName(x.canal))}</span>` : ''}${esc(firstMsg(x.steps) || 'Sem mensagens')}</small></span><span class="fn">${countMsgs(x.steps)}</span></button>`;
+const fItem = (x, on) => `<button class="fi ${on ? 'on' : ''}" data-act="ftab" data-id="${x.id}" ${isAdmin() ? 'draggable="true"' : ''}><span class="fav" style="background:${FRENTE[x.frente] ? FRENTE[x.frente].bg : `linear-gradient(135deg,${favBg(x.t || x.id)})`}">${esc(FRENTE[x.frente] ? x.frente : ((x.t || 'N').trim()[0] || 'N').toUpperCase())}</span><span class="fit"><b>${esc(x.t || 'Novo fluxo')}</b><small>${esc(firstMsg(x.steps) || 'Sem mensagens')}</small></span><span class="fn">${countMsgs(x.steps)}</span></button>`;
 /* marca, frente e canal de cada fluxo (a lista agrupa por marca) */
 const FMARCAS = [['yucaloo', 'Yucaloo'], ['coco', 'Coco & Luna'], ['', 'Geral']];
 const FRENTE = { A: { n: 'A · Conteúdo via envio direto', bg: 'linear-gradient(135deg,#a78bfa,#7c5cff)' }, B: { n: 'B · Conteúdo via marketplace', bg: 'linear-gradient(135deg,#f472b6,#fb923c)' }, C: { n: 'C · Produto por review', bg: 'linear-gradient(135deg,#22d3ee,#3b82f6)' } };
 const CANAIS = () => store.board === 'us' ? [['amazon', 'Amazon US'], ['walmart', 'Walmart'], ['tiktok', 'TikTok Shop US']] : [['ml', 'Mercado Livre'], ['shopee', 'Shopee'], ['amazon', 'Amazon'], ['tiktok', 'TikTok Shop']];
 const canalName = k => (CANAIS().find(c => c[0] === k) || [k, k])[1];
+/* um fluxo de marketplace serve para todos os canais: {canal}, {no canal}, {comprovante} e {avaliação} trocam conforme o canal escolhido */
+const CH_TXT = {
+  br: {
+    ml: ['Mercado Livre', 'no Mercado Livre', 'abre “Minhas compras”, entra na compra e manda o print com o número da compra, o valor do produto e o frete 🧾', '1. Abre o app do Mercado Livre e vai em “Minhas compras”\n2. Seleciona a compra da [produto]\n3. Toca em “Opinar sobre o produto”, dá as estrelas e escreve como foi o produto e como ele funcionou aí no dia a dia'],
+    shopee: ['Shopee', 'na Shopee', 'vai em “Eu” › “Minhas compras”, abre o pedido e manda o print com o número, o valor do produto e o frete 🧾', '1. Abre a Shopee e vai em “Eu” › “Minhas compras”\n2. Seleciona a compra da [produto] (se ainda não confirmou, toca em “Pedido recebido”)\n3. Toca em “Avaliar”, dá as estrelas e escreve como foi o produto e como ele funcionou aí no dia a dia'],
+    amazon: ['Amazon', 'na Amazon', 'vai em “Seus pedidos” › “Ver detalhes do pedido” e manda o print com o número do pedido e o total pago 🧾', '1. Abre a Amazon e vai em “Seus pedidos”\n2. Seleciona a compra da [produto]\n3. Toca em “Escrever uma avaliação do produto”, dá as estrelas e escreve como foi o produto e como ele funcionou aí no dia a dia'],
+    tiktok: ['TikTok Shop', 'no TikTok Shop', 'abre o seu perfil › “Pedidos”, entra no pedido e manda o print com o número, o valor do produto e o frete 🧾', '1. Abre o TikTok e vai no seu perfil › “Pedidos”\n2. Seleciona a compra da [produto]\n3. Toca em “Avaliar”, dá as estrelas e escreve como foi o produto e como ele funcionou aí no dia a dia']
+  },
+  us: {
+    amazon: ['Amazon', 'on Amazon', 'go to “Your Orders” › “View order details” and send a screenshot with the order number and the total paid 🧾', '1. Open Amazon and go to “Your Orders”\n2. Select the [product] order\n3. Tap “Write a product review”, give the stars and tell how the product worked for you day to day'],
+    walmart: ['Walmart', 'on Walmart', 'go to “Account” › “Purchase history”, open the order and send a screenshot with the order number and the total paid 🧾', '1. Open Walmart and go to “Account” › “Purchase history”\n2. Select the [product] order\n3. Tap “Write a review”, give the stars and tell how the product worked for you day to day'],
+    tiktok: ['TikTok Shop', 'on TikTok Shop', 'open your profile › “Orders”, open the order and send a screenshot with the order number and the total paid 🧾', '1. Open TikTok and go to your profile › “Orders”\n2. Select the [product] order\n3. Tap “Leave a review”, give the stars and tell how the product worked for you day to day']
+  }
+};
+const TK_RE = /\{(canal|no canal|comprovante|avaliação)\}/g, TK_I = { canal: 0, 'no canal': 1, comprovante: 2, 'avaliação': 3 };
+const curCh = () => { const l = CANAIS(), k = (UI.ch || {})[store.board]; return l.some(c => c[0] === k) ? k : l[0][0]; };
+const chTxt = () => (CH_TXT[store.board === 'us' ? 'us' : 'br'])[curCh()];
+const hasTk = st => /\{(canal|no canal|comprovante|avaliação)\}/.test(JSON.stringify(st || []));
+const sub = x => String(x || '').replace(TK_RE, (m, k) => chTxt()[TK_I[k]]);
+const subH = x => esc(x).replace(TK_RE, (m, k) => `<span class="tk">${esc(chTxt()[TK_I[k]])}</span>`);
+const usesCh = f => f && (f.frente === 'B' || f.frente === 'C' || hasTk(f.steps));
+const chBar = f => usesCh(f) ? `<div class="chbar" id="chbar"><span class="lb">Canal</span>${CANAIS().map(([k, n]) => `<button class="chip ${k === curCh() ? 'on' : ''}" data-act="ch" data-v="${k}">${n}</button>`).join('')}</div>` : '';
 function flist(all, f) {
   const q = (UI.fq || '').trim().toLowerCase(), l = q ? all.filter(x => JSON.stringify([x.t, x.steps]).toLowerCase().includes(q)) : all;
   if (!l.length) return `<div class="fl-empty">Nenhum fluxo encontrado.</div>`;
@@ -654,9 +680,10 @@ function dmHTML(f) {
   if (!f) return `<div class="empty node">${ic('chat')}<div>${A ? 'Crie o primeiro fluxo em <b>Novo</b> e monte a conversa do direct.' : 'Nenhum fluxo ainda.'}</div></div>`;
   return `<div class="dm node" data-fid="${f.id}">
       <div class="dm-h"><button class="dm-back" data-act="fback" aria-label="Voltar para os fluxos">${ic('left')}</button><span class="dm-av"><span>${ic('paw')}</span></span>
-        <div class="dm-who">${A ? `<input class="dm-t" id="fl-t" placeholder="Nome do fluxo" value="${esc(f.t || '')}" autocomplete="off">` : `<b>${esc(f.t || 'Fluxo')}</b>`}${A ? `<div class="dm-meta"><select class="msel" data-fm="marca" aria-label="Marca">${FMARCAS.map(([k, n]) => `<option value="${k}" ${(f.marca || '') === k ? 'selected' : ''}>${n}</option>`).join('')}</select><select class="msel" data-fm="frente" aria-label="Frente"><option value="">Sem frente</option>${Object.entries(FRENTE).map(([k, v]) => `<option value="${k}" ${f.frente === k ? 'selected' : ''}>${v.n}</option>`).join('')}</select>${f.frente === 'B' ? `<select class="msel" data-fm="canal" aria-label="Canal"><option value="">Canal…</option>${CANAIS().map(([k, n]) => `<option value="${k}" ${f.canal === k ? 'selected' : ''}>${n}</option>`).join('')}</select>` : ''}</div>` : `<small>${[FMARCAS.find(m => m[0] === (f.marca || ''))?.[1], FRENTE[f.frente]?.n, f.canal && canalName(f.canal)].filter(Boolean).map(esc).join(' · ') || 'clique numa mensagem da marca para copiar'}</small>`}</div>
+        <div class="dm-who">${A ? `<input class="dm-t" id="fl-t" placeholder="Nome do fluxo" value="${esc(f.t || '')}" autocomplete="off">` : `<b>${esc(f.t || 'Fluxo')}</b>`}${A ? `<div class="dm-meta"><select class="msel" data-fm="marca" aria-label="Marca">${FMARCAS.map(([k, n]) => `<option value="${k}" ${(f.marca || '') === k ? 'selected' : ''}>${n}</option>`).join('')}</select><select class="msel" data-fm="frente" aria-label="Frente"><option value="">Sem frente</option>${Object.entries(FRENTE).map(([k, v]) => `<option value="${k}" ${f.frente === k ? 'selected' : ''}>${v.n}</option>`).join('')}</select></div>` : `<small>${[FMARCAS.find(m => m[0] === (f.marca || ''))?.[1], FRENTE[f.frente]?.n].filter(Boolean).map(esc).join(' · ') || 'clique numa mensagem da marca para copiar'}</small>`}</div>
         ${A ? `<button class="gb danger" data-act="del-flow" title="Excluir fluxo">${ic('trash')}</button>` : ''}
       </div>
+      ${chBar(f)}
       <div class="dm-b" id="dm-b">${level(f.steps || [], '')}</div>
       <div class="dm-f"><span class="fake">${store.board === 'us' ? 'Message…' : 'Mensagem…'}</span></div>
     </div>`;
@@ -679,7 +706,7 @@ function level(steps, p) {
     const w = s.w === 'p' ? 'p' : 'm';
     h += `<div class="br ${w}">
       ${A ? `<div class="bt glass"><button data-act="b-copy" data-p="${p}" data-i="${i}" title="Copiar">${ic('copy')}</button><button data-act="b-side" data-p="${p}" data-i="${i}" title="Trocar lado">${ic('swap')}</button><button data-act="b-up" data-p="${p}" data-i="${i}" title="Subir" ${i ? '' : 'disabled'}>${ic('up')}</button><button class="dg" data-act="b-del" data-p="${p}" data-i="${i}" title="Excluir">${ic('trash')}</button></div>` : ''}
-      <div class="bub ${w} ${!A && w === 'm' ? 'cpy' : ''}" ${A ? `contenteditable="true" data-bub data-p="${p}" data-i="${i}"` : w === 'm' ? `data-act="b-copy" data-p="${p}" data-i="${i}" title="Clique para copiar"` : ''} data-ph="${w === 'p' ? 'Resposta do parceiro…' : 'Mensagem da marca…'}">${esc(s.x)}</div>
+      <div class="bub ${w} ${!A && w === 'm' ? 'cpy' : ''}" ${A ? `contenteditable="true" data-bub data-p="${p}" data-i="${i}"` : w === 'm' ? `data-act="b-copy" data-p="${p}" data-i="${i}" title="Clique para copiar"` : ''} data-ph="${w === 'p' ? 'Resposta do parceiro…' : 'Mensagem da marca…'}">${subH(s.x)}</div>
     </div>`;
   });
   if (!steps.length && !A) h += `<div class="empty" style="padding:30px">Sem mensagens.</div>`;
@@ -690,7 +717,7 @@ function forkHTML(s, p, i) {
   const A = isAdmin(), sel = Math.min(UI.fk[s.id] || 0, s.opts.length - 1), sub = (p ? p + '.' : '') + i + '.' + sel;
   return `<div class="fork">
     <div class="fork-h">${ic('fork')}<span class="ttl">a resposta do parceiro pode variar</span>${A ? `<button class="gb danger" data-act="del-fork" data-p="${p}" data-i="${i}" title="Excluir caminhos">${ic('trash')}</button>` : ''}</div>
-    <div class="fopts">${s.opts.map((o, j) => `<div class="fopt ${j === sel ? 'on' : ''}" role="button" tabindex="0" data-act="fsel" data-fid="${s.id}" data-j="${j}"><span class="k ${'AB'[j]}">${'AB'[j]}</span><span class="c" ${A ? `contenteditable="true" data-cond data-p="${p}" data-i="${i}" data-j="${j}"` : ''} data-ph="Se o parceiro…">${esc(o.c)}</span></div>`).join('')}</div>
+    <div class="fopts" style="--n:${s.opts.length}">${s.opts.map((o, j) => `<div class="fopt ${j === sel ? 'on' : ''}" role="button" tabindex="0" data-act="fsel" data-fid="${s.id}" data-j="${j}"><span class="k k${'ABCD'[j]}">${'ABCD'[j]}</span><span class="c" ${A ? `contenteditable="true" data-cond data-p="${p}" data-i="${i}" data-j="${j}"` : ''} data-ph="Se o parceiro…">${subH(o.c)}</span></div>`).join('')}</div>
     ${level(s.opts[sel].steps, sub)}
   </div>`;
 }
@@ -850,8 +877,9 @@ document.addEventListener('click', async e => {
   if (a === 'fback') { UI.mchat = false; $('.fx').classList.remove('mchat'); return; }
   if (a === 'new-flow' && A) { const id = uid(); commit('fluxo/' + id, { t: '', n: Math.max(0, ...flows().map(x => x.n || 0)) + 1, steps: [] }); UI.fl[store.board] = id; UI.mchat = true; UI.fq = ''; saveUI(); renderView(); $('#fl-t')?.focus(); return; }
   if (a === 'del-flow' && A) { const f = curFlow(); if (!f || !(await ask('Excluir o fluxo “' + (f.t || 'Novo fluxo') + '”?'))) return; commit('fluxo/' + f.id, null); delete UI.fl[store.board]; UI.mchat = false; renderView(); toast('Fluxo excluído'); return; }
+  if (a === 'ch') { UI.ch = { ...(UI.ch || {}), [store.board]: b.dataset.v }; saveUI(); $$('#chbar .chip').forEach(x => x.classList.toggle('on', x === b)); const f = curFlow(), body = $('#dm-b'); if (f && body) body.innerHTML = level(f.steps || [], ''); updTab(); return; }
   if (a === 'fsel') { UI.fk[b.dataset.fid] = +b.dataset.j; const f = curFlow(); const body = $('#dm-b'); if (f && body) body.innerHTML = level(f.steps || [], ''); return; }
-  if (a === 'b-copy') { const f = curFlow(), s = f && listAt(f, b.dataset.p)[+b.dataset.i]; if (s && s.x && await copyText(s.x)) toast('Mensagem copiada'); return; }
+  if (a === 'b-copy') { const f = curFlow(), s = f && listAt(f, b.dataset.p)[+b.dataset.i]; if (s && s.x && await copyText(sub(s.x))) toast('Mensagem copiada'); return; }
   if (A && /^(add-p|add-m|add-fork)$/.test(a)) {
     const p = b.dataset.p;
     mutFlow(f => { const l = listAt(f, p); if (a === 'add-fork') l.push({ k: 'fork', id: uid(), opts: [{ c: '', steps: [{ w: 'p', x: '' }] }, { c: '', steps: [{ w: 'p', x: '' }] }] }); else l.push({ w: a === 'add-p' ? 'p' : 'm', x: '' }); });
@@ -860,7 +888,7 @@ document.addEventListener('click', async e => {
   if (A && a === 'b-side') { const p = b.dataset.p, i = +b.dataset.i; mutFlow(f => { const s = listAt(f, p)[i]; s.w = s.w === 'p' ? 'm' : 'p'; }); return; }
   if (A && a === 'b-up') { const p = b.dataset.p, i = +b.dataset.i; if (!i) return; mutFlow(f => { const l = listAt(f, p);[l[i - 1], l[i]] = [l[i], l[i - 1]]; }); return; }
   if (A && a === 'b-del') { const p = b.dataset.p, i = +b.dataset.i, f = curFlow(), s = f && listAt(f, p)[i]; if (s && s.x.trim() && !(await ask('Excluir esta mensagem?'))) return; mutFlow(f => listAt(f, p).splice(i, 1)); return; }
-  if (A && a === 'del-fork') { const p = b.dataset.p, i = +b.dataset.i; if (!(await ask('Excluir os caminhos A e B e as mensagens dentro deles?'))) return; mutFlow(f => listAt(f, p).splice(i, 1)); return; }
+  if (A && a === 'del-fork') { const p = b.dataset.p, i = +b.dataset.i; if (!(await ask('Excluir estes caminhos e as mensagens dentro deles?'))) return; mutFlow(f => listAt(f, p).splice(i, 1)); return; }
   // gerador
   if (a === 'gm') { UI.gm = b.dataset.v; saveUI(); renderView(); return; }
   if (a === 'gen') { generate(); $('#ggrid').innerHTML = gcards(new Set(used())); return; }
@@ -889,6 +917,10 @@ document.addEventListener('change', e => {
   if (e.target.id === 'g-marca') { UI.g = { ...(UI.g || {}), marca: e.target.value }; saveUI(); generate(); $('#ggrid').innerHTML = gcards(new Set(used())); }
   if (e.target.id === 'logo-in' && e.target.files[0]) { const f = e.target.files[0]; if (f.size > 1e6) return toast('Logo muito grande (máx. 1 MB)', 'r'); const rd = new FileReader(); rd.onload = () => { cfgSet('logo', rd.result); render(); }; rd.readAsDataURL(f); }
 });
+/* admin edita o texto com as marcações ({canal}…); fora do foco mostra o texto do canal escolhido */
+const rawOf = t => { const f = curFlow(), s = f && listAt(f, t.dataset.p)[+t.dataset.i]; return !s ? null : 'cond' in t.dataset ? (s.opts[+t.dataset.j] || {}).c || '' : s.x || ''; };
+document.addEventListener('focusin', e => { const t = e.target; if (!t.dataset || !('bub' in t.dataset || 'cond' in t.dataset)) return; const r = rawOf(t); if (r != null && r !== t.innerText) { t.innerText = r; placeEnd(t); } });
+document.addEventListener('focusout', e => { const t = e.target; if (!t.dataset || !('bub' in t.dataset || 'cond' in t.dataset)) return; const r = rawOf(t); if (r != null && /\{(canal|no canal|comprovante|avaliação)\}/.test(r)) t.innerHTML = subH(r); });
 document.addEventListener('paste', e => {
   const ed = e.target.closest && e.target.closest('[contenteditable=true]'); if (!ed) return;
   e.preventDefault(); const t = (e.clipboardData || window.clipboardData).getData('text/plain'); document.execCommand('insertText', false, t);
