@@ -764,6 +764,50 @@ const BANK = {
   }
 };
 const EMO = { gato: ['🐱', '😻', '🐾', '💚', '✨', '🫶', '😺', '💌'], cao: ['🐶', '🐾', '🦴', '💛', '✨', '🫶', '💌'], pet: ['🐾', '💚', '✨', '🫶', '😊', '💌'] };
+/* tom de cada marca: Yucaloo brincalhona, com o gato de óculos (e marca americana no Brasil); Coco & Luna calorosa e cuidadosa */
+const TONE = {
+  'Yucaloo': {
+    pt: {
+      open: ['wow', 'gente', 'socorro', 'aaaa', 'pera', 'eita', 'ok', 'parei tudo', 'calma', 'olha isso', 'mds', 'wow wow'],
+      hook: ['{p} passou na inspeção do nosso gato de óculos', 'nosso gato de óculos ajeitou os óculos pra ver {p} melhor', '{p} tem pose de quem manda na casa (e manda mesmo)', 'wow, {p} é muita personalidade num gato só', 'o gato de óculos aprovou {p}, e ele não aprova qualquer um', '{p} merece uma caixinha à altura', 'a gente viu {p} e o gato de óculos até tirou os óculos', '{p} dá opinião sobre tudo e a gente respeita', 'wow, que atitude tem {p}', 'o feed de vocês tem muito gato de personalidade e a gente ama', 'dá pra ver que {p} é quem manda aí', '{p} tem cara de quem exige o melhor da casa'],
+      match: ['o gato de óculos sentiu match', 'deu match com a gente, certeza', 'isso aqui é match de gato pra gato', 'match aprovado pelo gato de óculos', 'a gente sente que deu match', 'é match, o gato de óculos confirmou'],
+      offer: ['a gente quer mandar uma areia de mandioca de verdade pra {p2} testar', 'tem uma caixinha nova esperando {p2}', 'a gente quer saber o que {p2} acha da nossa areia de mandioca', 'temos um mimo de raiz pra {p2} (literalmente, é de mandioca)', 'separamos uma Yucaloo pra {p2} testar', 'queremos ver {p2} aprovando a nossa areia'],
+      brand: ['aqui é a {m}, a marca americana da areia de mandioca', 'oi, {m} aqui (com o nosso gato de óculos)', '{m} passando, de óculos e tudo', 'é a {m}, a areia de mandioca de verdade', 'oi oi, aqui é a {m}'],
+      tail: ['que o gato de óculos explica', 'pra receber uma caixinha nova', 'que tem areia de mandioca esperando', 'que a gente conta tudo', 'pra gente te contar a novidade'],
+      emo: ['😼', '🐱', '🤓', '👓', '🌿', '💚', '✨', '🐾']
+    },
+    en: {
+      open: ['wow', 'omg', 'ok wait', 'hiii', 'stop', 'hold on', 'wow wow'],
+      hook: ['{p} passed our cat-in-glasses inspection', 'our cat in glasses fixed his glasses to see {p} better', 'wow, {p} has so much personality', '{p} clearly runs the house and we respect it', 'our cat in glasses approved {p}, and he is picky', '{p} deserves a litter box upgrade fr', '{p} is giving boss energy', 'your feed is full of cats with attitude and we love it'],
+      match: ['the cat in glasses says it’s a match', 'cat-approved match', "it's a match fr", 'match confirmed by the cat in glasses'],
+      offer: ['we wanna send {p2} some real cassava litter to try', "there's a fresh litter box upgrade waiting for {p2}", 'we saved a Yucaloo for {p2}', "we'd love to hear what {p2} thinks of our cassava litter"],
+      brand: ['{m} here, the cassava litter people', 'hey, {m} here (glasses on)', "it's {m}"],
+      tail: ['and our cat in glasses will explain', 'for a litter box upgrade', 'for a little gift'],
+      emo: ['😼', '🐱', '🤓', '👓', '🌿', '💚', '✨']
+    }
+  },
+  'Coco & Luna': {
+    pt: {
+      open: ['oi', 'oi oi', 'aaaa', 'que amor', 'gente', 'ai que fofura', 'olha só', 'oi gente', 'ai ai'],
+      hook: ['{p} tem um olhar que derrete a gente', 'dá pra ver o carinho que vocês têm com {p}', 'que cuidado lindo que vocês têm com {p}', 'dá pra sentir daqui o quanto vocês amam {p}', 'o perfil de vocês é um abraço quentinho', '{p} merece todo o cuidado do mundo', 'a gente se encantou com {p}', 'que alegria ver {p} tão feliz', 'esse amor entre vocês e {p} é lindo demais', '{p} tem uma energia tão boa', 'impossível não sorrir vendo {p}'],
+      match: ['sentimos que deu match', 'deu match de coração', 'a gente sente que tem tudo a ver', 'é match, com muito carinho', 'rolou um match aqui'],
+      offer: ['queremos cuidar de {p2} com um mimo nosso', 'separamos um carinho especial pra {p2}', 'temos um presentinho pra cuidar de {p2} por dentro', 'queremos mandar um mimo cheio de cuidado pra vocês', 'tem um suplemento feito com carinho esperando {p2}', 'queremos fazer parte do cuidado com {p2}'],
+      brand: ['aqui é a {m}', 'oi, aqui é a {m}, com muito carinho', 'é a {m} passando pra deixar um carinho', 'oi oi, {m} aqui'],
+      tail: ['pra receber um mimo cheio de carinho', 'que a gente conta tudo com calma', 'que tem um carinho esperando', 'pra gente te contar a novidade'],
+      emo: ['💛', '🐾', '🥰', '✨', '🫶', '🌼', '💌']
+    },
+    en: {
+      open: ['hi', 'hiii', 'aww', 'omg', 'hey hey', 'aww wait'],
+      hook: ['the love you have for {p} shows', '{p} melts our hearts', 'your page feels like a warm hug', '{p} deserves all the care in the world', "we're in love with {p}", '{p} has the sweetest energy', "can't stop smiling at {p}"],
+      match: ['we feel a match', 'a match from the heart', 'such a match', 'we think it’s a match'],
+      offer: ["we'd love to send {p2} a little care package", 'we saved something special to care for {p2}', 'we have a gift to care for {p2} from the inside', "we'd love to be part of {p2}'s care"],
+      brand: ['{m} here', 'hi from {m}, with love', "it's {m}"],
+      tail: ['for a little care package', "and we'll tell you everything", 'for a special gift'],
+      emo: ['💛', '🐾', '🥰', '✨', '🫶', '🌼']
+    }
+  }
+};
+const petOf = o => o.marca === 'Yucaloo' ? 'gato' : o.pet;
 const TPL = [
   b => `${b.open}, ${b.hook}! ${b.match}. ${b.ctaq} ${b.tail} ${b.e}`,
   b => `${b.hook} ${b.e || '!'} ${b.offer}, ${b.cta}!`,
@@ -784,13 +828,13 @@ function tidy(s, lower) {
   return s.replace(/(^|[.!?]\s+)([a-zà-ú])/g, (m, a, c) => a + c.toUpperCase());
 }
 function makeOne(o) {
-  const L = BANK[o.lang], pet = o.pet, nome = o.nome.trim();
+  const T = (TONE[o.marca] || {})[o.lang] || {}, L = { ...BANK[o.lang], ...T }, pet = petOf(o), nome = o.nome.trim();
   const p = nome && Math.random() < .7 ? nome : pick(L.pn[pet]), p2 = nome && Math.random() < .7 ? nome : pick(L.pn2[pet]);
   const cta = pick(L.cta), m = o.marca;
   const sub = s => s.replace(/\{p\}/g, p).replace(/\{p2\}/g, p2).replace(/\{cta\}/g, cta).replace(/\{m\}/g, m);
-  const b = { open: pick(L.open), hook: sub(pick(L.hook)), match: pick(L.match), offer: sub(pick(L.offer)), cta, ctaq: sub(pick(L.ctaq)), brand: m ? sub(pick(L.brand)) : '', tail: pick(L.tail), m, e: o.emo ? (Math.random() < .3 ? shuffle(EMO[pet]).slice(0, 2).join('') : pick(EMO[pet])) : '' };
+  const b = { open: pick(L.open), hook: sub(pick(L.hook)), match: pick(L.match), offer: sub(pick(L.offer)), cta, ctaq: sub(pick(L.ctaq)), brand: m ? sub(pick(L.brand)) : '', tail: pick(L.tail), m, e: o.emo ? (Math.random() < .3 ? shuffle(T.emo || EMO[pet]).slice(0, 2).join('') : pick(T.emo || EMO[pet])) : '' };
   let s = pick(TPL)(b);
-  if (o.lang === 'pt') s = s.replace(/\bpra o\b/g, 'pro').replace(/\bpra a\b/g, 'pra');
+  if (o.lang === 'pt') s = s.replace(/\bpra o\b/g, 'pro').replace(/\bpra a\b/g, 'pra').replace(/\bde o\b/g, 'do').replace(/\bde a\b/g, 'da');
   return tidy(s, Math.random() < .4);
 }
 function generate() {
@@ -803,7 +847,7 @@ const modelos = () => Object.entries(store.docs).filter(([k]) => k.startsWith('m
 function viewGerador() {
   const o = gopt(), A = isAdmin(), M = modelos(), mode = UI.gm === 'mod' ? 'mod' : 'gen';
   if (!UI.gres || UI.gresB !== store.board) generate();
-  const seg = (k, opts) => `<div class="seg" data-g="${k}">${opts.map(([v, n]) => `<button class="pill sm ${o[k] === v ? 'on' : ''}" data-v="${v}">${n}</button>`).join('')}</div>`;
+  const seg = (k, opts) => `<div class="seg" data-g="${k}">${opts.map(([v, n]) => { const on = k === 'pet' ? petOf(o) === v : o[k] === v, off = k === 'pet' && o.marca === 'Yucaloo' && v !== 'gato'; return `<button class="pill sm ${on ? 'on' : ''}" data-v="${v}" ${off ? 'disabled title="A Yucaloo é areia para gatos"' : ''}>${n}</button>`; }).join('')}</div>`;
   const head = `<div class="gmode"><nav class="seg">${[['gen', 'Geradas', 'spark'], ['mod', 'Modelos' + (M.length ? ' ' + M.length : ''), 'file']].map(([k, l, i]) => `<button class="pill ${mode === k ? 'on' : ''}" data-act="gm" data-v="${k}">${ic(i)}${l}</button>`).join('')}</nav><span class="sp"></span>${mode === 'mod' && A ? `<button class="pill white" data-act="new-mod">${ic('plus')}Novo modelo</button>` : `<span class="sub">${o.lang === 'en' ? 'mensagens em inglês · EUA' : 'mensagens em português · Brasil'}</span>`}</div>`;
   if (mode === 'mod') return `<div class="gx">${head}${M.length ? `<div class="ggrid">${M.map((m, i) => `<div class="mcard glass" style="--d:${i}" data-mid="${m.id}">
       ${A ? `<input class="mt" data-mt placeholder="Título (ex.: primeiro contato)" value="${esc(m.t || '')}" autocomplete="off">` : m.t ? `<span class="ttl">${esc(m.t)}</span>` : ''}
@@ -914,7 +958,7 @@ document.addEventListener('input', e => {
   if (UI.editing && t.closest && t.closest('.sec')) { clearTimeout(saveManual.t); saveManual.t = setTimeout(saveManual, 700); savest('Salvando…'); }
 });
 document.addEventListener('change', e => {
-  if (e.target.id === 'g-marca') { UI.g = { ...(UI.g || {}), marca: e.target.value }; saveUI(); generate(); $('#ggrid').innerHTML = gcards(new Set(used())); }
+  if (e.target.id === 'g-marca') { UI.g = { ...(UI.g || {}), marca: e.target.value }; saveUI(); generate(); $('#ggrid').innerHTML = gcards(new Set(used())); $$('[data-g=pet] .pill').forEach(x => { const off = e.target.value === 'Yucaloo' && x.dataset.v !== 'gato'; x.disabled = off; x.title = off ? 'A Yucaloo é areia para gatos' : ''; x.classList.toggle('on', x.dataset.v === petOf(gopt())); }); }
   if (e.target.id === 'logo-in' && e.target.files[0]) { const f = e.target.files[0]; if (f.size > 1e6) return toast('Logo muito grande (máx. 1 MB)', 'r'); const rd = new FileReader(); rd.onload = () => { cfgSet('logo', rd.result); render(); }; rd.readAsDataURL(f); }
 });
 /* admin edita o texto com as marcações ({canal}…); fora do foco mostra o texto do canal escolhido */
