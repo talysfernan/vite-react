@@ -2,7 +2,7 @@
 
 > Documento de contexto do ecossistema **CAO(S)** (meucaos.com).
 > Cole este arquivo inteiro no início da conversa (ChatGPT, Gemini, Claude) ou salve como `CLAUDE.md` / `AGENTS.md` / `GEMINI.md` na raiz do projeto para Claude Code, Codex ou Gemini CLI.
-> Última atualização: 10/10/2026.
+> Última atualização: 15/10/2026.
 
 ---
 
@@ -175,6 +175,7 @@ users  = [{ id, name, user, cargo, email, note, pass(hash), passEnc, active,
   - O proxy quebra o envio de assets do wrangler (401 no upload), por isso o `index.html` vai embutido no código: `site.js` é a entrada, serve `/` e repassa o resto ao `worker.js`; `public/.assetsignore` tira o `index.html` dos assets. Os outros arquivos de `public/` só são enviados se não mudarem — se mudar um ícone/sw.js, o upload falha e precisa de outro caminho.
   - Anexos: `POST /api/files` (corpo = arquivo, cabeçalhos `x-name`, `x-board`), `GET /api/blob/:id?b=br|us[&dl=1]`, `DELETE /api/files/:id`; guardados em partes de 1,8 MB nas tabelas `files`/`file_parts` do Durable Object do país (fora da foto diária e do export).
   - Teste local com o servidor real: `.dev.vars` com `SESSION_SECRET=...` e `npx wrangler dev`; login local pela senha de emergência padrão.
+  - **Versão offline** (`python3 constelacao/offline.py <saída>`): HTML único que abre com dois cliques, sem servidor nem login; API simulada no navegador, dados só no `localStorage` de quem abre (não sincroniza com o painel no ar); anexos não funcionam. O `public/index.html` puro aberto direto do disco fica com tela preta (depende do servidor).
   - Antes de publicar, anotar a versão atual (`/workers/scripts/caos-constelacao/deployments`) para poder voltar.
 - Fluxo das correções:
   1. Uma correção por vez, só o que foi pedido.
@@ -219,4 +220,5 @@ Aprendidos na Constelação (out/2026). Seguir sem precisar perguntar de novo.
 ### Painel e dados
 - BR e US no mesmo painel, com bandeiras (SVG, não emoji) no canto para alternar; dados separados por país.
 - Anexos: `POST /api/files` em partes de 1,8 MB no SQLite; servir com `?b=` para imagens/downloads.
+- Quando ele pedir "o HTML" de um painel para abrir no computador, entregar a **versão offline** (API simulada, dados no navegador), testada abrindo por `file://`; nunca o `index.html` puro.
 
