@@ -176,6 +176,7 @@ users  = [{ id, name, user, cargo, email, note, pass(hash), passEnc, active,
   - Anexos: `POST /api/files` (corpo = arquivo, cabeçalhos `x-name`, `x-board`), `GET /api/blob/:id?b=br|us[&dl=1]`, `DELETE /api/files/:id`; guardados em partes de 1,8 MB nas tabelas `files`/`file_parts` do Durable Object do país (fora da foto diária e do export).
   - Teste local com o servidor real: `.dev.vars` com `SESSION_SECRET=...` e `npx wrangler dev`; login local pela senha de emergência padrão.
   - Antes de publicar, anotar a versão atual (`/workers/scripts/caos-constelacao/deployments`) para poder voltar.
+  - Constelação 3.0 (out/2026): **marcas separadas** (abas no topo; cada ponto tem `mk` = id da marca ou `geral`; sem `mk`, herda do pai ou da única marca em `brands`), visão **MACRO** (12 meses lado a lado, `MW=1900`), clique seleciona / clicar de novo abre / 2 cliques renomeia, atalhos (Tab, Enter, Espaço, F2, Del), **Organizar**, **Comentário** (forma `texto`, borda pontilhada), **Gadgets** (prazos, travados/sem dono, bloco rápido em `node/bloco~<marca>~<mês>`), **Modo Operar** (segue os fios: Agora / Em seguida / Travado / Feito) e cursores próprios.
 - Fluxo das correções:
   1. Uma correção por vez, só o que foi pedido.
   2. Testar no navegador (Playwright) com a API simulada.

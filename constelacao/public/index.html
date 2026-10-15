@@ -915,6 +915,216 @@ svg.c-wires{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
 @media (max-width:900px){.c-ebody{grid-template-columns:1fr}.c-eside{border-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:16px}.c-fg{grid-template-columns:1fr}.c-mg{grid-template-columns:repeat(3,1fr)}.c-dock{max-width:calc(100% - 28px);bottom:72px}.c-pickt{grid-template-columns:1fr}}
 .c-di span{white-space:nowrap}
 @media (max-width:640px){.c-di span{display:none}.c-di{min-width:42px;padding:8px 4px}.c-zw,.c-hs{display:none}.c-hud{padding:6px}.c-mod{padding:16px}.c-title{font-size:19px}.c-di{min-width:50px}}
+/* ===== CONSTELAÇÃO 3.0 — vidro escuro, cor de cada item, marcas separadas, operar, gadgets, cursores ===== */
+:root{
+  --cur-arrow:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cpath d='M5.5 3.5l14.2 8-6.1 1.4-3 5.9z' fill='%2316161a' fill-opacity='.94' stroke='%23f4f4f5' stroke-width='1.5' stroke-linejoin='round'/%3E%3Ccircle cx='13.6' cy='12.9' r='1.3' fill='%2360a5fa'/%3E%3C/svg%3E") 5 3;
+  --cur-hand:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cpath d='M10 4.6a1.7 1.7 0 0 1 3.4 0v6l3.9.7a2.6 2.6 0 0 1 2.1 3l-.8 4.5a3.7 3.7 0 0 1-3.6 3H12a3.7 3.7 0 0 1-3-1.5l-3.4-4.5a1.6 1.6 0 0 1 2.5-2l1.9 1.9z' fill='%2316161a' fill-opacity='.94' stroke='%23f4f4f5' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 11 3;
+  --cur-grab:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cpath d='M8 13V7a1.5 1.5 0 0 1 3 0v4.5V5.6a1.5 1.5 0 0 1 3 0v5.9V6.8a1.5 1.5 0 0 1 3 0v5.4V9.4a1.5 1.5 0 0 1 3 0v5.8c0 4.2-2.8 7.3-6.7 7.3-2.7 0-4.3-1.1-5.8-3.4l-3.2-4.6a1.5 1.5 0 0 1 2.4-1.7z' fill='%2316161a' fill-opacity='.94' stroke='%23f4f4f5' stroke-width='1.4' stroke-linejoin='round'/%3E%3C/svg%3E") 13 13;
+  --cur-grabbing:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cpath d='M8 12.6a1.5 1.5 0 0 1 3 0v-.8a1.5 1.5 0 0 1 3 0v-.3a1.5 1.5 0 0 1 3 0v.7a1.5 1.5 0 0 1 3 0v3.4c0 4.2-2.8 6.9-6.7 6.9-2.7 0-4.3-1.1-5.8-3.4l-2.7-3.6a1.5 1.5 0 0 1 2.4-1.7l.8.9z' fill='%2316161a' fill-opacity='.94' stroke='%2360a5fa' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 13 13;
+}
+html,body{cursor:var(--cur-arrow),default}
+button,a,label.pill,select,[data-act],.c-n,.c-wh,.c-k,.c-ki,.c-col,summary,.switch{cursor:var(--cur-hand),pointer!important}
+input[type=text],input:not([type]),input[type=url],input[type=number],input[type=date],textarea{cursor:text}
+.c-stage{cursor:var(--cur-grab),grab}
+.c-stage.grab,.c-stage.grab *,body.dragging,body.dragging *{cursor:var(--cur-grabbing),grabbing!important}
+.c-di,.c-end,.c-ph,.c-rz{cursor:var(--cur-grab),grab!important}
+.c-di:active{cursor:var(--cur-grabbing),grabbing!important}
+.c-rip{position:fixed;z-index:300;width:36px;height:36px;margin:-18px 0 0 -18px;border-radius:50%;border:1.5px solid rgba(255,255,255,.6);pointer-events:none;animation:rip .55s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes rip{from{transform:scale(.2);opacity:.9}to{transform:scale(1.5);opacity:0}}
+
+/* topo: período (Mensal / MACRO) e abas de marca */
+.c-mseg{padding:3px}.c-mseg .pill{height:30px}
+.c-mseg .pill.c-macro.on{background:linear-gradient(135deg,rgba(167,139,250,.3),rgba(244,114,182,.22));color:#fff;box-shadow:0 0 0 1px rgba(167,139,250,.45) inset,0 0 22px -6px rgba(167,139,250,.6)}
+.c-mseg .pill.c-macro svg{color:#c4b5fd}
+.c-mks{display:inline-flex;gap:4px;padding:4px;border-radius:14px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);max-width:100%;overflow-x:auto;scrollbar-width:none}
+.c-mk{position:relative;display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 10px 0 12px;border-radius:10px;color:var(--text-2);font-weight:550;font-size:12.5px;border:1px solid transparent;white-space:nowrap;transition:background .3s var(--ease),border-color .3s,color .2s,box-shadow .3s,transform .2s var(--ease)}
+.c-mk:hover{background:rgba(255,255,255,.06);color:var(--text);transform:translateY(-1px)}
+.c-mk small{font-size:11px;color:var(--muted);font-weight:500;font-variant-numeric:tabular-nums}
+.c-mkd{width:8px;height:8px;border-radius:50%;background:var(--mc);box-shadow:0 0 10px var(--mc);flex:none}
+.c-mkr{width:16px;height:16px;transform:rotate(-90deg);flex:none}.c-mkr circle{fill:none;stroke-width:2.6;stroke:rgba(255,255,255,.1)}.c-mkr circle+circle{stroke:var(--mc);stroke-linecap:round;transition:stroke-dasharray .6s var(--ease)}
+.c-mk.on{color:#fff;background:linear-gradient(135deg,color-mix(in srgb,var(--mc) 24%,transparent),rgba(255,255,255,.03));border-color:color-mix(in srgb,var(--mc) 50%,transparent);box-shadow:0 1px 0 rgba(255,255,255,.08) inset,0 0 26px -8px var(--mc)}
+.c-mk.on small{color:color-mix(in srgb,var(--mc) 45%,#fff)}
+
+/* palco: vidro com aurora na cor da marca e luz nos pontinhos perto do cursor */
+.c-stage{--bg:#0c0c0f;background-color:var(--bg);border-color:rgba(255,255,255,.07);box-shadow:0 1px 0 rgba(255,255,255,.04) inset,0 30px 60px -30px rgba(0,0,0,.9)}
+.c-aur{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.c-aur i{position:absolute;width:62%;height:80%;border-radius:50%;filter:blur(70px);opacity:.16;background:radial-gradient(closest-side,var(--mk),transparent);animation:aur 22s ease-in-out infinite alternate;transition:background .6s}
+.c-aur i:first-child{left:-12%;top:-30%}.c-aur i+i{right:-14%;bottom:-38%;opacity:.1;animation-duration:28s;animation-direction:alternate-reverse}
+@keyframes aur{0%{transform:translate(0,0) scale(1)}50%{transform:translate(8%,10%) scale(1.15)}100%{transform:translate(-6%,4%) scale(.95)}}
+.c-spot{position:absolute;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(rgba(255,255,255,.55) 1.1px,transparent 1.4px);background-size:22px 22px;opacity:.5;-webkit-mask-image:radial-gradient(170px circle at var(--mx,-999px) var(--my,-999px),#000,transparent 72%);mask-image:radial-gradient(170px circle at var(--mx,-999px) var(--my,-999px),#000,transparent 72%)}
+.c-world{z-index:1}
+.c-stage.swap-r #nodes,.c-stage.swap-r .c-wires{animation:swR .5s var(--ease) both}.c-stage.swap-l #nodes,.c-stage.swap-l .c-wires{animation:swL .5s var(--ease) both}
+@keyframes swR{from{opacity:0;translate:70px 0}}@keyframes swL{from{opacity:0;translate:-70px 0}}
+
+/* fios: na cor do item, finos e luminosos */
+.c-w{stroke:color-mix(in srgb,var(--wc,#e9e9ee) 58%,#d6d6dc);stroke-width:1.8;opacity:.82}
+.c-w.ok{stroke:color-mix(in srgb,#4ade80 40%,#6b6b74);opacity:.65}
+.c-w.hl{stroke:color-mix(in srgb,var(--wc,#fff) 40%,#fff);stroke-width:2.3;opacity:1;filter:drop-shadow(0 0 6px color-mix(in srgb,var(--wc,#fff) 60%,transparent))}
+.c-w.tx{stroke:color-mix(in srgb,var(--wc,#facc15) 70%,#fff);stroke-width:1.5;stroke-dasharray:.006 .012;opacity:.75}
+.c-lk{stroke:#a78bfa;opacity:.7}
+.c-guide{stroke:rgba(96,165,250,.6)}
+.c-spine{background:linear-gradient(90deg,rgba(255,255,255,.06),#3a3a44 8%,#3a3a44 92%,rgba(255,255,255,.06))}
+.c-prog{background:linear-gradient(90deg,color-mix(in srgb,var(--mk,#60a5fa) 80%,#fff),#4ade80);box-shadow:0 0 12px rgba(74,222,128,.45)}
+.c-tip{box-shadow:0 0 0 4px rgba(74,222,128,.18),0 0 14px rgba(74,222,128,.85)}
+.c-stage.magnet .c-spine{box-shadow:0 0 0 6px rgba(96,165,250,.1),0 0 24px rgba(96,165,250,.35)}
+
+/* itens: cápsulas vitrificadas com sotaque de cor */
+.c-n .c-b{gap:8px;transition:box-shadow .25s var(--ease),filter .25s,transform .25s var(--ease),background .25s,border-color .25s}
+.c-n:hover .c-b{transform:translate(-50%,-50%) translateY(-1.5px);filter:brightness(1.08)}
+.c-n.lift .c-b{transform:translate(-50%,-50%) scale(1.06);box-shadow:0 18px 36px -10px rgba(0,0,0,.95),0 0 0 5px color-mix(in srgb,var(--c) 20%,transparent)}
+.c-n.sel .c-b{box-shadow:0 0 0 2px rgba(255,255,255,.9),0 0 0 6px color-mix(in srgb,var(--c) 30%,transparent),0 14px 32px -8px rgba(0,0,0,.9)!important}
+.c-n.target .c-b{box-shadow:0 0 0 6px rgba(74,222,128,.3),0 0 30px rgba(74,222,128,.55)!important}
+.sh-pill .c-b{height:36px;padding:0 15px 0 12px;border-radius:999px;background:linear-gradient(135deg,color-mix(in srgb,var(--c) 22%,rgba(27,27,32,.92)),rgba(18,18,22,.9));border:1.5px solid color-mix(in srgb,var(--c) 62%,rgba(255,255,255,.16));color:#f4f4f6;font-size:13px;font-weight:600;box-shadow:0 1px 0 rgba(255,255,255,.08) inset,0 10px 26px -10px rgba(0,0,0,.85),0 0 22px -8px color-mix(in srgb,var(--c) 45%,transparent);-webkit-backdrop-filter:blur(12px) saturate(1.4);backdrop-filter:blur(12px) saturate(1.4)}
+.sh-pill .c-b::after,.sh-mini .c-b::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--c);box-shadow:0 0 10px var(--c);flex:none;order:-2}
+.sh-outline .c-b{height:34px;padding:0 16px;border-radius:999px;background:rgba(16,16,20,.86);border:1.6px solid color-mix(in srgb,var(--c) 70%,rgba(255,255,255,.3));color:#f4f4f5;font-size:12.5px;font-weight:600;text-transform:none;letter-spacing:.01em;box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 8px 22px -10px rgba(0,0,0,.8);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.c-stage .sh-outline .c-b{background:rgba(16,16,20,.86)}
+.sh-mini .c-b{height:26px;padding:0 11px;border-radius:999px;background:rgba(30,30,36,.9);border:1.2px solid color-mix(in srgb,var(--c) 35%,rgba(255,255,255,.2));color:#e6e6eb;font-size:11.5px;font-weight:550;text-transform:none;letter-spacing:.01em;gap:6px;box-shadow:0 6px 16px -8px rgba(0,0,0,.8);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.sh-mini .c-b::after{width:6px;height:6px;opacity:.9}
+.sh-dot .c-b{background:#121216;border:2px solid var(--c);box-shadow:0 0 16px -2px color-mix(in srgb,var(--c) 55%,transparent)}
+.sh-dot .c-b>i,.sh-dot[style*="--c:#f0559a"] .c-b>i{background:var(--c)}
+.sh-canal .c-b{width:44px;height:44px;background:radial-gradient(circle at 32% 28%,color-mix(in srgb,var(--c) 55%,#fff),var(--c) 62%);border:1.5px solid rgba(255,255,255,.75);box-shadow:0 10px 24px -8px rgba(0,0,0,.85),0 0 22px -4px color-mix(in srgb,var(--c) 60%,transparent)}
+.sh-icone .c-b{border-radius:13px;background:rgba(24,24,29,.88);border:1px solid color-mix(in srgb,var(--c) 30%,rgba(255,255,255,.14));color:color-mix(in srgb,var(--c) 70%,#fff);box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 10px 24px -10px rgba(0,0,0,.85);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.sh-icone .c-b svg{width:28px;height:28px;stroke-width:1.65}
+.sh-haste .c-b b{font-size:15px;padding:4px 10px;border-radius:9px;background:rgba(20,20,24,.9);border:1px solid rgba(255,255,255,.12);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.sh-haste .c-b b::after{bottom:-2px;height:2.5px;background:var(--c);box-shadow:0 0 8px var(--c)}
+.c-stem{background:linear-gradient(180deg,#ededf0,color-mix(in srgb,var(--c) 60%,#ededf0))}
+.sh-periodo .c-b b{font-size:12px;letter-spacing:.06em;padding:3px 10px;border-radius:999px;background:rgba(20,20,24,.9);border:1px solid color-mix(in srgb,var(--c) 55%,rgba(255,255,255,.15))}
+.c-brk{border-color:color-mix(in srgb,var(--c) 75%,#ededf0);border-radius:10px 10px 0 0;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 12%,transparent),transparent)}
+.c-lb{top:31px;padding:2px 8px;border-radius:7px;background:rgba(16,16,20,.86);border:1px solid rgba(255,255,255,.07);color:#d8d8e0;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.c-lb.on{pointer-events:auto;background:none;border:0;padding:0}
+.sz-s.sh-pill .c-b,.sz-s.sh-outline .c-b{height:28px;padding:0 11px 0 9px;font-size:11.5px;gap:6px}
+.sz-l.sh-pill .c-b,.sz-l.sh-outline .c-b{height:46px;padding:0 22px 0 16px;font-size:15.5px;gap:10px;border-width:2px}
+.sz-s.sh-mini .c-b{height:21px;padding:0 8px;font-size:10.5px}.sz-l.sh-mini .c-b{height:32px;padding:0 15px;font-size:13px}
+.c-pbadge{height:19px;padding:0 6px;border-radius:999px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.12);font-size:10.5px;font-weight:600;color:var(--text-2);display:inline-flex;align-items:center;font-variant-numeric:tabular-nums}
+.c-avs{margin-right:-4px}.c-avs .c-avt{box-shadow:0 0 0 1.8px #18181c}
+.c-ok{box-shadow:0 0 0 2px #0e0e11,0 0 10px rgba(74,222,128,.5)}
+.st-done .c-b{opacity:.72;filter:saturate(.6)}
+.st-done.sh-pill .c-b b,.st-done.sh-outline .c-b b,.st-done.sh-mini .c-b b{color:var(--text-2)}
+.c-n.hi .c-b{border-color:color-mix(in srgb,#f87171 70%,var(--c))}
+.c-n.hi .c-b::after{position:static;width:8px;height:8px;margin:0;background:var(--c);box-shadow:0 0 10px var(--c)}
+.c-n.hi:not(.sh-pill):not(.sh-mini) .c-b::after{content:none}
+/* comentário: bloco de texto com borda pontilhada */
+.sh-texto .c-b{width:var(--tw,240px);min-height:44px;padding:11px 14px;border-radius:14px;display:block;white-space:normal;text-align:left;border:1.5px dashed color-mix(in srgb,var(--c) 70%,transparent);background:color-mix(in srgb,var(--c) 7%,rgba(15,15,19,.74));color:color-mix(in srgb,var(--c) 30%,#ededf0);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 12px 30px -16px rgba(0,0,0,.9)}
+.c-tx{font-size:12.5px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere;margin:0}.c-tx.ph{color:color-mix(in srgb,var(--c) 40%,#6a6a73);font-style:italic}
+.c-rz{position:absolute;left:calc(var(--tw,240px) / 2 - 5px);top:-12px;width:10px;height:24px;border-radius:5px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);opacity:0;transition:opacity .2s;z-index:3}
+.sh-texto:hover .c-rz,.sh-texto.sel .c-rz{opacity:1}
+.c-n.sh-texto.sel .c-b{box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 22%,transparent),0 14px 32px -8px rgba(0,0,0,.9)!important}
+.c-n.sh-texto:hover .c-b{transform:translate(-50%,-50%)}
+/* renomear no lugar */
+.c-ined{background:rgba(10,10,13,.92);color:#fff;border:1.5px solid #60a5fa;border-radius:8px;padding:2px 8px;font:inherit;font-weight:600;outline:none;min-width:120px;max-width:320px;box-shadow:0 0 0 4px rgba(96,165,250,.22)}
+.c-intx{display:block;width:100%;min-width:0;max-width:none;min-height:40px;resize:none;font-weight:500;font-size:12.5px;line-height:1.5;padding:4px 6px;overflow:hidden}
+.c-n.ined .c-k,.c-n.ined .c-open1{display:none}
+/* abrir (aparece no item selecionado) */
+.c-open1{position:absolute;left:0;top:calc(-1 * var(--kh,18px) - 32px);transform:translateX(-50%);height:24px;padding:0 9px 0 11px;border-radius:999px;display:none;align-items:center;gap:5px;white-space:nowrap;font-size:11px;font-weight:550;color:#ededf0;background:rgba(24,24,29,.78);border:1px solid rgba(255,255,255,.18);-webkit-backdrop-filter:blur(10px) saturate(1.4);backdrop-filter:blur(10px) saturate(1.4);box-shadow:0 8px 20px -6px rgba(0,0,0,.85);z-index:8;transition:background .15s,color .15s,transform .2s var(--ease)}
+.c-open1:hover{background:rgba(255,255,255,.16);transform:translateX(-50%) translateY(-1px)}
+.c-n.sel:not(.ined) .c-open1{display:inline-flex;animation:pop .22s var(--ease) both}
+.sh-haste .c-open1,.sh-periodo .c-open1{top:calc(-1 * var(--kh,18px) * 2 - 34px)}
+.c-stage.op-on .c-open1{display:none!important}
+.c-n.ping1 .c-b{animation:ping1 1s var(--ease)}
+@keyframes ping1{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--c) 70%,transparent)}100%{box-shadow:0 0 0 22px transparent}}
+/* MACRO: colunas dos meses */
+#mcols{position:absolute;left:0;top:0}
+.c-mcol{position:absolute;top:-1800px;height:3600px;border-left:1px dashed rgba(255,255,255,.07);pointer-events:none}
+.c-mcol.cur{background:linear-gradient(180deg,transparent,rgba(96,165,250,.03) 35%,rgba(96,165,250,.05) 50%,rgba(96,165,250,.03) 65%,transparent);border-left-color:rgba(96,165,250,.25)}
+.c-mhdr{position:absolute;top:1730px;left:18px;display:inline-flex;align-items:center;gap:8px;height:30px;padding:0 13px;border-radius:999px;background:rgba(22,22,26,.85);border:1px solid rgba(255,255,255,.12);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);font-size:12px;font-weight:650;letter-spacing:.08em;text-transform:uppercase;color:#ededf0;pointer-events:auto;transition:all .2s var(--ease)}
+.c-mhdr:hover{border-color:#fff;transform:translateY(-1px)}
+.c-mcol.cur .c-mhdr{border-color:rgba(96,165,250,.55);color:#bfdbfe;box-shadow:0 0 18px -4px rgba(96,165,250,.4)}
+.c-mhdr small{color:var(--muted);font-weight:500;letter-spacing:0;text-transform:none}
+.c-stage.lod-far .sh-mini:not(.sel):not(:hover){opacity:.45}
+.c-mhdr{transform:scale(var(--iz,1));transform-origin:left bottom}.c-mhdr:hover{transform:scale(var(--iz,1)) translateY(-1px)}
+
+/* barra do topo do palco: quinzena, organizar, operar, gadgets */
+.c-midc{display:flex;align-items:flex-start;gap:6px}
+.c-mw{position:relative}
+.c-midb{width:auto;height:30px;padding:0 11px 0 9px;display:inline-flex;align-items:center;gap:6px;font-size:11.5px;white-space:nowrap}
+.c-midb svg{width:14px;height:14px}
+.c-midb:hover svg{transform:scale(1.1)}.c-midb svg{transition:transform .25s var(--ease)}
+.c-midc.open .c-gw:not(.open) .c-midm{opacity:0;transform:translateY(-4px);pointer-events:none}
+.c-gw.open .c-midm{opacity:1;transform:none;pointer-events:auto}
+.c-gw .c-midm button{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.c-gw .c-midm .switch{transform:scale(.85)}
+.c-opb.on{color:#fff;background:linear-gradient(135deg,rgba(74,222,128,.22),rgba(96,165,250,.16));border-color:rgba(74,222,128,.45);box-shadow:0 0 20px -6px rgba(74,222,128,.6)}
+.c-kb{position:absolute;left:50%;bottom:84px;transform:translateX(-50%);z-index:6;display:flex;gap:12px;padding:6px 12px;border-radius:12px;font-size:11px;color:var(--muted);background:rgba(20,20,24,.6);border:1px solid rgba(255,255,255,.08);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);pointer-events:none;white-space:nowrap;animation:pop .25s var(--ease) both}
+.c-kb kbd{margin-right:5px;padding:1px 6px;border-radius:5px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:var(--text-2);font-family:var(--mono);font-size:10px}
+
+/* MODO OPERAR */
+.c-op{position:absolute;left:14px;top:56px;z-index:6;width:304px;max-height:calc(100% - 150px);display:flex;flex-direction:column;border-radius:18px;background:rgba(20,20,24,.72);border:1px solid rgba(255,255,255,.1);-webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 26px 50px -24px rgba(0,0,0,.95);animation:opIn .4s var(--ease) both;overflow:hidden}
+@keyframes opIn{from{opacity:0;transform:translateX(-14px)}}
+.c-oph{display:flex;align-items:center;gap:10px;padding:12px 12px 8px 12px}
+.c-oph b{display:block;font-size:13.5px}.c-oph span{font-size:11.5px;color:var(--muted);display:block;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.c-opi{display:grid;place-items:center;width:30px;height:30px;border-radius:10px;color:#86efac;background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.3);flex:none}.c-opi svg{width:16px;height:16px}
+.c-opx{white-space:nowrap;flex:none;height:26px;padding:0 9px;border-radius:8px;font-size:11px;color:var(--text-2);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)}.c-opx:hover{color:#fff;background:rgba(255,255,255,.1)}
+.c-opx.i{width:26px;padding:0;display:grid;place-items:center}.c-opx.i svg{width:12px;height:12px}
+.c-opbar{height:4px;margin:2px 12px 0;border-radius:4px;background:rgba(255,255,255,.06);overflow:hidden}.c-opbar i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,#60a5fa,#4ade80);box-shadow:0 0 10px rgba(74,222,128,.5);transition:width .6s var(--ease)}
+.c-opn{padding:6px 12px 6px;font-size:11.5px;color:var(--muted)}.c-opn b{color:var(--text)}
+.c-opl{overflow:auto;padding:0 8px 10px;scrollbar-width:thin}
+.c-ope{padding:12px 6px}
+.c-ops{margin-top:6px}
+.c-ops h6{display:flex;align-items:center;gap:7px;padding:8px 6px 5px;font-size:10px;font-weight:650;letter-spacing:.13em;text-transform:uppercase;color:var(--dim)}
+.c-ops h6 i{width:6px;height:6px;border-radius:50%;background:var(--dim)}.c-ops h6 em{font-style:normal;letter-spacing:0;color:var(--muted);font-weight:500}
+.c-ops h6 button{display:flex;align-items:center;gap:7px;font:inherit;letter-spacing:inherit;text-transform:inherit;color:inherit}
+.c-ops.now h6 i{background:#4ade80;box-shadow:0 0 8px #4ade80}.c-ops.next h6 i{background:#60a5fa}.c-ops.blocked h6 i{background:#f87171;box-shadow:0 0 8px #f87171}
+.c-opr{display:flex;align-items:center;gap:8px;padding:5px 6px;border-radius:11px;transition:background .2s}
+.c-opr:hover{background:rgba(255,255,255,.05)}
+.c-opc{flex:none;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;border:1.6px solid color-mix(in srgb,var(--c) 60%,rgba(255,255,255,.35));color:transparent;transition:all .25s var(--ease)}
+.c-opc svg{width:11px;height:11px;stroke-width:3}
+.c-opc:hover{color:#0b2414;background:color-mix(in srgb,#4ade80 70%,transparent);border-color:#4ade80;transform:scale(1.1)}
+.c-opc.on{background:#4ade80;border-color:#4ade80;color:#0b2414}
+.c-opt{flex:1;min-width:0;text-align:left;display:flex;flex-direction:column;gap:1px}
+.c-opt b{font-weight:550;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.c-opt small{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.c-opt small em{font-style:normal}.c-opt small em.late{color:var(--red)}
+.c-opr.doing .c-opt b::after{content:"em andamento";margin-left:7px;font-size:10px;font-weight:600;color:#93c5fd}
+.c-ops.next .c-opr{opacity:.72}.c-opr.ok .c-opt b{text-decoration:line-through;color:var(--muted)}
+.c-stage.op-on .c-n.op-out{opacity:.16}
+.c-stage.op-on .c-w.op-out{opacity:.08}
+.c-w.op-flow{stroke-dasharray:.018 .022;animation:opFlow 1.1s linear infinite;opacity:1;stroke-width:2}
+.c-w.op-done{stroke:color-mix(in srgb,#4ade80 70%,#fff);opacity:.8}
+@keyframes opFlow{to{stroke-dashoffset:-.04}}
+.c-n.op-now .c-b{animation:opNow 2.2s ease-in-out infinite}
+@keyframes opNow{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--c) 0%,transparent),0 0 18px -6px var(--c)}50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--c) 22%,transparent),0 0 30px -4px var(--c)}}
+.c-n.op-arrive .c-b{animation:opArr .8s var(--ease)}
+@keyframes opArr{0%{filter:brightness(2.2);transform:translate(-50%,-50%) scale(1.18)}100%{filter:none}}
+.c-n.op-pop .c-b{animation:opPop .6s cubic-bezier(.2,1.4,.4,1)}
+@keyframes opPop{0%{transform:translate(-50%,-50%) scale(.85)}60%{transform:translate(-50%,-50%) scale(1.12)}100%{transform:translate(-50%,-50%) scale(1)}}
+.c-orb{fill:#fff;filter:drop-shadow(0 0 5px var(--wc,#4ade80)) drop-shadow(0 0 12px var(--wc,#4ade80))}
+
+/* GADGETS */
+.c-gads{position:absolute;right:14px;top:78px;z-index:6;width:262px;max-height:calc(100% - 170px);overflow:auto;display:flex;flex-direction:column;gap:10px;scrollbar-width:none}
+.c-gads::-webkit-scrollbar{display:none}
+.c-gad{flex:none;border-radius:16px;background:rgba(20,20,24,.66);border:1px solid rgba(255,255,255,.09);-webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 20px 40px -24px rgba(0,0,0,.95);animation:opIn .4s var(--ease) both;animation-name:gIn;overflow:hidden}
+@keyframes gIn{from{opacity:0;transform:translateX(14px)}}
+.c-gh{display:flex;align-items:center;gap:8px;padding:9px 8px 7px 10px}
+.c-gh b{font-size:12px;font-weight:600;flex:1;white-space:nowrap}.c-gh em{font-style:normal;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}.c-gh em.r{color:var(--red)}
+.c-gi{display:grid;place-items:center;width:24px;height:24px;border-radius:8px;background:rgba(255,255,255,.06);color:var(--text-2)}.c-gi svg{width:13px;height:13px}
+.c-gx{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;color:var(--muted)}.c-gx:hover{background:rgba(255,255,255,.08);color:var(--text)}.c-gx svg{width:12px;height:12px;transition:transform .3s var(--ease)}
+.c-gad.min .c-gx svg{transform:rotate(-90deg)}.c-gad.min .c-gb{display:none}
+.c-gb{padding:0 6px 8px}
+.c-gb h6{display:flex;justify-content:space-between;padding:6px 6px 3px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);font-weight:650}.c-gb h6.r{color:#fca5a5}.c-gb h6 em{font-style:normal;letter-spacing:0}
+.c-gr{display:flex;align-items:center;gap:8px;width:100%;text-align:left;padding:5px 6px;border-radius:9px;font-size:12px;color:var(--text-2);transition:background .2s,color .2s}
+.c-gr:hover{background:rgba(255,255,255,.06);color:#fff}
+.c-gr span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.c-gr small{font-size:10.5px;color:var(--muted);white-space:nowrap}.c-gr small.late{color:var(--red)}.c-gr small.today{color:var(--yellow)}
+.c-gr .c-sdot{box-shadow:0 0 8px var(--sc)}
+.c-gm{padding:4px 6px;font-size:11.5px;color:var(--muted)}
+.c-bloco{display:block;width:100%;min-height:118px;resize:vertical;border:0;outline:0;background:transparent;color:var(--text-2);font:inherit;font-size:12.5px;line-height:22px;padding:0 6px;background-image:repeating-linear-gradient(transparent 0 21px,rgba(255,255,255,.06) 21px 22px);background-attachment:local}
+.c-bloco::placeholder{color:var(--dim)}
+
+/* dock e controles em vidro */
+.c-dock{background:rgba(22,22,27,.6);border-color:rgba(255,255,255,.1)}
+.dk-pill{background:color-mix(in srgb,#a5a8f7 25%,transparent)!important;border-color:#a5a8f7}
+.dk-mini{width:30px;height:11px;background:rgba(255,255,255,.18);border:1.2px solid rgba(255,255,255,.55)}
+.dk-tx{width:32px;height:21px;border-radius:6px;border:1.5px dashed #facc15;display:flex;flex-direction:column;justify-content:center;gap:3px;padding:0 5px;margin:1px 0}.dk-tx b{height:2px;border-radius:2px;background:rgba(250,204,21,.7)}.dk-tx b+b{width:60%}
+.c-colin{position:relative;overflow:hidden;background:conic-gradient(#f87171,#facc15,#4ade80,#22d3ee,#60a5fa,#a78bfa,#f472b6,#f87171)}
+.c-colin input{position:absolute;inset:-6px;width:40px;height:40px;opacity:0}
+.c-colin.on{background:var(--cc)}
+.c-ctx{min-height:120px;border-style:dashed;border-color:color-mix(in srgb,var(--c) 50%,var(--line))}
+.c-shapes{grid-template-columns:repeat(5,1fr)}
+.c-hud{background:rgba(20,20,24,.66);border-color:rgba(255,255,255,.09);-webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4)}
+.c-hp .fg{stroke:url(#hpg);stroke:#4ade80}
+.c-ctl{background:rgba(20,20,24,.66);border-color:rgba(255,255,255,.09);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+
+@media (max-width:900px){.c-gads{display:none}.c-op{left:8px;right:8px;width:auto;top:auto;bottom:140px;max-height:44%}.c-kb{display:none}.c-midb span{display:none}.c-midb{padding:0 8px}}
+@media (prefers-reduced-motion:reduce){.c-aur i,.c-w.op-flow,.c-n.op-now .c-b{animation:none}}
 </style></head><body>
 <div id="app"></div><div class="toasts" id="toasts"></div>
 <script>
@@ -952,7 +1162,14 @@ const IC = {
   const: '<circle cx="5" cy="17" r="1.8"/><circle cx="11" cy="7" r="1.8"/><circle cx="19" cy="11" r="1.8"/><circle cx="15" cy="19" r="1.4"/><path d="M6.4 15.6l3.3-7M12.7 7.7l4.6 2.5M18 12.7l-2.3 4.8"/>',
   half: '<circle cx="12" cy="12" r="8"/><path d="M12 2v20"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor" stroke="none" opacity=".35"/>',
   hand: '<path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V12M11 11V4.5a1.5 1.5 0 0 1 3 0V12M14 11V6.5a1.5 1.5 0 0 1 3 0V14c0 4-2.5 7-6 7-2.7 0-4.2-1.2-5.6-3.6L3.8 14.6a1.5 1.5 0 0 1 2.4-1.8L8 15"/>',
+  macro: '<circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8M3.6 15h16.8"/><path d="M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>',
+  tidy: '<rect x="3" y="4" width="6" height="4" rx="1.2"/><rect x="15" y="4" width="6" height="4" rx="1.2"/><rect x="15" y="16" width="6" height="4" rx="1.2"/><path d="M9 6h6M12 6v12h3"/>',
+  flow: '<circle cx="5" cy="12" r="2.2"/><circle cx="19" cy="6" r="2.2"/><circle cx="19" cy="18" r="2.2"/><path d="M7.2 12h3.3c2 0 2.5-6 6.3-6M10.5 12c2 0 2.5 6 6.3 6"/>',
+  gadget: '<rect x="3" y="3" width="8" height="8" rx="2.2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2.2"/><rect x="3" y="13" width="8" height="8" rx="2.2"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', alert: '<path d="M12 3l9.5 17h-19z"/><path d="M12 10v4M12 17.2v.1"/>', pen: '<path d="M4 20l4-1 11-11-3-3L5 16z"/>',
+  play: '<path d="M7 5l12 7-12 7z"/>', chev: '<path d="M6 9l6 6 6-6"/>', target: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>',
   /* categorias */
+  comentario: '<path d="M4 5h16v11H9l-5 4z" stroke-dasharray="2.4 2.4"/><path d="M8 9.5h8M8 12.5h5"/>',
   plano: '<path d="M4 6h16M4 12h10M4 18h6"/><circle cx="19" cy="16" r="3"/>', estrategia: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/>', fase: '<rect x="3" y="8" width="18" height="8" rx="4"/>',
   ponto: '<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.5"/>', periodo: '<path d="M4 9V6h16v3"/><path d="M4 16h16"/><path d="M6 16l2-3M10 16l2-3M14 16l2-3M18 16l2-3"/>', marco: '<path d="M6 21V4"/><path d="M6 4h11l-2 4 2 4H6"/>',
   decisao: '<path d="M12 21v-7M12 14L5 7M12 14l7-7M5 7V3M5 7H1M19 7V3M19 7h4"/>',
@@ -977,7 +1194,7 @@ const IC = {
 const ic = (n, s = '') => `<svg class="i" viewBox="0 0 24 24" style="${s}">${IC[n] || ''}</svg>`;
 
 /* ---------- formas (do rascunho) ---------- */
-const SHAPES = [['pill', 'Cápsula'], ['outline', 'Contorno'], ['mini', 'Mini'], ['dot', 'Ponto'], ['canal', 'Círculo'], ['icone', 'Ícone'], ['haste', 'Rótulo'], ['periodo', 'Período']];
+const SHAPES = [['pill', 'Cápsula'], ['outline', 'Contorno'], ['mini', 'Mini'], ['dot', 'Ponto'], ['canal', 'Círculo'], ['icone', 'Ícone'], ['haste', 'Rótulo'], ['periodo', 'Período'], ['texto', 'Texto']];
 const SWATCH = ['#a5a8f7', '#fcd34d', '#4ade80', '#a7d3d1', '#5ad4ff', '#f0559a', '#fb923c', '#c4b5fd', '#f87171', '#e7e7ea'];
 
 /* ---------- redes e lojas ---------- */
@@ -1048,7 +1265,8 @@ const CATS = {
   meta: { g: 'gestao', n: 'Meta', s: 'pill', c: '#4ade80', d: 'Número que o time persegue no mês.', f: [['indicador', 'Indicador', 't', ''], ['alvo', 'Alvo', 't', ''], ['atual', 'Atual', 't', ''], ['fonte', 'Fonte do dado', 't', '']] },
   quadro: { g: 'livre', n: 'Quadro livre', s: 'pill', c: '#cbd5e1', d: 'Um quadro genérico para associar a qualquer coisa.', f: [['texto', 'Conteúdo', 'a', '', 2], ['link', 'Link', 'u', 'https://', 2]] },
   nota: { g: 'livre', n: 'Nota', s: 'icone', c: '#e7e7ea', d: 'Lembrete ou observação rápida.', f: [] },
-  ref: { g: 'livre', n: 'Referência', s: 'mini', c: '#e7e7ea', d: 'Link, inspiração ou material de apoio.', f: [['url', 'Endereço', 'u', 'https://', 2], ['porque', 'Por que importa', 'a', '', 2]] }
+  ref: { g: 'livre', n: 'Referência', s: 'mini', c: '#e7e7ea', d: 'Link, inspiração ou material de apoio.', f: [['url', 'Endereço', 'u', 'https://', 2], ['porque', 'Por que importa', 'a', '', 2]] },
+  comentario: { g: 'livre', n: 'Comentário', s: 'texto', c: '#facc15', d: 'Bloco de texto com borda pontilhada: comentário, observação ou recado no canvas.', f: [] }
 };
 const CAT = k => CATS[k] || CATS.quadro;
 const STATUS = [['todo', 'A fazer', '#85858e'], ['doing', 'Em andamento', '#60a5fa'], ['review', 'Revisão', '#facc15'], ['done', 'Feito', '#4ade80'], ['blocked', 'Travado', '#f87171']];
@@ -1056,7 +1274,7 @@ const ST = k => STATUS.find(s => s[0] === k) || STATUS[0];
 const PRIO = [['b', 'Baixa'], ['m', 'Média'], ['a', 'Alta']];
 const PCOL = ['#60a5fa', '#f472b6', '#4ade80', '#facc15', '#a78bfa', '#fb923c', '#22d3ee', '#f87171', '#2dd4bf', '#e7e7ea'];
 /* dock: atalhos que se arrastam para a constelação */
-const DOCK = [['plano', 'Plano'], ['acao', 'Ação'], ['reuniao', 'Reunião'], ['ponto', 'Ponto'], ['canal', 'Canal'], ['loja', 'Loja'], ['lista', 'Lista'], ['time', 'Time'], ['documento', 'Documento'], ['periodo', 'Período']];
+const DOCK = [['plano', 'Plano'], ['acao', 'Ação'], ['reuniao', 'Reunião'], ['ponto', 'Ponto'], ['canal', 'Canal'], ['loja', 'Loja'], ['lista', 'Lista'], ['time', 'Time'], ['documento', 'Documento'], ['comentario', 'Comentário'], ['periodo', 'Período']];
 
 
 /* =================== estado / sincronização / desfazer =================== */
@@ -1130,7 +1348,7 @@ async function setBoard(b) {
     closeModal(true); ED.id = '';
     store.board = b; store.role = s.data.role; store.name = s.data.name === 'admin' ? 'Mestre' : s.data.name || '';
     store.docs = d.data.docs || {}; store.since = d.data.now || 0; store.queue = {}; H.undo = []; H.redo = [];
-    UI.fb = (UI.fb || []).filter(marca); if (UI.ft && !time(UI.ft)) UI.ft = ''; if (UI.who && !pessoa(UI.who)) UI.who = ''; if (UI.view === 'set' && !isAdmin()) UI.view = 'cst'; saveUI();
+    if (UI.ft && !time(UI.ft)) UI.ft = ''; if (UI.who && !pessoa(UI.who)) UI.who = ''; if (UI.view === 'set' && !isAdmin()) UI.view = 'cst'; SEL = ''; OP.root = ''; mkPickDefault(); saveUI();
     rememberBoard(b); loadView(); render();
   } finally { store.switching = false; }
 }
@@ -1142,25 +1360,43 @@ const marcas = () => docsOf('marca/').sort((a, b) => (a.t || 0) - (b.t || 0));
 const times = () => docsOf('time/').sort(byName);
 const pessoas = () => docsOf('pessoa/').sort(byName);
 const marca = id => D('marca/' + id), time = id => D('time/' + id), pessoa = id => D('pessoa/' + id);
-const allNodes = () => docsOf('node/');
-const N = id => (D('node/' + id) ? { ...D('node/' + id), id } : null);
-const monthNodes = (m = UI.month) => allNodes().filter(n => n.month === m);
-function putNode(n) { const { id, ...b } = n; b.u = Date.now(); commit('node/' + id, b); }
+const allNodes = () => docsOf('node/').filter(n => n.cat);
+/* marcas separadas: cada ponto pertence à constelação de uma marca (mk); sem mk, herda do pai ou da única marca marcada */
+const mkRaw = n => { let c = n; for (let i = 0; c && i < 60; i++) { if (c.mk !== undefined) return c.mk || 'geral'; if ((c.brands || []).length === 1) return c.brands[0]; c = c.parent ? D('node/' + c.parent) : null; } return 'geral'; };
+const mkOf = n => { const k = mkRaw(n); return k !== 'geral' && !marca(k) ? 'geral' : k; };
+const curMk = () => { const M = marcas(); if (UI.mk === 'geral' && (!M.length || allNodes().some(n => mkOf(n) === 'geral'))) return 'geral'; if (M.some(b => b.id === UI.mk)) return UI.mk; return M[0]?.id || 'geral'; };
+const mkName = k => k === 'geral' ? 'Geral' : (marca(k) || {}).name || 'Geral';
+const mkColor = k => k === 'geral' ? '#e7e7ea' : (marca(k) || {}).color || '#e7e7ea';
+const inMk = (n, k = curMk()) => mkOf(n) === k;
+/* visão MACRO: os 12 meses lado a lado na mesma linha */
+const MW = 1900;
+const curYear = () => UI.month.slice(0, 4);
+const mIdx = m => clamp((+(m || curMonth()).split('-')[1] || 1) - 1, 0, 11);
+const withPos = n => UI.macro ? { ...n, x: mIdx(n.month) * MW + n.x } : n;
+const N = id => (D('node/' + id) ? withPos({ ...D('node/' + id), id }) : null);
+const monthNodes = (m = UI.month) => { const k = curMk(); if (UI.macro && m === UI.month) { const yr = curYear() + '-'; return allNodes().filter(n => (n.month || '').startsWith(yr) && inMk(n, k)).map(withPos); } return allNodes().filter(n => n.month === m && inMk(n, k)); };
+function putNode(n) {
+  const { id, ...b } = n;
+  if (UI.macro) { const raw = D('node/' + id);
+    if (!raw) { const mi = clamp(Math.floor((b.x + 220) / MW), 0, 11); b.month = `${curYear()}-${String(mi + 1).padStart(2, '0')}`; b.x = Math.round(b.x - mi * MW); }
+    else { b.month = b.month || raw.month; b.x = Math.round(b.x - mIdx(b.month) * MW); } }
+  b.u = Date.now(); commit('node/' + id, b);
+}
 const shapeOf = n => n.shape || CAT(n.cat).s;
 const colorOf = n => n.color || (n.cat === 'canal' && REDES[(n.f || {}).rede]?.c) || (n.cat === 'loja' && LOJA_C[(n.f || {}).loja]) || CAT(n.cat).c;
-const labelOf = n => n.title || (n.cat === 'canal' && (n.f || {}).rede) || (n.cat === 'loja' && (n.f || {}).loja) || CAT(n.cat).n;
+const labelOf = n => n.cat === 'comentario' ? (String(n.title || '').trim().split('\n')[0].slice(0, 48) || 'Comentário') : n.title || (n.cat === 'canal' && (n.f || {}).rede) || (n.cat === 'loja' && (n.f || {}).loja) || CAT(n.cat).n;
 function descendants(id, list) { const out = [], seen = new Set([id]); const walk = pid => list.forEach(n => { if (n.parent === pid && !seen.has(n.id)) { seen.add(n.id); out.push(n); walk(n.id); } }); walk(id); return out; }
-const countable = n => !['ponto', 'nota', 'ref', 'periodo', 'marco', 'canal', 'loja', 'time', 'documento'].includes(n.cat);
+const countable = n => !['ponto', 'nota', 'ref', 'periodo', 'marco', 'canal', 'loja', 'time', 'documento', 'comentario'].includes(n.cat);
 function progressOf(list) { const L = list.filter(countable); const d = L.filter(n => n.status === 'done').length; return { done: d, total: L.length, pct: L.length ? Math.round((d / L.length) * 100) : 0, blocked: L.filter(n => n.status === 'blocked').length, late: L.filter(n => n.status !== 'done' && n.due && n.due < todayISO()).length }; }
 const chkPct = n => { const c = n.chk || []; return c.length ? c.filter(x => x.ok).length / c.length : n.status === 'done' ? 1 : 0; };
 const matchF = n => (!UI.fb.length || (n.brands || []).some(b => UI.fb.includes(b))) && (!UI.ft || n.team === UI.ft || (n.who || []).some(w => (pessoa(w) || {}).team === UI.ft)) && (!UI.who || (n.who || []).includes(UI.who));
 const hasF = () => UI.fb.length || UI.ft || UI.who;
 
 /* =================== contexto =================== */
-const UI = (() => { let s = {}; try { s = JSON.parse(localStorage.getItem('cst:ui') || '{}'); } catch (e) {} return { view: 'cst', month: curMonth(), fb: [], ft: '', who: '', ...s }; })();
+const UI = (() => { let s = {}; try { s = JSON.parse(localStorage.getItem('cst:ui') || '{}'); } catch (e) {} return { view: 'cst', month: curMonth(), macro: false, fb: [], ft: '', who: '', ...s, fb: [] }; })();
 const saveUI = () => { try { localStorage.setItem('cst:ui', JSON.stringify(UI)); } catch (e) {} };
-let V = null;
-const VK = () => 'cst:v:' + store.board + ':' + UI.month;
+let V = null, SEL = '', INED = '';
+const VK = () => 'cst:v:' + store.board + ':' + curMk() + ':' + (UI.macro ? 'MACRO-' + curYear() : UI.month);
 function loadView() { try { V = JSON.parse(localStorage.getItem(VK()) || 'null'); } catch (e) { V = null; } }
 const saveView = () => { clearTimeout(saveView.t); saveView.t = setTimeout(() => { try { localStorage.setItem(VK(), JSON.stringify(V)); } catch (e) {} }, 300); };
 
@@ -1182,11 +1418,13 @@ function render() {
   <div class="titlebar">${titlePillHTML()}</div>
   <header class="top">
     <div class="top-l"><nav class="seg">${VIEWS.map(([k, l, i]) => `<button class="pill ${UI.view === k ? 'on' : ''}" data-act="view" data-v="${k}">${ic(i, 'width:14px;height:14px')}${l}</button>`).join('')}</nav></div>
-    <div class="month">${UI.view === 'set' ? `<span class="sub">${ic('gear', 'width:13px;height:13px')} ajustes</span>` : `<button class="pill icon" data-act="mon" data-v="-1" aria-label="Mês anterior">${ic('left')}</button><button class="month-btn" data-act="mon-pop">${cap1(monthName(UI.month))}${UI.month === curMonth() ? '<span class="dot g"></span>' : ''}</button><button class="pill icon" data-act="mon" data-v="1" aria-label="Próximo mês">${ic('right')}</button>`}</div>
+    <div class="month">${UI.view === 'set' ? `<span class="sub">${ic('gear', 'width:13px;height:13px')} ajustes</span>` : `<nav class="seg c-mseg"><button class="pill sm ${!UI.macro ? 'on' : ''}" data-act="macro" data-v="0">Mensal</button><button class="pill sm c-macro ${UI.macro ? 'on' : ''}" data-act="macro" data-v="1" title="Os 12 meses do ano lado a lado">${ic('macro', 'width:13px;height:13px')}MACRO</button></nav>${UI.macro
+      ? `<button class="pill icon" data-act="yr" data-v="-1" aria-label="Ano anterior">${ic('left')}</button><button class="month-btn" data-act="mon-pop">${curYear()}${curYear() === curMonth().slice(0, 4) ? '<span class="dot g"></span>' : ''}</button><button class="pill icon" data-act="yr" data-v="1" aria-label="Próximo ano">${ic('right')}</button>`
+      : `<button class="pill icon" data-act="mon" data-v="-1" aria-label="Mês anterior">${ic('left')}</button><button class="month-btn" data-act="mon-pop">${cap1(monthName(UI.month))}${UI.month === curMonth() ? '<span class="dot g"></span>' : ''}</button><button class="pill icon" data-act="mon" data-v="1" aria-label="Próximo mês">${ic('right')}</button>`}`}</div>
     <div class="top-r"><div class="save-st" id="savest"></div><nav class="seg c-flags" aria-label="País">${Object.keys(PAIS).map(k => `<button class="pill ${store.board === k ? 'on' : ''}" data-act="board" data-v="${k}" title="Constelação ${PAIS[k].name}" aria-label="Constelação ${PAIS[k].name}" aria-pressed="${store.board === k}">${FLAG[k]}</button>`).join('')}</nav></div>
   </header>
   ${UI.view === 'set' ? '' : `<div class="brandbar c-filt">
-    ${M.map(b => `<button class="pill sm ${UI.fb.includes(b.id) ? 'on' : ''}" data-act="fb" data-v="${b.id}"><span class="dot" style="background:${b.color};box-shadow:0 0 10px ${b.color}80"></span>${esc(b.name)}</button>`).join('')}
+    ${mkTabsHTML()}
     ${T.length ? `<span class="c-vsep"></span>${T.map(t => `<button class="pill sm ${UI.ft === t.id ? 'on' : ''}" data-act="ft" data-v="${t.id}">${ic('time', `width:13px;height:13px;color:${t.color}`)}${esc(t.name)}</button>`).join('')}` : ''}
     ${hasF() ? `<button class="pill sm ghost" data-act="clearf">${ic('x', 'width:12px;height:12px')}limpar</button>` : ''}
     <span class="sp"></span>
@@ -1197,22 +1435,43 @@ function render() {
   if (UI.view === 'cst') mountCst(); else scrollTo(0, y);
   updUndo();
 }
-function refresh() { if (UI.view === 'cst' && $('#world')) { reconcile(); } else render(); }
+function refresh() { if (UI.view === 'cst' && $('#world')) { reconcile(); mkTabsUpd(); } else render(); }
+/* abas de marca: cada marca tem a sua constelação (Geral aparece quando há pontos sem marca) */
+/* sem marca escolhida: abre a que tem mais pontos no mês */
+function mkPickDefault() { if (UI.mk && mkKeys().includes(UI.mk)) return; const c = {}; allNodes().filter(n => n.month === UI.month).forEach(n => { const k = mkOf(n); c[k] = (c[k] || 0) + 1; }); const ks = mkKeys(); UI.mk = ks.reduce((a, k) => (c[k] || 0) > (c[a] || 0) ? k : a, ks[0] || 'geral'); }
+function mkKeys() { const M = marcas().map(b => b.id); return (!M.length || allNodes().some(n => mkOf(n) === 'geral')) ? [...M, 'geral'] : M; }
+function mkStat(k) { const yr = curYear() + '-', L = allNodes().filter(n => (UI.macro ? (n.month || '').startsWith(yr) : n.month === UI.month) && mkOf(n) === k); return progressOf(L); }
+function mkTabsHTML() {
+  const cur = curMk();
+  return `<nav class="c-mks" id="mks" aria-label="Marcas">${mkKeys().map(k => { const pr = mkStat(k), c = mkColor(k);
+    return `<button class="c-mk ${k === cur ? 'on' : ''}" data-act="mk" data-v="${k}" style="--mc:${c}" aria-pressed="${k === cur}"><i class="c-mkd"></i><span>${esc(mkName(k))}</span><small>${pr.total ? `${pr.done}/${pr.total}` : '—'}</small><svg class="c-mkr" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8"/><circle cx="10" cy="10" r="8" style="stroke-dasharray:${pr.pct / 100 * 50.3} 50.3"/></svg></button>`; }).join('')}</nav>`;
+}
+function mkTabsUpd() { const el = $('#mks'); if (!el) return; const h = mkTabsHTML(); if (el._h !== h) { el.outerHTML = h; $('#mks')._h = h; } }
 
 /* =================== CONSTELAÇÃO =================== */
 /* marco do meio do mês: divide a linha em duas quinzenas (só visual, por pessoa) */
 const MIDM = [['off', 'Desligado'], ['linha', 'Linha'], ['ponto', 'Ponto'], ['quinzenas', 'Quinzenas']];
 const midHTML = () => `<i class="c-midl"></i><b class="c-midp"></b><span class="c-midt">metade do mês</span><span class="c-midq a">1ª quinzena</span><span class="c-midq b">2ª quinzena</span>`;
 function vCst() {
-  return `<div class="c-stage" id="stage">
-    <div class="c-world" id="world"><div class="c-spine" id="spine"><i class="c-prog" id="prog"></i><b class="c-tip" id="tip"></b><span class="c-cap s">início</span><span class="c-cap e">final</span></div><div class="c-mid" id="mid" data-mode="${UI.mid || 'off'}">${midHTML()}</div><svg class="c-wires" id="wires" width="1" height="1"></svg><div id="nodes"></div><div id="bridges"></div><button class="c-wdel" id="wdel" data-act="wire-del" title="Apagar este fio" aria-label="Apagar este fio" hidden>${ic('x')}</button></div>
+  const k = curMk(), when = UI.macro ? 'de ' + curYear() : 'de ' + monthName(UI.month, false);
+  return `<div class="c-stage ${OP.on ? 'op-on' : ''}" id="stage" style="--mk:${mkColor(k)}">
+    <div class="c-aur" aria-hidden="true"><i></i><i></i></div><div class="c-spot" id="spot" aria-hidden="true"></div>
+    <div class="c-world" id="world"><div id="mcols"></div><div class="c-spine" id="spine"><i class="c-prog" id="prog"></i><b class="c-tip" id="tip"></b><span class="c-cap s">${UI.macro ? 'jan ' + curYear() : 'início'}</span><span class="c-cap e">${UI.macro ? 'dez ' + curYear() : 'final'}</span></div><div class="c-mid" id="mid" data-mode="${UI.macro ? 'off' : UI.mid || 'off'}">${midHTML()}</div><svg class="c-wires" id="wires" width="1" height="1"></svg><div id="nodes"></div><div id="bridges"></div><button class="c-wdel" id="wdel" data-act="wire-del" title="Apagar este fio" aria-label="Apagar este fio" hidden>${ic('x')}</button></div>
     <div class="c-hud" id="hud"></div>
-    <div class="c-midc ${UI.midMenu ? 'open' : ''}"><button class="c-midb ${UI.mid && UI.mid !== 'off' ? 'on' : ''}" data-act="mid-menu" title="Marco do meio do mês" aria-label="Marco do meio do mês">${ic('half')}</button><div class="c-midm">${MIDM.map(([k, l]) => `<button class="${(UI.mid || 'off') === k ? 'on' : ''}" data-act="mid" data-v="${k}">${l}</button>`).join('')}</div></div>
-    <div class="c-empty" id="empty" hidden><div>${ic('const', 'width:30px;height:30px')}<b>A constelação de ${monthName(UI.month, false)} está vazia</b><span>Arraste um item da barra de baixo para o canvas, ou dê dois cliques em qualquer lugar.</span></div></div>
+    <div class="c-midc ${UI.midMenu ? 'open' : ''}">
+      ${UI.macro ? '' : `<div class="c-mw"><button class="c-midb ${UI.mid && UI.mid !== 'off' ? 'on' : ''}" data-act="mid-menu" title="Marco do meio do mês">${ic('half')}<span>Quinzena</span></button><div class="c-midm">${MIDM.map(([k, l]) => `<button class="${(UI.mid || 'off') === k ? 'on' : ''}" data-act="mid" data-v="${k}">${l}</button>`).join('')}</div></div>`}
+      <button class="c-midb" data-act="tidy" title="Organizar e alinhar os ramos">${ic('tidy')}<span>Organizar</span></button>
+      <button class="c-midb c-opb ${OP.on ? 'on' : ''}" data-act="op" title="Operar: seguir os fios do que fazer agora">${ic('flow')}<span>Operar</span></button>
+      <div class="c-mw c-gw ${UI.gadMenu ? 'open' : ''}"><button class="c-midb ${GADS.some(([g]) => gadOn(g)) ? 'on' : ''}" data-act="gad-menu" title="Gadgets">${ic('gadget')}<span>Gadgets</span></button><div class="c-midm">${GADS.map(([g, l]) => `<button data-act="gad" data-v="${g}"><span>${l}</span><i class="switch ${gadOn(g) ? 'on' : ''}"></i></button>`).join('')}</div></div>
+    </div>
+    <div class="c-op" id="op" ${OP.on ? '' : 'hidden'}></div>
+    <div class="c-gads" id="gads"></div>
+    <div class="c-empty" id="empty" hidden><div>${ic('const', 'width:30px;height:30px')}<b>A constelação ${esc(mkName(k))} ${when} está vazia</b><span>Arraste um item da barra de baixo para o canvas, ou dê dois cliques em qualquer lugar.</span></div></div>
+    <div class="c-kb" id="kb" hidden><span><kbd>Tab</kbd>filho</span><span><kbd>Enter</kbd>irmão</span><span><kbd>Espaço</kbd>abrir</span><span><kbd>2×</kbd>renomear</span><span><kbd>Del</kbd>excluir</span></div>
     <div class="c-ctl"><button class="pill sm icon" data-act="undo" title="Desfazer (Ctrl+Z)" aria-label="Desfazer">${ic('undo')}</button><button class="pill sm icon" data-act="redo" title="Refazer" aria-label="Refazer">${ic('redo')}</button><span class="c-sep"></span>
       <span class="c-zw"><button class="pill sm icon" data-act="zoom" data-v="-1" aria-label="Diminuir">${ic('minus')}</button><span class="c-zl" id="zl"></span><button class="pill sm icon" data-act="zoom" data-v="1" aria-label="Aumentar">${ic('plus')}</button></span>
       <button class="pill sm icon" data-act="fit" title="Enquadrar tudo (F)" aria-label="Enquadrar">${ic('fit')}</button></div>
-    <div class="c-dock" id="dock">${DOCK.map(([k, l], i) => `${[4, 6, 9].includes(i) ? '<span class="c-sep"></span>' : ''}<button class="c-di" data-dock="${k}" title="Clique para adicionar · arraste para posicionar">${dockIcon(k)}<span>${l}</span></button>`).join('')}<span class="c-sep"></span><button class="c-di more" data-act="pick-any" title="Todos os tipos">${ic('plus')}<span>Mais</span></button></div>
+    <div class="c-dock" id="dock">${DOCK.map(([k, l], i) => `${[4, 6, 10].includes(i) ? '<span class="c-sep"></span>' : ''}<button class="c-di" data-dock="${k}" title="Clique para adicionar · arraste para posicionar">${dockIcon(k)}<span>${l}</span></button>`).join('')}<span class="c-sep"></span><button class="c-di more" data-act="pick-any" title="Todos os tipos">${ic('plus')}<span>Mais</span></button></div>
   </div>`;
 }
 function dockIcon(k) {
@@ -1223,6 +1482,7 @@ function dockIcon(k) {
   if (k === 'ponto') return `<i class="dk-dot"></i>`;
   if (k === 'canal') return `<i class="dk-can">${ic('r_note')}</i>`;
   if (k === 'periodo') return `<i class="dk-per"></i>`;
+  if (k === 'comentario') return `<i class="dk-tx"><b></b><b></b></i>`;
   return `<i class="dk-ic">${ic(k)}</i>`;
 }
 let NODES = new Map(), WIRES = new Map(), POS = {}, SIZE = {}, anim = false;
@@ -1245,33 +1505,65 @@ function dirSpot(id, d) {
   const base = d === 'r' ? { x: n.x + w + 150, y: n.y } : { x: n.x + 40, y: n.y + (d === 'u' ? -1 : 1) * Math.max(140, S.h / 2 + 110) };
   return freeSpot(id, { x: Math.round(base.x), y: Math.round(base.y) });
 }
-function nodeHTML(n) {
-  const sh = shapeOf(n), C = CAT(n.cat), lbl = labelOf(n), who = (n.who || []).map(pessoa).filter(Boolean).slice(0, 3), br = (n.brands || []).map(marca).filter(Boolean);
-  const bd = br.length ? `<span class="c-bd">${br.map(b => `<i style="background:${b.color}"></i>`).join('')}</span>` : '';
+function nodeHTML(n, list) {
+  const sh = shapeOf(n), C = CAT(n.cat), lbl = labelOf(n), who = (n.who || []).map(pessoa).filter(Boolean).slice(0, 3), ed = INED === n.id;
   const avs = who.length ? `<span class="c-avs">${who.map(p => av(p, 18)).join('')}</span>` : '';
   const ok = n.status === 'done' ? `<em class="c-ok">${ic('check')}</em>` : '';
+  const kids = (list || []).filter(k => k.parent === n.id && countable(k)), pb = kids.length && (sh === 'pill' || sh === 'outline') ? `<span class="c-pbadge">${kids.filter(k => k.status === 'done').length}/${kids.length}</span>` : '';
+  const inp = `<input class="c-ined" id="ined-in" value="${esc(n.title || '')}" placeholder="${esc(CAT(n.cat).n)}" autocomplete="off" spellcheck="false">`;
+  const tEl = ed ? inp : `<b>${esc(lbl)}</b>`;
   let body = '', below = '';
-  if (sh === 'pill' || sh === 'outline') body = `${bd}<b>${esc(lbl)}</b>${n.rep ? ic('repeat', 'width:11px;height:11px;opacity:.65') : ''}${avs}${ok}`;
-  else if (sh === 'mini') body = `<b>${esc(lbl)}</b>${ok}`;
+  if (sh === 'pill' || sh === 'outline') body = `${tEl}${pb}${n.rep ? ic('repeat', 'width:11px;height:11px;opacity:.65') : ''}${avs}${ok}`;
+  else if (sh === 'mini') body = `${tEl}${avs}${ok}`;
   else if (sh === 'dot') { body = `<i></i>${ok}`; below = n.title ? lbl : ''; }
   else if (sh === 'canal') { body = `${ic(n.cat === 'canal' ? (REDES[(n.f || {}).rede]?.i || 'r_note') : n.cat)}${ok}`; below = lbl; }
   else if (sh === 'icone') { body = `${n.cat === 'lista' ? listGlyph(n) : ic(n.cat)}${ok}`; below = n.title || (n.cat === 'time' && n.team ? (time(n.team) || {}).name : '') || ''; }
-  else if (sh === 'haste') body = `<b>${esc(lbl)}</b><i class="c-stem"></i>${ok}`;
-  else if (sh === 'periodo') body = `<b>${esc(lbl)}</b><i class="c-brk" style="width:${n.w || 220}px"></i>`;
+  else if (sh === 'haste') body = `${tEl}<i class="c-stem"></i>${ok}`;
+  else if (sh === 'periodo') body = `${tEl}<i class="c-brk" style="width:${n.w || 220}px"></i>`;
+  else if (sh === 'texto') body = ed ? `<textarea class="c-ined c-intx" id="ined-in" placeholder="Escreva o comentário" spellcheck="false">${esc(n.title || '')}</textarea>` : `<p class="c-tx${n.title ? '' : ' ph'}">${esc(n.title || 'Comentário')}</p>`;
   const anc = (n.tail > 0 ? (n.anc || []) : []).map(a => `<b class="c-anc ${a.ok ? 'ok' : ''}" data-anc="${a.id}" title="${esc(a.t || 'Ponto de ancoragem')}"></b>`).join('');
   const tail = n.tail > 0 && (sh === 'pill' || sh === 'outline' || sh === 'mini') ? `<i class="c-tail"></i><span class="c-end ${n.status === 'done' ? 'ok' : ''}" title="Arraste para esticar"></span>${anc}` : '';
   const per = sh === 'periodo' ? `<i class="c-stripe" style="width:${n.w || 220}px"></i><span class="c-ph l"></span><span class="c-ph r"></span>` : '';
-  return `${tail}${per}<div class="c-b">${body}</div>${below ? `<span class="c-lb">${esc(below)}</span>` : ''}${['r', 'u', 'd'].map(d => `<button class="c-k c-k${d}" data-dir="${d}" aria-label="Adicionar">${ic('plus')}<span class="c-kl">${knobTypes(n, d).map((k, i) => `<span class="c-ki${i ? '' : ' on'}" data-k="${k}">${esc(CAT(k).n)}</span>`).join('')}<span class="c-ki more" data-more="1">Outros…</span></span></button>`).join('')}`;
+  const rz = sh === 'texto' ? `<span class="c-rz" title="Arraste para mudar a largura"></span>` : '';
+  const lb = ed && ['dot', 'canal', 'icone'].includes(sh) ? `<span class="c-lb on">${inp}</span>` : below ? `<span class="c-lb">${esc(below)}</span>` : '';
+  const open = `<button class="c-open1" data-act="open" data-id="${n.id}" title="Abrir (Espaço)">Abrir${ic('arrow', 'width:11px;height:11px')}</button>`;
+  return `${tail}${per}${open}<div class="c-b">${body}</div>${rz}${lb}${sh === 'texto' ? '' : ['r', 'u', 'd'].map(d => `<button class="c-k c-k${d}" data-dir="${d}" aria-label="Adicionar">${ic('plus')}<span class="c-kl">${knobTypes(n, d).map((k, i) => `<span class="c-ki${i ? '' : ' on'}" data-k="${k}">${esc(CAT(k).n)}</span>`).join('')}<span class="c-ki more" data-more="1">Outros…</span></span></button>`).join('')}`;
+}
+/* renomear direto no item (2 cliques, F2 ou logo depois de criar) */
+function startInlineEdit(id) {
+  if (!N(id) || !$('#nodes')) return;
+  INED = id; SEL = id; reconcile();
+  setTimeout(() => {
+    const inp = $('#ined-in'); if (!inp) { INED = ''; return; }
+    inp.focus(); inp.select();
+    const tx1 = inp.tagName === 'TEXTAREA', fitTa = () => { if (tx1) { inp.style.height = 'auto'; inp.style.height = inp.scrollHeight + 'px'; } }; fitTa(); inp.addEventListener('input', fitTa);
+    const finish = save => {
+      if (INED !== id) return; INED = '';
+      if (save) { const raw = D('node/' + id); if (raw) { const v = tx1 ? inp.value.replace(/\s+$/, '') : inp.value.trim(); if (v !== (raw.title || '')) commit('node/' + id, { ...raw, title: v, u: Date.now() }); } }
+      reconcile();
+    };
+    inp.addEventListener('keydown', ev => {
+      ev.stopPropagation();
+      if (ev.key === 'Enter' && !(tx1 && ev.shiftKey)) { ev.preventDefault(); finish(true); }
+      else if (ev.key === 'Escape') { ev.preventDefault(); finish(false); }
+      else if (ev.key === 'Tab' && !tx1) { ev.preventDefault(); finish(true); const cur = N(id); if (cur) { const d = cur.y === 0 ? 'u' : 'r'; startInlineEdit(createNode(suggestFor(cur, d), dirSpot(id, d))); } }
+    });
+    inp.addEventListener('pointerdown', ev => ev.stopPropagation());
+    inp.addEventListener('blur', () => finish(true), { once: true });
+  }, 20);
 }
 function reconcile(first) {
   const nodesEl = $('#nodes'); if (!nodesEl) return;
-  const list = monthNodes(), ids = new Set(list.map(n => n.id)), f = hasF();
+  const list = monthNodes(), ids = new Set(list.map(n => n.id)), f = hasF(), op = OP.sc = OP.on ? opScope(list) : null;
+  if (SEL && !ids.has(SEL)) SEL = '';
   for (const [id, el] of NODES) if (!ids.has(id)) { el.classList.add('bye'); setTimeout(() => el.remove(), 260); NODES.delete(id); delete POS[id]; }
   for (const n of list) {
-    let el = NODES.get(n.id); const sh = shapeOf(n), html = nodeHTML(n), col = colorOf(n);
+    let el = NODES.get(n.id); const sh = shapeOf(n), html = nodeHTML(n, list), col = colorOf(n);
     if (!el) { el = document.createElement('div'); el.dataset.id = n.id; nodesEl.appendChild(el); NODES.set(n.id, el); if (!first) el.classList.add('born'); POS[n.id] = { x: n.x, y: n.y }; }
-    const cls = `c-n sh-${sh} cat-${n.cat}${n.sz ? ' sz-' + n.sz : ''} st-${n.status || 'todo'}${n.y === 0 ? ' on-spine' : ''}${f && !matchF(n) ? ' dim' : ''}${n.carried ? ' carried' : ''}${ED.id === n.id ? ' sel' : ''}${n.prio === 'a' ? ' hi' : ''}`;
-    if (el._h !== html) { el.innerHTML = html; el._h = html; }
+    const sel = ED.id === n.id || SEL === n.id || INED === n.id, ops = op ? (op.now.has(n.id) ? ' op-now' : op.ids.has(n.id) ? ' op-in' : ' op-out') : '';
+    const cls = `c-n sh-${sh} cat-${n.cat}${n.sz ? ' sz-' + n.sz : ''} st-${n.status || 'todo'}${n.y === 0 ? ' on-spine' : ''}${f && !matchF(n) ? ' dim' : ''}${n.carried ? ' carried' : ''}${sel ? ' sel' : ''}${INED === n.id ? ' ined' : ''}${n.prio === 'a' ? ' hi' : ''}${ops}`;
+    if (el._h !== html && !(INED === n.id && el.querySelector('#ined-in'))) { el.innerHTML = html; el._h = html; }
+    if (sh === 'texto') el.style.setProperty('--tw', (n.w || 240) + 'px');
     if (el._c !== cls) { const born = el.classList.contains('born'); el.className = cls + (born ? ' born' : ''); el._c = cls; }
     el.style.setProperty('--c', col); if (n.cat === 'time') el.style.setProperty('--tc', (time(n.team) || {}).color || '#ededf0');
     const b = el.querySelector('.c-b'); SIZE[n.id] = { w: b ? b.offsetWidth : 0, h: b ? b.offsetHeight : 0 };
@@ -1283,8 +1575,18 @@ function reconcile(first) {
     layoutTail(el, n);
   }
   $('#empty') && ($('#empty').hidden = list.length > 0);
-  bridges(list); hud(list);
+  const kb = $('#kb'); if (kb) kb.hidden = !SEL || !!INED || OP.on;
+  macroCols(); bridges(list); hud(list); gadgets(); opPanel(list, op);
   kick();
+}
+/* MACRO: uma coluna por mês com o nome e o progresso; clicar abre o mês */
+function macroCols() {
+  const mc = $('#mcols'); if (!mc) return;
+  if (!UI.macro) { if (mc.innerHTML) mc.innerHTML = ''; return; }
+  const yr = curYear(), k = curMk(), all = allNodes().filter(n => (n.month || '').startsWith(yr + '-') && inMk(n, k));
+  const h = MESES.map((mn, i) => { const m = `${yr}-${String(i + 1).padStart(2, '0')}`, L = all.filter(n => n.month === m), pr = progressOf(L);
+    return `<div class="c-mcol ${m === curMonth() ? 'cur' : ''}" style="left:${i * MW - 220}px;width:${MW}px"><button class="c-mhdr" data-act="macro-zoom" data-v="${m}">${mn.slice(0, 3)} <small>${L.length ? `${pr.done}/${pr.total} · ${pr.pct}%` : 'vazio'}</small></button></div>`; }).join('');
+  if (mc._h !== h) { mc.innerHTML = h; mc._h = h; }
 }
 function layoutTail(el, n) {
   if (!(n.tail > 0)) return; const w = SIZE[n.id].w / 2, t = el.querySelector('.c-tail'), e = el.querySelector('.c-end'); if (!t) return;
@@ -1305,7 +1607,10 @@ function frame() {
   if (moving || (drag && drag.live)) requestAnimationFrame(frame); else anim = false;
 }
 function attach(n, by, depth = 0) {
-  const p = by[n.parent], pp = p && POS[p.id]; if (!pp) return null;
+  const p = by[n.parent], pp = p && POS[p.id];
+  /* pai na constelação de outra marca: se ele está na linha do mês, o fio nasce na linha */
+  if (!p) { const o = n.parent && N(n.parent); return o && o.y === 0 && (UI.macro || o.month === n.month) ? { x: o.x, y: 0, horiz: true } : null; }
+  if (!pp) return null;
   if (n.at && p.tail > 0) { const a = (p.anc || []).find(x => x.id === n.at); if (a) return { x: pp.x + SIZE[p.id].w / 2 + p.tail * a.p, y: pp.y, horiz: true }; }
   if (n.via != null && depth < 40) { const q = wireAt(p, by, n.via, depth + 1); if (q) return { x: q.x, y: q.y, horiz: true }; }
   return { x: pp.x, y: pp.y, horiz: p.y === 0 || shapeOf(p) === 'dot' && pp.y === 0 };
@@ -1339,14 +1644,18 @@ function pathFor(P, C, mode) {
 function wires(list) {
   const svg = $('#wires'); if (!svg) return; const by = Object.fromEntries(list.map(n => [n.id, n])), f = hasF(), seen = new Set();
   const put = (key, d, cls) => { seen.add(key); let p = WIRES.get(key); if (!p) { p = document.createElementNS('http://www.w3.org/2000/svg', 'path'); p.setAttribute('pathLength', '1'); svg.appendChild(p); WIRES.set(key, p); p.classList.add('born'); setTimeout(() => p.classList.remove('born'), 700); } if (p._d !== d) { p.setAttribute('d', d); p._d = d; } if (p._c !== cls) { p.setAttribute('class', cls); p._c = cls; } };
+  const op = OP.on ? OP.sc : null;
   for (const n of list) {
-    if (!n.parent || !by[n.parent]) continue; const P = attach(n, by), C = POS[n.id]; if (!P || !C) continue;
-    const d = pathFor(P, C, n.ln || 'auto');
-    put('w' + n.id, d, `c-w${n.status === 'done' ? ' ok' : ''}${f && !matchF(n) ? ' dim' : ''}`);
+    if (!n.parent) continue; const P = attach(n, by), C = POS[n.id]; if (!P || !C) continue;
+    const d = pathFor(P, C, n.ln || 'auto'), tx1 = shapeOf(n) === 'texto';
+    put('w' + n.id, d, `c-w${tx1 ? ' tx' : ''}${n.status === 'done' && !tx1 ? ' ok' : ''}${f && !matchF(n) ? ' dim' : ''}${op ? (op.ids.has(n.id) ? (n.status === 'done' ? ' op-done' : ' op-flow') : ' op-out') : ''}`);
+    const wp = WIRES.get('w' + n.id), wc = colorOf(n); if (wp._wc !== wc) { wp.style.setProperty('--wc', wc); wp._wc = wc; }
     seen.add('h' + n.id); let h = WIRES.get('h' + n.id); if (!h) { h = document.createElementNS('http://www.w3.org/2000/svg', 'path'); h.setAttribute('class', 'c-wh'); h.dataset.wire = n.id; svg.appendChild(h); WIRES.set('h' + n.id, h); }
     if (h._d !== d) { h.setAttribute('d', d); h._d = d; }
   }
   for (const n of list) for (const k of n.links || []) { if (k < n.id || !by[k] || !POS[k] || !POS[n.id]) continue; const a = POS[n.id], b = POS[k]; const d = `M${a.x} ${a.y}C${(a.x + b.x) / 2} ${a.y} ${(a.x + b.x) / 2} ${b.y} ${b.x} ${b.y}`; put('l' + n.id + k, d, 'c-lk'); seen.add('hk' + n.id + k); let h = WIRES.get('hk' + n.id + k); if (!h) { h = document.createElementNS('http://www.w3.org/2000/svg', 'path'); h.setAttribute('class', 'c-wh'); h.dataset.link = n.id + '|' + k; svg.appendChild(h); WIRES.set('hk' + n.id + k, h); } if (h._d !== d) { h.setAttribute('d', d); h._d = d; } }
+  /* MACRO: fio de continuidade entre o ponto e a cópia que seguiu para o mês seguinte */
+  if (UI.macro) for (const n of list) if (n.carried && by[n.carried] && POS[n.id] && POS[n.carried]) { const a = POS[n.id], b = POS[n.carried]; put('c' + n.id, `M${a.x} ${a.y}C${(a.x + b.x) / 2} ${a.y} ${(a.x + b.x) / 2} ${b.y} ${b.x} ${b.y}`, 'c-lk'); }
   const G = drag && drag.kind === 'node' && drag.guide; if (G && G.gy) { const a = Math.min(G.gy.x, G.x) - 60, b = Math.max(G.gy.x, G.x) + 60; put('guide-h', `M${a} ${G.y}L${b} ${G.y}`, 'c-guide'); } if (G && G.gx) { const a = Math.min(G.gx.y, G.y) - 60, b = Math.max(G.gx.y, G.y) + 60; put('guide-v', `M${G.x} ${a}L${G.x} ${b}`, 'c-guide'); }
   if (drag && drag.kind === 'knob' && drag.to) { const a = POS[drag.id]; put('rubber', `M${a.x} ${a.y}L${drag.to.x} ${drag.to.y}`, 'c-rub'); }
   for (const [k, p] of WIRES) if (!seen.has(k)) { p.remove(); WIRES.delete(k); }
@@ -1356,6 +1665,7 @@ function spine(list) {
   /* a linha cresce com o conteúdo: pouco espaço antes da primeira estrela, mais espaço depois da última */
   let x0 = list.length ? Infinity : -300, x1 = 2400; for (const n of list) { const p = POS[n.id]; if (!p) continue; x0 = Math.min(x0, p.x - (SIZE[n.id]?.w || 0) / 2 - 70); x1 = Math.max(x1, p.x + (n.tail || 0) + (SIZE[n.id]?.w || 0) / 2 + 520); }
   if (!isFinite(x0)) x0 = -300;
+  if (UI.macro) { x0 = -220; x1 = 12 * MW - 220; }
   SP = { x0, x1 }; const s = $('#spine'); if (!s) return;
   const md = $('#mid'); if (md) { md.style.left = (x0 + x1) / 2 + 'px'; md.style.setProperty('--half', (x1 - x0) / 2 + 'px'); }
   s.style.left = x0 + 'px'; s.style.width = x1 - x0 + 'px';
@@ -1371,7 +1681,7 @@ function recurringMissing(all, m) {
 function hud(list) {
   const h = $('#hud'); if (!h) return; const pr = progressOf(list);
   h.innerHTML = list.length ? `<div class="c-hp"><svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" class="bg"/><circle cx="18" cy="18" r="15" class="fg" style="stroke-dasharray:${(pr.pct / 100) * 94.2} 94.2"/></svg><b>${pr.pct}%</b></div>
-    <div class="c-hs"><span><b>${pr.done}</b>/${pr.total} ações</span>${pr.late ? `<span class="r"><b>${pr.late}</b> ${pr.late === 1 ? 'atrasada' : 'atrasadas'}</span>` : ''}${pr.blocked ? `<span class="y"><b>${pr.blocked}</b> ${pr.blocked === 1 ? 'travada' : 'travadas'}</span>` : ''}</div>` : '';
+    <div class="c-hs"><span><b>${pr.done}</b>/${pr.total} ${UI.macro ? 'no ano' : 'ações'}</span>${pr.late ? `<span class="r"><b>${pr.late}</b> ${pr.late === 1 ? 'atrasada' : 'atrasadas'}</span>` : ''}${pr.blocked ? `<span class="y"><b>${pr.blocked}</b> ${pr.blocked === 1 ? 'travada' : 'travadas'}</span>` : ''}</div>` : '';
   h.hidden = !list.length;
 }
 
@@ -1379,20 +1689,22 @@ function hud(list) {
 function applyView() {
   const w = $('#world'), st = $('#stage'); if (!w || !V) return;
   w.style.transform = `translate(${V.x}px,${V.y}px) scale(${V.z})`;
-  st.style.backgroundPosition = `${V.x}px ${V.y}px`; st.style.backgroundSize = `${22 * V.z}px ${22 * V.z}px`;
+  st.style.backgroundPosition = `${V.x}px ${V.y}px`; st.style.backgroundSize = `${22 * V.z}px ${22 * V.z}px`; const sp = $('#spot'); if (sp) { sp.style.backgroundPosition = st.style.backgroundPosition; sp.style.backgroundSize = st.style.backgroundSize; }
   const zl = $('#zl'); if (zl) zl.textContent = Math.round(V.z * 100) + '%';
+  st.classList.toggle('lod-far', UI.macro && V.z < 0.42); st.style.setProperty('--iz', clamp(1 / V.z, 1, 7));
   saveView();
 }
 function bounds() {
   const list = monthNodes(); let x0 = 0, x1 = 1400, y0 = -260, y1 = 260;
+  if (UI.macro) { const i = mIdx(UI.month); x0 = i * MW - 260; x1 = (i + 1) * MW - 300; if (!list.length) return { x0, x1, y0: -320, y1: 320 }; }
   for (const n of list) { const s = SIZE[n.id] || { w: 80, h: 30 }; x0 = Math.min(x0, n.x - s.w / 2 - 40); x1 = Math.max(x1, n.x + s.w / 2 + (n.tail || 0) + 40); y0 = Math.min(y0, n.y - s.h - 50); y1 = Math.max(y1, n.y + s.h + 50); }
   return { x0, x1, y0, y1 };
 }
 function fit(instant) {
-  const st = $('#stage'); if (!st) return; const b = bounds(), sw = st.clientWidth, sh = st.clientHeight;
-  const small = sw < 700, z = clamp(Math.min((sw - 80) / (b.x1 - b.x0), (sh - 190) / (b.y1 - b.y0)), small ? 0.5 : 0.2, 1.15);
+  const st = $('#stage'); if (!st) return; const b = bounds(), gw = $('#gads')?.offsetWidth && st.clientWidth > 900 ? 290 : 0, ow = OP.on && st.clientWidth > 900 ? 320 : 0, sw = st.clientWidth - gw - ow, sh = st.clientHeight;
+  const small = sw < 700, z = clamp(Math.min((sw - 80) / (b.x1 - b.x0), (sh - 190) / (b.y1 - b.y0)), UI.macro ? 0.12 : small ? 0.5 : 0.2, 1.15);
   const cx = small ? Math.min((b.x0 + b.x1) / 2, b.x0 + (sw / 2 - 20) / z) : (b.x0 + b.x1) / 2;
-  const to = { z, x: sw / 2 - cx * z, y: (sh - 90) / 2 - ((b.y0 + b.y1) / 2) * z };
+  const to = { z, x: ow + sw / 2 - cx * z, y: (sh - 90) / 2 - ((b.y0 + b.y1) / 2) * z };
   if (instant || !V) { V = to; applyView(); return; }
   camTo(to);
 }
@@ -1407,18 +1719,21 @@ document.addEventListener('pointerdown', e => {
   const st = $('#stage'); if (!st || e.button > 0) return;
   const dk = e.target.closest('[data-dock]');
   if (dk) { drag = { kind: 'dock', cat: dk.dataset.dock, sx: e.clientX, sy: e.clientY, moved: false }; e.preventDefault(); return; }
-  if (!st.contains(e.target) || e.target.closest('.c-ctl,.c-dock,.c-edge,.c-hud,.c-midc,button:not(.c-k)')) return;
+  if (!st.contains(e.target) || e.target.closest('.c-ctl,.c-dock,.c-edge,.c-hud,.c-midc,.c-op,.c-gads,.c-kb,.c-ined,button:not(.c-k)')) return;
   const r = st.getBoundingClientRect();
+  ripple(e.clientX, e.clientY);
   ptrs.set(e.pointerId, { x: e.clientX - r.left, y: e.clientY - r.top });
   if (ptrs.size === 2) { clearTimeout(lpT); const [a, b] = [...ptrs.values()]; drag = { kind: 'pinch', d0: Math.hypot(a.x - b.x, a.y - b.y), z0: V.z, x0: V.x, y0: V.y, cx: (a.x + b.x) / 2, cy: (a.y + b.y) / 2 }; return; }
   const nodeEl = e.target.closest('.c-n'), id = nodeEl && nodeEl.dataset.id, w = toWorld(e.clientX, e.clientY);
   if (nodeEl && e.target.closest('.c-k')) { drag = { kind: 'knob', dir: e.target.closest('.c-k').dataset.dir || 'r', more: !!e.target.closest('[data-more]'), pick: e.target.closest('[data-k]')?.dataset.k, id, sx: e.clientX, sy: e.clientY, moved: false, live: true }; }
   else if (nodeEl && e.target.closest('.c-end')) { const n = N(id); drag = { kind: 'tail', id, sx: e.clientX, t0: n.tail, moved: false, live: true, ids: new Set() }; }
   else if (nodeEl && e.target.closest('.c-ph')) { const n = N(id); drag = { kind: 'per', id, sx: e.clientX, w0: n.w || 220, moved: false, live: true, ids: new Set() }; }
+  else if (nodeEl && e.target.closest('.c-rz')) { const n = N(id); drag = { kind: 'rz', id, sx: e.clientX, w0: n.w || 240, x0: n.x, moved: false, live: true, ids: new Set() }; }
   else if (nodeEl && e.target.closest('.c-anc')) { drag = { kind: 'anc', id, a: e.target.closest('.c-anc').dataset.anc, sx: e.clientX, sy: e.clientY, moved: false }; }
   else if (nodeEl) {
+    if (INED === id) return;
     const n = N(id), sub = descendants(id, monthNodes()), ids = new Set([id, ...sub.map(x => x.id)]);
-    drag = { kind: 'node', id, ids, sx: e.clientX, sy: e.clientY, start: Object.fromEntries([...ids].map(k => [k, { x: N(k).x, y: N(k).y }])), moved: false, live: true };
+    drag = { kind: 'node', id, ids, sx: e.clientX, sy: e.clientY, start: Object.fromEntries([...ids].map(k => [k, { x: N(k).x, y: N(k).y }])), moved: false, live: true, tx: shapeOf(n) === 'texto' };
   } else {
     drag = { kind: 'pan', sx: e.clientX, sy: e.clientY, x0: V.x, y0: V.y, moved: false, w, wire: e.target.closest('.c-wh')?.dataset.wire || undefined };
     if (e.pointerType !== 'mouse' && !drag.wire) { clearTimeout(lpT); lpT = setTimeout(() => { if (drag && drag.kind === 'pan' && !drag.moved) { drag = null; navigator.vibrate && navigator.vibrate(12); openPick({ x: w.x, y: w.y }); } }, 520); }
@@ -1426,6 +1741,7 @@ document.addEventListener('pointerdown', e => {
   e.preventDefault();
 });
 document.addEventListener('pointermove', e => {
+  spot(e);
   if (!drag) { hover(e); return; }
   const st = $('#stage'); if (!st) return; const r = st.getBoundingClientRect();
   if (ptrs.has(e.pointerId)) ptrs.set(e.pointerId, { x: e.clientX - r.left, y: e.clientY - r.top });
@@ -1436,7 +1752,7 @@ document.addEventListener('pointermove', e => {
   if (far) drag.moved = true; if (!drag.moved) return;
   const dx = (e.clientX - drag.sx) / V.z, dy = (e.clientY - (drag.sy ?? e.clientY)) / V.z;
   if (drag.kind === 'node') {
-    const s0 = drag.start[drag.id]; let ny = Math.round(s0.y + dy), nx = Math.round(s0.x + dx); const snap = Math.abs(ny) < SNAP; if (snap) ny = 0;
+    const s0 = drag.start[drag.id]; let ny = Math.round(s0.y + dy), nx = Math.round(s0.x + dx); const snap = !drag.tx && Math.abs(ny) < SNAP; if (snap) ny = 0;
     /* ímã: alinha com o pai (fio reto) ou com outra estrela, na horizontal e na vertical */
     const me = N(drag.id), par = me && me.parent && N(me.parent), others = monthNodes().filter(o => !drag.ids.has(o.id)); let gx = null, gy = null;
     if (!snap) { let by = 12 / V.z; for (const o of others) { const t = (par && o.id === par.id ? 12 : 7) / V.z, d = Math.abs(o.y - ny); if (d < t && d < by) { by = d; gy = o; } } if (gy) ny = gy.y; }
@@ -1444,9 +1760,10 @@ document.addEventListener('pointermove', e => {
     const was = drag.guide && (drag.guide.gx || drag.guide.gy); drag.guide = { gx, gy, x: nx, y: ny };
     if ((gx || gy) && !was) { NODES.get(drag.id)?.classList.remove('snapq'); void NODES.get(drag.id)?.offsetWidth; NODES.get(drag.id)?.classList.add('snapq'); navigator.vibrate && navigator.vibrate(6); }
     const ddy = ny - s0.y, ddx = nx - s0.x;
-    for (const k of drag.ids) { const n = store.docs['node/' + k], s = drag.start[k]; n.x = Math.round(s.x + ddx); n.y = k === drag.id ? ny : Math.round(s.y + ddy); }
-    st.classList.toggle('magnet', snap); drag.dirty = true; NODES.get(drag.id)?.classList.add('lift'); kick(); return;
+    for (const k of drag.ids) { const n = store.docs['node/' + k], s = drag.start[k], wx = Math.round(s.x + ddx); n.x = UI.macro ? wx - mIdx(n.month) * MW : wx; n.y = k === drag.id ? ny : Math.round(s.y + ddy); }
+    st.classList.toggle('magnet', snap); drag.dirty = true; NODES.get(drag.id)?.classList.add('lift'); document.body.classList.add('dragging'); kick(); return;
   }
+  if (drag.kind === 'rz') { const n = store.docs['node/' + drag.id]; n.w = clamp(Math.round(drag.w0 + dx), 140, 640); n.x = Math.round(drag.x0 - (UI.macro ? mIdx(n.month) * MW : 0) + (n.w - drag.w0) / 2); drag.dirty = true; refresh(); return; }
   if (drag.kind === 'tail') { const n = store.docs['node/' + drag.id]; n.tail = Math.max(40, Math.round(drag.t0 + dx)); drag.dirty = true; layoutTail(NODES.get(drag.id), { ...n, id: drag.id }); kick(); return; }
   if (drag.kind === 'per') { const n = store.docs['node/' + drag.id]; n.w = Math.max(90, Math.round(drag.w0 + dx * 2)); drag.dirty = true; const el = NODES.get(drag.id); el.querySelector('.c-brk').style.width = n.w + 'px'; el.querySelector('.c-stripe').style.width = n.w + 'px'; return; }
   if (drag.kind === 'knob') { drag.to = toWorld(e.clientX, e.clientY); st.classList.add('kdrag');
@@ -1456,30 +1773,52 @@ const endDrag = e => {
   ptrs.delete(e.pointerId); clearTimeout(lpT);
   if (!drag) return; const d = drag, st = $('#stage');
   if (d.kind === 'pinch') { if (ptrs.size < 2) drag = null; return; }
-  drag = null; st?.classList.remove('grab', 'magnet', 'kdrag'); $$('.c-n.lift,.c-n.target').forEach(x => x.classList.remove('lift', 'target')); $('#ghost')?.remove();
+  drag = null; st?.classList.remove('grab', 'magnet', 'kdrag'); document.body.classList.remove('dragging'); $$('.c-n.lift,.c-n.target').forEach(x => x.classList.remove('lift', 'target')); $('#ghost')?.remove();
   if (e.type === 'pointercancel') { refresh(); return; }
   if (d.kind === 'dock') {
-    if (!d.moved) { const c = st.getBoundingClientRect(), w = toWorld(c.left + c.width / 2, c.top + c.height / 2); createNode(d.cat, freeSpot(null, { x: w.x, y: CAT(d.cat).s === 'periodo' ? 0 : w.y })); return; }
+    if (!d.moved) { const c = st.getBoundingClientRect(), w = toWorld(c.left + c.width / 2, c.top + c.height / 2); startInlineEdit(createNode(d.cat, freeSpot(null, { x: w.x, y: CAT(d.cat).s === 'periodo' ? 0 : w.y }))); return; }
     const r = st.getBoundingClientRect(); if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) return;
-    const w = toWorld(e.clientX, e.clientY); createNode(d.cat, { x: Math.round(w.x), y: Math.abs(w.y) < SNAP ? 0 : Math.round(w.y) }); return;
+    const w = toWorld(e.clientX, e.clientY); startInlineEdit(createNode(d.cat, { x: Math.round(w.x), y: Math.abs(w.y) < SNAP && CAT(d.cat).s !== 'texto' ? 0 : Math.round(w.y) })); return;
   }
   if (d.kind === 'pan') {
     if (!d.moved && d.wire) { branchFromWire(d.wire, d.w); return; }
+    if (!d.moved && SEL) { SEL = ''; reconcile(); }
     if (!d.moved && e.pointerType === 'mouse') { const now = Date.now(); if (now - lastTap.t < 340 && Math.abs(e.clientX - lastTap.x) < 8 && Math.abs(e.clientY - lastTap.y) < 8) { lastTap.t = 0; openPick({ x: d.w.x, y: Math.abs(d.w.y) < SNAP ? 0 : d.w.y }); } else lastTap = { t: now, x: e.clientX, y: e.clientY }; }
     return;
   }
-  if (d.kind === 'node') { if (d.dirty) tx(() => { for (const k of d.ids) { const cur = store.docs['node/' + k], s = d.start[k]; const after = { ...cur }; cur.x = s.x; cur.y = s.y; putNode({ ...after, id: k }); } }); else if (!d.moved) openEd(d.id); refresh(); return; }
-  if (d.kind === 'tail' || d.kind === 'per') { if (d.dirty) { const cur = store.docs['node/' + d.id], after = { ...cur }; if (d.kind === 'tail') cur.tail = d.t0; else cur.w = d.w0; putNode({ ...after, id: d.id }); } else if (!d.moved) openEd(d.id); refresh(); return; }
+  if (d.kind === 'node') {
+    if (d.dirty) {
+      /* MACRO: soltar em outra coluna leva o ponto (e os ramos dele) para aquele mês */
+      let to = null; if (UI.macro) { const r0 = store.docs['node/' + d.id], wx = r0.x + mIdx(r0.month) * MW, mi = clamp(Math.floor((wx + 220) / MW), 0, 11), m = `${curYear()}-${String(mi + 1).padStart(2, '0')}`; if (m !== r0.month) to = m; }
+      tx(() => { for (const k of d.ids) { const cur = store.docs['node/' + k], s = d.start[k], off = UI.macro ? mIdx(cur.month) * MW : 0, after = { ...cur, x: cur.x + off }; cur.x = s.x - off; cur.y = s.y; if (to) { after.month = to; if (k === d.id && after.parent && !d.ids.has(after.parent)) { after.parent = null; after.at = null; after.via = null; } } putNode({ ...after, id: k }); } });
+      if (to) toast(`Levado para ${monthName(to, false)}`, 'g');
+    } else if (!d.moved) nodeTap(d.id, e);
+    refresh(); return;
+  }
+  if (d.kind === 'tail' || d.kind === 'per' || d.kind === 'rz') { if (d.dirty) { const cur = store.docs['node/' + d.id], after = { ...cur, x: N(d.id).x }; if (d.kind === 'tail') cur.tail = d.t0; else if (d.kind === 'rz') { cur.w = d.w0; cur.x = d.x0 - (UI.macro ? mIdx(cur.month) * MW : 0); } else cur.w = d.w0; putNode({ ...after, id: d.id }); } else if (!d.moved) nodeTap(d.id, e); refresh(); return; }
   if (d.kind === 'anc') { openPick({ parent: d.id, at: d.a }); return; }
   if (d.kind === 'knob') {
     WIRES.get('rubber')?.remove(); WIRES.delete('rubber');
-    if (!d.moved) { const spot = dirSpot(d.id, d.dir); if (d.more) openPick(spot); else createNode(d.pick || suggestFor(N(d.id), d.dir), spot); return; }
+    if (!d.moved) { const spot = dirSpot(d.id, d.dir); if (d.more) openPick(spot); else startInlineEdit(createNode(d.pick || suggestFor(N(d.id), d.dir), spot)); return; }
     if (d.over) { linkNodes(d.id, d.over); toast('Conexão criada', 'g'); refresh(); return; }
     const at = { parent: d.id, x: Math.round(d.to.x), y: Math.abs(d.to.y) < SNAP ? 0 : Math.round(d.to.y) };
-    if (d.pick) createNode(d.pick, at); else openPick(at); kick();
+    if (d.pick) startInlineEdit(createNode(d.pick, at)); else openPick(at); kick();
   }
 };
-document.addEventListener('pointerdown', e => { if (UI.midMenu && !e.target.closest('.c-midc')) { UI.midMenu = false; $('.c-midc')?.classList.remove('open'); } }, true);
+document.addEventListener('pointerdown', e => { if (UI.midMenu && !e.target.closest('.c-midc .c-mw:not(.c-gw)')) { UI.midMenu = false; $('.c-midc')?.classList.remove('open'); } if (UI.gadMenu && !e.target.closest('.c-gw')) { UI.gadMenu = false; $('.c-gw')?.classList.remove('open'); } }, true);
+/* clique no item: 1º seleciona, clicar de novo abre o pop-up, 2 cliques rápidos renomeia */
+let tapT = { t: 0, id: '' };
+function nodeTap(id) {
+  const now = Date.now(), dbl = tapT.id === id && now - tapT.t < 380; tapT = { t: now, id };
+  clearTimeout(nodeTap.t);
+  if (dbl) { tapT.t = 0; startInlineEdit(id); return; }
+  if (OP.on) { OP.root = id; SEL = id; reconcile(); opFly(id); return; }
+  if (SEL === id) { nodeTap.t = setTimeout(() => openEd(id), 280); return; }
+  SEL = id; reconcile();
+}
+/* onda no clique e luz nos pontinhos perto do cursor */
+function ripple(x, y) { if (matchMedia('(prefers-reduced-motion: reduce)').matches) return; const r = document.createElement('i'); r.className = 'c-rip'; r.style.left = x + 'px'; r.style.top = y + 'px'; document.body.appendChild(r); setTimeout(() => r.remove(), 600); }
+function spot(e) { const st = $('#stage'), sp = $('#spot'); if (!st || !sp) return; const r = st.getBoundingClientRect(); sp.style.setProperty('--mx', e.clientX - r.left + 'px'); sp.style.setProperty('--my', e.clientY - r.top + 'px'); }
 document.addEventListener('pointerup', endDrag); document.addEventListener('pointercancel', endDrag);
 document.addEventListener('wheel', e => {
   const st = $('#stage'); if (!st || !st.contains(e.target) || $('#modal')) return; e.preventDefault();
@@ -1512,7 +1851,7 @@ window.addEventListener('resize', () => { if (UI.view === 'cst') { sizeStage(); 
 function freeSpot(pid, base) {
   const list = monthNodes(), p = pid ? N(pid) : null; let x, y;
   if (base) { x = base.x; y = base.y; }
-  else if (!p) { x = Math.round(SP.x1 - 260); y = 0; }
+  else if (!p) { x = Math.round(UI.macro ? mIdx(UI.month) * MW + 300 : SP.x1 - 260); y = 0; }
   else if (p.y === 0) { const kids = list.filter(n => n.parent === p.id), up = kids.filter(n => n.y < 0).length, dn = kids.filter(n => n.y > 0).length; x = p.x + 30 + kids.length * 26; y = up <= dn ? -150 : 150; }
   else { const dir = Math.sign(p.y) || 1, w = (SIZE[p.id]?.w || 100) / 2; x = p.x + w + (p.tail || 0) + 120; y = p.y; if (list.some(n => n.parent === p.id)) { x = p.x + 40; y = p.y + dir * 110; } }
   const hit = (a, b) => list.some(n => Math.abs(n.x - a) < 110 && Math.abs(n.y - b) < 40);
@@ -1532,11 +1871,120 @@ function wireDot(q) {
 }
 function linkNodes(a, b) { tx(() => { const A = N(a), B = N(b); if (!A || !B) return; A.links = [...new Set([...(A.links || []), b])]; B.links = [...new Set([...(B.links || []), a])]; putNode(A); putNode(B); }); }
 
+/* ---------- organizar: árvore arrumada, cada ramo com espaço para os filhos ---------- */
+function tidyLayout() {
+  const list = monthNodes().filter(n => shapeOf(n) !== 'texto'); if (!list.length) return;
+  const kidsOf = id => list.filter(n => n.parent === id && !n.at && n.y !== 0).sort((a, b) => a.y - b.y || a.x - b.x);
+  const leaves = n => { const k = kidsOf(n.id); return k.length ? k.reduce((s, x) => s + leaves(x), 0) : 1; }, RH = 66;
+  const place = p => {
+    const kids = kidsOf(p.id), w = (SIZE[p.id]?.w || 120) / 2 + (p.tail > 0 ? p.tail : 0);
+    if (p.y === 0) {
+      for (const side of [-1, 1]) { let cum = 0; kids.filter(k => Math.sign(k.y) === side).sort((a, b) => side * (a.y - b.y)).forEach(k => { const h = leaves(k) * RH; k.x = Math.round(p.x + 60); k.y = Math.round(side * (140 + cum + h / 2)); cum += h; putNode(k); place(k); }); }
+    } else if (kids.length) {
+      const tot = kids.reduce((s, k) => s + leaves(k) * RH, 0); let y = p.y - tot / 2; const ys = kids.map(k => { const h = leaves(k) * RH, c = y + h / 2; y += h; return c; });
+      const side = Math.sign(p.y), lim = 56, sh = side < 0 ? Math.min(0, -lim - Math.max(...ys)) : Math.max(0, lim - Math.min(...ys));
+      kids.forEach((k, i) => { k.x = Math.round(p.x + w + 190); k.y = Math.round(ys[i] + sh); putNode(k); place(k); });
+    }
+  };
+  tx(() => { list.filter(n => n.y === 0 || !n.parent || !list.some(x => x.id === n.parent)).forEach(place); list.filter(n => n.y === 0).forEach(n => list.filter(k => k.parent === n.id && k.y === 0).forEach(place)); });
+  refresh(); toast('Constelação organizada · Ctrl+Z desfaz', 'g');
+}
+
+/* ---------- MODO OPERAR: segue os fios e mostra o que dá para fazer agora ---------- */
+const OP = { on: !!UI.op, root: '', sc: null };
+function opScope(list) {
+  const by = Object.fromEntries(list.map(n => [n.id, n])), root = OP.root && by[OP.root];
+  const base = root ? [root, ...descendants(root.id, list)] : list, items = base.filter(countable);
+  const up = n => n.parent ? by[n.parent] || N(n.parent) : null;
+  const waitOn = n => { let p = up(n); for (let i = 0; p && i < 60; i++) { if (countable(p) && p.status !== 'done') return p; p = up(p); } return null; };
+  const L = { now: [], next: [], blocked: [], done: [] };
+  for (const n of items) { if (n.status === 'done') L.done.push(n); else if (n.status === 'blocked') L.blocked.push(n); else { const w = waitOn(n); if (w) L.next.push({ n, w }); else L.now.push(n); } }
+  L.now.sort((a, b) => (b.status === 'doing') - (a.status === 'doing') || (a.due || '9').localeCompare(b.due || '9') || a.x - b.x);
+  L.next.sort((a, b) => a.n.x - b.n.x);
+  return { ids: new Set(base.map(n => n.id)), now: new Set(L.now.map(n => n.id)), L, root, pr: progressOf(items) };
+}
+const dueTxt = d => { if (!d) return ''; const t = Math.round((Date.parse(d) - Date.parse(todayISO())) / 864e5); return t < 0 ? `atrasada ${-t}d` : t === 0 ? 'hoje' : t === 1 ? 'amanhã' : t < 8 ? `em ${t} dias` : fmtD(d); };
+function opPanel(list, op) {
+  const el = $('#op'); if (!el) return; el.hidden = !op; if (!op) return;
+  const row = (n, sub, cls = '') => `<div class="c-opr ${cls}" style="--c:${colorOf(n)}"><button class="c-opc ${n.status === 'done' ? 'on' : ''}" data-act="op-done" data-id="${n.id}" title="${n.status === 'done' ? 'Reabrir' : 'Concluir'}" aria-label="${n.status === 'done' ? 'Reabrir' : 'Concluir'}">${ic('check')}</button><button class="c-opt" data-act="op-go" data-id="${n.id}"><b>${esc(labelOf(n))}</b><small>${sub}</small></button>${(n.who || []).map(pessoa).filter(Boolean).slice(0, 2).map(p => av(p, 18)).join('')}</div>`;
+  const meta = n => [CAT(n.cat).n, n.due ? `<em class="${n.due < todayISO() && n.status !== 'done' ? 'late' : ''}">${dueTxt(n.due)}</em>` : ''].filter(Boolean).join(' · ');
+  const { now, next, blocked, done } = op.L, pr = op.pr;
+  const sec = (k, t, n, body) => n ? `<section class="c-ops ${k}"><h6><i></i>${t}<em>${n}</em></h6>${body}</section>` : '';
+  const h = `<div class="c-oph"><span class="c-opi">${ic('flow')}</span><div><b>Operar</b><span>${op.root ? 'ramo · ' + esc(labelOf(op.root)) : 'tudo · ' + esc(mkName(curMk()))}</span></div><span class="sp"></span>${op.root ? '<button class="c-opx" data-act="op-all">ver tudo</button>' : ''}<button class="c-opx i" data-act="op" aria-label="Sair do modo operar">${ic('x')}</button></div>
+    <div class="c-opbar"><i style="width:${pr.pct}%"></i></div><p class="c-opn"><b>${pr.done}</b>/${pr.total} feitos${now.length ? ` · <b>${now.length}</b> para agora` : ''}</p>
+    <div class="c-opl">${pr.total ? '' : `<p class="c-mut c-ope">Nada para operar ${op.root ? 'neste ramo' : 'aqui'}. Clique num item para seguir o fio dele.</p>`}
+    ${sec('now', 'Agora', now.length, now.map(n => row(n, meta(n) || 'liberado', n.status === 'doing' ? 'doing' : '')).join(''))}
+    ${sec('next', 'Em seguida', next.length, next.map(({ n, w }) => row(n, `espera ${esc(labelOf(w))}`)).join(''))}
+    ${sec('blocked', 'Travado', blocked.length, blocked.map(n => row(n, meta(n) || 'travado')).join(''))}
+    ${done.length ? `<section class="c-ops done"><h6><button data-act="op-feito"><i></i>Feito<em>${done.length}</em>${ic('chev', `width:12px;height:12px;transform:rotate(${UI.opFeito ? 180 : 0}deg)`)}</button></h6>${UI.opFeito ? done.map(n => row(n, meta(n), 'ok')).join('') : ''}</section>` : ''}</div>`;
+  if (el._h !== h) { const sc = el.querySelector('.c-opl')?.scrollTop || 0; el.innerHTML = h; el._h = h; const l = el.querySelector('.c-opl'); if (l) l.scrollTop = sc; }
+}
+function opFly(id) {
+  const n = N(id), st = $('#stage'); if (!n || !st || !V) return;
+  const sx = n.x * V.z + V.x, sy = n.y * V.z + V.y, W = st.clientWidth, Hh = st.clientHeight;
+  if (sx < W * .3 || sx > W * .82 || sy < Hh * .18 || sy > Hh * .78) camTo({ z: V.z, x: W * .56 - n.x * V.z, y: Hh * .45 - n.y * V.z });
+}
+function opDone(id) {
+  const n = N(id); if (!n) return; const done = n.status !== 'done', before = new Set(OP.sc ? OP.sc.now : []);
+  tx(() => { n.status = done ? 'done' : 'todo'; putNode(n); }); refresh();
+  if (!done) return;
+  const el = NODES.get(id); el?.classList.remove('op-pop'); void el?.offsetWidth; el?.classList.add('op-pop');
+  const freed = OP.sc ? [...OP.sc.now].filter(k => !before.has(k) && k !== id) : [];
+  pulse(id);
+  if (freed.length) { toast(`Liberado: ${freed.slice(0, 3).map(k => labelOf(N(k))).join(', ')}${freed.length > 3 ? '…' : ''}`, 'g'); setTimeout(() => opFly(freed[0]), 650); }
+  else toast(`${labelOf(n)} feito`, 'g');
+}
+/* energia correndo pelo fio, do item concluído até os próximos */
+function pulse(id) {
+  const svg = $('#wires'); if (!svg) return; const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  monthNodes().filter(k => k.parent === id).forEach((k, i) => {
+    const path = WIRES.get('w' + k.id); if (!path) return; const L = path.getTotalLength(); if (!L) return;
+    const arrive = () => { const e = NODES.get(k.id); e?.classList.remove('op-arrive'); void e?.offsetWidth; e?.classList.add('op-arrive'); };
+    if (reduce) return arrive();
+    const o = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); o.setAttribute('r', '5'); o.setAttribute('class', 'c-orb'); o.style.setProperty('--wc', colorOf(k)); svg.appendChild(o);
+    const t0 = performance.now() + i * 90, T = 720;
+    const step = t => { const q = clamp((t - t0) / T, 0, 1), e = q < .5 ? 2 * q * q : 1 - Math.pow(-2 * q + 2, 2) / 2, pt = path.getPointAtLength(e * path.getTotalLength()); o.setAttribute('cx', pt.x); o.setAttribute('cy', pt.y); if (q < 1) requestAnimationFrame(step); else { o.remove(); arrive(); } };
+    requestAnimationFrame(step);
+  });
+}
+
+/* ---------- GADGETS: prazos da semana, travados / sem dono, bloco rápido ---------- */
+const GADS = [['prazos', 'Prazos da semana', 'clock'], ['travados', 'Travados / sem dono', 'alert'], ['bloco', 'Bloco rápido', 'pen']];
+const gadDef = () => ({ prazos: true, travados: true, bloco: true });
+const gadOn = g => !!({ ...gadDef(), ...(UI.gad || {}) })[g];
+const blocoPath = () => 'node/bloco~' + curMk() + '~' + (UI.macro ? curYear() : UI.month);
+function gadBody(g) {
+  const k = curMk(), today = todayISO(), lim = new Date(Date.parse(today) + 7 * 864e5).toISOString().slice(0, 10);
+  const rowG = (n, right, cls = '') => `<button class="c-gr" data-act="gfly" data-id="${n.id}"><i class="c-sdot" style="--sc:${colorOf(n)}"></i><span>${esc(labelOf(n))}</span><small class="${cls}">${right}</small></button>`;
+  if (g === 'prazos') { const L = allNodes().filter(n => inMk(n, k) && countable(n) && n.status !== 'done' && n.due && n.due <= lim).sort((a, b) => a.due.localeCompare(b.due));
+    return [L.length, L.length ? L.slice(0, 7).map(n => rowG(n, dueTxt(n.due), n.due < today ? 'late' : n.due === today ? 'today' : '')).join('') + (L.length > 7 ? `<p class="c-gm">+${L.length - 7} outros</p>` : '') : '<p class="c-gm">Nada vence nos próximos 7 dias.</p>']; }
+  if (g === 'travados') { const L = monthNodes().filter(n => countable(n) && n.status !== 'done'), B = L.filter(n => n.status === 'blocked'), S = L.filter(n => n.status !== 'blocked' && !(n.who || []).length && !n.team);
+    return [B.length + S.length, (B.length ? `<h6 class="r">Travados<em>${B.length}</em></h6>${B.slice(0, 5).map(n => rowG(n, 'travado', 'late')).join('')}` : '') + (S.length ? `<h6>Sem dono<em>${S.length}</em></h6>${S.slice(0, 5).map(n => rowG(n, n.due ? dueTxt(n.due) : '—')).join('')}${S.length > 5 ? `<p class="c-gm">+${S.length - 5} outros</p>` : ''}` : '') || '<p class="c-gm">Tudo com dono e nada travado.</p>']; }
+  return [0, null];
+}
+function gadgets() {
+  const el = $('#gads'); if (!el) return;
+  for (const [g, l, i] of GADS) {
+    let c = el.querySelector(`[data-g="${g}"]`);
+    if (!gadOn(g)) { c?.remove(); continue; }
+    const min = !!(UI.gmin || {})[g];
+    if (!c) { c = document.createElement('div'); c.className = 'c-gad'; c.dataset.g = g; c.innerHTML = `<div class="c-gh"><span class="c-gi">${ic(i)}</span><b>${l}</b><em></em><button class="c-gx" data-act="gad-min" data-v="${g}" aria-label="Recolher">${ic('chev')}</button></div><div class="c-gb"></div>`; const after = GADS.slice(GADS.findIndex(x => x[0] === g) + 1).map(x => el.querySelector(`[data-g="${x[0]}"]`)).find(Boolean); el.insertBefore(c, after || null); }
+    c.classList.toggle('min', min);
+    const b = c.querySelector('.c-gb'), em = c.querySelector('.c-gh em');
+    if (g === 'bloco') {
+      let ta = b.querySelector('textarea'); if (!ta) { b.innerHTML = '<textarea class="c-bloco" id="bloco" placeholder="Anote algo rápido…" spellcheck="false"></textarea>'; ta = b.querySelector('textarea'); }
+      const v = (D(blocoPath()) || {}).text || ''; if (document.activeElement !== ta && ta.value !== v) ta.value = v; ta.dataset.p = blocoPath(); em.textContent = UI.macro ? curYear() : monthName(UI.month, false);
+      continue;
+    }
+    const [n, h] = gadBody(g); if (b._h !== h) { b.innerHTML = h; b._h = h; } em.textContent = n || ''; em.className = n && g === 'travados' ? 'r' : '';
+  }
+}
+
 /* =================== LISTA =================== */
 function vLista() {
   const list = monthNodes().filter(n => !hasF() || matchF(n)), pr = progressOf(monthNodes());
   const groups = GROUPS.map(([g, gn]) => [gn, list.filter(n => CAT(n.cat).g === g).sort((a, b) => (a.due || '9') .localeCompare(b.due || '9'))]).filter(([, L]) => L.length);
-  return `<div class="row c-lh"><div class="label"><span class="dot"></span>${PAIS[store.board].flag} ${PAIS[store.board].name} · ${monthName(UI.month)}</div><span class="sp"></span><span class="sub">${pr.done}/${pr.total} concluídas · ${pr.pct}%</span><button class="pill sm white" data-act="pick-any">${ic('plus')}Novo ponto</button></div>
+  return `<div class="row c-lh"><div class="label"><span class="dot" style="background:${mkColor(curMk())}"></span>${esc(mkName(curMk()))} · ${PAIS[store.board].name} · ${UI.macro ? 'MACRO ' + curYear() : monthName(UI.month)}</div><span class="sp"></span><span class="sub">${pr.done}/${pr.total} concluídas · ${pr.pct}%</span><button class="pill sm white" data-act="pick-any">${ic('plus')}Novo ponto</button></div>
   ${groups.length ? groups.map(([gn, L]) => `<div class="label c-glbl"><span class="dot"></span>${gn}<em>${L.length}</em></div><div class="node c-table"><div class="c-th"><span>Ponto</span><span>Tipo</span><span>Marca</span><span>Quem</span><span>Entrega</span><span>Status</span></div>${L.map(n => { const st = ST(n.status), late = n.due && n.status !== 'done' && n.due < todayISO();
     return `<button class="c-tr" data-act="open" data-id="${n.id}"><span><span class="c-ic2" style="--c:${colorOf(n)}">${ic(n.cat === 'canal' ? (REDES[(n.f || {}).rede]?.i || 'canal') : n.cat)}</span><b>${esc(labelOf(n))}</b>${n.parent && N(n.parent) ? `<small>de ${esc(labelOf(N(n.parent)))}</small>` : ''}</span><span class="c-mut">${esc(CAT(n.cat).n)}</span><span class="c-bds">${(n.brands || []).map(marca).filter(Boolean).map(b => `<i style="background:${b.color}" title="${esc(b.name)}"></i>`).join('') || '<span class="c-mut">—</span>'}</span><span class="c-avs2">${(n.who || []).map(pessoa).filter(Boolean).map(p => av(p, 22)).join('') || (n.team && time(n.team) ? `<span class="c-mut">${esc(time(n.team).name)}</span>` : '<span class="c-mut">—</span>')}</span><span class="${late ? 'c-late' : 'c-mut'}">${n.due ? fmtD(n.due) : '—'}</span><span>${countable(n) ? `<span class="c-stp" style="--sc:${st[2]}">${st[1]}</span>` : '<span class="c-mut">—</span>'}</span></button>`; }).join('')}</div>`).join('') : `<div class="empty node">Nada neste mês${hasF() ? ' com esses filtros' : ''}.</div>`}`;
 }
@@ -1552,7 +2000,7 @@ function vPessoas() {
   return `<div class="row c-lh"><div class="label"><span class="dot"></span>Times</div><span class="sp"></span>${isAdmin() ? `<button class="pill sm" data-act="ent" data-k="time" data-id="">${ic('plus')}Time</button><button class="pill sm white" data-act="ent" data-k="pessoa" data-id="">${ic('plus')}Pessoa</button>` : ''}</div>
   ${T.length ? `<div class="c-tgrid">${T.map(t => { const mem = P.filter(p => p.team === t.id), its = list.filter(n => countable(n) && (n.team === t.id || (n.who || []).some(w => (pessoa(w) || {}).team === t.id))), pr = progressOf(its);
     return `<div class="node c-tc" style="--c:${t.color}"><div class="c-pch"><span class="c-tico">${ic('time')}</span><div><b>${esc(t.name)}</b><span>${mem.length} ${mem.length === 1 ? 'pessoa' : 'pessoas'} · ${pr.done}/${pr.total} ações</span></div><span class="sp"></span>${isAdmin() ? `<button class="pill sm icon ghost" data-act="ent" data-k="time" data-id="${t.id}">${ic('gear', 'width:14px;height:14px')}</button>` : ''}</div><div class="c-tav">${mem.map(p => av(p, 26)).join('') || '<span class="c-mut">sem pessoas</span>'}</div><div class="c-pb"><i style="width:${pr.pct}%"></i></div></div>`; }).join('')}</div>` : `<div class="empty node c-sm">Nenhum time cadastrado.</div>`}
-  <div class="label mt"><span class="dot"></span>Pessoas · ${monthName(UI.month)}</div>
+  <div class="label mt"><span class="dot"></span>Pessoas · ${esc(mkName(curMk()))} · ${UI.macro ? 'MACRO ' + curYear() : monthName(UI.month)}</div>
   ${P.length ? `<div class="c-pgrid">${P.map(card).join('')}</div>` : `<div class="empty node">Cadastre as pessoas para dar nome a cada ação.</div>`}`;
 }
 
@@ -1598,11 +2046,13 @@ function createNode(cat, ctx = {}, title = '') {
   const C = CAT(cat), p = ctx.parent ? N(ctx.parent) : null;
   let { x, y } = ctx; if (x == null) ({ x, y } = freeSpot(p ? p.id : null));
   if (C.s === 'periodo' && Math.abs(y) < 80) y = 0;
-  const n = { id: uid(), month: UI.month, cat, title, x: Math.round(x), y: Math.round(y), parent: p ? p.id : null, at: ctx.at || null, via: p && ctx.via != null ? ctx.via : null, status: 'todo', prio: 'm', brands: p ? [...(p.brands || [])] : [...UI.fb], team: p ? p.team || '' : UI.ft || '', who: p ? [...(p.who || [])] : UI.who ? [UI.who] : [], f: {}, chk: [], anc: [], links: [], by: store.name, t: Date.now() };
-  if (C.s === 'periodo') n.w = 220;
+  const mk = curMk();
+  const n = { id: uid(), month: UI.month, mk, cat, title, x: Math.round(x), y: Math.round(y), parent: p ? p.id : null, at: ctx.at || null, via: p && ctx.via != null ? ctx.via : null, status: 'todo', prio: 'm', brands: mk === 'geral' ? [] : [mk], team: p ? p.team || '' : UI.ft || '', who: p ? [...(p.who || [])] : UI.who ? [UI.who] : [], f: {}, chk: [], anc: [], links: [], by: store.name, t: Date.now() };
+  if (C.s === 'periodo') n.w = UI.macro ? 620 : 220;
+  if (C.s === 'texto') n.w = 240;
   if (cat === 'canal') n.f.rede = 'TikTok';
   if (cat === 'loja') n.f.loja = LOJAS[store.board][0];
-  tx(() => putNode(n)); refresh(); NODES.forEach((el, k) => el.classList.toggle('sel', k === n.id)); return n.id;
+  tx(() => putNode(n)); SEL = n.id; refresh(); return n.id;
 }
 
 /* ---------- editor completo ---------- */
@@ -1619,8 +2069,8 @@ function openEd(id, fresh) {
   const links = (n.links || []).map(N).filter(Boolean), M = marcas(), T = times(), P = pessoas();
   const tailable = ['pill', 'outline', 'mini'].includes(sh);
   const side = `    <div class="c-sec"><h5>Aparência</h5>${sizeCtl(n)}
-      <div class="c-shapes">${SHAPES.map(([k, l]) => `<button class="c-shp ${sh === k ? 'on' : ''}" data-act="ed-shape" data-v="${k}" title="${l}">${dockIcon({ pill: 'plano', outline: 'reuniao', mini: 'acao', dot: 'ponto', canal: 'canal', icone: 'nota', haste: 'loja', periodo: 'periodo' }[k])}<span>${l}</span></button>`).join('')}</div>
-      <div class="c-chips mt8">${SWATCH.map(c => `<button class="c-col ${colorOf(n) === c ? 'on' : ''}" data-act="ed-color" data-v="${c}" style="background:${c}"></button>`).join('')}${n.color ? `<button class="pill sm ghost" data-act="ed-color" data-v="">padrão</button>` : ''}</div>
+      <div class="c-shapes">${SHAPES.map(([k, l]) => `<button class="c-shp ${sh === k ? 'on' : ''}" data-act="ed-shape" data-v="${k}" title="${l}">${dockIcon({ pill: 'plano', outline: 'reuniao', mini: 'acao', dot: 'ponto', canal: 'canal', icone: 'nota', haste: 'loja', periodo: 'periodo', texto: 'comentario' }[k])}<span>${l}</span></button>`).join('')}</div>
+      <div class="c-chips mt8">${colRow(n)}</div>
       ${p ? `<div class="field mt8"><span>Linha até ${esc(labelOf(p))}</span><nav class="seg">${[['auto', 'Auto'], ['reta', 'Reta'], ['curva', 'Curva'], ['cotovelo', 'Cotovelo']].map(([k, l]) => `<button class="pill sm ${(n.ln || 'auto') === k ? 'on' : ''}" data-act="ed-ln" data-v="${k}">${l}</button>`).join('')}</nav></div>` : ''}
       ${tailable ? `<div class="row mt8"><span>Esticar até finalizar</span><span class="sp"></span><button class="switch ${n.tail > 0 ? 'on' : ''}" data-act="ed-tail"></button></div><p class="c-mut c-hint">Cria uma cauda com pontos de ancoragem. Arraste o fim para esticar.</p>` : ''}
     </div>
@@ -1645,6 +2095,7 @@ function openEd(id, fresh) {
   if (n.cat === 'ponto') return edShow(id, edPonto(n, p, kids, list, sub), 'c-ed sm', fresh);
   if (n.cat === 'reuniao') return edShow(id, edReuniao(n, p, list, sub), 'c-ed sm', fresh);
   if (n.cat === 'acao') return edShow(id, edAcao(n, p, list, sub), 'c-ed sm', fresh);
+  if (n.cat === 'comentario') return edShow(id, edComent(n, p, list, sub), 'c-ed sm', fresh);
   const html = `<div class="c-mh" style="--c:${colorOf(n)}"><button class="c-cat" data-act="ed-cat" title="Trocar tipo"><span class="c-ic2">${ic(n.cat)}</span>${esc(C.n)}</button>${p ? `<button class="c-crumb" data-act="open" data-id="${p.id}">${ic('left', 'width:12px;height:12px')}${esc(labelOf(p))}</button>` : ''}<span class="sp"></span>${n.from ? `<button class="tag" data-act="goto" data-id="${n.from.id}">veio de ${monthName(n.from.month, false)}</button>` : ''}${n.carried ? `<button class="tag" data-act="goto" data-id="${n.carried}">seguiu para ${monthName(addMonth(n.month, 1), false)}</button>` : ''}<button class="pill sm icon ghost" data-act="close" aria-label="Fechar">${ic('x')}</button></div>
   <input class="c-title" data-nf="title" value="${esc(n.title)}" placeholder="${esc(labelOf({ ...n, title: '' }))}" autocomplete="off">
   <div class="c-ebody">
@@ -1656,7 +2107,7 @@ function openEd(id, fresh) {
       <label class="field"><span>Entrega</span><input class="inp sm" type="date" data-nf="due" value="${esc(n.due || '')}"></label>
       <div class="field"><span>Prioridade</span><nav class="seg">${PRIO.map(([k, l]) => `<button class="pill sm ${(n.prio || 'm') === k ? 'on' : ''}" data-act="ed-prio" data-v="${k}">${l}</button>`).join('')}</nav></div>
     </div>
-    <div class="field"><span>Marcas</span><div class="c-chips">${M.map(b => `<button class="pill sm ${(n.brands || []).includes(b.id) ? 'on' : ''}" data-act="ed-brand" data-v="${b.id}"><span class="dot" style="background:${b.color}"></span>${esc(b.name)}</button>`).join('')}${isAdmin() ? `<button class="pill sm ghost" data-act="ent" data-k="marca" data-id="" data-back="${id}">${ic('plus', 'width:12px;height:12px')}Marca</button>` : ''}</div></div>
+    <div class="field"><span>Marca</span><div class="c-chips">${M.map(b => `<button class="pill sm ${mkOf(n) === b.id ? 'on' : ''}" data-act="ed-brand" data-v="${b.id}"><span class="dot" style="background:${b.color}"></span>${esc(b.name)}</button>`).join('')}${isAdmin() ? `<button class="pill sm ghost" data-act="ent" data-k="marca" data-id="" data-back="${id}">${ic('plus', 'width:12px;height:12px')}Marca</button>` : ''}</div></div>
     <div class="field"><span>Time</span><div class="c-chips">${T.map(t => `<button class="pill sm ${n.team === t.id ? 'on' : ''}" data-act="ed-team" data-v="${t.id}">${ic('time', `width:13px;height:13px;color:${t.color}`)}${esc(t.name)}</button>`).join('')}${isAdmin() ? `<button class="pill sm ghost" data-act="ent" data-k="time" data-id="" data-back="${id}">${ic('plus', 'width:12px;height:12px')}Time</button>` : ''}${!T.length && !isAdmin() ? '<span class="c-mut">Nenhum time.</span>' : ''}</div></div>
     <div class="field"><span>Responsáveis</span><div class="c-chips">${P.map(x => `<button class="pill sm c-pp ${(n.who || []).includes(x.id) ? 'on' : ''}" data-act="ed-who" data-v="${x.id}">${av(x, 18)}${esc(x.name.split(' ')[0])}</button>`).join('')}${isAdmin() ? `<button class="pill sm ghost" data-act="ent" data-k="pessoa" data-id="" data-back="${id}">${ic('plus', 'width:12px;height:12px')}Pessoa</button>` : ''}${!P.length && !isAdmin() ? '<span class="c-mut">Ninguém cadastrado.</span>' : ''}</div></div>
     ${C.f.length ? `<div class="c-sec"><h5>${esc(C.n)}</h5><div class="c-fg">${C.f.map(field).join('')}</div></div>` : ''}
@@ -1717,7 +2168,7 @@ function edPlano(n, p, kids, sub, sp, side) {
       </div>
       <div class="field"><span>Responsáveis</span><div class="c-chips">${chips(P, 'ed-who', x => (n.who || []).includes(x.id), x => av(x, 18) + esc(x.name.split(' ')[0]))}${isAdmin() ? `<button class="pill sm ghost" data-act="ent" data-k="pessoa" data-id="" data-back="${n.id}">${ic('plus', 'width:12px;height:12px')}Pessoa</button>` : ''}</div></div>
       <div class="field"><span>Time</span><div class="c-chips">${chips(T, 'ed-team', x => n.team === x.id, x => ic('time', `width:13px;height:13px;color:${x.color}`) + esc(x.name))}${isAdmin() ? `<button class="pill sm ghost" data-act="ent" data-k="time" data-id="" data-back="${n.id}">${ic('plus', 'width:12px;height:12px')}Time</button>` : ''}</div></div>
-      <div class="field"><span>Marcas</span><div class="c-chips">${chips(M, 'ed-brand', x => (n.brands || []).includes(x.id), x => `<span class="dot" style="background:${x.color}"></span>${esc(x.name)}`)}${isAdmin() ? `<button class="pill sm ghost" data-act="ent" data-k="marca" data-id="" data-back="${n.id}">${ic('plus', 'width:12px;height:12px')}Marca</button>` : ''}</div></div>`,
+      <div class="field"><span>Marca</span><div class="c-chips">${chips(M, 'ed-brand', x => mkOf(n) === x.id, x => `<span class="dot" style="background:${x.color}"></span>${esc(x.name)}`)}${isAdmin() ? `<button class="pill sm ghost" data-act="ent" data-k="marca" data-id="" data-back="${n.id}">${ic('plus', 'width:12px;height:12px')}Marca</button>` : ''}</div></div>`,
     acoes: () => { const groups = {}; kids.forEach(k => (groups[CAT(k.cat).n] = groups[CAT(k.cat).n] || []).push(k));
       return `<div class="c-chips">${[['acao', 'Ação'], ['reuniao', 'Reunião'], ['ponto', 'Ponto']].map(([k, l]) => `<button class="pill sm" data-act="pl-add" data-k="${k}">${ic('plus', 'width:12px;height:12px')}${l}</button>`).join('')}<button class="pill sm ghost" data-act="ramo" data-id="${n.id}">${ic('plus', 'width:12px;height:12px')}Outro tipo</button></div>
       ${kids.length ? Object.entries(groups).map(([g, ks]) => `<div class="c-sec"><h5>${esc(g)} <small>${ks.length}</small></h5>${ks.map(k => `<button class="c-kid" data-act="open" data-id="${k.id}"><span class="c-ic2" style="--c:${colorOf(k)}">${ic(k.cat)}</span><span>${esc(labelOf(k))}</span>${k.due ? `<small class="c-mut">${fmtD(k.due)}</small>` : ''}<i class="c-sdot" style="--sc:${ST(k.status)[2]}"></i></button>`).join('')}</div>`).join('') : '<p class="c-mut">Nada nasce deste plano ainda. Use os botões acima ou clique no fio na constelação.</p>'}
@@ -1943,6 +2394,18 @@ function edPonto(n, p, kids, list, sub) {
   </div>
   <div class="c-mf"><button class="pill sm danger ghost" data-act="ed-del">${ic('trash', 'width:13px;height:13px')}Excluir</button><span class="sp"></span><button class="pill sm white" data-act="close">Pronto</button></div>`;
 }
+/* cores: paleta + cor livre (o vidro, a borda, o brilho e o fio seguem a cor do item) */
+const colRow = n => `${SWATCH.map(c => `<button class="c-col ${colorOf(n) === c ? 'on' : ''}" data-act="ed-color" data-v="${c}" style="background:${c}"></button>`).join('')}<label class="c-col c-colin ${n.color && !SWATCH.includes(n.color) ? 'on' : ''}" title="Outra cor" style="--cc:${colorOf(n)}"><input type="color" data-ncol="1" value="${/^#[0-9a-f]{6}$/i.test(colorOf(n)) ? colorOf(n) : '#facc15'}"></label>${n.color ? `<button class="pill sm ghost" data-act="ed-color" data-v="">padrão</button>` : ''}`;
+/* Comentário: o texto, a cor e (se quiser) um fio pontilhado até um item */
+function edComent(n, p, list, sub) {
+  return `${edHead(n, p)}
+  <div class="c-pt">
+    <textarea class="inp c-ta c-ctx" rows="6" data-nf="title" placeholder="Escreva o comentário" style="--c:${colorOf(n)}">${esc(n.title || '')}</textarea>
+    <div class="field"><span>Cor</span><div class="c-chips">${colRow(n)}</div></div>
+    <label class="field"><span>Apontar para</span><select class="inp sm" data-par="1"><option value="">— sem fio —</option>${list.filter(x => x.id !== n.id && !sub.some(s => s.id === x.id)).map(x => `<option value="${x.id}" ${n.parent === x.id ? 'selected' : ''}>${esc(labelOf(x))} · ${esc(CAT(x.cat).n)}</option>`).join('')}</select></label>
+  </div>
+  <div class="c-mf"><button class="pill sm danger ghost" data-act="ed-del">${ic('trash', 'width:13px;height:13px')}Excluir</button><button class="pill sm ghost" data-act="ed-dup">${ic('copy', 'width:13px;height:13px')}Duplicar</button><span class="sp"></span><button class="pill sm white" data-act="close">Pronto</button></div>`;
+}
 const edNode = () => N(ED.id);
 function edSet(fn, reopen = true) { const n = edNode(); if (!n) return; fn(n); putNode(n); refresh(); if (reopen) openEd(n.id); }
 
@@ -1961,7 +2424,7 @@ function openEnt(k, id, back) {
   setTimeout(() => $('#en-n')?.focus(), 30);
 }
 function monthPop() {
-  const all = allNodes(), base = +UI.month.slice(0, 4);
+  const k = curMk(), all = allNodes().filter(n => inMk(n, k)), base = +UI.month.slice(0, 4);
   modal(`<div class="c-mh"><div><b>Meses</b><span>constelação de cada mês</span></div><span class="sp"></span><button class="pill sm icon ghost" data-act="close">${ic('x')}</button></div>
   ${[base - 1, base, base + 1].map(y => `<div class="c-yr"><h5>${y}</h5><div class="c-mg">${MESES.map((mn, i) => { const m = `${y}-${String(i + 1).padStart(2, '0')}`, L = all.filter(n => n.month === m), pr = progressOf(L); return `<button class="c-mc ${m === UI.month ? 'on' : ''} ${m === curMonth() ? 'cur' : ''}" data-act="mon-go" data-v="${m}"><b>${mn.slice(0, 3)}</b><small>${L.length ? `${L.length} pontos · ${pr.pct}%` : '—'}</small><i style="width:${pr.pct}%"></i></button>`; }).join('')}</div></div>`).join('')}`, 'sm');
 }
@@ -1969,17 +2432,19 @@ function monthPop() {
 /* ---------- levar entre meses ---------- */
 function copyTree(rootIds, toMonth, opts = {}) {
   const made = [];
+  /* trabalha com os dados crus (posição dentro do mês), mesmo na visão MACRO */
+  const raw = id => D('node/' + id) ? { ...D('node/' + id), id } : null;
   const go = (n, parentNew, dx, dy) => {
     const nn = clone(n), nid = uid();
-    Object.assign(nn, { id: nid, month: toMonth, parent: parentNew, at: parentNew ? nn.at : null, t: Date.now(), by: store.name, x: n.x + dx, y: n.y + dy });
-    delete nn.carried; delete nn.u; nn.links = [];
+    Object.assign(nn, { month: toMonth, mk: mkOf(n), parent: parentNew, at: parentNew ? nn.at : null, t: Date.now(), by: store.name, x: n.x + dx, y: n.y + dy });
+    delete nn.id; delete nn.carried; nn.links = []; nn.u = Date.now();
     if (opts.carry) nn.from = { month: n.month, id: n.id };
     else { nn.status = 'todo'; nn.chk = (nn.chk || []).map(c => ({ ...c, ok: false })); nn.anc = (nn.anc || []).map(a => ({ ...a, ok: false })); nn.rid = n.rid || n.id; delete nn.from; }
-    putNode(nn); made.push(nn);
-    if (opts.carry) { const o = N(n.id); o.carried = nid; putNode(o); }
+    commit('node/' + nid, nn); made.push({ ...nn, id: nid });
+    if (opts.carry) commit('node/' + n.id, { ...D('node/' + n.id), carried: nid, u: Date.now() });
     allNodes().filter(x => x.parent === n.id && x.month === n.month && !x.carried && (!opts.carry || !countable(x) || x.status !== 'done')).forEach(k => go(k, nid, dx, dy));
   };
-  tx(() => { const there = allNodes().filter(n => n.month === toMonth); let dx = 0; if (opts.carry && there.length) dx = Math.max(...there.map(n => n.x)) + 260 - Math.min(...rootIds.map(id => N(id)?.x ?? 0)); rootIds.forEach(id => { const n = N(id); if (n) go(n, null, dx, 0); }); });
+  tx(() => { const k = mkOf(raw(rootIds[0]) || {}), there = allNodes().filter(n => n.month === toMonth && mkOf(n) === k); let dx = 0; if (opts.carry && there.length) dx = Math.max(...there.map(n => n.x)) + 260 - Math.min(...rootIds.map(id => raw(id)?.x ?? 0)); rootIds.forEach(id => { const n = raw(id); if (n) go(n, null, dx, 0); }); });
   return made;
 }
 function pendRoots(list) { const by = Object.fromEntries(list.map(n => [n.id, n])), open = list.filter(n => countable(n) && n.status !== 'done' && !n.carried), ids = new Set(open.map(n => n.id)); return open.filter(n => { let p = by[n.parent]; while (p) { if (ids.has(p.id)) return false; p = by[p.parent]; } return true; }); }
@@ -1987,11 +2452,31 @@ function pendRoots(list) { const by = Object.fromEntries(list.map(n => [n.id, n]
 /* =================== ações =================== */
 function setDeep(o, path, v) { const k = path.split('.'); let x = o; while (k.length > 1) { const h = k.shift(); x[h] = x[h] && typeof x[h] === 'object' ? x[h] : {}; x = x[h]; } x[k[0]] = v; }
 function cfgSet(path, v) { const c = clone(D('app/cfg') || {}); setDeep(c, path, v); commit('app/cfg', c); }
-function setMonth(m) { UI.month = m; saveUI(); loadView(); render(); }
-function goto(id) { const n = N(id); if (!n) return; closeModal(true); ED.id = ''; if (n.month !== UI.month) setMonth(n.month); if (UI.view !== 'cst') { UI.view = 'cst'; saveUI(); render(); } setTimeout(() => { const st = $('#stage'); if (st && V) camTo({ z: Math.max(V.z, .8), x: st.clientWidth / 2 - n.x * Math.max(V.z, .8), y: st.clientHeight / 2 - n.y * Math.max(V.z, .8) }); openEd(id); }, 80); }
+function setMonth(m) { UI.month = m; UI.macro = false; SEL = ''; saveUI(); loadView(); render(); }
+function goto(id, open = true) {
+  let n = N(id); if (!n) return; closeModal(true); ED.id = '';
+  const k = mkOf(n); if (k !== curMk()) { UI.mk = k; saveUI(); loadView(); render(); }
+  if (UI.macro ? !n.month.startsWith(curYear()) : n.month !== UI.month) setMonth(n.month);
+  if (UI.view !== 'cst') { UI.view = 'cst'; saveUI(); render(); }
+  setTimeout(() => { n = N(id); const st = $('#stage'); if (st && V && n) { const z = Math.max(V.z, UI.macro ? .55 : .8); camTo({ z, x: st.clientWidth / 2 - n.x * z, y: st.clientHeight / 2 - n.y * z }); } if (open) openEd(id); else { SEL = id; reconcile(); const el = NODES.get(id); el?.classList.remove('ping1'); void el?.offsetWidth; el?.classList.add('ping1'); } }, 80);
+}
 function delNodes(ids) { tx(() => ids.forEach(k => { const x = N(k); if (!x) return; (x.links || []).forEach(l => { const o = N(l); if (o) { o.links = (o.links || []).filter(y => y !== k); putNode(o); } }); commit('node/' + k, null); })); }
 const ACT = {
   board: a => setBoard(a.dataset.v),
+  mk: a => { const ks = mkKeys(), from = ks.indexOf(curMk()), to = ks.indexOf(a.dataset.v); if (to < 0 || a.dataset.v === curMk()) return; UI.mk = a.dataset.v; SEL = ''; OP.root = ''; saveUI(); loadView(); render(); const st = $('#stage'); st?.classList.add(to > from ? 'swap-r' : 'swap-l'); },
+  macro: a => { const on = a.dataset.v === '1'; if (on === !!UI.macro) return; UI.macro = on; SEL = ''; OP.root = ''; saveUI(); loadView(); render(); },
+  'macro-zoom': a => setMonth(a.dataset.v),
+  yr: a => { UI.month = addMonth(UI.month, +a.dataset.v * 12); SEL = ''; saveUI(); loadView(); render(); },
+  tidy: () => tidyLayout(),
+  op: () => { OP.on = !OP.on; OP.root = OP.on && SEL ? SEL : ''; UI.op = OP.on; saveUI(); render(); setTimeout(() => fit(), 30); },
+  'op-all': () => { OP.root = ''; reconcile(); },
+  'op-done': a => opDone(a.dataset.id),
+  'op-go': a => { SEL = a.dataset.id; reconcile(); opFly(a.dataset.id); },
+  'op-feito': () => { UI.opFeito = !UI.opFeito; saveUI(); reconcile(); },
+  'gad-menu': () => { UI.gadMenu = !UI.gadMenu; $('.c-gw')?.classList.toggle('open', UI.gadMenu); },
+  gad: a => { UI.gad = { ...gadDef(), ...(UI.gad || {}) }; UI.gad[a.dataset.v] = !UI.gad[a.dataset.v]; saveUI(); a.querySelector('.switch')?.classList.toggle('on', UI.gad[a.dataset.v]); $('.c-gw .c-midb')?.classList.toggle('on', GADS.some(([g]) => gadOn(g))); gadgets(); },
+  'gad-min': a => { UI.gmin = { ...(UI.gmin || {}) }; UI.gmin[a.dataset.v] = !UI.gmin[a.dataset.v]; saveUI(); gadgets(); },
+  gfly: a => goto(a.dataset.id, false),
   view: a => { UI.view = a.dataset.v; saveUI(); render(); scrollTo({ top: 0 }); },
   mon: a => setMonth(addMonth(UI.month, +a.dataset.v)),
   'mon-pop': () => monthPop(),
@@ -2013,7 +2498,10 @@ const ACT = {
   close: () => closeModal(),
   'ed-st': a => edSet(n => (n.status = a.dataset.v)),
   'ed-prio': a => edSet(n => (n.prio = a.dataset.v)),
-  'ed-brand': a => edSet(n => { const s = new Set(n.brands || []); s.has(a.dataset.v) ? s.delete(a.dataset.v) : s.add(a.dataset.v); n.brands = [...s]; }),
+  /* marca = em qual constelação o ponto mora: trocar leva o ponto e os ramos dele */
+  'ed-brand': a => { const n = edNode(), to = a.dataset.v; if (!n || mkOf(n) === to) return; const sub = descendants(n.id, allNodes().filter(x => x.month === n.month));
+    tx(() => [n.id, ...sub.map(x => x.id)].forEach(k => { const r = D('node/' + k); if (!r) return; const b = { ...r, mk: to, brands: to === 'geral' ? [] : [to], u: Date.now() }; if (k === n.id && r.parent && !sub.some(x => x.id === r.parent) && mkOf({ ...D('node/' + r.parent) }) !== to && (D('node/' + r.parent) || {}).y !== 0) { b.parent = null; b.at = null; b.via = null; } commit('node/' + k, b); }));
+    closeModal(true); ED.id = ''; SEL = ''; refresh(); toast(`Levado para ${mkName(to)}${sub.length ? ` com ${sub.length} ${sub.length === 1 ? 'ramo' : 'ramos'}` : ''}`, 'g'); },
   'ed-team': a => edSet(n => (n.team = n.team === a.dataset.v ? '' : a.dataset.v)),
   'ed-who': a => edSet(n => { const w = new Set(n.who || []); w.has(a.dataset.v) ? w.delete(a.dataset.v) : w.add(a.dataset.v); n.who = [...w]; }),
   'ed-multi': a => edSet(n => { n.f = n.f || {}; const s = new Set(n.f[a.dataset.k] || []); s.has(a.dataset.v) ? s.delete(a.dataset.v) : s.add(a.dataset.v); n.f[a.dataset.k] = [...s]; }),
@@ -2062,12 +2550,12 @@ const ACT = {
     const id = a.dataset.id || uid(), old = D(k + '/' + id) || { t: Date.now() }, body = { ...old, name, color: EC.color };
     if (k === 'pessoa') Object.assign(body, { role: $('#en-r').value.trim(), team: $('#en-t').value, email: $('#en-e').value.trim() });
     tx(() => { commit(k + '/' + id, body); if (k === 'time') { const on = new Set($$('#modal [data-act="en-mem"].on').map(b => b.dataset.v)); pessoas().forEach(p => { const want = on.has(p.id); if (want && p.team !== id) commit('pessoa/' + p.id, { ...D('pessoa/' + p.id), team: id }); if (!want && p.team === id) commit('pessoa/' + p.id, { ...D('pessoa/' + p.id), team: '' }); }); } });
-    const back = a.dataset.back; if (back && N(back) && !a.dataset.id) { const n = N(back); if (k === 'marca') n.brands = [...new Set([...(n.brands || []), id])]; if (k === 'time') n.team = id; if (k === 'pessoa') n.who = [...new Set([...(n.who || []), id])]; putNode(n); }
+    const back = a.dataset.back; if (back && N(back) && !a.dataset.id) { const n = N(back); if (k === 'marca') { n.mk = id; n.brands = [id]; } if (k === 'time') n.team = id; if (k === 'pessoa') n.who = [...new Set([...(n.who || []), id])]; putNode(n); }
     if (back) { refresh(); openEd(back); } else { closeModal(true); render(); }
   },
   'en-del': async a => { const k = a.dataset.k, x = D(k + '/' + a.dataset.id); if (!(await ask(`Excluir ${x.name}?`, 'Excluir'))) return; const id = a.dataset.id;
-    tx(() => { allNodes().forEach(n => { let ch = false; if (k === 'marca' && (n.brands || []).includes(id)) { n.brands = n.brands.filter(b => b !== id); ch = true; } if (k === 'time' && n.team === id) { n.team = ''; ch = true; } if (k === 'pessoa' && (n.who || []).includes(id)) { n.who = n.who.filter(w => w !== id); ch = true; } if (ch) putNode(n); }); if (k === 'time') pessoas().filter(p => p.team === id).forEach(p => commit('pessoa/' + p.id, { ...D('pessoa/' + p.id), team: '' })); commit(k + '/' + id, null); });
-    UI.fb = UI.fb.filter(b => b !== id); if (UI.ft === id) UI.ft = ''; if (UI.who === id) UI.who = ''; saveUI(); closeModal(true); render(); },
+    tx(() => { allNodes().forEach(n => { let ch = false; const putNode = x => { const { id: xid, ...b } = x; commit('node/' + xid, b); }; if (k === 'marca' && (n.brands || []).includes(id)) { n.brands = n.brands.filter(b => b !== id); ch = true; } if (k === 'time' && n.team === id) { n.team = ''; ch = true; } if (k === 'pessoa' && (n.who || []).includes(id)) { n.who = n.who.filter(w => w !== id); ch = true; } if (ch) putNode(n); }); if (k === 'time') pessoas().filter(p => p.team === id).forEach(p => commit('pessoa/' + p.id, { ...D('pessoa/' + p.id), team: '' })); commit(k + '/' + id, null); });
+    if (UI.mk === id) UI.mk = ''; if (UI.ft === id) UI.ft = ''; if (UI.who === id) UI.who = ''; saveUI(); closeModal(true); render(); },
   'set-tab': a => { setTab = a.dataset.v; render(); },
   'logo-del': () => { cfgSet('logo', ''); render(); }
 };
@@ -2075,9 +2563,16 @@ document.addEventListener('click', e => { const a = e.target.closest('[data-act]
 document.addEventListener('keydown', e => {
   const typing = busyTyping();
   if (e.key === 'Escape' && $('#modal')) { closeModal(); return; }
+  if (e.key === 'Escape' && !typing && SEL) { SEL = ''; reconcile(); return; }
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !typing) { e.preventDefault(); e.shiftKey ? redo() : undo(); return; }
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y' && !typing) { e.preventDefault(); redo(); return; }
-  if (!typing && !$('#modal') && UI.view === 'cst' && e.key.toLowerCase() === 'f') { fit(); return; }
+  if (!typing && !$('#modal') && UI.view === 'cst' && e.key.toLowerCase() === 'f' && !e.ctrlKey && !e.metaKey) { fit(); return; }
+  /* atalhos de mapa mental sobre o item selecionado */
+  const s = !typing && !$('#modal') && !$('.c-askscrim') && UI.view === 'cst' && SEL && N(SEL);
+  if (s && e.key === 'Tab') { e.preventDefault(); if (shapeOf(s) === 'texto') return; const d = s.y === 0 ? 'u' : 'r'; startInlineEdit(createNode(suggestFor(s, d), dirSpot(s.id, d))); return; }
+  if (s && e.key === 'Enter') { e.preventDefault(); const p = s.parent && N(s.parent), at = p ? freeSpot(p.id, { x: s.x, y: s.y + (s.y < 0 ? -68 : 68) }) : freeSpot(null, { x: s.x + 220, y: s.y }); startInlineEdit(createNode(s.cat, { ...at, via: p ? s.via : null, at: p ? s.at : null })); return; }
+  if (s && (e.key === ' ' || e.key === 'F2')) { e.preventDefault(); if (e.key === 'F2') startInlineEdit(s.id); else openEd(s.id); return; }
+  if (s && (e.key === 'Delete' || e.key === 'Backspace')) { e.preventDefault(); const sub = descendants(s.id, monthNodes()); ask(sub.length ? `Excluir “${labelOf(s)}” e os ${sub.length} ramos que nascem dele?` : `Excluir “${labelOf(s)}”?`, 'Excluir').then(ok => { if (!ok) return; delNodes([s.id, ...sub.map(x => x.id)]); SEL = ''; refresh(); toast('Excluído · Ctrl+Z desfaz', 'w'); }); return; }
   if (e.target.id === 'dec-new' && e.key === 'Enter' && e.target.value.trim()) { const t = e.target.value.trim(); decSet(l => [...l, { id: uid(), t }]); setTimeout(() => $('#dec-new')?.focus(), 20); return; }
   if (e.target.id === 'chk-new' && e.key === 'Enter' && e.target.value.trim()) { const t = e.target.value.trim(); edSet(n => { n.chk = [...(n.chk || []), { id: uid(), t, ok: false }]; }); setTimeout(() => $('#chk-new')?.focus(), 20); return; }
   if ((e.target.id === 'pick-q' || e.target.id === 'pick-t') && e.key === 'Enter') { const b = $('.c-pk'); if (b) b.click(); return; }
@@ -2088,6 +2583,7 @@ document.addEventListener('input', e => {
   const t = e.target;
   if (t.id === 'pick-q') { $('#pick-l').innerHTML = pickList(t.value); return; }
   if (t.id === 'link-q') { const q = norm(t.value), n = edNode(), r = $('#link-r'); if (!q) { r.innerHTML = ''; return; } const L = allNodes().filter(x => x.id !== n.id && !(n.links || []).includes(x.id) && norm(labelOf(x) + ' ' + CAT(x.cat).n).includes(q)).sort((a, b) => (b.month === n.month) - (a.month === n.month) || b.month.localeCompare(a.month)).slice(0, 8); r.innerHTML = L.map(x => `<button data-act="link-add" data-v="${x.id}"><span class="c-ic2" style="--c:${colorOf(x)}">${ic(x.cat)}</span><span>${esc(labelOf(x))}</span><small>${monthName(x.month, false)}</small></button>`).join('') || '<p class="c-mut">Nada encontrado.</p>'; return; }
+  if (t.id === 'bloco') { clearTimeout(t._t); t._t = setTimeout(() => { const p = t.dataset.p; if (p) commit(p, { text: t.value, u: Date.now() }, false); }, 500); return; }
   if (t.dataset.nf === 'title') { clearTimeout(t._t); t._t = setTimeout(() => { const n = edNode(); if (!n) return; n.title = t.value; putNode(n); refresh(); }, 280); }
 });
 document.addEventListener('change', e => {
@@ -2095,6 +2591,7 @@ document.addEventListener('change', e => {
   if (t.dataset.nf && n) { n[t.dataset.nf] = t.value; putNode(n); refresh(); return; }
   if (t.dataset.ff && n) { n.f = n.f || {}; n.f[t.dataset.ff] = t.type === 'number' ? (t.value === '' ? null : +t.value) : t.value; putNode(n); refresh(); if (t.tagName === 'SELECT') openEd(n.id); return; }
   if (t.dataset.par && n) { edSet(x => { x.parent = t.value || null; x.at = null; x.via = null; }); return; }
+  if (t.dataset.ncol && n) { edSet(x => (x.color = t.value)); return; }
   if (t.dataset.dec && n) { const v = t.value; decSet(l => l.map(x => x.id === t.dataset.dec ? { ...x, t: v } : x)); return; }
   if (t.dataset.chk && n) { const c = (n.chk || []).find(x => x.id === t.dataset.chk); if (c) { c.t = t.value; putNode(n); } return; }
   if (t.dataset.att && n) { const a = (n.att || []).find(x => x.id === t.dataset.att); if (a) { a[t.dataset.k] = t.value; putNode(n); if (t.dataset.k === 'u') openEd(n.id); } return; }
@@ -2128,7 +2625,8 @@ window.isAdmin = isAdmin; window.isApi = () => true;
   if (isAdmin() && !docsOf('marca/').length && !D('app/seeded')) { commit('marca/cl', { name: 'Coco & Luna', color: '#f87171', t: 1 }, false); commit('marca/yu', { name: 'Yucaloo', color: '#60a5fa', t: 2 }, false); commit('app/seeded', { t: Date.now() }, false); }
   if (UI.view === 'set' && !isAdmin()) UI.view = 'cst';
   if (!['cst', 'lista', 'pessoas', 'set'].includes(UI.view)) UI.view = 'cst';
-  UI.fb = (UI.fb || []).filter(marca); if (UI.ft && !time(UI.ft)) UI.ft = ''; if (UI.who && !pessoa(UI.who)) UI.who = '';
+  mkPickDefault();
+  if (UI.ft && !time(UI.ft)) UI.ft = ''; if (UI.who && !pessoa(UI.who)) UI.who = '';
   loadView(); render(); document.body.classList.add('ready');
   setInterval(poll, 8000);
 })();
