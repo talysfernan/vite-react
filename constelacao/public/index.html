@@ -1045,8 +1045,8 @@ input[type=text],input:not([type]),input[type=url],input[type=number],input[type
 /* MODO OPERAR */
 .c-op{position:absolute;left:14px;top:56px;z-index:6;width:304px;max-height:calc(100% - 150px);display:flex;flex-direction:column;border-radius:18px;background:rgba(20,20,24,.72);border:1px solid rgba(255,255,255,.1);-webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 26px 50px -24px rgba(0,0,0,.95);animation:opIn .4s var(--ease) both;overflow:hidden}
 @keyframes opIn{from{opacity:0;transform:translateX(-14px)}}
-.c-oph{display:flex;align-items:center;gap:10px;padding:12px 12px 8px 12px}
-.c-oph b{display:block;font-size:13.5px}.c-oph span{font-size:11.5px;color:var(--muted);display:block;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.c-oph{display:flex;align-items:center;gap:8px;padding:12px 12px 8px 12px}.c-oph>div{flex:1;min-width:0}.c-oph>.sp{display:none}
+.c-oph b{display:block;font-size:13.5px}.c-oph span{font-size:11.5px;color:var(--muted);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .c-opi{display:grid;place-items:center;width:30px;height:30px;border-radius:10px;color:#86efac;background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.3);flex:none}.c-opi svg{width:16px;height:16px}
 .c-opx{white-space:nowrap;flex:none;height:26px;padding:0 9px;border-radius:8px;font-size:11px;color:var(--text-2);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)}.c-opx:hover{color:#fff;background:rgba(255,255,255,.1)}
 .c-opx.i{width:26px;padding:0;display:grid;place-items:center}.c-opx.i svg{width:12px;height:12px}
@@ -1083,6 +1083,14 @@ input[type=text],input:not([type]),input[type=url],input[type=number],input[type
 @keyframes opPop{0%{scale:.85}60%{scale:1.12}100%{scale:1}}
 .c-orb{fill:#fff;filter:drop-shadow(0 0 5px var(--wc,#4ade80)) drop-shadow(0 0 12px var(--wc,#4ade80))}
 
+/* recolher ramo */
+.c-fold{position:absolute;left:var(--fx,30px);top:0;min-width:16px;height:16px;margin:-8px 0 0 3px;padding:0 4px;border-radius:8px;display:grid;place-items:center;font-size:10px;font-weight:650;font-variant-numeric:tabular-nums;color:var(--text-2);background:rgba(22,22,27,.92);border:1px solid color-mix(in srgb,var(--c) 45%,rgba(255,255,255,.2));opacity:0;transform:scale(.6);transition:opacity .2s,transform .25s cubic-bezier(.2,1.4,.4,1),background .15s,color .15s;z-index:6}
+.c-fold svg{width:9px;height:9px;stroke-width:2.4}
+.c-n:hover .c-fold,.c-n.sel .c-fold,.c-fold.on{opacity:1;transform:scale(1)}
+.c-fold:hover{color:#fff;background:color-mix(in srgb,var(--c) 35%,rgba(22,22,27,.92))}
+.c-fold.on{color:#fff;background:color-mix(in srgb,var(--c) 28%,rgba(22,22,27,.95));box-shadow:0 0 12px -2px color-mix(in srgb,var(--c) 60%,transparent)}
+.sh-haste .c-fold,.sh-periodo .c-fold{top:-12px}
+@media (hover:none){.c-fold{opacity:1;transform:none}}
 /* GADGETS */
 .c-gads{position:absolute;right:14px;top:78px;z-index:6;width:262px;max-height:calc(100% - 170px);overflow:auto;display:flex;flex-direction:column;gap:10px;scrollbar-width:none}
 .c-gads::-webkit-scrollbar{display:none}
@@ -1109,7 +1117,7 @@ input[type=text],input:not([type]),input[type=url],input[type=number],input[type
 .dk-pill{position:relative;width:36px;height:15px;background:linear-gradient(135deg,rgba(165,168,247,.32),rgba(20,20,24,.9))!important;border:1.4px solid rgba(165,168,247,.85)}.dk-pill::after,.dk-mini::after{content:"";position:absolute;left:5px;top:50%;width:5px;height:5px;margin-top:-2.5px;border-radius:50%;background:#a5a8f7;box-shadow:0 0 6px #a5a8f7}
 .dk-mini{position:relative;width:30px;height:11px;background:rgba(40,40,46,.9);border:1.2px solid rgba(255,255,255,.4)}.dk-mini::after{left:4px;width:4px;height:4px;margin-top:-2px;background:#fff;box-shadow:none}
 .dk-out{border-color:rgba(237,237,240,.7);background:rgba(16,16,20,.8)}
-.dk-can{background:radial-gradient(circle at 32% 28%,#f9a8d4,#f0559a 62%);box-shadow:0 0 12px -2px rgba(240,85,154,.7)}
+.dk-can{display:grid;place-items:center;box-sizing:border-box;background:radial-gradient(circle at 32% 28%,#f9a8d4,#f0559a 62%);box-shadow:0 0 12px -2px rgba(240,85,154,.7)}
 .dk-ic svg{stroke-width:1.6}
 .dk-tx{width:32px;height:21px;border-radius:6px;border:1.5px dashed #facc15;display:flex;flex-direction:column;justify-content:center;gap:3px;padding:0 5px;margin:1px 0}.dk-tx b{height:2px;border-radius:2px;background:rgba(250,204,21,.7)}.dk-tx b+b{width:60%}
 .c-colin{position:relative;overflow:hidden;background:conic-gradient(#f87171,#facc15,#4ade80,#22d3ee,#60a5fa,#a78bfa,#f472b6,#f87171)}
@@ -1524,7 +1532,9 @@ function nodeHTML(n, list) {
   const per = sh === 'periodo' ? `<i class="c-stripe" style="width:${n.w || 220}px"></i><span class="c-ph l"></span><span class="c-ph r"></span>` : '';
   const rz = sh === 'texto' ? `<span class="c-rz" title="Arraste para mudar a largura"></span>` : '';
   const lb = ed && ['dot', 'canal', 'icone'].includes(sh) ? `<span class="c-lb on">${inp}</span>` : below ? `<span class="c-lb">${esc(below)}</span>` : '';
-  return `${tail}${per}<div class="c-b">${body}</div>${rz}${lb}${sh === 'texto' ? '' : ['r', 'u', 'd'].map(d => `<button class="c-k c-k${d}" data-dir="${d}" aria-label="Adicionar">${ic('plus')}<span class="c-kl">${knobTypes(n, d).map((k, i) => `<span class="c-ki${i ? '' : ' on'}" data-k="${k}">${esc(CAT(k).n)}</span>`).join('')}<span class="c-ki more" data-more="1">Outros…</span></span></button>`).join('')}`;
+  const hasK = (list || []).some(k => k.parent === n.id), fo = hasK && (UI.fold || []).includes(n.id), nk = fo ? descendants(n.id, list).length : 0;
+  const fold = hasK ? `<button class="c-fold${fo ? ' on' : ''}" data-act="fold" data-id="${n.id}" title="${fo ? 'Expandir ramo' : 'Recolher ramo'}" aria-label="${fo ? 'Expandir ramo' : 'Recolher ramo'}">${fo ? `+${nk}` : ic('minus')}</button>` : '';
+  return `${tail}${per}<div class="c-b">${body}</div>${fold}${rz}${lb}${sh === 'texto' ? '' : ['r', 'u', 'd'].map(d => `<button class="c-k c-k${d}" data-dir="${d}" aria-label="Adicionar">${ic('plus')}<span class="c-kl">${knobTypes(n, d).map((k, i) => `<span class="c-ki${i ? '' : ' on'}" data-k="${k}">${esc(CAT(k).n)}</span>`).join('')}<span class="c-ki more" data-more="1">Outros…</span></span></button>`).join('')}`;
 }
 /* renomear direto no item (2 cliques, F2 ou logo depois de criar) */
 function startInlineEdit(id) {
@@ -1551,12 +1561,17 @@ function startInlineEdit(id) {
 }
 function reconcile(first) {
   const nodesEl = $('#nodes'); if (!nodesEl) return;
-  const list = monthNodes(), ids = new Set(list.map(n => n.id)), f = hasF(), op = OP.sc = OP.on ? opScope(list) : null;
+  const all = monthNodes(), list = visible(all), ids = new Set(list.map(n => n.id)), f = hasF(), op = OP.sc = OP.on ? opScope(all) : null;
   if (SEL && !ids.has(SEL)) SEL = '';
-  for (const [id, el] of NODES) if (!ids.has(id)) { el.classList.add('bye'); setTimeout(() => el.remove(), 260); NODES.delete(id); delete POS[id]; }
+  for (const [id, el] of NODES) if (!ids.has(id)) {
+    /* recolhido: o ramo volta para dentro do pai antes de sumir */
+    const raw = D('node/' + id), pp = raw && raw.parent && POS[raw.parent];
+    if (pp) { el.style.transition = 'transform .3s cubic-bezier(.2,.8,.2,1),opacity .25s'; el.style.transform = `translate(${pp.x}px,${pp.y}px) scale(.6)`; }
+    el.classList.add('bye'); setTimeout(() => el.remove(), 300); NODES.delete(id); delete POS[id];
+  }
   for (const n of list) {
-    let el = NODES.get(n.id); const sh = shapeOf(n), html = nodeHTML(n, list), col = colorOf(n);
-    if (!el) { el = document.createElement('div'); el.dataset.id = n.id; nodesEl.appendChild(el); NODES.set(n.id, el); if (!first) el.classList.add('born'); POS[n.id] = { x: n.x, y: n.y }; }
+    let el = NODES.get(n.id); const sh = shapeOf(n), html = nodeHTML(n, all), col = colorOf(n);
+    if (!el) { el = document.createElement('div'); el.dataset.id = n.id; nodesEl.appendChild(el); NODES.set(n.id, el); if (!first) el.classList.add('born'); const pp = !first && n.parent && POS[n.parent]; POS[n.id] = pp ? { x: pp.x, y: pp.y } : { x: n.x, y: n.y }; }
     const sel = ED.id === n.id || SEL === n.id || INED === n.id, ops = op ? (op.now.has(n.id) ? ' op-now' : op.ids.has(n.id) ? ' op-in' : ' op-out') : '';
     const cls = `c-n sh-${sh} cat-${n.cat}${n.sz ? ' sz-' + n.sz : ''} st-${n.status || 'todo'}${n.y === 0 ? ' on-spine' : ''}${f && !matchF(n) ? ' dim' : ''}${n.carried ? ' carried' : ''}${sel ? ' sel' : ''}${INED === n.id ? ' ined' : ''}${n.prio === 'a' ? ' hi' : ''}${ops}`;
     if (el._h !== html && !(INED === n.id && el.querySelector('#ined-in'))) { el.innerHTML = html; el._h = html; }
@@ -1566,14 +1581,15 @@ function reconcile(first) {
     const b = el.querySelector('.c-b'); SIZE[n.id] = { w: b ? b.offsetWidth : 0, h: b ? b.offsetHeight : 0 };
     const S = SIZE[n.id], hw = sh === 'periodo' ? (n.w || 220) / 2 : S.w / 2;
     el.style.setProperty('--w', (n.w || 220) + 'px');
-    el.style.setProperty('--kx', hw + (n.tail > 0 && ['pill', 'outline', 'mini'].includes(sh) ? n.tail + 20 : 15) + 'px');
+    el.style.setProperty('--kx', hw + (n.tail > 0 && ['pill', 'outline', 'mini'].includes(sh) ? n.tail + 20 : 15) + (all.some(k => k.parent === n.id) ? 22 : 0) + 'px');
+    el.style.setProperty('--fx', hw + (n.tail > 0 && ['pill', 'outline', 'mini'].includes(sh) ? n.tail : 0) + 'px');
     el.style.setProperty('--kh', S.h / 2 + 'px');
     el.style.setProperty('--ky', sh === 'haste' ? -(S.h - 14) + 'px' : sh === 'periodo' ? -(S.h / 2 + 10) + 'px' : '0px');
     layoutTail(el, n);
   }
   $('#empty') && ($('#empty').hidden = list.length > 0);
   const kb = $('#kb'); if (kb) kb.hidden = !SEL || !!INED || OP.on;
-  macroCols(); bridges(list); hud(list); gadgets(); opPanel(list, op);
+  macroCols(); bridges(all); hud(all); gadgets(); opPanel(all, op);
   kick();
 }
 /* MACRO: uma coluna por mês com o nome e o progresso; clicar abre o mês */
@@ -1593,7 +1609,7 @@ function layoutTail(el, n) {
 /* ---------- animação: posições suaves e fios ---------- */
 function kick() { if (!anim) { anim = true; requestAnimationFrame(frame); } }
 function frame() {
-  let moving = false; const list = monthNodes();
+  let moving = false; const list = visible(monthNodes());
   for (const n of list) {
     const p = POS[n.id] || (POS[n.id] = { x: n.x, y: n.y }), el = NODES.get(n.id); if (!el) continue;
     if (drag && drag.ids && drag.ids.has(n.id)) { p.x = n.x; p.y = n.y; p.vx = p.vy = 0; }
@@ -1709,8 +1725,15 @@ function applyView() {
   st.classList.toggle('lod-far', UI.macro && V.z < 0.42); st.style.setProperty('--iz', clamp(1 / V.z, 1, 7));
   saveView();
 }
+/* recolher ramos (como nos mapas mentais): fica guardado neste navegador */
+const foldSet = () => new Set(UI.fold || []);
+function visible(list) {
+  const F = foldSet(); if (!F.size) return list; const hide = new Set();
+  for (const n of list) if (F.has(n.id) && !hide.has(n.id)) descendants(n.id, list).forEach(x => hide.add(x.id));
+  return hide.size ? list.filter(n => !hide.has(n.id)) : list;
+}
 function bounds() {
-  const list = monthNodes(); let x0 = 0, x1 = 1400, y0 = -260, y1 = 260;
+  const list = visible(monthNodes()); let x0 = 0, x1 = 1400, y0 = -260, y1 = 260;
   if (UI.macro) { const i = mIdx(UI.month); x0 = i * MW - 260; x1 = (i + 1) * MW - 300; if (!list.length) return { x0, x1, y0: -320, y1: 320 }; }
   for (const n of list) { const s = SIZE[n.id] || { w: 80, h: 30 }; x0 = Math.min(x0, n.x - s.w / 2 - 40); x1 = Math.max(x1, n.x + s.w / 2 + (n.tail || 0) + 40); y0 = Math.min(y0, n.y - s.h - 50); y1 = Math.max(y1, n.y + s.h + 50); }
   return { x0, x1, y0, y1 };
@@ -2074,6 +2097,7 @@ function createNode(cat, ctx = {}, title = '') {
   if (C.s === 'texto') n.w = 240;
   if (cat === 'canal') n.f.rede = 'TikTok';
   if (cat === 'loja') n.f.loja = LOJAS[store.board][0];
+  if (p && (UI.fold || []).includes(p.id)) { UI.fold = UI.fold.filter(x => x !== p.id); saveUI(); }
   tx(() => putNode(n)); SEL = n.id; refresh(); return n.id;
 }
 
@@ -2477,6 +2501,7 @@ function cfgSet(path, v) { const c = clone(D('app/cfg') || {}); setDeep(c, path,
 function setMonth(m) { UI.month = m; UI.macro = false; SEL = ''; saveUI(); loadView(); render(); }
 function goto(id, open = true) {
   let n = N(id); if (!n) return; closeModal(true); ED.id = '';
+  if ((UI.fold || []).length) { let c = D('node/' + n.parent); const F = foldSet(); for (let i = 0; c && i < 60; i++) { const cid = Object.keys(store.docs).find(k => store.docs[k] === c)?.slice(5); if (cid) F.delete(cid); c = c.parent ? D('node/' + c.parent) : null; } UI.fold = [...F]; saveUI(); }
   const k = mkOf(n); if (k !== curMk()) { UI.mk = k; saveUI(); loadView(); render(); }
   if (UI.macro ? !n.month.startsWith(curYear()) : n.month !== UI.month) setMonth(n.month);
   if (UI.view !== 'cst') { UI.view = 'cst'; saveUI(); render(); }
@@ -2490,6 +2515,7 @@ const ACT = {
   'macro-zoom': a => setMonth(a.dataset.v),
   yr: a => { UI.month = addMonth(UI.month, +a.dataset.v * 12); SEL = ''; saveUI(); loadView(); render(); },
   tidy: () => tidyLayout(),
+  fold: a => { const id = a.dataset.id, F = foldSet(); F.has(id) ? F.delete(id) : F.add(id); UI.fold = [...F]; saveUI(); reconcile(); },
   op: () => { OP.on = !OP.on; OP.root = OP.on && SEL ? SEL : ''; UI.op = OP.on; saveUI(); render(); setTimeout(() => fit(), 30); },
   'op-all': () => { OP.root = ''; reconcile(); },
   'op-done': a => opDone(a.dataset.id),
