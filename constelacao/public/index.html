@@ -647,7 +647,7 @@ svg.c-wires{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
 @keyframes born{from{opacity:0;transform:translate(-50%,-50%) scale(.4)}}
 .c-n.bye{opacity:0;transition:opacity .25s}
 .c-n:hover .c-b{filter:brightness(1.06)}
-.c-n.lift .c-b{transform:translate(-50%,-50%) scale(1.06);box-shadow:0 14px 30px -12px rgba(0,0,0,.9),0 0 0 6px color-mix(in srgb,var(--c) 14%,transparent)}
+.c-n.lift .c-b{scale:1.06;box-shadow:0 14px 30px -12px rgba(0,0,0,.9),0 0 0 6px color-mix(in srgb,var(--c) 14%,transparent)}
 .c-n.sel .c-b{box-shadow:0 0 0 5px color-mix(in srgb,var(--c) 22%,transparent),0 0 26px -4px var(--c)}
 .c-n.target .c-b{box-shadow:0 0 0 6px rgba(255,255,255,.18),0 0 30px rgba(255,255,255,.4)}
 /* cápsula */
@@ -970,8 +970,8 @@ input[type=text],input:not([type]),input[type=url],input[type=number],input[type
 
 /* itens: cápsulas vitrificadas com sotaque de cor */
 .c-n .c-b{gap:8px;transition:box-shadow .25s var(--ease),filter .25s,transform .25s var(--ease),background .25s,border-color .25s}
-.c-n:hover .c-b{transform:translate(-50%,-50%) translateY(-1.5px);filter:brightness(1.08)}
-.c-n.lift .c-b{transform:translate(-50%,-50%) scale(1.06);box-shadow:0 18px 36px -10px rgba(0,0,0,.95),0 0 0 5px color-mix(in srgb,var(--c) 20%,transparent)}
+.c-n:hover .c-b{filter:brightness(1.08)}
+.c-n.lift .c-b{scale:1.06;box-shadow:0 18px 36px -10px rgba(0,0,0,.95),0 0 0 5px color-mix(in srgb,var(--c) 20%,transparent)}
 .c-n.sel .c-b{box-shadow:0 0 0 2px rgba(255,255,255,.9),0 0 0 6px color-mix(in srgb,var(--c) 30%,transparent),0 14px 32px -8px rgba(0,0,0,.9)!important}
 .c-n.target .c-b{box-shadow:0 0 0 6px rgba(74,222,128,.3),0 0 30px rgba(74,222,128,.55)!important}
 .sh-pill .c-b{height:36px;padding:0 15px 0 12px;border-radius:999px;background:linear-gradient(135deg,color-mix(in srgb,var(--c) 22%,rgba(27,27,32,.92)),rgba(18,18,22,.9));border:1.5px solid color-mix(in srgb,var(--c) 62%,rgba(255,255,255,.16));color:#f4f4f6;font-size:13px;font-weight:600;box-shadow:0 1px 0 rgba(255,255,255,.08) inset,0 10px 26px -10px rgba(0,0,0,.85),0 0 22px -8px color-mix(in srgb,var(--c) 45%,transparent)}
@@ -1009,17 +1009,12 @@ input[type=text],input:not([type]),input[type=url],input[type=number],input[type
 .c-rz{position:absolute;left:calc(var(--tw,240px) / 2 - 5px);top:-12px;width:10px;height:24px;border-radius:5px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);opacity:0;transition:opacity .2s;z-index:3}
 .sh-texto:hover .c-rz,.sh-texto.sel .c-rz{opacity:1}
 .c-n.sh-texto.sel .c-b{box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 22%,transparent),0 14px 32px -8px rgba(0,0,0,.9)!important}
-.c-n.sh-texto:hover .c-b{transform:translate(-50%,-50%)}
+
 /* renomear no lugar */
 .c-ined{background:rgba(10,10,13,.92);color:#fff;border:1.5px solid #60a5fa;border-radius:8px;padding:2px 8px;font:inherit;font-weight:600;outline:none;min-width:120px;max-width:320px;box-shadow:0 0 0 4px rgba(96,165,250,.22)}
 .c-intx{display:block;width:100%;min-width:0;max-width:none;min-height:40px;resize:none;font-weight:500;font-size:12.5px;line-height:1.5;padding:4px 6px;overflow:hidden}
-.c-n.ined .c-k,.c-n.ined .c-open1{display:none}
+.c-n.ined .c-k{display:none}
 /* abrir (aparece no item selecionado) */
-.c-open1{position:absolute;left:0;top:calc(-1 * var(--kh,18px) - 32px);transform:translateX(-50%);height:24px;padding:0 9px 0 11px;border-radius:999px;display:none;align-items:center;gap:5px;white-space:nowrap;font-size:11px;font-weight:550;color:#ededf0;background:rgba(24,24,29,.78);border:1px solid rgba(255,255,255,.18);-webkit-backdrop-filter:blur(10px) saturate(1.4);backdrop-filter:blur(10px) saturate(1.4);box-shadow:0 8px 20px -6px rgba(0,0,0,.85);z-index:8;transition:background .15s,color .15s,transform .2s var(--ease)}
-.c-open1:hover{background:rgba(255,255,255,.16);transform:translateX(-50%) translateY(-1px)}
-.c-n.sel:not(.ined) .c-open1{display:inline-flex;animation:pop .22s var(--ease) both}
-.sh-haste .c-open1,.sh-periodo .c-open1{top:calc(-1 * var(--kh,18px) * 2 - 34px)}
-.c-stage.op-on .c-open1{display:none!important}
 .c-n.ping1 .c-b{animation:ping1 1s var(--ease)}
 @keyframes ping1{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--c) 70%,transparent)}100%{box-shadow:0 0 0 22px transparent}}
 /* MACRO: colunas dos meses */
@@ -1083,9 +1078,9 @@ input[type=text],input:not([type]),input[type=url],input[type=number],input[type
 .c-n.op-now .c-b{animation:opNow 2.2s ease-in-out infinite}
 @keyframes opNow{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--c) 0%,transparent),0 0 18px -6px var(--c)}50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--c) 22%,transparent),0 0 30px -4px var(--c)}}
 .c-n.op-arrive .c-b{animation:opArr .8s var(--ease)}
-@keyframes opArr{0%{filter:brightness(2.2);transform:translate(-50%,-50%) scale(1.18)}100%{filter:none}}
+@keyframes opArr{0%{filter:brightness(2.2);scale:1.18}100%{filter:none;scale:1}}
 .c-n.op-pop .c-b{animation:opPop .6s cubic-bezier(.2,1.4,.4,1)}
-@keyframes opPop{0%{transform:translate(-50%,-50%) scale(.85)}60%{transform:translate(-50%,-50%) scale(1.12)}100%{transform:translate(-50%,-50%) scale(1)}}
+@keyframes opPop{0%{scale:.85}60%{scale:1.12}100%{scale:1}}
 .c-orb{fill:#fff;filter:drop-shadow(0 0 5px var(--wc,#4ade80)) drop-shadow(0 0 12px var(--wc,#4ade80))}
 
 /* GADGETS */
@@ -1529,8 +1524,7 @@ function nodeHTML(n, list) {
   const per = sh === 'periodo' ? `<i class="c-stripe" style="width:${n.w || 220}px"></i><span class="c-ph l"></span><span class="c-ph r"></span>` : '';
   const rz = sh === 'texto' ? `<span class="c-rz" title="Arraste para mudar a largura"></span>` : '';
   const lb = ed && ['dot', 'canal', 'icone'].includes(sh) ? `<span class="c-lb on">${inp}</span>` : below ? `<span class="c-lb">${esc(below)}</span>` : '';
-  const open = `<button class="c-open1" data-act="open" data-id="${n.id}" title="Abrir (Espaço)">Abrir${ic('arrow', 'width:11px;height:11px')}</button>`;
-  return `${tail}${per}${open}<div class="c-b">${body}</div>${rz}${lb}${sh === 'texto' ? '' : ['r', 'u', 'd'].map(d => `<button class="c-k c-k${d}" data-dir="${d}" aria-label="Adicionar">${ic('plus')}<span class="c-kl">${knobTypes(n, d).map((k, i) => `<span class="c-ki${i ? '' : ' on'}" data-k="${k}">${esc(CAT(k).n)}</span>`).join('')}<span class="c-ki more" data-more="1">Outros…</span></span></button>`).join('')}`;
+  return `${tail}${per}<div class="c-b">${body}</div>${rz}${lb}${sh === 'texto' ? '' : ['r', 'u', 'd'].map(d => `<button class="c-k c-k${d}" data-dir="${d}" aria-label="Adicionar">${ic('plus')}<span class="c-kl">${knobTypes(n, d).map((k, i) => `<span class="c-ki${i ? '' : ' on'}" data-k="${k}">${esc(CAT(k).n)}</span>`).join('')}<span class="c-ki more" data-more="1">Outros…</span></span></button>`).join('')}`;
 }
 /* renomear direto no item (2 cliques, F2 ou logo depois de criar) */
 function startInlineEdit(id) {
@@ -1834,9 +1828,8 @@ function nodeTap(id) {
   const now = Date.now(), dbl = tapT.id === id && now - tapT.t < 380; tapT = { t: now, id };
   clearTimeout(nodeTap.t);
   if (dbl) { tapT.t = 0; startInlineEdit(id); return; }
-  if (OP.on) { OP.root = id; SEL = id; reconcile(); opFly(id); return; }
-  if (SEL === id) { nodeTap.t = setTimeout(() => openEd(id), 280); return; }
-  SEL = id; reconcile();
+  SEL = id; if (OP.on) { OP.root = id; reconcile(); opFly(id); }
+  nodeTap.t = setTimeout(() => openEd(id), 240);
 }
 /* onda no clique e luz nos pontinhos perto do cursor */
 function ripple(x, y) { if (matchMedia('(prefers-reduced-motion: reduce)').matches) return; const r = document.createElement('i'); r.className = 'c-rip'; r.style.left = x + 'px'; r.style.top = y + 'px'; document.body.appendChild(r); setTimeout(() => r.remove(), 600); }
