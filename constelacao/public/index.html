@@ -1083,6 +1083,9 @@ input[type=text],input:not([type]),input[type=url],input[type=number],input[type
 @keyframes opPop{0%{scale:.85}60%{scale:1.12}100%{scale:1}}
 .c-orb{fill:#fff;filter:drop-shadow(0 0 5px var(--wc,#4ade80)) drop-shadow(0 0 12px var(--wc,#4ade80))}
 
+/* tamanho para os demais formatos */
+.sz-s.sh-dot .c-b,.sz-s.sh-canal .c-b,.sz-s.sh-icone .c-b,.sz-s.sh-haste .c-b,.sz-s.sh-periodo .c-b,.sz-s.sh-texto .c-b{scale:.82}
+.sz-l.sh-dot .c-b,.sz-l.sh-canal .c-b,.sz-l.sh-icone .c-b,.sz-l.sh-haste .c-b,.sz-l.sh-periodo .c-b,.sz-l.sh-texto .c-b{scale:1.22}
 /* recolher ramo */
 .c-fold{position:absolute;left:var(--fx,30px);top:0;min-width:16px;height:16px;margin:-8px 0 0 3px;padding:0 4px;border-radius:8px;display:grid;place-items:center;font-size:10px;font-weight:650;font-variant-numeric:tabular-nums;color:var(--text-2);background:rgba(22,22,27,.92);border:1px solid color-mix(in srgb,var(--c) 45%,rgba(255,255,255,.2));opacity:0;transform:scale(.6);transition:opacity .2s,transform .25s cubic-bezier(.2,1.4,.4,1),background .15s,color .15s;z-index:6}
 .c-fold svg{width:9px;height:9px;stroke-width:2.4}
@@ -1358,7 +1361,7 @@ async function setBoard(b) {
     rememberBoard(b); loadView(); render();
   } finally { store.switching = false; }
 }
-const CFG0 = () => ({ title: { text: 'Constelação · ' + PAIS[store.board].name, color: '#26262b', size: 14 }, logo: '', logoSize: 70 });
+const CFG0 = () => ({ title: { text: 'Constelação · ' + PAIS[store.board].name, color: '#26262b', size: 14 }, logo: '', logoSize: 70, sz: 'm' });
 function cfg() { const c = D('app/cfg') || {}, d = CFG0(); const o = { ...d, ...c }; o.title = { ...d.title, ...(c.title || {}) }; return o; }
 const docsOf = pre => Object.entries(store.docs).filter(([k, v]) => k.startsWith(pre) && v).map(([k, v]) => ({ ...v, id: k.slice(pre.length) }));
 const byName = (a, b) => String(a.name).localeCompare(String(b.name));
@@ -1573,7 +1576,7 @@ function reconcile(first) {
     let el = NODES.get(n.id); const sh = shapeOf(n), html = nodeHTML(n, all), col = colorOf(n);
     if (!el) { el = document.createElement('div'); el.dataset.id = n.id; nodesEl.appendChild(el); NODES.set(n.id, el); if (!first) el.classList.add('born'); const pp = !first && n.parent && POS[n.parent]; POS[n.id] = pp ? { x: pp.x, y: pp.y } : { x: n.x, y: n.y }; }
     const sel = ED.id === n.id || SEL === n.id || INED === n.id, ops = op ? (op.now.has(n.id) ? ' op-now' : op.ids.has(n.id) ? ' op-in' : ' op-out') : '';
-    const cls = `c-n sh-${sh} cat-${n.cat}${n.sz ? ' sz-' + n.sz : ''} st-${n.status || 'todo'}${n.y === 0 ? ' on-spine' : ''}${f && !matchF(n) ? ' dim' : ''}${n.carried ? ' carried' : ''}${sel ? ' sel' : ''}${INED === n.id ? ' ined' : ''}${n.prio === 'a' ? ' hi' : ''}${ops}`;
+    const szk = n.sz || (cfg().sz !== 'm' ? cfg().sz : ''), cls = `c-n sh-${sh} cat-${n.cat}${szk ? ' sz-' + szk : ''} st-${n.status || 'todo'}${n.y === 0 ? ' on-spine' : ''}${f && !matchF(n) ? ' dim' : ''}${n.carried ? ' carried' : ''}${sel ? ' sel' : ''}${INED === n.id ? ' ined' : ''}${n.prio === 'a' ? ' hi' : ''}${ops}`;
     if (el._h !== html && !(INED === n.id && el.querySelector('#ined-in'))) { el.innerHTML = html; el._h = html; }
     if (sh === 'texto') el.style.setProperty('--tw', (n.w || 240) + 'px');
     if (el._c !== cls) { const born = el.classList.contains('born'); el.className = cls + (born ? ' born' : ''); el._c = cls; }
@@ -1839,7 +1842,12 @@ const endDrag = e => {
   if (d.kind === 'knob') {
     WIRES.get('rubber')?.remove(); WIRES.delete('rubber');
     if (!d.moved) { const spot = dirSpot(d.id, d.dir); if (d.more) openPick(spot); else startInlineEdit(createNode(d.pick || suggestFor(N(d.id), d.dir), spot)); return; }
-    if (d.over) { linkNodes(d.id, d.over); toast('Conexão criada', 'g'); refresh(); return; }
+    if (d.over) {
+      /* item solto (sem fio): passa a nascer deste, com fio de verdade; já ligado: vira conexão */
+      const T = N(d.over), src = N(d.id); let c = src, cyc = false; for (let i = 0; c && i < 60; i++) { if (c.id === d.over) { cyc = true; break; } c = c.parent ? N(c.parent) : null; }
+      if (T && !T.parent && !cyc) { tx(() => { const t = N(d.over); t.parent = d.id; t.at = null; t.via = null; putNode(t); }); toast('Fio ligado', 'g'); refresh(); return; }
+      linkNodes(d.id, d.over); toast('Conexão criada', 'g'); refresh(); return;
+    }
     const at = { parent: d.id, x: Math.round(d.to.x), y: Math.abs(d.to.y) < SNAP ? 0 : Math.round(d.to.y) };
     if (d.pick) startInlineEdit(createNode(d.pick, at)); else openPick(at); kick();
   }
@@ -2059,7 +2067,8 @@ function vSet() {
   if (setTab === 'time') body = times().map(x => row('time', x, `${pessoas().filter(p => p.team === x.id).length} pessoas`)).join('') + `<button class="pill sm" data-act="ent" data-k="time" data-id="">${ic('plus')}Novo time</button>`;
   if (setTab === 'pessoa') body = pessoas().map(x => row('pessoa', x, esc([x.role, (time(x.team) || {}).name].filter(Boolean).join(' · ')))).join('') + `<button class="pill sm" data-act="ent" data-k="pessoa" data-id="">${ic('plus')}Nova pessoa</button>`;
   if (setTab === 'look') body = `<div class="label"><span class="dot"></span>Título</div><div class="node c-spad"><div class="row"><input class="inp sm" data-cfg="title.text" value="${esc(c.title.text)}"><input type="color" class="colorin" data-cfg="title.color" value="${esc(c.title.color)}"></div><label class="field mt"><span>Tamanho</span><input type="range" class="range" min="10" max="30" data-cfg-num="title.size" value="${c.title.size}"></label></div>
-    <div class="label"><span class="dot"></span>Logo</div><div class="node c-spad"><div class="row"><label class="pill sm">${ic('plus')}${c.logo ? 'Trocar logo' : 'Enviar logo'}<input type="file" accept="image/*" id="logo-in" hidden></label>${c.logo ? '<button class="pill sm ghost" data-act="logo-del">Remover</button>' : ''}</div><label class="field mt"><span>Altura</span><input type="range" class="range" min="28" max="200" data-cfg-num="logoSize" value="${c.logoSize}"></label></div>`;
+    <div class="label"><span class="dot"></span>Logo</div><div class="node c-spad"><div class="row"><label class="pill sm">${ic('plus')}${c.logo ? 'Trocar logo' : 'Enviar logo'}<input type="file" accept="image/*" id="logo-in" hidden></label>${c.logo ? '<button class="pill sm ghost" data-act="logo-del">Remover</button>' : ''}</div><label class="field mt"><span>Altura</span><input type="range" class="range" min="28" max="200" data-cfg-num="logoSize" value="${c.logoSize}"></label></div>
+    <div class="label"><span class="dot"></span>Tamanho dos elementos</div><div class="node c-spad"><nav class="seg">${[['s', 'Pequenos'], ['m', 'Médios'], ['l', 'Grandes']].map(([k, l]) => `<button class="pill sm ${(c.sz || 'm') === k ? 'on' : ''}" data-act="cfg-sz" data-v="${k}">${l}</button>`).join('')}</nav><p class="c-mut c-hint">Vale para todos os itens da constelação. Um item com tamanho próprio escolhido no pop-up mantém o dele.</p></div>`;
   return `<nav class="seg c-stabs">${[['marca', 'Marcas'], ['time', 'Times'], ['pessoa', 'Pessoas'], ['look', 'Visual']].map(([k, l]) => `<button class="pill sm ${setTab === k ? 'on' : ''}" data-act="set-tab" data-v="${k}">${l}</button>`).join('')}</nav>${body}`;
 }
 
@@ -2515,6 +2524,7 @@ const ACT = {
   'macro-zoom': a => setMonth(a.dataset.v),
   yr: a => { UI.month = addMonth(UI.month, +a.dataset.v * 12); SEL = ''; saveUI(); loadView(); render(); },
   tidy: () => tidyLayout(),
+  'cfg-sz': a => { cfgSet('sz', a.dataset.v); render(); },
   fold: a => { const id = a.dataset.id, F = foldSet(); F.has(id) ? F.delete(id) : F.add(id); UI.fold = [...F]; saveUI(); reconcile(); },
   op: () => { OP.on = !OP.on; OP.root = OP.on && SEL ? SEL : ''; UI.op = OP.on; saveUI(); render(); setTimeout(() => fit(), 30); },
   'op-all': () => { OP.root = ''; reconcile(); },
