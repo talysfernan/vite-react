@@ -178,7 +178,7 @@ svg.c-wires{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
 .k-dia .c-dal{position:absolute;right:-3px;top:-3px;width:9px;height:9px;border-radius:50%;background:#f87171;box-shadow:0 0 0 2px #0c0c0f,0 0 10px #f87171}
 .c-lb{position:absolute;left:0;top:calc(var(--kh,20px) + 8px);transform:translateX(-50%);white-space:nowrap;font-size:11.5px;font-weight:600;color:#d8d8e0;padding:2px 8px;border-radius:7px;background:rgba(16,16,20,.86);border:1px solid rgba(255,255,255,.07);pointer-events:none}
 .c-lb.on{pointer-events:auto;background:none;border:0;padding:0}
-.c-lb.d{background:none;border:0;padding:0;font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:lowercase;color:var(--muted);top:calc(var(--kh,15px) + 6px)}
+.c-lb.d{background:#0c0c0f;border:0;padding:1px 6px;border-radius:6px;font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:lowercase;color:var(--muted);top:calc(var(--kh,15px) + 6px)}
 /* Marco: pílula de vidro; o nível muda o visual, o conteúdo muda o tamanho */
 .k-marco .c-b{height:var(--ph,34px);padding:0 14px 0 var(--pl,8px);border-radius:999px;font-size:var(--pf,12.5px);font-weight:600;color:#f4f4f6}
 .lv-leve .c-b{background:rgba(16,16,20,.88);border:1.4px solid color-mix(in srgb,var(--c) 45%,rgba(255,255,255,.22));color:#e4e4ea;font-weight:550;box-shadow:0 8px 20px -10px rgba(0,0,0,.8)}
@@ -471,8 +471,8 @@ details.more summary{list-style:none;color:var(--muted);font-size:12px;display:i
 .c-selo{position:absolute;left:-9px;top:-13px;width:22px;height:20px;transform:rotate(-12deg);filter:drop-shadow(0 3px 5px rgba(0,0,0,.7));z-index:4;transition:transform .2s var(--spring)}
 .c-selo:hover{transform:rotate(-4deg) scale(1.15)}.c-selo svg,.selo-i{width:100%;height:100%;display:block}
 .k-marco.has-selo .c-b{padding-left:calc(var(--pl,8px) + 2px)}
-.c-dsel{min-width:86px;cursor:var(--cur-hand),pointer!important}.c-dsel:hover{transform:none}
-.dsel{display:flex;gap:4px;align-items:flex-end;height:24px}.dsel b{width:21px;height:19px;display:block;cursor:var(--cur-grab),grab;transition:transform .25s var(--spring)}.dsel b:hover{transform:translateY(-3px) rotate(-10deg) scale(1.15)}.dsel b:active{cursor:var(--cur-grabbing),grabbing}
+.c-dsel{min-width:60px;cursor:var(--cur-hand),pointer!important}.c-dsel:hover{transform:none}
+.dsel{display:flex;gap:4px;align-items:flex-end;height:24px}.dsel b{width:25px;height:23px;filter:drop-shadow(0 2px 6px rgba(251,191,36,.35));display:block;cursor:var(--cur-grab),grab;transition:transform .25s var(--spring)}.dsel b:hover{transform:translateY(-3px) rotate(-10deg) scale(1.15)}.dsel b:active{cursor:var(--cur-grabbing),grabbing}
 .c-gselo{width:34px;height:31px;padding:0;background:none;border:0;box-shadow:none;transform:translate(-50%,-50%) rotate(-12deg) scale(1)}.c-gselo.in{transform:translate(-50%,-50%) rotate(-12deg) scale(1.25)}.c-gselo svg{width:100%;height:100%;filter:drop-shadow(0 6px 10px rgba(0,0,0,.8))}
 .selo-tag{display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 9px 0 6px;border-radius:9px;font-size:12px;font-weight:600;color:var(--sc);background:color-mix(in srgb,var(--sc) 10%,transparent);border:1px solid color-mix(in srgb,var(--sc) 30%,transparent)}.selo-tag .selo-i{width:17px;height:15px}.selo-tag:hover{background:color-mix(in srgb,var(--sc) 18%,transparent)}
 .crumb{display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 9px;border-radius:8px;font-size:12px;color:var(--muted);max-width:240px;overflow:hidden;white-space:nowrap}.crumb:hover{color:var(--text);background:rgba(255,255,255,.05)}
@@ -593,8 +593,8 @@ const KINDS = { marco: ['Marco', '#a5a8f7'], dia: ['Dia', '#e7e7ea'], canal: ['C
 const LV = [['leve', 'Leve'], ['imp', 'Importante'], ['crit', 'Crítico']];
 const MODELS = [['lista', 'Lista por pessoa', 'm_lista', 'Tarefas com responsável, prazo e status, agrupadas por pessoa'], ['quadro', 'Quadro', 'm_quadro', 'Cartões em colunas: a fazer, fazendo, revisão e feito'], ['etapas', 'Etapas', 'm_etapas', 'Uma sequência com datas, como um cronograma'], ['conteudo', 'Conteúdo', 'm_conteudo', 'Calendário de posts: data, canal, formato e status'], ['pauta', 'Pauta', 'm_pauta', 'Reunião com tópicos e decisões que viram tarefa'], ['texto', 'Descritivo', 'm_texto', 'Um texto que explica algo, com negrito, listas e tabela, e quem é responsável']];
 /* selo: triângulo com ! que se cola na pílula */
-const SELOS = [['leve', 'Leve', '#60a5fa'], ['imp', 'Importante', '#fbbf24'], ['crit', 'Crítico', '#f87171']];
-const seloSvg = c => `<svg viewBox="0 0 24 22" class="selo-i"><path d="M12 1.6 23 20.4H1z" fill="${c}" stroke="#0b0b0d" stroke-width="1.4" stroke-linejoin="round"/><path d="M12 7.6v6.2" stroke="#0b0b0d" stroke-width="2.6" stroke-linecap="round"/><circle cx="12" cy="17.1" r="1.5" fill="#0b0b0d"/></svg>`;
+const SELOS = [['sim', 'Atenção', '#fbbf24']];
+const seloSvg = () => `<svg viewBox="0 0 24 22" class="selo-i"><defs><linearGradient id="vtr" x1="0" y1="0" x2=".3" y2="1"><stop offset="0" stop-color="#fef3c7"/><stop offset=".45" stop-color="#fbbf24"/><stop offset="1" stop-color="#d97706"/></linearGradient></defs><path d="M12 1.8 22.9 20.3H1.1z" fill="url(#vtr)" fill-opacity=".92" stroke="#3a2504" stroke-width="1.5" stroke-linejoin="round"/><path d="M6.6 11.1 12 20.3l5.4-9.2M3.9 15.6h16.2" fill="none" stroke="#7c4a03" stroke-opacity=".35" stroke-width=".9"/><path d="M10.4 5 4.4 15.4" stroke="#fff" stroke-opacity=".6" stroke-width="1.3" stroke-linecap="round"/><path d="M12 7.8v5.8" stroke="#2a1a00" stroke-width="2.5" stroke-linecap="round"/><circle cx="12" cy="16.9" r="1.45" fill="#2a1a00"/></svg>`;
 /* texto rico do Descritivo: só as marcações permitidas */
 const RT_OK = new Set(['B', 'STRONG', 'I', 'EM', 'U', 'S', 'P', 'DIV', 'BR', 'H2', 'H3', 'UL', 'OL', 'LI', 'TABLE', 'THEAD', 'TBODY', 'TR', 'TD', 'TH', 'A', 'BLOCKQUOTE', 'HR', 'SPAN']);
 function cleanHtml(h) {
@@ -779,7 +779,7 @@ function vCst() {
     <div class="c-ctl"><button class="pill sm icon" data-act="undo" title="Desfazer (Ctrl+Z)" aria-label="Desfazer">${ic('undo')}</button><button class="pill sm icon" data-act="redo" title="Refazer" aria-label="Refazer">${ic('redo')}</button><span class="c-sep"></span>
       <button class="pill sm icon" data-act="zoom" data-v="-1" aria-label="Diminuir">${ic('minus')}</button><span class="c-zl" id="zl"></span><button class="pill sm icon" data-act="zoom" data-v="1" aria-label="Aumentar">${ic('plus')}</button>
       <button class="pill sm icon" data-act="fit" title="Enquadrar tudo (F)" aria-label="Enquadrar">${ic('fit')}</button></div>
-    <div class="c-dock" id="dock">${DOCK.map(([k2, l], i) => `${i === 2 || i === 3 ? '<span class="c-sep"></span>' : ''}<button class="c-di" data-dock="${k2}" title="Clique para adicionar · arraste para posicionar">${dockIcon(k2)}<span>${l}</span></button>`).join('')}<span class="c-sep"></span><div class="c-di c-dsel" title="Arraste um selo até um marco"><i class="dk dsel">${SELOS.map(([k3, l3, c3]) => `<b data-selo="${k3}" title="${l3}">${seloSvg(c3)}</b>`).join('')}</i><span>Selos</span></div>${tpls().length ? `<span class="c-sep"></span><button class="c-di" data-act="tpl-pick" title="Marco a partir de um modelo">${dockIcon('tpl')}<span>Modelo</span></button>` : ''}</div>
+    <div class="c-dock" id="dock">${DOCK.map(([k2, l], i) => `${i === 2 || i === 3 ? '<span class="c-sep"></span>' : ''}<button class="c-di" data-dock="${k2}" title="Clique para adicionar · arraste para posicionar">${dockIcon(k2)}<span>${l}</span></button>`).join('')}<span class="c-sep"></span><div class="c-di c-dsel" title="Arraste um selo até um marco"><i class="dk dsel">${SELOS.map(([k3, l3, c3]) => `<b data-selo="${k3}" title="${l3}">${seloSvg(c3)}</b>`).join('')}</i><span>Selo</span></div>${tpls().length ? `<span class="c-sep"></span><button class="c-di" data-act="tpl-pick" title="Marco a partir de um modelo">${dockIcon('tpl')}<span>Modelo</span></button>` : ''}</div>
   </div>`;
 }
 function dockIcon(k) {
@@ -822,7 +822,7 @@ function nodeHTML(n, list) {
   } else if (k === 'marco') {
     const p = progOf(n), R = 15.9, C = 2 * Math.PI * R;
     const ring = `<svg class="c-ring ${p.total && p.done === p.total ? 'full' : ''} ${p.total ? '' : 'none'}" viewBox="0 0 36 36"><circle class="bg" cx="18" cy="18" r="${R}"/><circle class="fg" cx="18" cy="18" r="${R}" style="stroke-dasharray:${p.pct / 100 * C} ${C}"/></svg>`;
-    const sl = SELOS.find(s2 => s2[0] === n.selo);
+    const sl = n.selo ? SELOS[0] : null;
     body = `${ring}${ed ? inp : `<b>${esc(labelOf(n))}</b>`}${p.total ? `<span class="c-cnt">${p.done}/${p.total}</span>` : ''}${p.late ? '<i class="c-late" title="Tem tarefa atrasada"></i>' : ''}${who.length ? `<span class="c-avs">${who.map(x => av(x, 18)).join('')}</span>` : ''}${sl ? `<button class="c-selo" data-act="selo-x" data-id="${n.id}" title="Selo ${sl[1]} · clique para tirar" aria-label="Tirar selo ${sl[1]}">${seloSvg(sl[2])}</button>` : ''}`;
   } else if (k === 'canal') { body = canalIcon(n); below = labelOf(n); }
   else if (k === 'comentario') body = ed ? `<textarea class="c-ined c-intx" id="ined-in" placeholder="Escreva o comentário" spellcheck="false">${esc(n.title || '')}</textarea>` : `<p class="c-tx${n.title ? '' : ' ph'}">${esc(n.title || 'Comentário')}</p>`;
@@ -881,7 +881,7 @@ function reconcile(first) {
     if (!el) { el = document.createElement('div'); el.dataset.id = n.id; nodesEl.appendChild(el); NODES.set(n.id, el); if (!first) el.classList.add('born'); const pp = !first && n.parent && POS[n.parent]; POS[n.id] = pp ? { x: pp.x, y: pp.y } : { x: n.x, y: n.y }; }
     const iso = k === 'dia' && n.day ? `${n.month}-${String(n.day).padStart(2, '0')}` : '';
     const sel = DW.id === n.id ? ' open' : SEL === n.id || INED === n.id ? ' sel' : '';
-    const cls = `c-n k-${k}${k === 'marco' ? ` lv-${n.selo === 'crit' ? 'crit' : 'imp'}${n.selo ? ' has-selo' : ''}` : ''}${c.sz !== 'm' ? ' gs-' + c.sz : ''}${k === 'marco' && isDone(n) ? ' st-done' : ''}${k === 'dia' ? (n.day ? iso === today ? ' today' : iso < today ? ' past' : '' : ' blank') : ''}${f && !matchF(n) && k === 'marco' ? ' dim' : ''}${n.carried ? ' carried' : ''}${sel}${INED === n.id ? ' ined' : ''}`;
+    const cls = `c-n k-${k}${k === 'marco' ? ` lv-imp${n.selo ? ' has-selo' : ''}` : ''}${c.sz !== 'm' ? ' gs-' + c.sz : ''}${k === 'marco' && isDone(n) ? ' st-done' : ''}${k === 'dia' ? (n.day ? iso === today ? ' today' : iso < today ? ' past' : '' : ' blank') : ''}${f && !matchF(n) && k === 'marco' ? ' dim' : ''}${n.carried ? ' carried' : ''}${sel}${INED === n.id ? ' ined' : ''}`;
     if (el._h !== html && !(INED === n.id && el.querySelector('#ined-in'))) { el.innerHTML = html; el._h = html; }
     if (el._c !== cls) { const born = el.classList.contains('born'); el.className = cls + (born ? ' born' : ''); el._c = cls; }
     el.style.setProperty('--c', col);
@@ -955,6 +955,7 @@ function wireD(n, by, depth = 0) {
     return mode === 'reta' ? L(a, b) : `M${a.x} ${a.y}C${a.x + k} ${a.y} ${b.x - k} ${b.y} ${b.x} ${b.y}`;
   }
   const b = { x: C.x, y: C.y - sy * cs.h / 2 };
+  if (fromDia && Math.abs(dx) < Math.max(40, Math.abs(dy) * 0.35)) { const k = (b.y - P.y) * 0.5; return mode === 'reta' ? L(P, b) : `M${P.x} ${P.y}C${P.x} ${P.y + k} ${b.x} ${b.y - k} ${b.x} ${b.y}`; }
   if (P.horiz || fromDia) { const a = P, ex = b.x - a.x, ey = b.y - a.y; return mode === 'reta' ? L(a, b) : `M${a.x} ${a.y}C${a.x + ex * 0.62} ${a.y} ${b.x} ${b.y - ey * 0.62} ${b.x} ${b.y}`; }
   const a = { x: P.x, y: P.y + sy * ps.h / 2 }, k = (b.y - a.y) * 0.5;
   return mode === 'reta' ? L(a, b) : `M${a.x} ${a.y}C${a.x} ${a.y + k} ${b.x} ${b.y - k} ${b.x} ${b.y}`;
@@ -1086,7 +1087,7 @@ document.addEventListener('pointermove', e => {
   const far = Math.abs(e.clientX - drag.sx) + Math.abs(e.clientY - (drag.sy ?? e.clientY)) > 4;
   if (drag.kind === 'pinch') { if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; const d = Math.hypot(a.x - b.x, a.y - b.y); const z = clamp(drag.z0 * d / drag.d0, 0.12, 2.6), k = z / drag.z0; V.z = z; V.x = drag.cx - (drag.cx - drag.x0) * k; V.y = drag.cy - (drag.cy - drag.y0) * k; applyView(); } return; }
   if (drag.kind === 'dock') { if (far) drag.moved = true; if (!drag.moved) return; let g = $('#ghost'); if (!g) { g = document.createElement('div'); g.id = 'ghost'; g.className = 'c-ghost'; g.innerHTML = dockIcon(drag.cat) + `<span>${KINDS[drag.cat][0]}</span>`; document.body.appendChild(g); } g.style.left = e.clientX + 'px'; g.style.top = e.clientY + 'px'; const inSt = e.clientX > r.left && e.clientX < r.right && e.clientY > r.top && e.clientY < r.bottom; g.classList.toggle('in', inSt); if (inSt) { const w = toWorld(e.clientX, e.clientY); st.classList.toggle('magnet', Math.abs(w.y) < SNAP && drag.cat !== 'comentario'); } return; }
-  if (drag.kind === 'selo') { if (far) drag.moved = true; if (!drag.moved) return; let g = $('#ghost'); if (!g) { g = document.createElement('div'); g.id = 'ghost'; g.className = 'c-ghost c-gselo'; g.innerHTML = seloSvg(SELOS.find(s2 => s2[0] === drag.lv)[2]); document.body.appendChild(g); } g.style.left = e.clientX + 'px'; g.style.top = e.clientY + 'px'; const t = document.elementFromPoint(e.clientX, e.clientY)?.closest('.c-n.k-marco'); $$('.c-n.target').forEach(x => x.classList.remove('target')); if (t) t.classList.add('target'); drag.over = t ? t.dataset.id : null; g.classList.toggle('in', !!t); return; }
+  if (drag.kind === 'selo') { if (far) drag.moved = true; if (!drag.moved) return; let g = $('#ghost'); if (!g) { g = document.createElement('div'); g.id = 'ghost'; g.className = 'c-ghost c-gselo'; g.innerHTML = seloSvg((SELOS[0])[2]); document.body.appendChild(g); } g.style.left = e.clientX + 'px'; g.style.top = e.clientY + 'px'; const t = document.elementFromPoint(e.clientX, e.clientY)?.closest('.c-n.k-marco'); $$('.c-n.target').forEach(x => x.classList.remove('target')); if (t) t.classList.add('target'); drag.over = t ? t.dataset.id : null; g.classList.toggle('in', !!t); return; }
   if (drag.kind === 'pan') { if (far) { drag.moved = true; clearTimeout(lpT); st.classList.add('grab'); } const t = performance.now(), dt = Math.max(1, t - (drag.lt || t - 16)); drag.vx = 0.8 * (drag.vx || 0) + 0.2 * (e.clientX - (drag.lx ?? e.clientX)) / dt; drag.vy = 0.8 * (drag.vy || 0) + 0.2 * (e.clientY - (drag.ly ?? e.clientY)) / dt; drag.lx = e.clientX; drag.ly = e.clientY; drag.lt = t; V.x = drag.x0 + e.clientX - drag.sx; V.y = drag.y0 + e.clientY - drag.sy; applyView(); return; }
   if (far) drag.moved = true; if (!drag.moved) return;
   const dx = (e.clientX - drag.sx) / V.z, dy = (e.clientY - (drag.sy ?? e.clientY)) / V.z;
@@ -1158,8 +1159,8 @@ document.addEventListener('pointerdown', e => { if (UI.gadMenu && !e.target.clos
 document.addEventListener('wheel', e => {
   const st = $('#stage'); if (!st || !st.contains(e.target) || $('#modal') || e.target.closest('.c-gads,.mep')) return; e.preventDefault();
   const r = st.getBoundingClientRect(); glide.id = 0; camTo.id = 0;
-  if (e.ctrlKey || e.metaKey) zoomAt(Math.exp(-e.deltaY * 0.0025), e.clientX - r.left, e.clientY - r.top);
-  else { V.x -= e.shiftKey ? e.deltaY : e.deltaX; V.y -= e.shiftKey ? 0 : e.deltaY; applyView(); }
+  if (e.shiftKey) { V.x -= e.deltaY || e.deltaX; applyView(); }
+  else zoomAt(Math.exp(-(e.deltaMode === 1 ? e.deltaY * 33 : e.deltaY) * (e.ctrlKey ? 0.0045 : 0.0016)), e.clientX - r.left, e.clientY - r.top);
 }, { passive: false });
 /* clique: abre (2 cliques rápidos renomeia) */
 let tapT = { t: 0, id: '' };
@@ -1251,7 +1252,7 @@ function createNode(kind, ctx = {}, extra = {}) {
 }
 /* colar um selo na pílula (com um “carimbo”) */
 function stickSelo(id, lv) {
-  const n = N(id); if (!n || n.kind !== 'marco') return; const s = SELOS.find(x => x[0] === lv);
+  const n = N(id); if (!n || n.kind !== 'marco') return; const s = (SELOS[0]);
   tx(() => { n.selo = lv; log(n, `colou o selo ${s[1]}`); putNode(n); }); refresh(); if (DW.id === id) drawer(id);
   const el = NODES.get(id)?.querySelector('.c-selo'); if (el && !reduceMotion()) el.animate([{ transform: 'rotate(-30deg) scale(1.9)', opacity: .3 }, { transform: 'rotate(-14deg) scale(.9)', opacity: 1, offset: .7 }, { transform: 'rotate(-12deg) scale(1)' }], { duration: 420, easing: 'cubic-bezier(.2,1.4,.4,1)' });
   navigator.vibrate && navigator.vibrate(10); toast(`Selo ${s[1]} em ${labelOf(n)}`, 'g');
@@ -1385,7 +1386,7 @@ function attHTML(n) {
   <div><button class="pill sm" data-act="att-new">${ic('link', 'width:13px;height:13px')}Adicionar link</button></div>`;
 }
 function dwMarco(n) {
-  const p = progOf(n), P = pessoas(), C = monthNodes().filter(x => x.kind === 'canal'), par = n.parent && N(n.parent), mdl = MV[n.modelo] ? n.modelo : '', M = MODELS.find(m => m[0] === mdl), sl = SELOS.find(s => s[0] === n.selo);
+  const p = progOf(n), P = pessoas(), C = monthNodes().filter(x => x.kind === 'canal'), par = n.parent && N(n.parent), mdl = MV[n.modelo] ? n.modelo : '', M = MODELS.find(m => m[0] === mdl), sl = n.selo ? SELOS[0] : null;
   return `<div class="dw-h">
     <div class="dw-top"><span class="dw-kind">${ic(M ? M[2] : 'marco')}${M ? M[1] : 'Marco'}</span>${par ? `<button class="crumb" data-act="open" data-id="${par.id}">${ic('left', 'width:11px;height:11px')}${esc(labelOf(par))}</button>` : ''}<span class="sp"></span>${sl ? `<button class="selo-tag" style="--sc:${sl[2]}" data-act="selo-x" data-id="${n.id}" title="Tirar o selo">${seloSvg(sl[2])}${sl[1]}${ic('x', 'width:11px;height:11px')}</button>` : ''}<button class="dw-x" data-act="dw-close" aria-label="Fechar">${ic('x')}</button></div>
     <input class="dw-t" data-nf="title" value="${esc(n.title || '')}" placeholder="Nome do marco" autocomplete="off">
@@ -1662,7 +1663,7 @@ function vSet() {
     <label class="field"><span>Tamanho no mapa · ${sz}px</span><input type="range" class="range" min="28" max="88" step="2" data-cfg-num="iconSize" value="${sz}"></label></div>
     ${I.length ? `<div class="icl" style="--isz:${sz}px">${I.map(x => `<div class="icc"><button class="pill sm icon ghost x" data-act="ic-del" data-v="${x.id}" aria-label="Excluir ícone">${ic('x')}</button><span class="pv" style="background:radial-gradient(circle at 32% 28%,${x.color || '#33333a'}66,#18181c 70%)"><img src="${esc(x.src)}" alt=""></span><input class="inp sm" data-icn="${x.id}" value="${esc(x.name)}"><input type="color" data-icc="${x.id}" value="${x.color || '#f0559a'}" title="Cor do círculo" style="width:100%;height:24px;border:0;background:none"></div>`).join('')}</div>` : '<div class="empty node">Nenhum ícone enviado ainda.</div>'}`; }
   if (tab === 'tpl') { const T = tpls(); b = `<h2>Modelos de marco</h2><p>Marcos prontos com as tarefas de sempre. Crie abrindo um marco e usando “Salvar como modelo”.</p>
-    ${T.map(t => `<div class="node sc"><div class="er"><span class="dw-kind" style="--c:#c4b5fd">${ic(MODELS.find(m => m[0] === t.modelo)?.[2] || 'm_lista')}</span><div style="flex:1"><input class="inp sm" data-tpln="${t.id}" value="${esc(t.name)}"><span style="display:block;margin-top:4px">${(t.tasks || []).filter(x => x.kind !== 'topico').length} tarefas · ${MODELS.find(m => m[0] === t.modelo)?.[1] || 'Lista'}${t.selo ? ' · selo ' + (SELOS.find(s => s[0] === t.selo) || [])[1] : ''}</span></div><button class="pill sm icon ghost" data-act="tpl-del" data-v="${t.id}" aria-label="Excluir modelo">${ic('trash')}</button></div></div>`).join('') || '<div class="empty node">Nenhum modelo ainda.</div>'}`; }
+    ${T.map(t => `<div class="node sc"><div class="er"><span class="dw-kind" style="--c:#c4b5fd">${ic(MODELS.find(m => m[0] === t.modelo)?.[2] || 'm_lista')}</span><div style="flex:1"><input class="inp sm" data-tpln="${t.id}" value="${esc(t.name)}"><span style="display:block;margin-top:4px">${(t.tasks || []).filter(x => x.kind !== 'topico').length} tarefas · ${MODELS.find(m => m[0] === t.modelo)?.[1] || 'Lista'}${t.selo ? ' · selo ' + ((SELOS[0]) || [])[1] : ''}</span></div><button class="pill sm icon ghost" data-act="tpl-del" data-v="${t.id}" aria-label="Excluir modelo">${ic('trash')}</button></div></div>`).join('') || '<div class="empty node">Nenhum modelo ainda.</div>'}`; }
   if (tab === 'look') b = `<h2>Visual</h2>
     <div class="node sc"><b>Título</b><div class="row"><input class="inp sm" data-cfg="title.text" value="${esc(c.title.text)}"><input type="color" data-cfg="title.color" value="${esc(c.title.color)}" style="width:44px;height:30px;border:0;background:none"></div><label class="field"><span>Tamanho</span><input type="range" class="range" min="10" max="30" data-cfg-num="title.size" value="${c.title.size}"></label></div>
     <div class="node sc"><b>Logo</b><div class="row"><label class="pill sm">${ic('plus')}${c.logo ? 'Trocar logo' : 'Enviar logo'}<input type="file" accept="image/*" id="logo-in" hidden></label>${c.logo ? '<button class="pill sm ghost" data-act="logo-del">Remover</button>' : ''}</div><label class="field"><span>Altura</span><input type="range" class="range" min="28" max="200" data-cfg-num="logoSize" value="${c.logoSize}"></label></div>
@@ -1725,7 +1726,7 @@ const ACT = {
   open: a => { const n = N(a.dataset.id); if (!n) return; if (UI.view !== 'cst' || !NODES.has(n.id)) return goto(n.id); drawer(n.id); },
   close: () => closeModal(),
   'dw-close': () => closeDrawer(),
-  'selo-x': a => { const n = N(a.dataset.id); if (!n || !n.selo) return; const s = SELOS.find(x => x[0] === n.selo); tx(() => { delete n.selo; log(n, `tirou o selo ${s ? s[1] : ''}`); putNode(n); }); refresh(); if (DW.id === n.id) drawer(n.id); toast('Selo tirado · Ctrl+Z desfaz'); },
+  'selo-x': a => { const n = N(a.dataset.id); if (!n || !n.selo) return; const s = (SELOS[0]); tx(() => { delete n.selo; log(n, `tirou o selo ${s ? s[1] : ''}`); putNode(n); }); refresh(); if (DW.id === n.id) drawer(n.id); toast('Selo tirado · Ctrl+Z desfaz'); },
   'dw-model': a => { const n = dwNode(); if (!n) return; n.modelo = a.dataset.v; log(n, `escolheu o modelo ${MODELS.find(m => m[0] === n.modelo)[1]}`); putNode(n); refresh(); drawer(n.id, 1); },
   'dw-repick': () => { const n = dwNode(); if (!n) return; n.modelo = ''; putNode(n); refresh(); drawer(n.id, -1); },
   'dw-who': a => dwSet(n => { const s = new Set(n.who || []); s.has(a.dataset.v) ? s.delete(a.dataset.v) : s.add(a.dataset.v); n.who = [...s]; }),
