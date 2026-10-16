@@ -234,9 +234,10 @@ a.rv-ch:hover{border-color:rgba(255,255,255,.25);color:var(--text)}
 .k-canal .c-b img{width:62%;height:62%;object-fit:contain;pointer-events:none;-webkit-user-drag:none}
 .k-canal .c-b svg{width:46%;height:46%;stroke-width:2}
 /* Comentário pontilhado */
-.k-comentario .c-b{width:var(--tw,240px);min-height:44px;padding:11px 14px;border-radius:14px;display:block;white-space:normal;text-align:left;border:1.5px dashed color-mix(in srgb,var(--c) 70%,transparent);background:color-mix(in srgb,var(--c) 7%,rgba(15,15,19,.8));color:color-mix(in srgb,var(--c) 30%,#ededf0);box-shadow:0 12px 30px -16px rgba(0,0,0,.9)}
+.k-comentario .c-b{width:max-content;max-width:var(--tw,240px);padding:2px 3px;border-radius:6px;display:block;white-space:normal;text-align:left;background:transparent;color:color-mix(in srgb,var(--c) 30%,#ededf0)}
+.k-comentario.sel .c-b,.k-comentario.open .c-b{background:rgba(255,255,255,.04);box-shadow:none!important}.k-comentario.ined .c-b{width:var(--tw,240px)}
 .c-tx{font-size:12.5px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}.c-tx.ph{color:color-mix(in srgb,var(--c) 40%,#6a6a73);font-style:italic}
-.c-rz{position:absolute;left:calc(var(--tw,240px) / 2 - 5px);top:-12px;width:10px;height:24px;border-radius:5px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);opacity:0;transition:opacity .2s;z-index:3;cursor:var(--cur-grab),grab!important}
+.c-rz{position:absolute;left:calc(var(--fx,120px) + 4px);top:-12px;width:10px;height:24px;border-radius:5px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);opacity:0;transition:opacity .2s;z-index:3;cursor:var(--cur-grab),grab!important}
 .k-comentario:hover .c-rz,.k-comentario.sel .c-rz{opacity:1}
 /* Período */
 .k-periodo .c-b{transform:translate(-50%,-100%);margin-top:-8px;flex-direction:column;gap:8px;background:transparent}
@@ -951,7 +952,7 @@ function nodeHTML(n, list) {
     const sl = n.selo ? SELOS[0] : null;
     body = `${ring}${ed ? inp : `<b>${esc(labelOf(n))}</b>`}${who.length && cfg().pillWho ? `<span class="c-avs">${who.map(x => av(x, 18)).join('')}</span>` : ''}${sl ? `<button class="c-selo" data-act="selo-x" data-id="${n.id}" title="Selo ${sl[1]} · clique para tirar" aria-label="Tirar selo ${sl[1]}">${seloSvg(sl[2])}</button>` : ''}`;
   } else if (k === 'canal') { body = canalIcon(n); below = n.nolb ? '' : labelOf(n); }
-  else if (k === 'comentario') body = ed ? `<textarea class="c-ined c-intx" id="ined-in" placeholder="Escreva o comentário" spellcheck="false">${esc(n.title || '')}</textarea>` : `<p class="c-tx${n.title ? '' : ' ph'}">${esc(n.title || 'Comentário')}</p>`;
+  else if (k === 'comentario') body = ed ? `<textarea class="c-ined c-intx" id="ined-in"${n.fs ? ` style="font-size:${n.fs}px"` : ''} placeholder="Escreva o comentário" spellcheck="false">${esc(n.title || '')}</textarea>` : `<p class="c-tx${n.title ? '' : ' ph'}"${n.fs ? ` style="font-size:${n.fs}px !important"` : ''}>${esc(n.title || 'Comentário')}</p>`;
   else if (k === 'periodo') body = `${ed ? inp : `<b>${esc(labelOf(n))}</b>`}<i class="c-brk" style="width:${n.w || 220}px"></i>`;
   const per = k === 'periodo' ? `<i class="c-stripe" style="width:${n.w || 220}px"></i><span class="c-ph l"></span><span class="c-ph r"></span>` : '';
   const rz = k === 'comentario' ? '<span class="c-rz" title="Arraste para mudar a largura"></span>' : '';
@@ -1625,7 +1626,8 @@ function dwSmall(n) {
     <div class="dw-b"><section class="sec"><h5>Ícone</h5><div class="icg">${I.map(x => `<button class="${n.icon === x.id ? 'on' : ''}" data-act="dw-icon" data-v="${x.id}" title="${esc(x.name)}"><img src="${esc(x.src)}" alt=""></button>`).join('')}${BUILTIN.map(([i, l, c]) => `<button class="${!n.icon && n.bi === i ? 'on' : ''}" data-act="dw-bi" data-v="${i}" title="${l}" style="color:${c}">${bic(i)}</button>`).join('')}</div>${isAdmin() ? `<p class="c-mut" style="margin-top:8px">Os ícones das suas lojas e redes entram em Ajustes → Ícones (SVG).</p>` : ''}</section>
     <section class="sec"><h5>Cor</h5><div class="chips">${colRow(n)}</div></section>
     <label class="field"><span>Link</span><input class="inp sm" data-nf="link" value="${esc(n.link || '')}" placeholder="https://"></label>${legs}</div>`; }
-  if (k === 'comentario') body = `${head}</div><div class="dw-b"><textarea class="inp" rows="7" data-nf="title" placeholder="Escreva o comentário" style="border-style:dashed;border-color:color-mix(in srgb,var(--c) 50%,var(--line))">${esc(n.title || '')}</textarea>
+  if (k === 'comentario') body = `${head}</div><div class="dw-b"><textarea class="inp" rows="7" data-nf="title" placeholder="Escreva o comentário" style="border-style:dashed;border-color:color-mix(in srgb,var(--c) 50%,var(--line));font-size:${n.fs || 12.5}px">${esc(n.title || '')}</textarea>
+    <div class="txr" style="grid-template-columns:120px 1fr 48px"><span><b>Tamanho do texto</b></span><input type="range" class="range" min="10" max="36" step="0.5" data-cfs="1" value="${n.fs || 12.5}"><em>${n.fs || 12.5}px</em></div>
     <section class="sec"><h5>Cor</h5><div class="chips">${colRow(n)}</div></section>
     <label class="field"><span>Apontar para (fio pontilhado)</span><select class="inp sm" data-par="1"><option value="">— sem fio —</option>${list.filter(x => x.id !== n.id && x.kind !== 'comentario').map(x => `<option value="${x.id}" ${n.parent === x.id ? 'selected' : ''}>${esc(labelOf(x))}</option>`).join('')}</select></label></div>`;
   if (k === 'periodo') body = `${head}<input class="dw-t" data-nf="title" value="${esc(n.title || '')}" placeholder="Nome do período (ex.: Black Friday)" autocomplete="off"></div>
@@ -2068,6 +2070,7 @@ document.addEventListener('keydown', e => {
 /* textos: salva enquanto digita, sem redesenhar (foco e cursor ficam onde estão) */
 document.addEventListener('input', e => {
   const t = e.target;
+  if (t.dataset.cfs) { const n = dwNode(); if (!n) return; n.fs = +t.value; const em = t.parentNode.querySelector('em'); if (em) em.textContent = t.value + 'px'; const ta = $('#dw textarea[data-nf="title"]'); if (ta) ta.style.fontSize = t.value + 'px'; putNode(n); reconcile(); return; }
   if (t.dataset.txs) { cfgSet(`txt.${t.dataset.txs}.s`, +t.value); const em = t.parentNode.querySelector('em'); if (em) em.textContent = t.value + 'px'; reconcile(); return; }
   if (t.id === 'bloco') { clearTimeout(t._t); t._t = setTimeout(() => { const p = t.dataset.p; if (p) commit(p, { text: t.value, u: Date.now() }, false); }, 500); return; }
   if (t.matches('.nt,.tp-d textarea,.kcard textarea')) { t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; }
