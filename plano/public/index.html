@@ -86,6 +86,8 @@ svg.wires{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;p
 .cnt{font-size:11px;color:var(--muted)}
 .k-depto .n-b{border-color:color-mix(in srgb,var(--c) 35%,var(--line));background:linear-gradient(180deg,color-mix(in srgb,var(--c) 9%,#1c1c20),#17171a)}
 .k-depto .n-tx b{font-size:14px}
+.k-programa .n-b{border-color:color-mix(in srgb,var(--c) 35%,var(--line));background:linear-gradient(180deg,color-mix(in srgb,var(--c) 9%,#1c1c20),#17171a)}
+.k-programa .n-tx b{font-size:14px}
 .k-objetivo .n-b{border-color:rgba(250,204,21,.35);background:linear-gradient(180deg,rgba(250,204,21,.08),#17171a)}
 .k-etapa .n-b{padding:9px 12px;border-radius:13px}.k-etapa .n-ic{width:26px;height:26px;border-radius:8px}
 .k-nucleo .n-b{padding:18px 18px;border-radius:22px;border-color:color-mix(in srgb,var(--c) 40%,var(--line));background:radial-gradient(120% 140% at 0% 0%,color-mix(in srgb,var(--c) 20%,transparent),transparent 60%),linear-gradient(180deg,#1c1c20,#151518)}
@@ -383,6 +385,7 @@ const IC = {
   depto: '<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
   setor: '<circle cx="6" cy="6" r="2.2"/><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="12" r="2.2"/><path d="M6 8.2v7.6M8 6.5c4 0 4 5.5 7.8 5.5"/>',
   estrategia: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/>',
+  programa: '<path d="M17 3l3 3-3 3"/><path d="M4 11V9a3 3 0 0 1 3-3h13"/><path d="M7 21l-3-3 3-3"/><path d="M20 13v2a3 3 0 0 1-3 3H4"/>',
   canal: '<path d="M4 9l1-5h14l1 5"/><path d="M4 9a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0 2.7 2.7 0 0 0 5.3 0"/><path d="M5 11v9h14v-9"/>',
   publico: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/>',
   decisao: '<circle cx="6" cy="18" r="2"/><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><path d="M6 16V8M6 14c0-4 12-3 12-6"/>',
@@ -398,7 +401,8 @@ const ic = (n, s = '') => `<svg class="i" viewBox="0 0 24 24" style="${s}">${IC[
 
 /* ---------- tipos de card ---------- */
 const KIND = {
-  nucleo: { n: 'Marca', w: 250, kids: ['objetivo', 'depto', 'publico'] },
+  nucleo: { n: 'Marca', w: 250, kids: ['objetivo', 'depto', 'programa', 'publico'] },
+  programa: { n: 'Programa', w: 245, ph: 'Nome do programa (ex.: Programa Parceiros)', kids: ['estrategia', 'acao', 'campanha', 'meta', 'publico'], d: 'iniciativa contínua, como Parceiros ou @nossavet' },
   objetivo: { n: 'Estrela-guia', w: 270, c: '#facc15', ph: 'Aonde a marca quer chegar', kids: ['depto', 'meta'], d: 'o objetivo maior' },
   depto: { n: 'Departamento', w: 240, ph: 'Nome do departamento', kids: ['canal', 'setor', 'estrategia', 'meta'], d: 'uma frente do plano' },
   canal: { n: 'Canal', w: 235, ph: 'Nome do canal', kids: ['estrategia', 'acao', 'campanha', 'lancamento', 'meta'], d: 'onde a marca vende ou fala' },
@@ -416,13 +420,14 @@ const ST = {
   acao: [['todo', 'A fazer', '#85858e'], ['doing', 'Fazendo', '#facc15'], ['done', 'Feita', '#4ade80']],
   campanha: [['ideia', 'Ideia', '#85858e'], ['planejada', 'Planejada', '#60a5fa'], ['producao', 'Em produção', '#facc15'], ['no_ar', 'No ar', '#4ade80'], ['encerrada', 'Encerrada', '#a78bfa']],
   lancamento: [['planejado', 'Planejado', '#85858e'], ['preparando', 'Preparando', '#facc15'], ['lancado', 'Lançado', '#4ade80']],
-  canal: [['ativo', 'Ativo', '#4ade80'], ['abrir', 'Abrir', '#60a5fa'], ['pausar', 'Pausar', '#f87171']]
+  canal: [['ativo', 'Ativo', '#4ade80'], ['abrir', 'Abrir', '#60a5fa'], ['pausar', 'Pausar', '#f87171']],
+  programa: [['piloto', 'Piloto', '#60a5fa'], ['ativo', 'Ativo', '#4ade80'], ['pausado', 'Pausado', '#f87171']]
 };
 ST.etapa = ST.acao;
 const DONE_ST = { acao: 'done', etapa: 'done', campanha: 'encerrada', lancamento: 'lancado' };
 const stOf = n => { const L = ST[n.kind]; if (!L) return null; return L.find(x => x[0] === n.status) || (DONE_ST[n.kind] ? L[0] : null); };
 const LANC_IT = ['Cadastro', 'Fotos', 'Preço', 'Estoque', 'Ads', 'Seeding'];
-const FIELDS = { nucleo: ['visao'], objetivo: ['frase', 'metas', 'prazo'], depto: ['prop', 'resp'], canal: ['status', 'fase', 'papel', 'sortimento', 'preco', 'midia', 'metas', 'resp'], setor: ['prop', 'resp'], estrategia: ['oque', 'porque', 'como', 'fase', 'canais', 'quando', 'kpi', 'resp'], publico: ['dor', 'gatilho', 'canais'], decisao: ['criterio', 'escolha', 'prazo'], acao: ['resp', 'prazo', 'quando', 'status', 'chk', 'nota'], campanha: ['status', 'inicio', 'fim', 'canais', 'oferta', 'verba', 'kpi', 'resultado', 'quando'], lancamento: ['data', 'canais', 'status', 'quando'], meta: ['atual', 'alvo', 'prazo', 'resp'] };
+const FIELDS = { programa: ['status', 'prop', 'quem', 'como', 'canais', 'cadencia', 'painel', 'metas', 'resp'], nucleo: ['visao'], objetivo: ['frase', 'metas', 'prazo'], depto: ['prop', 'resp'], canal: ['status', 'fase', 'papel', 'sortimento', 'preco', 'midia', 'metas', 'resp'], setor: ['prop', 'resp'], estrategia: ['oque', 'porque', 'como', 'fase', 'canais', 'quando', 'kpi', 'resp'], publico: ['dor', 'gatilho', 'canais'], decisao: ['criterio', 'escolha', 'prazo'], acao: ['resp', 'prazo', 'quando', 'status', 'chk', 'nota'], campanha: ['status', 'inicio', 'fim', 'canais', 'oferta', 'verba', 'kpi', 'resultado', 'quando'], lancamento: ['data', 'canais', 'status', 'quando'], meta: ['atual', 'alvo', 'prazo', 'resp'] };
 FIELDS.etapa = FIELDS.acao;
 const hasVal = (k, v) => k === 'metas' ? (v || []).some(m => String(m.atual || m.alvo || m.v || '').trim()) : Array.isArray(v) ? v.some(x => typeof x === 'object' ? String(x.t || '').trim() : String(x).trim()) : !!String(v ?? '').trim();
 const filled = n => (FIELDS[n.kind] || []).some(k => hasVal(k, n[k])) || (n.links || []).some(l => l.u) || (n.att || []).length > 0;
@@ -628,6 +633,7 @@ function nodeHTML(n, list, offs = offOf(list)) {
     if (st) m.push(pill(st[1], st[2]));
     if (k === 'estrategia') { if ((n.fase || []).length) m.push(jrHTML(n.fase)); const q = QUANDO.find(x => x[0] === n.quando); if (q) m.push(pill(q[1], q[2])); }
     else if (k === 'canal') { if ((n.fase || []).length) m.push(jrHTML(n.fase)); }
+    else if (k === 'programa') { if (n.cadencia) m.push(`<span class="who">${esc(n.cadencia)}</span>`); }
     else if (k === 'acao' || k === 'etapa') { if (n.resp) m.push(`<span class="who">${esc(n.resp)}</span>`); if (n.prazo) m.push(`<span class="who">${fmtD(n.prazo)}</span>`); const ck = n.chk || []; if (ck.length) m.push(`<span class="who">${ck.filter(x => x.ok).length}/${ck.length}</span>`); }
     else if (k === 'campanha') { if (n.inicio || n.fim) m.push(`<span class="who">${[fmtD(n.inicio), fmtD(n.fim)].filter(Boolean).join(' – ')}</span>`); }
     else if (k === 'lancamento') { if (n.data) m.push(`<span class="who">${fmtD(n.data)}</span>`); const cs = n.canais || []; if (cs.length) { const tot = cs.length * LANC_IT.length, ok = cs.reduce((a, ch) => a + ((n.lc || {})[ch] || []).filter(x => LANC_IT.includes(x)).length, 0); m.push(`<span class="who">${Math.round(ok / tot * 100)}% pronto</span>`); } }
@@ -861,8 +867,9 @@ const fArea = (k, label, ph, n, rows = 2) => `<div class="f"><h5>${label}</h5><t
 const fText = (k, label, ph, n) => `<div class="f"><h5>${label}</h5><input class="inp" data-f="${k}" placeholder="${esc(ph)}" value="${esc(n[k] || '')}" autocomplete="off"></div>`;
 const fDate = (k, label, n) => `<div class="f"><h5>${label}</h5><input class="inp" type="date" data-f="${k}" value="${esc(n[k] || '')}"></div>`;
 const LI = { como: ['Um movimento principal', 3] };
+const LIph = (n, k) => n.kind === 'programa' && k === 'como' ? 'Um passo do programa' : LI[k][0];
 const blHTML = (k, ph, n, max) => { const L = n[k] || []; return `${L.map((v, i) => `<div class="row"><span class="num">${i + 1}</span><input class="inp" data-li="${k}" data-i="${i}" placeholder="${esc(ph)}" value="${esc(v)}" autocomplete="off"><button class="xb" data-act="li-del" data-k="${k}" data-i="${i}" aria-label="Remover">${ic('x')}</button></div>`).join('')}${L.length < max ? `<button class="addl" data-act="li-add" data-k="${k}">${ic('plus')}Adicionar</button>` : ''}`; };
-const fList = (k, label, n) => `<div class="f"><h5>${label}</h5><div class="bl" id="bl-${k}">${blHTML(k, LI[k][0], n, LI[k][1])}</div></div>`;
+const fList = (k, label, n) => `<div class="f"><h5>${label}</h5><div class="bl" id="bl-${k}">${blHTML(k, LIph(n, k), n, LI[k][1])}</div></div>`;
 const fJorn = (n, label = 'Jornada', hint = 'em que fase do cliente isso age') => `<div class="f"><h5>${label} <span>${hint}</span></h5><div class="chips">${JORN.map(j => `<button class="chip ${(n.fase || []).includes(j[0]) ? 'on' : ''}" style="--cc:${j[4]}" data-act="tog" data-k="fase" data-v="${j[0]}">${j[2]}<small>${j[3]}</small></button>`).join('')}</div></div>`;
 const fCanais = (n, label = 'Canais') => `<div class="f"><h5>${label}</h5><div class="chips">${CANAIS[store.board].map(c => `<button class="chip ${(n.canais || []).includes(c) ? 'on' : ''}" data-act="tog" data-k="canais" data-v="${esc(c)}">${esc(c)}</button>`).join('')}</div></div>`;
 const fQuando = n => `<div class="f"><h5>Quando</h5><div class="chips">${QUANDO.map(q => `<button class="chip ${n.quando === q[0] ? 'on' : ''}" style="--cc:${q[2]}" data-act="one" data-k="quando" data-v="${q[0]}">${q[1]}</button>`).join('')}</div></div>`;
@@ -875,7 +882,7 @@ const attHTML = n => `${(n.links || []).map((l, i) => `<div class="row"><input c
 const fAtt = (n, hint = '') => `<div class="f"><h5>Arquivos e links${hint ? ` <span>${hint}</span>` : ''}</h5><div class="bl" id="att">${attHTML(n)}</div></div>`;
 const more = inner => `<details class="more"><summary>${ic('right')}Mais opções</summary>${inner}</details>`;
 const stepper = (n, live) => { const L = ST[n.kind], st = stOf(n), cur = st ? st[0] : '', ci = L.findIndex(x => x[0] === cur), flow = !!DONE_ST[n.kind]; return `<div class="stp">${L.map((x, i) => `<button class="stp-i ${x[0] === cur ? 'on' : ''} ${flow && i < ci ? 'past' : ''}" style="--sc:${x[2]}" ${live ? `data-act="st" data-v="${x[0]}"` : 'disabled'}>${x[1]}</button>`).join('')}</div>`; };
-const fStep = n => `<div class="f"><h5>${n.kind === 'canal' ? 'Status do canal' : 'Fluxo'}</h5><div id="stp">${stepper(n, true)}</div></div>`;
+const fStep = n => `<div class="f"><h5>${n.kind === 'canal' ? 'Status do canal' : n.kind === 'programa' ? 'Status do programa' : 'Fluxo'}</h5><div id="stp">${stepper(n, true)}</div></div>`;
 const chkHTML = (n, edit, live) => `${(n.chk || []).map((c, i) => `<div class="ck ${c.ok ? 'ok' : ''}"><button class="ckb" ${live ? `data-act="chk-tog" data-i="${i}"` : 'disabled'} aria-label="${c.ok ? 'Desmarcar' : 'Marcar'}">${ic('check')}</button>${edit ? `<input class="inp sm" data-chk="${i}" value="${esc(c.t || '')}" placeholder="Item" autocomplete="off"><button class="xb" data-act="chk-del" data-i="${i}" aria-label="Remover">${ic('x')}</button>` : `<span>${esc(c.t || '')}</span>`}</div>`).join('')}${edit ? `<button class="addl" data-act="chk-add">${ic('plus')}Item</button>` : ''}`;
 const lcHTML = (n, live) => { const cs = n.canais || []; if (!cs.length) return live ? '<p class="muted" style="font-size:12px">Escolha os canais do lançamento para montar o checklist.</p>' : ''; const lc = n.lc || {}; return `<div class="lc"><div class="lch"><span></span>${LANC_IT.map(i => `<span>${i}</span>`).join('')}<span></span></div>${cs.map(c => { const d = (lc[c] || []).filter(x => LANC_IT.includes(x)); return `<div class="lcr"><b>${esc(c)}</b>${LANC_IT.map(i => `<button class="lcb ${d.includes(i) ? 'on' : ''}" ${live ? `data-act="lc" data-c="${esc(c)}" data-v="${i}"` : 'disabled'} aria-label="${esc(c)} · ${i}">${ic('check')}</button>`).join('')}<em>${Math.round(d.length / LANC_IT.length * 100)}%</em></div>`; }).join('')}</div>`; };
 const verbaHTML = n => `<div class="vb"><button class="switch ${n.verbaOn ? 'on' : ''}" data-act="verba" aria-label="Verba" aria-pressed="${!!n.verbaOn}"></button><h5 style="margin:0">Verba</h5></div>${n.verbaOn ? `<input class="inp" style="margin-top:8px" data-f="verba" placeholder="Ex.: R$ 5.000" value="${esc(n.verba || '')}" autocomplete="off">` : ''}`;
@@ -886,6 +893,7 @@ function edForm(n, list) {
   const k = n.kind;
   if (k === 'nucleo') { const b = marca(n.marca) || {}; return `<div class="f"><h5>Visão da marca <span>abre a apresentação</span></h5><textarea class="inp" rows="3" data-f="visao" placeholder="Em uma frase: o que a ${esc(b.name || 'marca')} quer ser para o cliente">${esc(n.visao || '')}</textarea></div>`; }
   if (k === 'objetivo') return `${fArea('frase', 'Por que este é o norte', 'O que muda para a marca quando chegarmos lá', n)}${fMetas(n)}${fText('prazo', 'Horizonte', 'Ex.: até dez/2027', n)}`;
+  if (k === 'programa') return `${fStep(n)}${fArea('prop', 'Propósito', 'Para que o programa existe', n)}${fText('quem', 'Quem participa', 'Ex.: microinfluenciadores, veterinários', n)}${fList('como', 'Como funciona', n)}${fCanais(n)}<div class="g2">${fText('cadencia', 'Cadência', 'Ex.: 4 conteúdos/semana', n)}${fText('painel', 'Painel do programa', 'Ex.: parceiros-do.meucaos.com', n)}</div>${fMetas(n, 'Metas do programa')}${fCor(n)}${more(`${fText('resp', 'Responsável', 'Quem toca o programa', n)}${fAtt(n)}`)}`;
   if (k === 'depto') return `${fArea('prop', 'Propósito', 'O que este departamento entrega para o plano', n)}${fText('resp', 'Responsável', 'Quem lidera', n)}${fCor(n)}`;
   if (k === 'canal') return `<div class="f"><h5>Qual canal</h5><div class="chips">${CANAIS[store.board].map(c => `<button class="chip ${n.title === c ? 'on' : ''}" data-act="cpick" data-v="${esc(c)}">${esc(c)}</button>`).join('')}</div></div>${fStep(n)}${fJorn(n, 'Papel na jornada', 'o que este canal faz pelo cliente')}${fArea('papel', 'Papel', 'Ex.: canal de volume e recompra', n)}<div class="g2">${fText('sortimento', 'Sortimento', 'Quais produtos/kits aqui', n)}${fText('preco', 'Preço e posicionamento', 'Ex.: preço cheio, kits com desconto', n)}</div>${fText('midia', 'Mídia', 'Ex.: Product Ads, cupons', n)}${fMetas(n, 'Metas do canal')}${more(`${fText('resp', 'Responsável', 'Quem cuida do canal', n)}${fAtt(n)}`)}`;
   if (k === 'setor') return `${fArea('prop', 'Papel', 'O que este setor faz dentro do departamento', n)}${fText('resp', 'Responsável', 'Quem lidera', n)}`;
@@ -918,12 +926,13 @@ function readHTML(n, list, live, pres) {
   if (n.kind === 'nucleo') {
     const all = brandNodes(), b = marca(n.marca) || {}, cnt = k => all.filter(x => x.kind === k).length, obj = list.find(x => x.kind === 'objetivo');
     return `${pres ? `<span class="kl">${FLAG[store.board].replace('<svg', '<svg style="width:18px;height:12px;border-radius:2px"')}Plano omnichannel · ${PAIS[store.board].name}</span>` : ''}<h1>${esc(b.name || 'Marca')}</h1>${lead(n.visao)}${obj && obj.title ? `<h6>Estrela-guia</h6><p class="lead" style="color:var(--text)">${esc(obj.title)}</p>` : ''}
-      <div class="stats">${[['depto', 'departamentos'], ['canal', 'canais'], ['estrategia', 'estratégias'], ['acao', 'ações'], ['campanha', 'campanhas'], ['lancamento', 'lançamentos']].filter(([k]) => cnt(k)).map(([k, l]) => `<div><b>${cnt(k)}</b><span>${l}</span></div>`).join('')}</div>${pgL}`;
+      <div class="stats">${[['depto', 'departamentos'], ['programa', 'programas'], ['canal', 'canais'], ['estrategia', 'estratégias'], ['acao', 'ações'], ['campanha', 'campanhas'], ['lancamento', 'lançamentos']].filter(([k]) => cnt(k)).map(([k, l]) => `<div><b>${cnt(k)}</b><span>${l}</span></div>`).join('')}</div>${pgL}`;
   }
   const head = `${crumb}${pres ? `<span class="kl">${ic(n.kind, 'width:14px;height:14px')}${K.n}</span>` : ''}<h1 class="${n.title ? '' : 'ph'}">${esc(n.title || K.ph)}</h1>`;
   const st = stOf(n), stp = st || (ST[n.kind] && live) ? `<div id="stp" style="margin:-2px 0 6px">${stepper(n, live)}</div>` : '';
   switch (n.kind) {
     case 'objetivo': { const ms = (n.metas || []).filter(m => m.atual || m.alvo || m.v); return `${head}${lead(n.frase)}${ms.length ? `<h6>Metas</h6>${kpisHTML(ms)}` : ''}${info([['Horizonte', esc(n.prazo || '')]])}${pgL}${kidsL('Frentes')}`; }
+    case 'programa': { const ms = (n.metas || []).filter(m => m.atual || m.alvo), como = (n.como || []).filter(x => String(x).trim()), pu = String(n.painel || '').trim(); return `${head}${st ? `<div style="margin:-4px 0 12px">${pill(st[1], st[2])}</div>` : ''}${lead(n.prop)}${info([['Quem participa', esc(n.quem || '')], ['Cadência', esc(n.cadencia || '')], ['Responsável', esc(n.resp || '')]])}${como.length ? `<h6>Como funciona</h6><ol>${como.map(x => `<li>${esc(x)}</li>`).join('')}</ol>` : ''}${(n.canais || []).length ? `<h6>Canais</h6>${chipsRO(n.canais)}` : ''}${ms.length ? `<h6>Metas do programa</h6>${kpisHTML(ms)}` : ''}${pu ? `<h6>Painel</h6><a class="lnk" href="${esc(/^https?:\/\//.test(pu) ? pu : 'https://' + pu)}" target="_blank" rel="noopener">${ic('link', 'width:13px;height:13px')}Abrir painel do programa</a>` : ''}${pgL}${kidsL('Estratégias e ações')}${linksRO(n)}`; }
     case 'depto': return `${head}${lead(n.prop)}${info([['Responsável', esc(n.resp || '')]])}${pgL}${kidsL('Canais, setores e estratégias')}`;
     case 'canal': { const ms = (n.metas || []).filter(m => m.atual || m.alvo); return `${head}${st ? `<div style="margin:-4px 0 12px">${pill(st[1], st[2])}</div>` : ''}${lead(n.papel)}${(n.fase || []).length ? `<h6>Papel na jornada</h6>${jbHTML(n.fase)}` : ''}${info([['Sortimento', esc(n.sortimento || '')], ['Preço e posicionamento', esc(n.preco || '')], ['Mídia', esc(n.midia || '')], ['Responsável', esc(n.resp || '')]])}${ms.length ? `<h6>Metas do canal</h6>${kpisHTML(ms)}` : ''}${pgL}${kidsL('Estratégias e ações')}${linksRO(n)}`; }
     case 'setor': return `${head}${lead(n.prop)}${info([['Responsável', esc(n.resp || '')]])}${pgL}${kidsL('Estratégias e ações')}`;
@@ -939,11 +948,11 @@ function readHTML(n, list, live, pres) {
 }
 
 /* pop-up: abre lendo; o lápis troca para edição no mesmo lugar */
-const DUP = ['setor', 'canal', 'estrategia', 'acao', 'etapa', 'campanha', 'lancamento', 'meta', 'publico'];
+const DUP = ['programa', 'setor', 'canal', 'estrategia', 'acao', 'etapa', 'campanha', 'lancamento', 'meta', 'publico'];
 function openEd(id, mode) {
   closeAdd(); const n = N(id); if (!n) return; const list = brandNodes(), K = KIND[n.kind] || KIND.setor;
   ED.id = id; ED.mode = mode || (filled(n) ? 'read' : 'edit');
-  const c = colorOf(n, list), nuc = n.kind === 'nucleo', wide = ['estrategia', 'campanha', 'lancamento', 'canal'].includes(n.kind);
+  const c = colorOf(n, list), nuc = n.kind === 'nucleo', wide = ['estrategia', 'campanha', 'lancamento', 'canal', 'programa'].includes(n.kind);
   const s = modal(`<div class="mh"><span class="n-ic" style="--c:${c}">${nuc ? esc(((marca(n.marca) || {}).name || '?')[0]) : ic(n.kind)}</span><b>${K.n}</b><span class="sp"></span><button class="pill sm icon ghost" data-act="close" aria-label="Fechar">${ic('x')}</button></div><div id="edb"></div><div class="mf" id="mf"></div>`, wide ? '' : 'sm');
   $('.mod', s).style.setProperty('--c', c);
   drawEd();
@@ -1159,8 +1168,8 @@ document.addEventListener('click', async e => {
   if (a === 'cpick') { $$('[data-act="cpick"]', $('#modal')).forEach(b => b.classList.toggle('on', b.dataset.v === v)); const ti = $('#modal .ttl'); if (ti) ti.value = v; edSet('title', v); return; }
   if (a === 'pick') { edSet('escolha', n.escolha === v ? '' : v); edPart('opts', optsHTML(edNode(), brandNodes(), true)); refresh(); return; }
   if (a === 'one') { const nv = n[t.dataset.k] === v ? '' : v; $$(`[data-act="one"][data-k="${t.dataset.k}"]`, $('#modal')).forEach(b => b.classList.toggle('on', b.dataset.v === nv)); if (t.dataset.k === 'color') { $('#modal .mh .n-ic').style.setProperty('--c', nv || colorOf({ ...n, color: '' }, brandNodes())); } edSet(t.dataset.k, nv); if (t.dataset.k === 'color') refresh(); return; }
-  if (a === 'li-add') { const k = t.dataset.k; n[k] = [...(n[k] || []), '']; putNode(n); edPart('bl-' + k, blHTML(k, LI[k][0], n, LI[k][1])); $$(`#bl-${k} input`).pop()?.focus(); return; }
-  if (a === 'li-del') { const k = t.dataset.k; n[k] = (n[k] || []).filter((_, i) => i !== +t.dataset.i); putNode(n); edPart('bl-' + k, blHTML(k, LI[k][0], n, LI[k][1])); return; }
+  if (a === 'li-add') { const k = t.dataset.k; n[k] = [...(n[k] || []), '']; putNode(n); edPart('bl-' + k, blHTML(k, LIph(n, k), n, LI[k][1])); $$(`#bl-${k} input`).pop()?.focus(); return; }
+  if (a === 'li-del') { const k = t.dataset.k; n[k] = (n[k] || []).filter((_, i) => i !== +t.dataset.i); putNode(n); edPart('bl-' + k, blHTML(k, LIph(n, k), n, LI[k][1])); return; }
   if (a === 'meta-add') { n.metas = [...(n.metas || []), { t: '', atual: '', alvo: '' }]; putNode(n); edPart('metas', metasHTML(n)); $$('#metas [data-meta="t"]').pop()?.focus(); updNode(n.id); return; }
   if (a === 'meta-del') { n.metas = (n.metas || []).filter((_, i) => i !== +t.dataset.i); putNode(n); edPart('metas', metasHTML(n)); updNode(n.id); return; }
   if (a === 'link-add') { n.links = [...(n.links || []), { u: '', t: '' }]; putNode(n); edPart('att', attHTML(n)); $$('#att [data-link="u"]').pop()?.focus(); return; }
