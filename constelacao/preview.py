@@ -9,28 +9,29 @@ out = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else root / 'preview.html'
 MOCK = r"""<script>
 /* ===== MODO TESTE: API simulada no navegador (nada vai para o servidor) ===== */
 (() => {
-  const KEY = 'constelacao-teste-docs3';
-  const nowBR = new Date(Date.now() - 3 * 3600e3), m = nowBR.toISOString().slice(0, 7), d = n => new Date(nowBR.getTime() + n * 864e5).toISOString().slice(0, 10);
-  const base = { month: m, status: 'todo', prio: 'm', brands: [], team: '', who: [], f: {}, chk: [], anc: [], links: [], t: 1 };
+  const KEY = 'constelacao-teste-docs4';
+  const nowBR = new Date(Date.now() - 3 * 3600e3), m = nowBR.toISOString().slice(0, 7), td = nowBR.getUTCDate(), d = n => new Date(nowBR.getTime() + n * 864e5).toISOString().slice(0, 10);
+  const base = { month: m, brands: [], who: [], links: [], t: 1 };
+  const tk = (t, st, who, due, x) => ({ id: Math.random().toString(36).slice(2, 9), t, st: st || 'todo', who: who || '', due: due || '', ...(x || {}) });
   const SEED = {
-    'marca/yu': { name: 'Yucaloo', color: '#60a5fa', t: 1 }, 'marca/cl': { name: 'Coco & Luna', color: '#f472b6', t: 2 }, 'app/seeded': { t: 1 },
-    'pessoa/p1': { name: 'Talys', color: '#4ade80' }, 'pessoa/p2': { name: 'Charles', color: '#facc15' },
-    'node/y0': { ...base, mk: 'yu', cat: 'ponto', title: '', x: 300, y: 0, parent: null },
-    'node/y1': { ...base, mk: 'yu', cat: 'plano', title: 'Black Friday', x: 420, y: -230, parent: 'y0', status: 'doing', who: ['p1'] },
-    'node/y2': { ...base, mk: 'yu', cat: 'roteiro', title: 'Roteiro do reels', x: 700, y: -320, parent: 'y1', due: d(1), who: ['p2'] },
-    'node/y3': { ...base, mk: 'yu', cat: 'acao', title: 'Gravar vídeo', x: 960, y: -320, parent: 'y2', due: d(3) },
-    'node/y4': { ...base, mk: 'yu', cat: 'acao', title: 'Aprovar arte', x: 700, y: -170, parent: 'y1', status: 'done' },
-    'node/y5': { ...base, mk: 'yu', cat: 'anuncio', title: 'Meta Ads', x: 960, y: -170, parent: 'y4', due: d(-1) },
-    'node/y6': { ...base, mk: 'yu', cat: 'canal', title: '', f: { rede: 'Instagram' }, x: 760, y: 200, parent: 'y0' },
-    'node/y7': { ...base, mk: 'yu', cat: 'acao', title: 'Postar teaser', x: 1000, y: 200, parent: 'y6', status: 'blocked' },
-    'node/y8': { ...base, mk: 'yu', cat: 'comentario', title: 'Lembrar: o teaser só sai depois da arte aprovada.', x: 1060, y: 330, parent: 'y7', w: 240 },
-    'node/y9': { ...base, mk: 'yu', cat: 'ponto', title: 'Meio do mês', x: 1500, y: 0, parent: 'y0' },
-    'node/c0': { ...base, mk: 'cl', cat: 'ponto', title: '', x: 300, y: 0, parent: null },
-    'node/c1': { ...base, mk: 'cl', cat: 'lancamento', title: 'Lançamento Ômega', x: 520, y: -200, parent: 'c0', color: '#f472b6' },
-    'node/c2': { ...base, mk: 'cl', cat: 'acao', title: 'Fotos do produto', x: 800, y: -200, parent: 'c1', due: d(2) }
+    'marca/yu': { name: 'Yucaloo', color: '#60a5fa', t: 1 }, 'marca/cl': { name: 'Coco & Luna', color: '#f472b6', t: 2 }, 'marca/ml': { name: 'Mercado Livre', color: '#facc15', t: 3 },
+    'pessoa/p1': { name: 'Talys', color: '#4ade80' }, 'pessoa/p2': { name: 'Charles', color: '#facc15' }, 'pessoa/p3': { name: 'Bia', color: '#f472b6' },
+    'node/d1': { ...base, mk: 'yu', cat: 'dia', day: Math.max(1, td - 3), title: '', x: 220, y: 0, parent: null },
+    'node/d2': { ...base, mk: 'yu', cat: 'dia', day: td, title: 'lançamento', x: 900, y: 0, parent: null },
+    'node/d3': { ...base, mk: 'yu', cat: 'dia', day: Math.min(28, td + 6), title: '', x: 1600, y: 0, parent: null },
+    'node/m1': { ...base, mk: 'yu', cat: 'marco', title: 'Black Friday', nivel: 'crit', modelo: 'lista', x: 420, y: -210, parent: 'd1', who: ['p1'], tasks: [tk('Definir oferta e cupom', 'done', 'p1', d(-2)), tk('Briefing para a agência', 'done', 'p1', d(-1)), tk('Artes do feed e stories', 'doing', 'p3', d(1)), tk('Subir campanha no Meta Ads', 'todo', 'p2', d(2)), tk('Revisar estoque FBA', 'blocked', 'p2', d(-1)), tk('E-mail para a base', 'todo', '', d(4))] },
+    'node/m2': { ...base, mk: 'yu', cat: 'marco', title: 'Reels da areia', nivel: 'imp', modelo: 'quadro', x: 780, y: -330, parent: 'm1', tasks: [tk('Roteiro', 'done', 'p3'), tk('Gravação', 'doing', 'p3', d(1)), tk('Edição', 'todo', 'p2', d(3))] },
+    'node/m3': { ...base, mk: 'yu', cat: 'marco', title: 'Calendário de posts', nivel: 'imp', modelo: 'conteudo', x: 1120, y: -170, parent: 'd2', tasks: [tk('Antes e depois da caixa', 'review', 'p3', d(1), { fmt: 'Reels', canal: 'c1' }), tk('Carrossel: 5 motivos', 'todo', 'p3', d(3), { fmt: 'Carrossel', canal: 'c1' }), tk('Live de lançamento', 'todo', 'p1', d(5), { fmt: 'Live', canal: 'c2' })] },
+    'node/m4': { ...base, mk: 'yu', cat: 'marco', title: 'Reunião com a agência', nivel: 'leve', modelo: 'pauta', x: 1120, y: 200, parent: 'd2', meet: { date: d(1), time: '10:00', where: 'Meet' }, tasks: [tk('Resultados da semana', 'todo', '', '', { kind: 'topico', dec: 'Dobrar verba no criativo 2' }), tk('Pauta de influenciadoras', 'todo', '', '', { kind: 'topico' })] },
+    'node/m5': { ...base, mk: 'yu', cat: 'marco', title: 'Lançamento Ômega', nivel: 'imp', modelo: 'etapas', x: 1820, y: -200, parent: 'd3', tasks: [tk('Amostras', 'done', 'p2', d(-6), { start: d(-9) }), tk('Embalagem', 'doing', 'p3', d(4), { start: d(-2) }), tk('Fotos', 'todo', 'p3', d(8), { start: d(5) })] },
+    'node/c1': { ...base, mk: 'yu', cat: 'canal', bi: 'r_cam', title: 'Instagram', x: 520, y: 230, parent: 'd1' },
+    'node/c2': { ...base, mk: 'yu', cat: 'canal', bi: 'r_note', title: 'TikTok', x: 760, y: 300, parent: 'c1' },
+    'node/k1': { ...base, mk: 'yu', cat: 'comentario', title: 'Lembrar: o teaser só sai depois da arte aprovada.', color: '#facc15', x: 1560, y: 260, parent: 'm4', w: 240 },
+    'node/q1': { ...base, mk: 'cl', cat: 'dia', day: td, x: 300, y: 0, parent: null },
+    'node/q2': { ...base, mk: 'cl', cat: 'marco', title: 'Kit presente', nivel: 'imp', x: 560, y: -180, parent: 'q1', tasks: [tk('Fornecedor da caixa', 'todo', 'p2', d(2))] }
   };
   let all; try { all = JSON.parse(localStorage.getItem(KEY)) || null; } catch (e) {}
-  if (!all) all = { br: JSON.parse(JSON.stringify(SEED)), us: { 'marca/yu': { name: 'Yucaloo', color: '#60a5fa', t: 1 }, 'app/seeded': { t: 1 }, 'node/u0': { ...base, mk: 'yu', cat: 'ponto', title: '', x: 300, y: 0, parent: null }, 'node/u1': { ...base, mk: 'yu', cat: 'plano', title: 'Plano USA', x: 520, y: -200, parent: 'u0' } } };
+  if (!all) all = { br: JSON.parse(JSON.stringify(SEED)), us: { 'marca/yu': { name: 'Yucaloo', color: '#60a5fa', t: 1 }, 'node/u0': { ...base, mk: 'yu', cat: 'dia', day: 1, x: 300, y: 0, parent: null }, 'node/u1': { ...base, mk: 'yu', cat: 'marco', nivel: 'imp', title: 'Plano USA', x: 520, y: -200, parent: 'u0', tasks: [] } } };
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(all)); } catch (e) {} };
   window.__resetTeste = () => { try { localStorage.removeItem(KEY); } catch (e) {} location.reload(); };
   const res = (o, s = 200) => Promise.resolve(new Response(JSON.stringify(o), { status: s, headers: { 'content-type': 'application/json' } }));
