@@ -203,9 +203,9 @@ a.rv-ch:hover{border-color:rgba(255,255,255,.25);color:var(--text)}
 .rv-gh{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:650;color:var(--text);margin:4px 0 6px}.rv-gh small{color:var(--muted);font-weight:500;font-variant-numeric:tabular-nums}
 .rv-tk{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:11px;background:rgba(255,255,255,.025);font-size:13px;line-height:1.4}
 .rv-tk>.tx{flex:1;min-width:0;overflow-wrap:anywhere}.rv-tk small{color:var(--muted);font-size:11.5px;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
-.rv-tk.done>.tx{color:var(--muted);text-decoration:line-through}
+.rv-tk.done>.tx{color:var(--text)}
 .rv-st{width:9px;height:9px;border-radius:50%;flex:none;background:var(--sc);box-shadow:0 0 0 3px color-mix(in srgb,var(--sc) 18%,transparent)}
-.rv-tk .rv-n{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;flex:none;font-size:11px;font-weight:700;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
+.rv-tk .rv-n{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;flex:none;font-size:11px;font-weight:700;background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.5);color:#fca5a5}
 .rv-tk.done .rv-n{background:rgba(74,222,128,.15);border-color:rgba(74,222,128,.35);color:#86efac}
 .rv-tk .rv-d{width:38px;flex:none;text-align:center;line-height:1}.rv-tk .rv-d b{display:block;font-size:16px}.rv-tk .rv-d i{font-style:normal;font-size:10px;color:var(--muted)}
 .rv-tk .pch{width:24px;height:24px}
@@ -369,9 +369,9 @@ a.rv-ch:hover{border-color:rgba(255,255,255,.25);color:var(--text)}
 .tk:hover{background:rgba(255,255,255,.035)}
 .tk .tt{background:transparent;border:0;outline:none;font-size:13px;padding:5px 2px;min-width:0;width:100%;border-radius:6px}
 .tk .tt:focus{background:rgba(255,255,255,.04)}
-.tk.done .tt{text-decoration:line-through;color:var(--muted)}
+.tk.done .tt{color:var(--text)}
 .tk-r{display:flex;align-items:center;gap:5px}
-.cb{width:20px;height:20px;border-radius:7px;border:1.6px solid var(--line-2);display:grid;place-items:center;color:transparent;transition:all .25s var(--ease)}
+.cb{width:20px;height:20px;border-radius:7px;border:1.6px solid rgba(248,113,113,.65);display:grid;place-items:center;color:transparent;transition:all .25s var(--ease)}
 .cb svg{width:12px;height:12px;stroke-width:3}.cb:hover{border-color:var(--green)}
 .tk.done .cb,.cb.on{background:var(--green);border-color:var(--green);color:#0b2414}
 .tk.done .cb{animation:cbPop .35s var(--spring)}@keyframes cbPop{0%{scale:.7}100%{scale:1}}
@@ -385,7 +385,7 @@ a.rv-ch:hover{border-color:rgba(255,255,255,.25);color:var(--text)}
 .dns button{padding:0 10px;border-radius:6px;font-size:11.5px;color:var(--muted);transition:all .2s var(--ease)}.dns button:hover{color:var(--text-2)}
 .dns button.on{background:rgba(255,255,255,.1);color:var(--text)}.dns button.on.ok{background:rgba(74,222,128,.14);color:#86efac}
 .c-phl{position:absolute;top:-6000px;height:12000px;width:0;border-left:1.5px solid rgba(74,222,128,.55);pointer-events:none;z-index:3}
-.c-phk{position:absolute;top:6000px;left:-1px;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:#4ade80;box-shadow:0 0 0 4px rgba(74,222,128,.18),0 2px 8px rgba(0,0,0,.6);pointer-events:auto;cursor:var(--cur-grab,grab)}
+.c-phk{position:absolute;top:6000px;left:-1px;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:#4ade80;box-shadow:0 0 0 4px rgba(74,222,128,.18),0 2px 8px rgba(0,0,0,.6);pointer-events:auto;cursor:var(--cur-grab),grab}
 .c-phk::before{content:"";position:absolute;inset:-10px}
 .dpk{position:fixed;z-index:200;width:252px;padding:12px;border-radius:16px;background:rgba(24,24,28,.92);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);box-shadow:0 24px 48px -18px rgba(0,0,0,.9);animation:dpkIn .18s var(--ease)}
 @keyframes dpkIn{from{opacity:0;transform:translateY(-4px)}}
@@ -427,8 +427,10 @@ a.rv-ch:hover{border-color:rgba(255,255,255,.25);color:var(--text)}
 .stp{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;position:relative}
 .stp::before{content:"";position:absolute;left:13.5px;top:30px;bottom:-14px;width:1.5px;background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,.04))}
 .stp:last-of-type::before{display:none}
-.stp-n{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;background:#1d1d22;border:1.5px solid rgba(255,255,255,.18);color:var(--text-2);z-index:1}
-.stp.done .stp-n{background:var(--green);border-color:var(--green);color:#0b2414}.stp.doing .stp-n{border-color:var(--blue);color:#bfdbfe;box-shadow:0 0 0 4px rgba(96,165,250,.15)}
+.stp-n{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;background:rgba(248,113,113,.1);border:1.5px solid rgba(248,113,113,.7);color:#fca5a5;z-index:1}
+.stp.done .stp-n{background:var(--green);border-color:var(--green);color:#0b2414}
+.stp[data-stp]{cursor:var(--cur-grab),grab;transition:transform .22s var(--ease)}.stp.drg{transition:none;z-index:5;background:rgba(24,24,28,.92);border-radius:14px;box-shadow:0 18px 36px -14px rgba(0,0,0,.9)}
+body.stp-drg,body.stp-drg *{cursor:var(--cur-grabbing),grabbing!important;user-select:none}
 .stp-c{display:flex;flex-direction:column;gap:7px;padding:2px 0 12px}
 .stp-c .tt{font-size:13.5px;font-weight:550;background:transparent;border:0;outline:none;padding:4px 2px;border-radius:6px}.stp-c .tt:focus{background:rgba(255,255,255,.04)}
 .stp-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
@@ -1480,8 +1482,8 @@ function mQuadro(n) {
 function mEtapas(n) {
   const T = realTasks(n), m = n.month, dm = dim(m), pos = d => d && d.slice(0, 7) === m ? (+d.slice(8) - 1) / dm * 100 : d && d < m ? 0 : 100, today = todayISO();
   return `${T.map((t, i) => { const a = t.start || t.due, b = t.due || t.start, l = a ? pos(a) : 0, w = a ? Math.max(100 / dm, pos(b) - l + 100 / dm) : 0;
-    return `<div class="stp ${t.st === 'done' ? 'done' : t.st === 'doing' ? 'doing' : ''}"><button class="stp-n" data-act="tk-done" data-t="${t.id}" title="Concluir etapa">${t.st === 'done' ? ic('check', 'width:13px;height:13px;stroke-width:3') : i + 1}</button>
-    <div class="stp-c"><div class="row"><input class="tt" data-tk="${t.id}" data-f="t" value="${esc(t.t || '')}" placeholder="Nome da etapa" style="flex:1"><span class="stp-mv"><button data-act="tk-mv" data-t="${t.id}" data-d="-1" aria-label="Subir">${ic('up')}</button><button data-act="tk-mv" data-t="${t.id}" data-d="1" aria-label="Descer">${ic('down')}</button></span></div>
+    return `<div class="stp ${t.st === 'done' ? 'done' : ''}" data-stp="${t.id}" title="Arraste para mudar a ordem"><button class="stp-n" data-act="tk-done" data-t="${t.id}" title="Concluir etapa">${t.st === 'done' ? ic('check', 'width:13px;height:13px;stroke-width:3') : i + 1}</button>
+    <div class="stp-c"><div class="row"><input class="tt" data-tk="${t.id}" data-f="t" value="${esc(t.t || '')}" placeholder="Nome da etapa" style="flex:1"></div>
     <div class="stp-row">${pSel(t)}${dSel(t, 'start', 'início')}<span class="c-mut">→</span>${dSel(t, 'due', 'fim')}${stChip(t)}${xBtn(t)}</div>
     ${a ? `<div class="gantt" style="--dim:${dm}"><i style="left:${l}%;width:${Math.min(100 - l, w)}%"></i>${today.slice(0, 7) === m ? `<b style="left:${(+today.slice(8) - .5) / dm * 100}%"></b>` : ''}</div>` : ''}</div></div>`; }).join('')}
   ${addRow('etapa', T.length ? 'Próxima etapa' : 'Primeira etapa')}`;
@@ -1562,7 +1564,7 @@ function dwMarco(n) {
 /* ---------- gaveta fechada: só o que foi preenchido ---------- */
 const rvAv = id => { const p = pessoa(id); return p ? `<span class="rv-ch">${av(p, 20)}${esc(p.name.split(' ')[0])}</span>` : ''; };
 const rvDue = (v, done) => { if (!v) return ''; const late = !done && v < todayISO(); return `<span class="rv-ch ${late ? 'late' : ''}">${ic('cal')}${fmtD(v)}${late ? ' · atrasado' : ''}</span>`; };
-const rvTk = (t, x = '') => { const s = STc(t.st), p = pessoa(t.who); return `<div class="rv-tk ${t.st === 'done' ? 'done' : ''}">${x || `<i class="rv-st" style="--sc:${s[2]}" title="${s[1]}"></i>`}<span class="tx">${esc(t.t || 'Sem nome')}</span><small>${p ? av(p, 18) + esc(p.name.split(' ')[0]) : ''}${t.due ? (p ? ' · ' : '') + fmtD(t.due) : ''}${t.st && t.st !== 'todo' ? ` · ${s[1]}` : ''}</small></div>`; };
+const rvTk = (t, x = '') => { const s = STc(t.st), p = pessoa(t.who); return `<div class="rv-tk ${t.st === 'done' ? 'done' : ''}">${x || `<i class="rv-st" style="--sc:${t.st === 'done' ? '#4ade80' : '#f87171'}" title="${s[1]}"></i>`}<span class="tx">${esc(t.t || 'Sem nome')}</span><small>${p ? av(p, 18) + esc(p.name.split(' ')[0]) : ''}${t.due ? (p ? ' · ' : '') + fmtD(t.due) : ''}${t.st && t.st !== 'todo' ? ` · ${s[1]}` : ''}</small></div>`; };
 const rvIc = c => c.icon && iconById(c.icon) ? `<img src="${esc(iconById(c.icon).src)}" alt="" style="width:13px;height:13px;object-fit:contain">` : bic(c.bi || 'r_note');
 function rvBody(n) {
   const T = realTasks(n), m = MV[n.modelo] ? n.modelo : '';
@@ -1687,6 +1689,27 @@ async function uploadFiles(list) {
 document.addEventListener('dragover', e => { const d = e.target.closest && e.target.closest('#drop'); if (d) { e.preventDefault(); d.classList.add('over'); } });
 document.addEventListener('dragleave', e => { const d = e.target.closest && e.target.closest('#drop'); if (d) d.classList.remove('over'); });
 document.addEventListener('drop', e => { const d = e.target.closest && e.target.closest('#drop'); if (!d) return; e.preventDefault(); d.classList.remove('over'); uploadFiles([...(e.dataTransfer?.files || [])]); });
+/* etapas: arrastar para mudar a ordem */
+let SD = null;
+document.addEventListener('pointerdown', e => {
+  const s = e.button > 0 ? null : e.target.closest && e.target.closest('#dw .stp[data-stp]'); if (!s || e.target.closest('input,textarea,select,label,.ix,.stc')) return;
+  const L = [...s.parentNode.querySelectorAll('.stp[data-stp]')]; SD = { el: s, y0: e.clientY, moved: false, L, i0: L.indexOf(s), to: L.indexOf(s), r: L.map(x => x.getBoundingClientRect()) };
+});
+document.addEventListener('pointermove', e => {
+  if (!SD) return; const dy = e.clientY - SD.y0; if (!SD.moved && Math.abs(dy) < 5) return;
+  if (!SD.moved) { SD.moved = true; SD.el.classList.add('drg'); document.body.classList.add('stp-drg'); }
+  const { L, r, i0 } = SD, h = r[i0].height, mid = r[i0].top + h / 2 + dy; let to = 0;
+  r.forEach((b, i) => { if (i !== i0 && mid > b.top + b.height / 2) to++; }); SD.to = to;
+  L.forEach((x, i) => { x.style.transform = i === i0 ? `translateY(${dy}px)` : i > i0 && i <= to ? `translateY(${-h}px)` : i < i0 && i >= to ? `translateY(${h}px)` : ''; });
+  e.preventDefault();
+});
+document.addEventListener('pointerup', () => {
+  if (!SD) return; const d = SD; SD = null; if (!d.moved) return;
+  document.body.classList.remove('stp-drg'); d.L.forEach(x => { x.style.transform = ''; x.classList.remove('drg'); });
+  const eat = ev => { ev.stopPropagation(); ev.preventDefault(); }; addEventListener('click', eat, { capture: true, once: true }); setTimeout(() => removeEventListener('click', eat, true), 60);
+  if (d.to === d.i0) return; const ids = d.L.map(x => x.dataset.stp); const [m] = ids.splice(d.i0, 1); ids.splice(d.to, 0, m);
+  dwSet(n => { const T = n.tasks || [], by = Object.fromEntries(T.map(t => [t.id, t])); let k = 0; n.tasks = T.map(t => ids.includes(t.id) ? by[ids[k++]] : t); });
+});
 /* quadro: arrastar cartões entre colunas */
 document.addEventListener('dragstart', e => { const c = e.target.closest && e.target.closest('[data-card]'); if (!c) return; e.dataTransfer.setData('text/plain', c.dataset.card); e.dataTransfer.effectAllowed = 'move'; c.classList.add('dragging'); });
 document.addEventListener('dragend', e => { $$('.kcard.dragging').forEach(c => c.classList.remove('dragging')); $$('.kc.over').forEach(c => c.classList.remove('over')); });
