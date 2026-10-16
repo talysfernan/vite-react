@@ -261,17 +261,17 @@ body.pres-on .stage{border-radius:0;border:0;background-color:#0b0b0d}
   background:rgba(22,22,26,.72);border:1px solid rgba(255,255,255,.1);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4);box-shadow:0 30px 70px -30px rgba(0,0,0,.95);cursor:default;user-select:text;-webkit-user-select:text}
 .slide .in{animation:slideUp .5s var(--ease) both}
 @keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-.slide .crumb{display:flex;align-items:center;gap:6px;flex-wrap:wrap;color:var(--muted);font-size:11.5px;margin-bottom:14px}
-.slide .crumb i{font-style:normal;color:var(--dim)}
-.slide .kl{display:inline-flex;align-items:center;gap:8px;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--c)}
-.slide h1{font-size:28px;line-height:1.15;letter-spacing:-.02em;font-weight:650;margin:8px 0 14px}
-.slide h1.ph{color:var(--dim)}
-.slide .lead{font-size:15px;color:var(--text-2);line-height:1.55}
-.slide h6{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:20px 0 8px}
-.slide p{color:var(--text-2);font-size:13.5px;line-height:1.6;white-space:pre-wrap}
-.slide ol{list-style:none;display:flex;flex-direction:column;gap:7px;counter-reset:c}
-.slide ol li{counter-increment:c;display:flex;gap:10px;align-items:flex-start;color:var(--text-2);font-size:13.5px;line-height:1.5}
-.slide ol li::before{content:counter(c);width:22px;height:22px;border-radius:7px;flex:none;display:grid;place-items:center;font-size:11px;font-weight:600;color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent)}
+.rd .crumb{display:flex;align-items:center;gap:6px;flex-wrap:wrap;color:var(--muted);font-size:11.5px;margin-bottom:14px}
+.rd .crumb i{font-style:normal;color:var(--dim)}
+.rd .kl{display:inline-flex;align-items:center;gap:8px;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--c)}
+.rd h1{font-size:28px;line-height:1.15;letter-spacing:-.02em;font-weight:650;margin:8px 0 14px}
+.rd h1.ph{color:var(--dim)}
+.rd .lead{font-size:15px;color:var(--text-2);line-height:1.55}
+.rd h6{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:20px 0 8px}
+.rd p{color:var(--text-2);font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+.rd ol{list-style:none;display:flex;flex-direction:column;gap:7px;counter-reset:c}
+.rd ol li{counter-increment:c;display:flex;gap:10px;align-items:flex-start;color:var(--text-2);font-size:13.5px;line-height:1.5}
+.rd ol li::before{content:counter(c);width:22px;height:22px;border-radius:7px;flex:none;display:grid;place-items:center;font-size:11px;font-weight:600;color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent)}
 .kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
 .kpi{padding:12px;border-radius:14px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07)}
 .kpi b{display:block;font-size:19px;font-weight:650;letter-spacing:-.01em}
@@ -290,6 +290,49 @@ body.pres-on .stage{border-radius:0;border:0;background-color:#0b0b0d}
 .pdots i{display:block;height:100%;background:linear-gradient(90deg,var(--c,#e7e7ea),#fff);transition:width .5s var(--ease)}
 .wire.dim{opacity:.12}
 
+.mod .rd h1{font-size:22px;margin:0 0 12px}.mod .rd .lead{font-size:14px}
+.info{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:0 18px}
+.pgb{display:flex;align-items:center;gap:10px}.pgt{flex:1;height:6px;border-radius:6px;background:rgba(255,255,255,.07);overflow:hidden}.pgt i{display:block;height:100%;border-radius:6px;background:var(--c);transition:width .5s var(--ease)}.pgb span{font-size:11.5px;color:var(--muted);white-space:nowrap}
+.n-pg{height:4px;border-radius:4px;background:rgba(255,255,255,.07);overflow:hidden;flex:1;min-width:40px;max-width:110px}.n-pg i{display:block;height:100%;background:var(--c)}
+.n-meta .who{font-size:11px;color:var(--muted)}
+.stp{display:flex;gap:4px;flex-wrap:wrap}
+.stp-i{height:30px;padding:0 12px;border-radius:999px;font-size:12px;color:var(--muted);background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);transition:all .25s var(--ease)}
+.stp-i:not([disabled]):hover{color:var(--text);background:rgba(255,255,255,.07)}
+.stp-i.past{color:color-mix(in srgb,var(--sc) 65%,#999);border-color:color-mix(in srgb,var(--sc) 22%,transparent)}
+.stp-i.on{color:var(--sc);background:color-mix(in srgb,var(--sc) 15%,transparent);border-color:color-mix(in srgb,var(--sc) 50%,transparent);font-weight:600}
+.stp-i[disabled]{cursor:default}
+.ck{display:flex;align-items:center;gap:8px;min-height:32px}
+.ckb{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;border:1px solid var(--line-2);color:transparent;flex:none;transition:all .2s}
+.ckb svg{width:12px;height:12px}
+.ck.ok .ckb{background:rgba(74,222,128,.18);border-color:rgba(74,222,128,.5);color:var(--green)}
+.ck span{color:var(--text-2);font-size:13px}.ck.ok span{color:var(--muted);text-decoration:line-through}
+.ckb[disabled]{cursor:default}
+.lc{display:flex;flex-direction:column;gap:4px;overflow-x:auto}
+.lch,.lcr{display:grid;grid-template-columns:minmax(90px,1.4fr) repeat(6,minmax(34px,1fr)) 38px;gap:4px;align-items:center;min-width:420px}
+.lch span{font-size:10px;color:var(--muted);text-align:center}
+.lcr b{font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lcr em{font-style:normal;font-size:11px;color:var(--muted);text-align:right}
+.lcb{height:28px;border-radius:8px;display:grid;place-items:center;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);color:transparent;transition:all .2s}
+.lcb svg{width:12px;height:12px}
+.lcb.on{background:rgba(74,222,128,.15);border-color:rgba(74,222,128,.45);color:var(--green)}
+.lcb[disabled]{cursor:default}
+.opt{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);margin-bottom:6px;transition:all .3s var(--ease)}
+.opt b{flex:1;font-weight:600;font-size:13px}
+.opl{width:24px;height:24px;border-radius:8px;display:grid;place-items:center;font-weight:700;font-size:12px;background:rgba(255,255,255,.06);color:var(--text-2);flex:none}
+.opt.on{border-color:rgba(74,222,128,.45);background:rgba(74,222,128,.08)}.opt.on .opl{background:rgba(74,222,128,.2);color:var(--green)}
+.opt.no{opacity:.45}
+.mbig{display:flex;align-items:baseline;gap:10px;margin:2px 0 12px;flex-wrap:wrap}.mbig b{font-size:30px;font-weight:650;letter-spacing:-.02em}.mbig span{font-size:16px;color:var(--muted)}
+.kpi small{display:block;font-size:11px;color:var(--muted);margin-top:2px}.kpi .pgt{margin-top:8px;height:4px}
+.n.off{opacity:.35;filter:saturate(.3)}.wire.off{stroke-dasharray:4 6;opacity:.45}
+.lnk{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:9px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--text-2);text-decoration:none;font-size:12px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lnk:hover{color:var(--text);border-color:rgba(255,255,255,.18)}
+.chip i.d{width:7px;height:7px;border-radius:50%;background:var(--sc);display:inline-block}
+.vb{display:flex;align-items:center;gap:10px}
+.switch{position:relative;width:34px;height:20px;border-radius:20px;background:#2c2c32;transition:background .25s;flex:none;display:inline-block}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#9a9aa3;transition:transform .3s var(--ease),background .25s}
+.switch.on{background:rgba(74,222,128,.3)}.switch.on::after{transform:translateX(14px);background:var(--green)}
+.edtg svg{width:13px;height:13px}
+.tc .qd{margin-top:6px}
 /* login / bloqueio */
 body.locked #app{filter:blur(18px) saturate(.7);pointer-events:none;user-select:none}
 #gate{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px;background:rgba(8,8,10,.35);animation:fade .35s both}
@@ -300,7 +343,7 @@ body.locked #app{filter:blur(18px) saturate(.7);pointer-events:none;user-select:
 @media (max-width:760px){
   .top{gap:8px}
   .slide{left:10px;right:10px;top:auto;bottom:70px;width:auto;max-height:52%;padding:20px}
-  .slide h1{font-size:22px}
+  .rd h1{font-size:22px}
   .dock .lbl,.vseg .vl{display:none}
   .vseg .pill{padding:0 10px}
   .g2{grid-template-columns:1fr}
@@ -340,19 +383,55 @@ const IC = {
   depto: '<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
   setor: '<circle cx="6" cy="6" r="2.2"/><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="12" r="2.2"/><path d="M6 8.2v7.6M8 6.5c4 0 4 5.5 7.8 5.5"/>',
   estrategia: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/>',
-  etapa: '<path d="M4 18h5v-5h5V8h6"/><circle cx="20" cy="8" r="1.4"/>'
+  canal: '<path d="M4 9l1-5h14l1 5"/><path d="M4 9a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0 2.7 2.7 0 0 0 5.3 0"/><path d="M5 11v9h14v-9"/>',
+  publico: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/>',
+  decisao: '<circle cx="6" cy="18" r="2"/><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><path d="M6 16V8M6 14c0-4 12-3 12-6"/>',
+  acao: '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/>',
+  campanha: '<path d="M3 10v4h3l7 4V6L6 10z"/><path d="M17 9a4 4 0 0 1 0 6M19.5 6.5a8 8 0 0 1 0 11"/>',
+  lancamento: '<path d="M5 19l3-1 8-8a5 5 0 0 0 0-7 5 5 0 0 0-7 0l-8 8-1 3"/><path d="M9 15l-3-3M14 6l4 4"/>',
+  meta: '<path d="M4 20h16"/><path d="M7 16l4-5 3 3 5-7"/><path d="M15 7h4v4"/>',
+  pencil: '<path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/>', eye: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  check: '<path d="M5 12l5 5 9-10"/>'
 };
+IC.etapa = IC.acao;
 const ic = (n, s = '') => `<svg class="i" viewBox="0 0 24 24" style="${s}">${IC[n] || ''}</svg>`;
 
 /* ---------- tipos de card ---------- */
 const KIND = {
-  nucleo: { n: 'Marca', w: 250, kids: ['objetivo', 'depto'] },
-  objetivo: { n: 'Estrela-guia', w: 270, c: '#facc15', ph: 'Aonde a marca quer chegar', kids: ['depto', 'objetivo'], d: 'o objetivo maior' },
-  depto: { n: 'Departamento', w: 240, ph: 'Nome do departamento', kids: ['setor', 'estrategia'], d: 'uma frente do plano' },
-  setor: { n: 'Setor', w: 225, ph: 'Nome do setor', kids: ['estrategia', 'setor', 'etapa'], d: 'divide o departamento' },
-  estrategia: { n: 'Estratégia', w: 240, ph: 'Nome da estratégia', kids: ['etapa', 'estrategia'], d: 'o caminho escolhido' },
-  etapa: { n: 'Etapa', w: 210, ph: 'Nome da etapa', kids: ['etapa'], d: 'um passo da estratégia' }
+  nucleo: { n: 'Marca', w: 250, kids: ['objetivo', 'depto', 'publico'] },
+  objetivo: { n: 'Estrela-guia', w: 270, c: '#facc15', ph: 'Aonde a marca quer chegar', kids: ['depto', 'meta'], d: 'o objetivo maior' },
+  depto: { n: 'Departamento', w: 240, ph: 'Nome do departamento', kids: ['canal', 'setor', 'estrategia', 'meta'], d: 'uma frente do plano' },
+  canal: { n: 'Canal', w: 235, ph: 'Nome do canal', kids: ['estrategia', 'acao', 'campanha', 'lancamento', 'meta'], d: 'onde a marca vende ou fala' },
+  setor: { n: 'Setor', w: 225, ph: 'Nome do setor', kids: ['estrategia', 'acao', 'campanha', 'setor', 'meta'], d: 'uma frente que não é canal' },
+  estrategia: { n: 'Estratégia', w: 240, ph: 'Nome da estratégia', kids: ['acao', 'campanha', 'lancamento', 'meta', 'decisao', 'publico'], d: 'o caminho escolhido' },
+  publico: { n: 'Público', w: 225, ph: 'Quem é (ex.: tutor de primeiro gato)', kids: ['estrategia'], d: 'para quem é' },
+  decisao: { n: 'Decisão', w: 235, ph: 'A pergunta a decidir', kids: ['estrategia', 'acao', 'campanha'], d: 'bifurcação A/B' },
+  acao: { n: 'Ação', w: 220, ph: 'O que fazer', kids: [], d: 'tarefa com dono e prazo' },
+  campanha: { n: 'Campanha', w: 235, ph: 'Nome da campanha', kids: ['acao'], d: 'período, canais e oferta' },
+  lancamento: { n: 'Lançamento', w: 235, ph: 'Produto a lançar', kids: ['acao'], d: 'checklist por canal' },
+  meta: { n: 'Meta', w: 220, ph: 'Indicador (ex.: vendas/mês)', kids: [], d: 'atual → meta' }
 };
+KIND.etapa = KIND.acao; /* cards antigos (Etapa) viram Ação */
+const ST = {
+  acao: [['todo', 'A fazer', '#85858e'], ['doing', 'Fazendo', '#facc15'], ['done', 'Feita', '#4ade80']],
+  campanha: [['ideia', 'Ideia', '#85858e'], ['planejada', 'Planejada', '#60a5fa'], ['producao', 'Em produção', '#facc15'], ['no_ar', 'No ar', '#4ade80'], ['encerrada', 'Encerrada', '#a78bfa']],
+  lancamento: [['planejado', 'Planejado', '#85858e'], ['preparando', 'Preparando', '#facc15'], ['lancado', 'Lançado', '#4ade80']],
+  canal: [['ativo', 'Ativo', '#4ade80'], ['abrir', 'Abrir', '#60a5fa'], ['pausar', 'Pausar', '#f87171']]
+};
+ST.etapa = ST.acao;
+const DONE_ST = { acao: 'done', etapa: 'done', campanha: 'encerrada', lancamento: 'lancado' };
+const stOf = n => { const L = ST[n.kind]; if (!L) return null; return L.find(x => x[0] === n.status) || (DONE_ST[n.kind] ? L[0] : null); };
+const LANC_IT = ['Cadastro', 'Fotos', 'Preço', 'Estoque', 'Ads', 'Seeding'];
+const FIELDS = { nucleo: ['visao'], objetivo: ['frase', 'metas', 'prazo'], depto: ['prop', 'resp'], canal: ['status', 'fase', 'papel', 'sortimento', 'preco', 'midia', 'metas', 'resp'], setor: ['prop', 'resp'], estrategia: ['oque', 'porque', 'como', 'fase', 'canais', 'quando', 'kpi', 'resp'], publico: ['dor', 'gatilho', 'canais'], decisao: ['criterio', 'escolha', 'prazo'], acao: ['resp', 'prazo', 'quando', 'status', 'chk', 'nota'], campanha: ['status', 'inicio', 'fim', 'canais', 'oferta', 'verba', 'kpi', 'resultado', 'quando'], lancamento: ['data', 'canais', 'status', 'quando'], meta: ['atual', 'alvo', 'prazo', 'resp'] };
+FIELDS.etapa = FIELDS.acao;
+const hasVal = (k, v) => k === 'metas' ? (v || []).some(m => String(m.atual || m.alvo || m.v || '').trim()) : Array.isArray(v) ? v.some(x => typeof x === 'object' ? String(x.t || '').trim() : String(x).trim()) : !!String(v ?? '').trim();
+const filled = n => (FIELDS[n.kind] || []).some(k => hasVal(k, n[k])) || (n.links || []).some(l => l.u) || (n.att || []).length > 0;
+/* números de metas: "R$ 1.200", "35%", "2,5" */
+const num = s => { let t = String(s ?? '').replace(/[^\d,.\-]/g, ''); if (!t) return NaN; if (/^-?\d{1,3}(\.\d{3})+$/.test(t)) t = t.replace(/\./g, ''); else if (/,\d{1,2}$/.test(t)) t = t.replace(/\./g, '').replace(',', '.'); else t = t.replace(/,/g, ''); return parseFloat(t); };
+const metaPct = (a, b) => { const x = num(a), y = num(b); return isFinite(x) && isFinite(y) && y ? clamp(Math.round(x / y * 100), 0, 100) : null; };
+const MES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+const fmtD = d => { if (!d) return ''; const [y, m, dd] = String(d).split('-'); return dd ? `${+dd} ${MES[+m - 1]}` : d; };
+const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
 const JORN = [['see', 'S', 'See', 'Descoberta', '#60a5fa'], ['think', 'T', 'Think', 'Consideração', '#a78bfa'], ['do', 'D', 'Do', 'Compra', '#4ade80'], ['care', 'C', 'Care', 'Fidelização', '#facc15']];
 const QUANDO = [['agora', 'Agora', '#4ade80'], ['proximo', 'Próximo', '#facc15'], ['depois', 'Depois', '#60a5fa']];
 const SWATCH = ['#f472b6', '#fb923c', '#facc15', '#4ade80', '#2dd4bf', '#60a5fa', '#a78bfa', '#e7e7ea'];
@@ -413,7 +492,7 @@ async function setBoard(b) {
     closeModal(true); closeDrawer();
     store.board = b; store.role = s.data.role; store.name = s.data.name || '';
     store.docs = d.data.docs || {}; store.since = d.data.now || 0; store.queue = {};
-    rememberBoard(b); seedBrands(); V = null; render();
+    rememberBoard(b); seedBrands(); migrate(); V = null; render();
   } finally { store.switching = false; }
 }
 
@@ -436,6 +515,22 @@ function colorOf(n, list) {
   if (n.kind === 'objetivo') return KIND.objetivo.c;
   if (n.color) return n.color;
   const a = ancestors(n, list).reverse().find(x => x.color && x.kind !== 'nucleo'); return a ? a.color : '#e7e7ea';
+}
+/* ramos de uma decisão que não foram escolhidos */
+function offOf(list) { const off = new Set(); list.forEach(d => { if (d.kind !== 'decisao' || !d.escolha || !list.some(x => x.id === d.escolha)) return; list.forEach(k => { if (k.parent === d.id && k.id !== d.escolha) { off.add(k.id); descendants(k.id, list).forEach(x => off.add(x.id)); } }); }); return off; }
+/* progresso: ações feitas, campanhas encerradas e lançamentos feitos abaixo do card */
+function progOf(n, list, offs = offOf(list)) { const ds = descendants(n.id, list).filter(d => DONE_ST[d.kind] && !offs.has(d.id)); const done = ds.filter(d => d.status === DONE_ST[d.kind]).length; return { done, total: ds.length, pct: ds.length ? Math.round(done / ds.length * 100) : 0 }; }
+const CH_ALL = new Set([...CANAIS.br, ...CANAIS.us].map(norm));
+function migrate() {
+  if (!isAdmin() || D('app/mig2')) return;
+  docsOf('node/').forEach(n => {
+    const { id, ...b } = n; let ch = false;
+    if (b.kind === 'etapa') { b.kind = 'acao'; if (b.desc) b.nota = b.desc; if ((b.entregas || []).some(x => String(x).trim())) b.chk = b.entregas.filter(x => String(x).trim()).map(t => ({ t, ok: false })); delete b.desc; delete b.entregas; ch = true; }
+    if (b.kind === 'setor' && CH_ALL.has(norm(b.title))) { b.kind = 'canal'; if (b.prop) { b.papel = b.prop; delete b.prop; } ch = true; }
+    if (b.kind === 'objetivo' && (b.metas || []).some(m => 'v' in m)) { b.metas = b.metas.map(m => ({ t: m.t || '', atual: m.atual || '', alvo: m.alvo ?? m.v ?? '' })); ch = true; }
+    if (ch) commit('node/' + id, b);
+  });
+  commit('app/mig2', { t: Date.now() });
 }
 const labelOf = n => n.kind === 'nucleo' ? ((marca(n.marca) || {}).name || 'Marca') : (n.title || '');
 
@@ -463,7 +558,7 @@ function seedPlan(withModel) {
   const mk = (kind, parent, extra = {}) => { const id = uid(); store.docs['node/' + id] = { marca: m, kind, parent, x: 0, y: 0, title: '', ...extra, u: Date.now() }; store.queue['node/' + id] = store.docs['node/' + id]; return id; };
   const root = mk('nucleo', null);
   if (withModel) {
-    const obj = mk('objetivo', root, { metas: [{ t: 'Faturamento', v: '' }, { t: 'Presença nos canais', v: '' }, { t: 'Recompra', v: '' }] });
+    const obj = mk('objetivo', root, { metas: [{ t: 'Faturamento', atual: '', alvo: '' }, { t: 'Presença nos canais', atual: '', alvo: '' }, { t: 'Recompra', atual: '', alvo: '' }] });
     const lojas = store.board === 'us' ? ['Amazon', 'Walmart', 'Chewy', 'TikTok Shop', 'Shopify'] : ['Mercado Livre', 'Amazon', 'Shopee', 'TikTok Shop', 'Shopify'];
     const deps = [
       ['Marketing', '#f472b6', 'Gerar demanda e construir a marca em todos os pontos de contato.', ['Conteúdo e social', 'Influência e seeding', 'Mídia paga', 'CRM e retenção']],
@@ -471,7 +566,7 @@ function seedPlan(withModel) {
       ['Produto e marca', '#a78bfa', 'Portfólio, embalagem e posicionamento coerentes em todos os canais.', ['Portfólio', 'Embalagem e página de produto', 'Posicionamento e preço']],
       ['Operações e experiência', '#2dd4bf', 'Entregar rápido e cuidar do cliente depois da compra.', ['Estoque e logística', store.board === 'us' ? 'Fulfillment (FBA)' : 'Fulfillment (Full / FBA)', 'Atendimento e reviews']]
     ];
-    deps.forEach(([t, c, p, ss]) => { const d = mk('depto', obj, { title: t, color: c, prop: p }); ss.forEach(s => mk('setor', d, { title: s })); });
+    deps.forEach(([t, c, p, ss], i) => { const d = mk('depto', obj, { title: t, color: c, prop: p }); ss.forEach(s => mk(i === 1 ? 'canal' : 'setor', d, { title: s })); });
   }
   savest('Salvando…'); clearTimeout(commit.t); commit.t = setTimeout(flush, 300);
   V = null; render(); requestAnimationFrame(() => { organize(false); fit(true); });
@@ -519,30 +614,41 @@ const VK = () => 'pln:v:' + store.board + ':' + curMarca();
 function loadView() { try { V = JSON.parse(localStorage.getItem(VK()) || 'null'); } catch (e) { V = null; } const st = $('#stage'); if (V && st && V.w !== Math.round(st.clientWidth)) V = null; }
 const saveView = () => { clearTimeout(saveView.t); saveView.t = setTimeout(() => { if (PRES) return; try { const st = $('#stage'); localStorage.setItem(VK(), JSON.stringify({ x: V.x, y: V.y, z: V.z, w: st ? Math.round(st.clientWidth) : 0 })); } catch (e) {} }, 300); };
 function applyView() { const w = $('#world'); if (!w || !V) return; w.style.transform = `translate(${V.x}px,${V.y}px) scale(${V.z})`; const z = $('#zl'); if (z) z.textContent = Math.round(V.z * 100) + '%'; saveView(); }
-function nodeHTML(n, list) {
+const jrHTML = fs => `<span class="jr">${JORN.map(j => `<i class="${fs.includes(j[0]) ? 'on' : ''}" style="--jc:${j[4]}" title="${j[2]} · ${j[3]}">${j[1]}</i>`).join('')}</span>`;
+const pill = (t, c) => `<span class="qd" style="--qc:${c}">${t}</span>`;
+function nodeHTML(n, list, offs = offOf(list)) {
   const K = KIND[n.kind] || KIND.setor, c = colorOf(n, list), kids = list.filter(x => x.parent === n.id);
   let body;
+  const pg = progOf(n, list, offs), pgRow = pg.total ? `<div class="n-meta"><span class="n-pg"><i style="width:${pg.pct}%"></i></span><span class="cnt">${pg.done}/${pg.total}</span></div>` : '';
   if (n.kind === 'nucleo') {
     const b = marca(n.marca) || {};
-    body = `<span class="n-ic">${esc((b.name || '?').trim()[0] || '?')}</span><div class="n-tx"><small>Plano omnichannel</small><b>${esc(b.name || 'Marca')}</b><span class="n-flag">${FLAG[store.board]}${PAIS[store.board].name}</span></div>`;
+    body = `<span class="n-ic">${esc((b.name || '?').trim()[0] || '?')}</span><div class="n-tx"><small>Plano omnichannel</small><b>${esc(b.name || 'Marca')}</b><span class="n-flag">${FLAG[store.board]}${PAIS[store.board].name}</span>${pgRow}</div>`;
   } else {
-    let meta = '';
-    if (n.kind === 'estrategia') {
-      const q = QUANDO.find(x => x[0] === n.quando), fs = n.fase || [];
-      meta = `<div class="n-meta"><span class="jr">${JORN.map(j => `<i class="${fs.includes(j[0]) ? 'on' : ''}" style="--jc:${j[4]}" title="${j[2]} · ${j[3]}">${j[1]}</i>`).join('')}</span>${q ? `<span class="qd" style="--qc:${q[2]}">${q[1]}</span>` : ''}</div>`;
-    } else if (n.kind === 'depto' || n.kind === 'setor') {
-      const ns = kids.filter(k => k.kind === 'setor').length, ne = kids.filter(k => k.kind === 'estrategia').length;
-      const t = [ns ? ns + (ns > 1 ? ' setores' : ' setor') : '', ne ? ne + (ne > 1 ? ' estratégias' : ' estratégia') : ''].filter(Boolean).join(' · ');
-      if (t) meta = `<div class="n-meta"><span class="cnt">${t}</span></div>`;
-    } else if (n.kind === 'objetivo') {
-      const ms = (n.metas || []).filter(x => x.t || x.v).length;
-      if (ms) meta = `<div class="n-meta"><span class="cnt">${ms} ${ms > 1 ? 'metas' : 'meta'}</span></div>`;
+    const m = [], st = stOf(n), k = n.kind;
+    if (st) m.push(pill(st[1], st[2]));
+    if (k === 'estrategia') { if ((n.fase || []).length) m.push(jrHTML(n.fase)); const q = QUANDO.find(x => x[0] === n.quando); if (q) m.push(pill(q[1], q[2])); }
+    else if (k === 'canal') { if ((n.fase || []).length) m.push(jrHTML(n.fase)); }
+    else if (k === 'acao' || k === 'etapa') { if (n.resp) m.push(`<span class="who">${esc(n.resp)}</span>`); if (n.prazo) m.push(`<span class="who">${fmtD(n.prazo)}</span>`); const ck = n.chk || []; if (ck.length) m.push(`<span class="who">${ck.filter(x => x.ok).length}/${ck.length}</span>`); }
+    else if (k === 'campanha') { if (n.inicio || n.fim) m.push(`<span class="who">${[fmtD(n.inicio), fmtD(n.fim)].filter(Boolean).join(' – ')}</span>`); }
+    else if (k === 'lancamento') { if (n.data) m.push(`<span class="who">${fmtD(n.data)}</span>`); const cs = n.canais || []; if (cs.length) { const tot = cs.length * LANC_IT.length, ok = cs.reduce((a, ch) => a + ((n.lc || {})[ch] || []).filter(x => LANC_IT.includes(x)).length, 0); m.push(`<span class="who">${Math.round(ok / tot * 100)}% pronto</span>`); } }
+    else if (k === 'meta') { if (n.atual || n.alvo) m.push(`<span class="who">${esc(n.atual || '—')} → ${esc(n.alvo || '—')}</span>`); }
+    else if (k === 'decisao') { const ch = n.escolha && list.find(x => x.id === n.escolha); m.push(ch ? pill('✓ ' + esc(ch.title || KIND[ch.kind].n), '#4ade80') : pill('Aberta', '#facc15')); }
+    else if (k === 'objetivo') { const ms = (n.metas || []).filter(x => x.atual || x.alvo); if (ms.length) m.push(`<span class="cnt">${ms.length} ${ms.length > 1 ? 'metas' : 'meta'}</span>`); }
+    else if (k === 'publico') { const cs = n.canais || []; if (cs.length) m.push(`<span class="cnt">${cs.slice(0, 2).map(esc).join(', ')}${cs.length > 2 ? ' +' + (cs.length - 2) : ''}</span>`); }
+    else if (k === 'depto' || k === 'setor') {
+      const cnt = (kk, a, b) => { const q = kids.filter(x => x.kind === kk).length; return q ? q + ' ' + (q > 1 ? b : a) : ''; };
+      const t = [cnt('canal', 'canal', 'canais'), cnt('setor', 'setor', 'setores'), cnt('estrategia', 'estratégia', 'estratégias')].filter(Boolean).join(' · ');
+      if (t) m.push(`<span class="cnt">${t}</span>`);
     }
+    let meta = m.length ? `<div class="n-meta">${m.join('')}</div>` : '';
+    if (k === 'meta') { const p = metaPct(n.atual, n.alvo); if (p != null) meta += `<div class="n-meta"><span class="n-pg"><i style="width:${p}%"></i></span><span class="cnt">${p}%</span></div>`; }
+    else if (!['acao', 'etapa'].includes(k)) meta += pgRow;
     body = `<span class="n-ic">${ic(n.kind)}</span><div class="n-tx"><small>${K.n}</small><b class="${n.title ? '' : 'ph'}">${esc(n.title || K.ph)}</b>${meta}</div>`;
   }
   const fo = kids.length && FOLD.has(n.id), nd = kids.length ? descendants(n.id, list).length : 0;
   const fb = !kids.length ? '' : fo ? `<button class="n-fold on" data-act="fold" title="Expandir (${nd} ${nd > 1 ? 'cards' : 'card'})" aria-label="Expandir">+${nd}</button>` : `<button class="n-fold" data-act="fold" title="Recolher" aria-label="Recolher">${ic('left')}</button>`;
-  return `<div class="n k-${n.kind}${fo ? ' folded' : ''}" data-id="${n.id}" style="left:${n.x}px;top:${n.y}px;width:${K.w}px;--c:${c}"><div class="n-b">${body}</div><button class="n-add" data-act="add" aria-label="Adicionar abaixo de ${esc(labelOf(n) || K.n)}" title="Adicionar">${ic('plus')}</button>${fb}</div>`;
+  const add = K.kids.length ? `<button class="n-add" data-act="add" aria-label="Adicionar abaixo de ${esc(labelOf(n) || K.n)}" title="Adicionar">${ic('plus')}</button>` : '';
+  return `<div class="n k-${n.kind}${fo ? ' folded' : ''}${offs.has(n.id) ? ' off' : ''}" data-id="${n.id}" style="left:${n.x}px;top:${n.y}px;width:${K.w}px;--c:${c}"><div class="n-b">${body}</div>${add}${fb}</div>`;
 }
 function drawWorld() {
   const w = $('#world'); if (!w) return;
@@ -555,22 +661,22 @@ function drawWorld() {
     $('#dock').hidden = true; return;
   }
   $('#dock').hidden = false;
-  const vis = visNodes(list);
-  w.innerHTML = `<svg class="wires" id="wires"></svg>${vis.map(n => nodeHTML(n, list)).join('')}<div class="guide h" id="gh" hidden></div><div class="guide v" id="gv" hidden></div>`;
+  const vis = visNodes(list), offs = offOf(list);
+  w.innerHTML = `<svg class="wires" id="wires"></svg>${vis.map(n => nodeHTML(n, list, offs)).join('')}<div class="guide h" id="gh" hidden></div><div class="guide v" id="gv" hidden></div>`;
   drawWires(vis);
   if (PRES) presMark();
 }
-function updNode(id) { const n = N(id); const el = $(`.n[data-id="${id}"]`); if (!n || !el) return; const list = brandNodes(); el.outerHTML = nodeHTML(n, list); if (n.parent) { const p = $(`.n[data-id="${n.parent}"]`), pn = N(n.parent); if (p && pn) p.outerHTML = nodeHTML(pn, list); } drawWires(visNodes(list)); }
+function updNode(id) { if (!$(`.n[data-id="${id}"]`)) return; const list = brandNodes(), offs = offOf(list), up = [N(id), ...ancestors(N(id) || {}, list)].filter(Boolean); up.forEach(x => { const el = $(`.n[data-id="${x.id}"]`); if (el) el.outerHTML = nodeHTML(x, list, offs); }); drawWires(visNodes(list)); }
 const W = n => (KIND[n.kind] || KIND.setor).w;
 function drawWires(list = visNodes(), pos) {
   const svg = $('#wires'); if (!svg) return;
   const m = new Map(list.map(n => [n.id, pos && pos[n.id] ? { ...n, ...pos[n.id] } : n]));
-  let out = '';
+  let out = ''; const offs = offOf(brandNodes());
   for (const n of m.values()) {
     const p = n.parent && m.get(n.parent); if (!p) continue;
     const x1 = p.x + W(p), y1 = p.y, x2 = n.x, y2 = n.y, dx = Math.max(40, Math.abs(x2 - x1) / 2);
     const c = colorOf(n, list);
-    out += `<path class="wire" data-w="${n.id}" d="M${x1} ${y1} C${x1 + dx} ${y1},${x2 - dx} ${y2},${x2} ${y2}" stroke="${c}" stroke-opacity=".45"/>`;
+    out += `<path class="wire${offs.has(n.id) ? ' off' : ''}" data-w="${n.id}" d="M${x1} ${y1} C${x1 + dx} ${y1},${x2 - dx} ${y2},${x2} ${y2}" stroke="${c}" stroke-opacity=".45"/>`;
   }
   svg.innerHTML = out;
 }
@@ -753,37 +859,103 @@ function modal(html, cls = '') {
 function closeModal(silent) { const m = $('#modal'); if (m) m.remove(); if (!silent) { const was = ED.id; ED.id = ''; if (was) { if (UI.view === 'mapa') updNode(was); else drawPane(); } } }
 const fArea = (k, label, ph, n, rows = 2) => `<div class="f"><h5>${label}</h5><textarea class="inp" rows="${rows}" data-f="${k}" placeholder="${esc(ph)}">${esc(n[k] || '')}</textarea></div>`;
 const fText = (k, label, ph, n) => `<div class="f"><h5>${label}</h5><input class="inp" data-f="${k}" placeholder="${esc(ph)}" value="${esc(n[k] || '')}" autocomplete="off"></div>`;
+const fDate = (k, label, n) => `<div class="f"><h5>${label}</h5><input class="inp" type="date" data-f="${k}" value="${esc(n[k] || '')}"></div>`;
+const LI = { como: ['Um movimento principal', 3] };
 const blHTML = (k, ph, n, max) => { const L = n[k] || []; return `${L.map((v, i) => `<div class="row"><span class="num">${i + 1}</span><input class="inp" data-li="${k}" data-i="${i}" placeholder="${esc(ph)}" value="${esc(v)}" autocomplete="off"><button class="xb" data-act="li-del" data-k="${k}" data-i="${i}" aria-label="Remover">${ic('x')}</button></div>`).join('')}${L.length < max ? `<button class="addl" data-act="li-add" data-k="${k}">${ic('plus')}Adicionar</button>` : ''}`; };
-const fList = (k, label, ph, n, max = 5) => `<div class="f"><h5>${label}</h5><div class="bl" id="bl-${k}">${blHTML(k, ph, n, max)}</div></div>`;
-const fJorn = n => `<div class="f"><h5>Jornada <span>em que fase do cliente isso age</span></h5><div class="chips">${JORN.map(j => `<button class="chip ${(n.fase || []).includes(j[0]) ? 'on' : ''}" style="--cc:${j[4]}" data-act="tog" data-k="fase" data-v="${j[0]}">${j[2]}<small>${j[3]}</small></button>`).join('')}</div></div>`;
-const fCanais = n => `<div class="f"><h5>Canais</h5><div class="chips">${CANAIS[store.board].map(c => `<button class="chip ${(n.canais || []).includes(c) ? 'on' : ''}" data-act="tog" data-k="canais" data-v="${esc(c)}">${esc(c)}</button>`).join('')}</div></div>`;
+const fList = (k, label, n) => `<div class="f"><h5>${label}</h5><div class="bl" id="bl-${k}">${blHTML(k, LI[k][0], n, LI[k][1])}</div></div>`;
+const fJorn = (n, label = 'Jornada', hint = 'em que fase do cliente isso age') => `<div class="f"><h5>${label} <span>${hint}</span></h5><div class="chips">${JORN.map(j => `<button class="chip ${(n.fase || []).includes(j[0]) ? 'on' : ''}" style="--cc:${j[4]}" data-act="tog" data-k="fase" data-v="${j[0]}">${j[2]}<small>${j[3]}</small></button>`).join('')}</div></div>`;
+const fCanais = (n, label = 'Canais') => `<div class="f"><h5>${label}</h5><div class="chips">${CANAIS[store.board].map(c => `<button class="chip ${(n.canais || []).includes(c) ? 'on' : ''}" data-act="tog" data-k="canais" data-v="${esc(c)}">${esc(c)}</button>`).join('')}</div></div>`;
 const fQuando = n => `<div class="f"><h5>Quando</h5><div class="chips">${QUANDO.map(q => `<button class="chip ${n.quando === q[0] ? 'on' : ''}" style="--cc:${q[2]}" data-act="one" data-k="quando" data-v="${q[0]}">${q[1]}</button>`).join('')}</div></div>`;
 const fCor = n => `<div class="f"><h5>Cor</h5><div class="sw">${SWATCH.map(c => `<button class="${n.color === c ? 'on' : ''}" style="--c:${c}" data-act="one" data-k="color" data-v="${c}" aria-label="Cor ${c}"></button>`).join('')}</div></div>`;
-const metasHTML = n => `${(n.metas || []).map((m, i) => `<div class="row"><input class="inp" data-meta="t" data-i="${i}" placeholder="Meta (ex.: Faturamento)" value="${esc(m.t || '')}" autocomplete="off"><input class="inp" style="max-width:42%" data-meta="v" data-i="${i}" placeholder="Número (ex.: R$ 2 mi)" value="${esc(m.v || '')}" autocomplete="off"><button class="xb" data-act="meta-del" data-i="${i}" aria-label="Remover">${ic('x')}</button></div>`).join('')}${(n.metas || []).length < 6 ? `<button class="addl" data-act="meta-add">${ic('plus')}Meta</button>` : ''}`;
-const kidsHTML = (n, list) => { const ks = kidsOf(n.id, list); return ks.length ? `<div class="f"><h5>Abaixo deste card</h5><div class="kids">${ks.map(k => `<button class="chip" data-act="goto" data-v="${k.id}">${ic(k.kind, 'width:13px;height:13px')}${esc(k.title || KIND[k.kind].n)}</button>`).join('')}</div></div>` : ''; };
+const metasHTML = n => `${(n.metas || []).map((m, i) => `<div class="row"><input class="inp" data-meta="t" data-i="${i}" placeholder="Indicador" value="${esc(m.t || '')}" autocomplete="off"><input class="inp" style="max-width:26%" data-meta="atual" data-i="${i}" placeholder="Hoje" value="${esc(m.atual || '')}" autocomplete="off"><input class="inp" style="max-width:26%" data-meta="alvo" data-i="${i}" placeholder="Meta" value="${esc(m.alvo ?? m.v ?? '')}" autocomplete="off"><button class="xb" data-act="meta-del" data-i="${i}" aria-label="Remover">${ic('x')}</button></div>`).join('')}${(n.metas || []).length < 6 ? `<button class="addl" data-act="meta-add">${ic('plus')}Meta</button>` : ''}`;
+const fMetas = (n, label = 'Metas') => `<div class="f"><h5>${label} <span>indicador, hoje e meta</span></h5><div class="bl" id="metas">${metasHTML(n)}</div></div>`;
 const attHTML = n => `${(n.links || []).map((l, i) => `<div class="row"><input class="inp" data-link="u" data-i="${i}" placeholder="https://" value="${esc(l.u || '')}" autocomplete="off"><input class="inp" style="max-width:38%" data-link="t" data-i="${i}" placeholder="Nome" value="${esc(l.t || '')}" autocomplete="off">${l.u ? `<a class="xb" href="${esc(/^https?:\/\//.test(l.u) ? l.u : 'https://' + l.u)}" target="_blank" rel="noopener" aria-label="Abrir">${ic('link')}</a>` : ''}<button class="xb" data-act="link-del" data-i="${i}" aria-label="Remover">${ic('x')}</button></div>`).join('')}
   ${(n.att || []).map(a => `<div class="att">${ic('clip', 'width:14px;height:14px;color:var(--muted)')}<a href="/api/blob/${a.id}?b=${store.board}" target="_blank" rel="noopener">${esc(a.name)}</a><span class="muted" style="font-size:11px">${(a.size / 1048576).toFixed(1)} MB</span><button class="xb" data-act="att-del" data-v="${a.id}" aria-label="Remover anexo">${ic('x')}</button></div>`).join('')}
   <div class="row" style="flex-wrap:wrap"><button class="addl" data-act="link-add">${ic('link')}Link</button><label class="drop" id="drop" style="flex:1;min-width:180px">${ic('clip', 'width:13px;height:13px;vertical-align:-2px')} Arraste um arquivo ou clique<input type="file" id="file-in" multiple hidden></label></div>`;
-function edBody(n, list) {
+const fAtt = (n, hint = '') => `<div class="f"><h5>Arquivos e links${hint ? ` <span>${hint}</span>` : ''}</h5><div class="bl" id="att">${attHTML(n)}</div></div>`;
+const more = inner => `<details class="more"><summary>${ic('right')}Mais opções</summary>${inner}</details>`;
+const stepper = (n, live) => { const L = ST[n.kind], st = stOf(n), cur = st ? st[0] : '', ci = L.findIndex(x => x[0] === cur), flow = !!DONE_ST[n.kind]; return `<div class="stp">${L.map((x, i) => `<button class="stp-i ${x[0] === cur ? 'on' : ''} ${flow && i < ci ? 'past' : ''}" style="--sc:${x[2]}" ${live ? `data-act="st" data-v="${x[0]}"` : 'disabled'}>${x[1]}</button>`).join('')}</div>`; };
+const fStep = n => `<div class="f"><h5>${n.kind === 'canal' ? 'Status do canal' : 'Fluxo'}</h5><div id="stp">${stepper(n, true)}</div></div>`;
+const chkHTML = (n, edit, live) => `${(n.chk || []).map((c, i) => `<div class="ck ${c.ok ? 'ok' : ''}"><button class="ckb" ${live ? `data-act="chk-tog" data-i="${i}"` : 'disabled'} aria-label="${c.ok ? 'Desmarcar' : 'Marcar'}">${ic('check')}</button>${edit ? `<input class="inp sm" data-chk="${i}" value="${esc(c.t || '')}" placeholder="Item" autocomplete="off"><button class="xb" data-act="chk-del" data-i="${i}" aria-label="Remover">${ic('x')}</button>` : `<span>${esc(c.t || '')}</span>`}</div>`).join('')}${edit ? `<button class="addl" data-act="chk-add">${ic('plus')}Item</button>` : ''}`;
+const lcHTML = (n, live) => { const cs = n.canais || []; if (!cs.length) return live ? '<p class="muted" style="font-size:12px">Escolha os canais do lançamento para montar o checklist.</p>' : ''; const lc = n.lc || {}; return `<div class="lc"><div class="lch"><span></span>${LANC_IT.map(i => `<span>${i}</span>`).join('')}<span></span></div>${cs.map(c => { const d = (lc[c] || []).filter(x => LANC_IT.includes(x)); return `<div class="lcr"><b>${esc(c)}</b>${LANC_IT.map(i => `<button class="lcb ${d.includes(i) ? 'on' : ''}" ${live ? `data-act="lc" data-c="${esc(c)}" data-v="${i}"` : 'disabled'} aria-label="${esc(c)} · ${i}">${ic('check')}</button>`).join('')}<em>${Math.round(d.length / LANC_IT.length * 100)}%</em></div>`; }).join('')}</div>`; };
+const verbaHTML = n => `<div class="vb"><button class="switch ${n.verbaOn ? 'on' : ''}" data-act="verba" aria-label="Verba" aria-pressed="${!!n.verbaOn}"></button><h5 style="margin:0">Verba</h5></div>${n.verbaOn ? `<input class="inp" style="margin-top:8px" data-f="verba" placeholder="Ex.: R$ 5.000" value="${esc(n.verba || '')}" autocomplete="off">` : ''}`;
+const optsHTML = (n, list, live) => { const ks = kidsOf(n.id, list); if (!ks.length) return live ? '<p class="muted" style="font-size:12px">As opções são os ramos abaixo desta decisão. Crie pelo “+” do card no mapa.</p>' : ''; return ks.map((k, i) => { const on = n.escolha === k.id; return `<div class="opt ${on ? 'on' : ''} ${n.escolha && !on ? 'no' : ''}"><span class="opl">${String.fromCharCode(65 + i)}</span><b>${esc(k.title || KIND[k.kind].n)}</b>${live ? `<button class="pill sm ${on ? 'white' : ''}" data-act="pick" data-v="${k.id}">${on ? 'Escolhida' : 'Escolher'}</button>` : on ? pill('Escolhida', '#4ade80') : ''}</div>`; }).join(''); };
+
+/* formulário de cada tipo */
+function edForm(n, list) {
   const k = n.kind;
-  if (k === 'nucleo') { const b = marca(n.marca) || {}; return `<div class="f"><h5>Visão da marca <span>aparece na abertura da apresentação</span></h5><textarea class="inp" rows="3" data-f="visao" placeholder="Em uma frase: o que a ${esc(b.name || 'marca')} quer ser para o cliente">${esc(n.visao || '')}</textarea></div>${kidsHTML(n, list)}`; }
-  if (k === 'objetivo') return `${fArea('frase', 'Por que este é o norte', 'O que muda para a marca quando chegarmos lá', n)}<div class="f"><h5>Metas <span>até 6, com número</span></h5><div class="bl" id="metas">${metasHTML(n)}</div></div>${fText('prazo', 'Horizonte', 'Ex.: até dez/2027', n)}${kidsHTML(n, list)}`;
-  if (k === 'depto') return `${fArea('prop', 'Propósito', 'O que este departamento entrega para o plano', n)}${fText('resp', 'Responsável', 'Quem lidera', n)}${fCor(n)}${kidsHTML(n, list)}`;
-  if (k === 'setor') return `${fArea('prop', 'Papel', 'O que este setor faz dentro do departamento', n)}${fJorn(n)}${fText('resp', 'Responsável', 'Quem lidera', n)}${kidsHTML(n, list)}`;
-  if (k === 'estrategia') return `${fArea('oque', 'O quê', 'A estratégia em uma ou duas frases', n)}${fArea('porque', 'Por quê', 'O problema ou a oportunidade', n)}${fList('como', 'Como', 'Um movimento principal', n, 3)}${fJorn(n)}${fCanais(n)}<div class="g2">${fQuando(n)}${fText('kpi', 'Indicador', 'Como saber que funcionou', n)}</div>
-    <details class="more" id="more"><summary>${ic('right')}Mais opções</summary>${fText('resp', 'Responsável', 'Quem toca', n)}<div class="f"><h5>Arquivos e links</h5><div class="bl" id="att">${attHTML(n)}</div></div></details>`;
-  if (k === 'etapa') return `${fArea('desc', 'O que acontece', 'O passo, em poucas palavras', n)}${fList('entregas', 'Entregas', 'Uma entrega', n, 5)}${fQuando(n)}
-    <details class="more" id="more"><summary>${ic('right')}Mais opções</summary><div class="f"><h5>Arquivos e links</h5><div class="bl" id="att">${attHTML(n)}</div></div></details>`;
+  if (k === 'nucleo') { const b = marca(n.marca) || {}; return `<div class="f"><h5>Visão da marca <span>abre a apresentação</span></h5><textarea class="inp" rows="3" data-f="visao" placeholder="Em uma frase: o que a ${esc(b.name || 'marca')} quer ser para o cliente">${esc(n.visao || '')}</textarea></div>`; }
+  if (k === 'objetivo') return `${fArea('frase', 'Por que este é o norte', 'O que muda para a marca quando chegarmos lá', n)}${fMetas(n)}${fText('prazo', 'Horizonte', 'Ex.: até dez/2027', n)}`;
+  if (k === 'depto') return `${fArea('prop', 'Propósito', 'O que este departamento entrega para o plano', n)}${fText('resp', 'Responsável', 'Quem lidera', n)}${fCor(n)}`;
+  if (k === 'canal') return `<div class="f"><h5>Qual canal</h5><div class="chips">${CANAIS[store.board].map(c => `<button class="chip ${n.title === c ? 'on' : ''}" data-act="cpick" data-v="${esc(c)}">${esc(c)}</button>`).join('')}</div></div>${fStep(n)}${fJorn(n, 'Papel na jornada', 'o que este canal faz pelo cliente')}${fArea('papel', 'Papel', 'Ex.: canal de volume e recompra', n)}<div class="g2">${fText('sortimento', 'Sortimento', 'Quais produtos/kits aqui', n)}${fText('preco', 'Preço e posicionamento', 'Ex.: preço cheio, kits com desconto', n)}</div>${fText('midia', 'Mídia', 'Ex.: Product Ads, cupons', n)}${fMetas(n, 'Metas do canal')}${more(`${fText('resp', 'Responsável', 'Quem cuida do canal', n)}${fAtt(n)}`)}`;
+  if (k === 'setor') return `${fArea('prop', 'Papel', 'O que este setor faz dentro do departamento', n)}${fText('resp', 'Responsável', 'Quem lidera', n)}`;
+  if (k === 'estrategia') return `${fArea('oque', 'O quê', 'A estratégia em uma ou duas frases', n)}${fArea('porque', 'Por quê', 'O problema ou a oportunidade', n)}${fList('como', 'Como', n)}${fJorn(n)}${fCanais(n)}<div class="g2">${fQuando(n)}${fText('kpi', 'Indicador', 'Como saber que funcionou', n)}</div>${more(`${fText('resp', 'Responsável', 'Quem toca', n)}${fAtt(n)}`)}`;
+  if (k === 'publico') return `${fArea('dor', 'Dor', 'O problema que essa pessoa quer resolver', n)}${fArea('gatilho', 'Gatilho de compra', 'O que faz ela comprar agora', n)}${fCanais(n, 'Onde está')}`;
+  if (k === 'decisao') return `${fArea('criterio', 'Como vamos decidir', 'Critério: custo, prazo, teste A/B…', n)}${fDate('prazo', 'Decidir até', n)}<div class="f"><h5>Opções</h5><div id="opts">${optsHTML(n, list, true)}</div></div>`;
+  if (k === 'acao' || k === 'etapa') return `<div class="g2">${fText('resp', 'Quem', 'Responsável', n)}${fDate('prazo', 'Prazo', n)}</div>${fStep(n)}<div class="f"><h5>Checklist</h5><div class="bl" id="chk">${chkHTML(n, true, true)}</div></div>${fQuando(n)}${more(`${fArea('nota', 'Notas', 'Detalhes, contexto', n)}${fAtt(n)}`)}`;
+  if (k === 'campanha') return `${fStep(n)}<div class="g2">${fDate('inicio', 'Início', n)}${fDate('fim', 'Fim', n)}</div>${fCanais(n)}${fArea('oferta', 'Oferta e mensagem', 'O que vamos dizer e oferecer', n)}<div class="g2"><div class="f" id="verba">${verbaHTML(n)}</div>${fText('kpi', 'Meta da campanha', 'Ex.: 500 vendas', n)}</div>${fAtt(n, 'artes, roteiros, briefing')}${fArea('resultado', 'Resultado', 'Como foi (preencha no fim)', n)}${fQuando(n)}${more(fText('resp', 'Responsável', 'Quem toca', n))}`;
+  if (k === 'lancamento') return `<div class="g2">${fDate('data', 'Data de lançamento', n)}${fText('resp', 'Responsável', 'Quem toca', n)}</div>${fStep(n)}${fCanais(n, 'Canais do lançamento')}<div class="f"><h5>Checklist por canal</h5><div id="lc">${lcHTML(n, true)}</div></div>${fQuando(n)}${more(fAtt(n))}`;
+  if (k === 'meta') return `<div class="g2">${fText('atual', 'Hoje', 'Ex.: 320', n)}${fText('alvo', 'Meta', 'Ex.: 1.000', n)}</div><div class="g2">${fText('prazo', 'Até quando', 'Ex.: mar/2027', n)}${fText('resp', 'Responsável', 'Quem acompanha', n)}</div>`;
   return '';
 }
-function openEd(id) {
+
+/* leitura: só o que foi preenchido (também é o slide da apresentação) */
+const para = (t, h) => t && String(t).trim() ? `${h ? `<h6>${h}</h6>` : ''}<p>${esc(t)}</p>` : '';
+const barHTML = (pct, label) => `<div class="pgb"><div class="pgt"><i style="width:${pct}%"></i></div><span>${label}</span></div>`;
+const jbHTML = fs => `<div class="jbar">${JORN.map(j => `<div class="${(fs || []).includes(j[0]) ? 'on' : ''}" style="--jc:${j[4]}"><b>${j[2]}</b>${j[3]}</div>`).join('')}</div>`;
+const chipsRO = cs => `<div class="chips">${cs.map(c => `<span class="chip on" style="--cc:var(--c)">${esc(c)}</span>`).join('')}</div>`;
+const kpisHTML = ms => `<div class="kpis">${ms.map(m => { const a = m.alvo ?? m.v, p = metaPct(m.atual, a); return `<div class="kpi"><span>${esc(m.t || 'Meta')}</span><b>${esc(a || '—')}</b>${m.atual ? `<small>hoje ${esc(m.atual)}</small>` : ''}${p != null ? `<div class="pgt"><i style="width:${p}%"></i></div>` : ''}</div>`; }).join('')}</div>`;
+const linksRO = n => { const L = (n.links || []).filter(l => l.u), A = n.att || []; return L.length || A.length ? `<h6>Arquivos e links</h6><div class="chips">${L.map(l => `<a class="lnk" href="${esc(/^https?:\/\//.test(l.u) ? l.u : 'https://' + l.u)}" target="_blank" rel="noopener">${ic('link', 'width:13px;height:13px')}${esc(l.t || l.u)}</a>`).join('')}${A.map(a => `<a class="lnk" href="/api/blob/${a.id}?b=${store.board}" target="_blank" rel="noopener">${ic('clip', 'width:13px;height:13px')}${esc(a.name)}</a>`).join('')}</div>` : ''; };
+function readHTML(n, list, live, pres) {
+  const K = KIND[n.kind] || KIND.setor, offs = offOf(list), path = ancestors(n, list).filter(a => a.kind !== 'nucleo');
+  const crumb = path.length ? `<div class="crumb">${path.map(a => esc(a.title || KIND[a.kind].n)).join(' <i>›</i> ')}</div>` : '';
+  const ks = kidsOf(n.id, list).filter(k => !offs.has(k.id));
+  const kidsL = h => ks.length ? `<h6>${h}</h6><div class="kids">${ks.map(k => { const st = stOf(k); return `<button class="chip" data-act="${live ? 'goto' : 'pgo'}" data-v="${k.id}">${st ? `<i class="d" style="--sc:${st[2]}"></i>` : ic(k.kind, 'width:13px;height:13px')}${esc(k.title || KIND[k.kind].n)}</button>`; }).join('')}</div>` : '';
+  const pg = progOf(n, list, offs), pgL = pg.total ? `<h6>Execução</h6>${barHTML(pg.pct, `${pg.done} de ${pg.total} concluídas`)}` : '';
+  const lead = t => t && String(t).trim() ? `<p class="lead">${esc(t)}</p>` : '';
+  const info = rows => { const r = rows.filter(x => x[1]); return r.length ? `<div class="info">${r.map(([l, v]) => `<div><h6>${l}</h6><p>${v}</p></div>`).join('')}</div>` : ''; };
+  const q = QUANDO.find(x => x[0] === n.quando), qP = q ? pill(q[1], q[2]) : '';
+  if (n.kind === 'nucleo') {
+    const all = brandNodes(), b = marca(n.marca) || {}, cnt = k => all.filter(x => x.kind === k).length, obj = list.find(x => x.kind === 'objetivo');
+    return `${pres ? `<span class="kl">${FLAG[store.board].replace('<svg', '<svg style="width:18px;height:12px;border-radius:2px"')}Plano omnichannel · ${PAIS[store.board].name}</span>` : ''}<h1>${esc(b.name || 'Marca')}</h1>${lead(n.visao)}${obj && obj.title ? `<h6>Estrela-guia</h6><p class="lead" style="color:var(--text)">${esc(obj.title)}</p>` : ''}
+      <div class="stats">${[['depto', 'departamentos'], ['canal', 'canais'], ['estrategia', 'estratégias'], ['acao', 'ações'], ['campanha', 'campanhas'], ['lancamento', 'lançamentos']].filter(([k]) => cnt(k)).map(([k, l]) => `<div><b>${cnt(k)}</b><span>${l}</span></div>`).join('')}</div>${pgL}`;
+  }
+  const head = `${crumb}${pres ? `<span class="kl">${ic(n.kind, 'width:14px;height:14px')}${K.n}</span>` : ''}<h1 class="${n.title ? '' : 'ph'}">${esc(n.title || K.ph)}</h1>`;
+  const st = stOf(n), stp = st || (ST[n.kind] && live) ? `<div id="stp" style="margin:-2px 0 6px">${stepper(n, live)}</div>` : '';
+  switch (n.kind) {
+    case 'objetivo': { const ms = (n.metas || []).filter(m => m.atual || m.alvo || m.v); return `${head}${lead(n.frase)}${ms.length ? `<h6>Metas</h6>${kpisHTML(ms)}` : ''}${info([['Horizonte', esc(n.prazo || '')]])}${pgL}${kidsL('Frentes')}`; }
+    case 'depto': return `${head}${lead(n.prop)}${info([['Responsável', esc(n.resp || '')]])}${pgL}${kidsL('Canais, setores e estratégias')}`;
+    case 'canal': { const ms = (n.metas || []).filter(m => m.atual || m.alvo); return `${head}${st ? `<div style="margin:-4px 0 12px">${pill(st[1], st[2])}</div>` : ''}${lead(n.papel)}${(n.fase || []).length ? `<h6>Papel na jornada</h6>${jbHTML(n.fase)}` : ''}${info([['Sortimento', esc(n.sortimento || '')], ['Preço e posicionamento', esc(n.preco || '')], ['Mídia', esc(n.midia || '')], ['Responsável', esc(n.resp || '')]])}${ms.length ? `<h6>Metas do canal</h6>${kpisHTML(ms)}` : ''}${pgL}${kidsL('Estratégias e ações')}${linksRO(n)}`; }
+    case 'setor': return `${head}${lead(n.prop)}${info([['Responsável', esc(n.resp || '')]])}${pgL}${kidsL('Estratégias e ações')}`;
+    case 'estrategia': { const como = (n.como || []).filter(x => String(x).trim()); return `${head}${lead(n.oque)}${para(n.porque, 'Por quê')}${como.length ? `<h6>Como</h6><ol>${como.map(x => `<li>${esc(x)}</li>`).join('')}</ol>` : ''}${(n.fase || []).length ? `<h6>Jornada do cliente</h6>${jbHTML(n.fase)}` : ''}${(n.canais || []).length ? `<h6>Canais</h6>${chipsRO(n.canais)}` : ''}${info([['Quando', qP], ['Indicador', esc(n.kpi || '')], ['Responsável', esc(n.resp || '')]])}${pgL}${kidsL('Ações e campanhas')}${linksRO(n)}`; }
+    case 'publico': return `${head}${para(n.dor, 'Dor')}${para(n.gatilho, 'Gatilho de compra')}${(n.canais || []).length ? `<h6>Onde está</h6>${chipsRO(n.canais)}` : ''}${kidsL('Estratégias')}`;
+    case 'decisao': { const o = optsHTML(n, list, live); return `${head}${lead(n.criterio)}${info([['Decidir até', fmtD(n.prazo)]])}${o ? `<h6>Opções</h6><div id="opts">${o}</div>` : ''}`; }
+    case 'acao': case 'etapa': { const ck = n.chk || []; return `${head}${stp}${info([['Quem', esc(n.resp || '')], ['Prazo', fmtD(n.prazo)], ['Quando', qP]])}${ck.length ? `<h6>Checklist · ${ck.filter(x => x.ok).length}/${ck.length}</h6><div id="chk">${chkHTML(n, false, live)}</div>` : ''}${para(n.nota, 'Notas')}${linksRO(n)}`; }
+    case 'campanha': return `${head}${stp}${info([['Período', [fmtD(n.inicio), fmtD(n.fim)].filter(Boolean).join(' – ')], ['Quando', qP], ['Verba', n.verbaOn ? esc(n.verba || '') : ''], ['Meta', esc(n.kpi || '')], ['Responsável', esc(n.resp || '')]])}${(n.canais || []).length ? `<h6>Canais</h6>${chipsRO(n.canais)}` : ''}${para(n.oferta, 'Oferta e mensagem')}${para(n.resultado, 'Resultado')}${pgL}${kidsL('Ações')}${linksRO(n)}`;
+    case 'lancamento': { const l = lcHTML(n, live); return `${head}${stp}${info([['Lançamento', fmtD(n.data)], ['Quando', qP], ['Responsável', esc(n.resp || '')]])}${l ? `<h6>Checklist por canal</h6><div id="lc">${l}</div>` : ''}${pgL}${kidsL('Ações')}${linksRO(n)}`; }
+    case 'meta': { const p = metaPct(n.atual, n.alvo); return `${head}${n.atual || n.alvo ? `<div class="mbig"><b>${esc(n.atual || '—')}</b><span>→ ${esc(n.alvo || '—')}</span></div>` : ''}${p != null ? barHTML(p, p + '% da meta') : ''}${info([['Até', esc(n.prazo || '')], ['Responsável', esc(n.resp || '')]])}`; }
+  }
+  return head;
+}
+
+/* pop-up: abre lendo; o lápis troca para edição no mesmo lugar */
+const DUP = ['setor', 'canal', 'estrategia', 'acao', 'etapa', 'campanha', 'lancamento', 'meta', 'publico'];
+function openEd(id, mode) {
   closeAdd(); const n = N(id); if (!n) return; const list = brandNodes(), K = KIND[n.kind] || KIND.setor;
-  ED.id = id; const c = colorOf(n, list), nuc = n.kind === 'nucleo';
-  const s = modal(`<div class="mh"><span class="n-ic" style="--c:${c}">${nuc ? esc(((marca(n.marca) || {}).name || '?')[0]) : ic(n.kind)}</span><b>${K.n}</b><span class="sp"></span><button class="pill sm icon ghost" data-act="close" aria-label="Fechar">${ic('x')}</button></div>
-    ${nuc ? `<div class="ttl" style="cursor:default">${esc((marca(n.marca) || {}).name || '')} · ${PAIS[store.board].name}</div>` : `<input class="ttl" data-f="title" placeholder="${esc(K.ph)}" value="${esc(n.title || '')}" autocomplete="off">`}
-    <div id="edb">${edBody(n, list)}</div>
-    <div class="mf">${nuc ? '' : `<button class="pill sm danger" data-act="del">${ic('trash')}Excluir</button>`}${['setor', 'estrategia', 'etapa'].includes(n.kind) ? `<button class="pill sm" data-act="dup">${ic('copy')}Duplicar</button>` : ''}<span class="sp"></span><button class="pill white" data-act="close">Pronto</button></div>`, n.kind === 'estrategia' ? '' : 'sm');
-  if (!n.title && !nuc) setTimeout(() => $('.ttl', s)?.focus(), 40);
+  ED.id = id; ED.mode = mode || (filled(n) ? 'read' : 'edit');
+  const c = colorOf(n, list), nuc = n.kind === 'nucleo', wide = ['estrategia', 'campanha', 'lancamento', 'canal'].includes(n.kind);
+  const s = modal(`<div class="mh"><span class="n-ic" style="--c:${c}">${nuc ? esc(((marca(n.marca) || {}).name || '?')[0]) : ic(n.kind)}</span><b>${K.n}</b><span class="sp"></span><button class="pill sm icon ghost" data-act="close" aria-label="Fechar">${ic('x')}</button></div><div id="edb"></div><div class="mf" id="mf"></div>`, wide ? '' : 'sm');
+  $('.mod', s).style.setProperty('--c', c);
+  drawEd();
+  if (ED.mode === 'edit' && !n.title && !nuc) setTimeout(() => $('#modal .ttl')?.focus(), 40);
+}
+function drawEd(keep) {
+  const n = edNode(), m = $('#modal .mod'); if (!n || !m) return; const list = brandNodes(), K = KIND[n.kind] || KIND.setor, nuc = n.kind === 'nucleo', y = m.scrollTop, rd = ED.mode === 'read';
+  $('#edb').innerHTML = rd ? `<div class="rd">${readHTML(n, list, true)}</div>` : `${nuc ? `<div class="ttl" style="cursor:default">${esc((marca(n.marca) || {}).name || '')} · ${PAIS[store.board].name}</div>` : `<input class="ttl" data-f="title" placeholder="${esc(K.ph)}" value="${esc(n.title || '')}" autocomplete="off">`}${edForm(n, list)}`;
+  const isA = n.kind === 'acao' || n.kind === 'etapa', feita = n.status === 'done';
+  $('#mf').innerHTML = rd ? `<button class="pill sm" data-act="mode">${ic('pencil')}Editar</button><span class="sp"></span>${isA ? `<button class="pill ${feita ? '' : 'white'}" data-act="acao-done">${feita ? 'Reabrir' : `${ic('check')}Marcar como feita`}</button>` : ''}<button class="pill ${isA && !feita ? '' : 'white'}" data-act="close">Fechar</button>`
+    : `${nuc ? '' : `<button class="pill sm danger" data-act="del">${ic('trash')}Excluir</button>`}${DUP.includes(n.kind) ? `<button class="pill sm" data-act="dup">${ic('copy')}Duplicar</button>` : ''}<span class="sp"></span><button class="pill white" data-act="ed-ok">Pronto</button>`;
+  m.scrollTop = keep ? y : 0;
 }
 const edNode = () => N(ED.id);
 function edSet(k, v) { const n = edNode(); if (!n) return; n[k] = v; putNode(n); updNode(n.id); }
@@ -810,7 +982,7 @@ function drawPane() {
   el.scrollTop = y;
 }
 function vJornada(list, b) {
-  const E = list.filter(n => n.kind === 'estrategia'), chs = CANAIS[store.board].filter(c => E.some(n => (n.canais || []).includes(c)));
+  const offs = offOf(list), E = list.filter(n => n.kind === 'estrategia' && !offs.has(n.id)), chs = CANAIS[store.board].filter(c => E.some(n => (n.canais || []).includes(c)));
   const rows = chs.map(c => [c, E.filter(n => (n.canais || []).includes(c))]);
   const semCanal = E.filter(n => !(n.canais || []).length && (n.fase || []).length); if (semCanal.length) rows.push(['Sem canal', semCanal]);
   const semFase = E.filter(n => !(n.fase || []).length).length;
@@ -819,21 +991,22 @@ function vJornada(list, b) {
   if (!rows.length) return head + `<div class="tempty">Nenhuma estratégia com jornada ainda.<br>Marque a jornada e os canais no pop-up de cada estratégia.</div>`;
   return head + `<div class="jgrid"><div></div>${JORN.map(j => `<div class="jh" style="--jc:${j[4]}"><b>${j[2]}</b><span>${j[3]}</span><em>${E.filter(n => (n.fase || []).includes(j[0])).length}</em></div>`).join('')}
     ${rows.map(([c, ns]) => { const cnt = JORN.map(j => ns.filter(n => (n.fase || []).includes(j[0])).length), mx = Math.max(...cnt);
-      return `<div class="jr0"><b>${esc(c)}</b><span>${mx ? JORN.filter((j, i) => cnt[i] === mx).map(j => `<i style="--jc:${j[4]}"></i>${j[3]}`).join(' · ') : 'sem jornada'}</span></div>${JORN.map(j => { const cs = ns.filter(n => (n.fase || []).includes(j[0])); return cs.length ? `<div class="jcell">${cs.map(sc).join('')}</div>` : '<div class="jcell hole">sem ação</div>'; }).join('')}`; }).join('')}
+      const cn = list.find(x => x.kind === 'canal' && norm(x.title) === norm(c) && (x.fase || []).length), pap = cn ? JORN.filter(j => cn.fase.includes(j[0])) : mx ? JORN.filter((j, i) => cnt[i] === mx) : [];
+      return `<div class="jr0"><b>${esc(c)}</b><span>${pap.length ? pap.map(j => `<i style="--jc:${j[4]}"></i>${j[3]}`).join(' · ') : 'sem jornada'}</span></div>${JORN.map(j => { const cs = ns.filter(n => (n.fase || []).includes(j[0])); return cs.length ? `<div class="jcell">${cs.map(sc).join('')}</div>` : '<div class="jcell hole">sem ação</div>'; }).join('')}`; }).join('')}
   </div>${semFase ? `<p class="pnote">${semFase} ${semFase > 1 ? 'estratégias ainda não têm' : 'estratégia ainda não tem'} jornada marcada.</p>` : ''}`;
 }
 const TCOLS = [...QUANDO, ['', 'Sem prazo', '#85858e']];
 function vTempo(list, b) {
-  const items = list.filter(n => n.kind === 'estrategia' || n.kind === 'etapa');
+  const offs = offOf(list), items = list.filter(n => ['estrategia', 'acao', 'campanha', 'lancamento'].includes(n.kind) && !offs.has(n.id));
   const cols = TCOLS.filter(c => c[0] || items.some(n => !n.quando));
-  const card = n => { const fs = n.fase || []; return `<button class="tc" data-tc="${n.id}" style="--c:${colorOf(n, list)}"><span class="n-ic">${ic(n.kind)}</span><span style="min-width:0"><b class="${n.title ? '' : 'ph'}">${esc(n.title || KIND[n.kind].ph)}</b><small>${esc(crumbOf(n, list))}</small>${n.kind === 'estrategia' && fs.length ? `<span class="jr">${JORN.map(j => `<i class="${fs.includes(j[0]) ? 'on' : ''}" style="--jc:${j[4]}">${j[1]}</i>`).join('')}</span>` : ''}</span></button>`; };
+  const card = n => { const fs = n.fase || [], st = ST[n.kind] ? stOf(n) : null, sub = [n.resp, fmtD(n.prazo || n.data || n.inicio)].filter(Boolean).join(' · '); return `<button class="tc" data-tc="${n.id}" style="--c:${colorOf(n, list)}"><span class="n-ic">${ic(n.kind)}</span><span style="min-width:0"><b class="${n.title ? '' : 'ph'}">${esc(n.title || KIND[n.kind].ph)}</b><small>${esc(crumbOf(n, list))}</small>${sub ? `<small>${esc(sub)}</small>` : ''}${n.kind === 'estrategia' && fs.length ? `<span class="jr">${JORN.map(j => `<i class="${fs.includes(j[0]) ? 'on' : ''}" style="--jc:${j[4]}">${j[1]}</i>`).join('')}</span>` : ''}${st ? `<span class="qd" style="--qc:${st[2]}">${st[1]}</span>` : ''}</span></button>`; };
   const col = ([k, l, c]) => {
     const ns = items.filter(n => (n.quando || '') === k), groups = new Map();
     ns.forEach(n => { const d = deptoOf(n, list), key = d ? d.id : ''; if (!groups.has(key)) groups.set(key, { d, ns: [] }); groups.get(key).ns.push(n); });
-    return `<div class="tcol" data-q="${k}" style="--qc:${c}"><div class="th"><b>${l}</b><span>${ns.length}</span></div>${ns.length ? [...groups.values()].map(g => `<div class="tg" style="--c:${g.d ? colorOf(g.d, list) : '#85858e'}"><i></i>${esc(g.d ? g.d.title || 'Departamento' : 'Sem departamento')}</div>${g.ns.map(card).join('')}`).join('') : '<div class="tempty">Arraste estratégias ou etapas para cá</div>'}</div>`;
+    return `<div class="tcol" data-q="${k}" style="--qc:${c}"><div class="th"><b>${l}</b><span>${ns.length}</span></div>${ns.length ? [...groups.values()].map(g => `<div class="tg" style="--c:${g.d ? colorOf(g.d, list) : '#85858e'}"><i></i>${esc(g.d ? g.d.title || 'Departamento' : 'Sem departamento')}</div>${g.ns.map(card).join('')}`).join('') : '<div class="tempty">Arraste cards para cá</div>'}</div>`;
   };
-  return `<div class="ph-h"><div><h2>Linha do tempo · ${esc(b.name)}</h2><p>Estratégias e etapas por horizonte. Arraste entre as colunas.</p></div></div>
-    ${items.length ? `<div class="tl" style="--n:${cols.length}">${cols.map(col).join('')}</div>` : '<div class="tempty">Nenhuma estratégia ou etapa ainda. Crie no mapa pelo “+” de cada setor.</div>'}`;
+  return `<div class="ph-h"><div><h2>Linha do tempo · ${esc(b.name)}</h2><p>Estratégias, ações, campanhas e lançamentos por horizonte. Arraste entre as colunas.</p></div></div>
+    ${items.length ? `<div class="tl" style="--n:${cols.length}">${cols.map(col).join('')}</div>` : '<div class="tempty">Nada com prazo ainda. Crie estratégias, ações e campanhas no mapa pelo “+”.</div>'}`;
 }
 /* arrastar cards entre Agora / Próximo / Depois */
 let TDRAG = null;
@@ -864,7 +1037,7 @@ document.addEventListener('pointercancel', endTdrag);
 /* =================== apresentação =================== */
 let PRES = null;
 function presSeq() {
-  const list = visNodes(), root = list.find(n => n.kind === 'nucleo') || list[0], out = [];
+  const all = visNodes(), offs = offOf(brandNodes()), list = all.filter(n => !offs.has(n.id)), root = list.find(n => n.kind === 'nucleo') || list[0], out = [];
   const walk = n => { out.push(n.id); kidsOf(n.id, list).forEach(walk); };
   if (root) walk(root); list.filter(n => !out.includes(n.id)).forEach(n => out.push(n.id));
   return out;
@@ -902,35 +1075,9 @@ function presGo(i) {
   if (focus.length > 1) fit(false, focus, area);
   else { const z = clamp(V.z < .9 ? 1 : V.z, .9, 1.2); camTo({ z, x: area.w / 2 - (n.x + W(n) / 2) * z, y: area.h / 2 - n.y * z }); }
   sl.style.setProperty('--c', colorOf(n, list));
-  sl.innerHTML = `<div class="in">${slideHTML(n, list)}</div>`; sl.scrollTop = 0;
+  sl.innerHTML = `<div class="in rd">${readHTML(n, list, false, true)}</div>`; sl.scrollTop = 0;
   $('#pct').textContent = (PRES.i + 1) + ' / ' + PRES.seq.length;
   const pp = $('#pprog'); pp.style.width = ((PRES.i + 1) / PRES.seq.length * 100) + '%'; pp.style.setProperty('--c', colorOf(n, list));
-}
-const para = (t, h) => t && String(t).trim() ? `${h ? `<h6>${h}</h6>` : ''}<p>${esc(t)}</p>` : '';
-function slideHTML(n, list) {
-  const K = KIND[n.kind] || KIND.setor, path = ancestors(n, list).filter(a => a.kind !== 'nucleo');
-  const crumb = path.length ? `<div class="crumb">${path.map(a => esc(a.title || KIND[a.kind].n)).join(' <i>›</i> ')}</div>` : '';
-  const ks = kidsOf(n.id, list);
-  const kidsL = (h) => ks.length ? `<h6>${h}</h6><div class="kids">${ks.map(k => `<button class="chip" data-act="pgo" data-v="${k.id}">${ic(k.kind, 'width:13px;height:13px')}${esc(k.title || KIND[k.kind].n)}</button>`).join('')}</div>` : '';
-  if (n.kind === 'nucleo') {
-    const all = brandNodes(), b = marca(n.marca) || {}, cnt = k => all.filter(x => x.kind === k).length, obj = list.find(x => x.kind === 'objetivo');
-    return `<span class="kl">${FLAG[store.board].replace('<svg', '<svg style="width:18px;height:12px;border-radius:2px"')}Plano omnichannel · ${PAIS[store.board].name}</span><h1>${esc(b.name || 'Marca')}</h1>
-      ${n.visao ? `<p class="lead">${esc(n.visao)}</p>` : ''}${obj && obj.title ? `<h6>Estrela-guia</h6><p class="lead" style="color:var(--text)">${esc(obj.title)}</p>` : ''}
-      <div class="stats"><div><b>${cnt('depto')}</b><span>departamentos</span></div><div><b>${cnt('setor')}</b><span>setores</span></div><div><b>${cnt('estrategia')}</b><span>estratégias</span></div><div><b>${cnt('etapa')}</b><span>etapas</span></div></div>`;
-  }
-  const head = `${crumb}<span class="kl">${ic(n.kind, 'width:14px;height:14px')}${K.n}</span><h1 class="${n.title ? '' : 'ph'}">${esc(n.title || K.ph)}</h1>`;
-  const jb = fs => `<h6>Jornada do cliente</h6><div class="jbar">${JORN.map(j => `<div class="${(fs || []).includes(j[0]) ? 'on' : ''}" style="--jc:${j[4]}"><b>${j[2]}</b>${j[3]}</div>`).join('')}</div>`;
-  if (n.kind === 'objetivo') { const ms = (n.metas || []).filter(m => m.t || m.v); return `${head}${n.frase ? `<p class="lead">${esc(n.frase)}</p>` : ''}${ms.length ? `<h6>Metas</h6><div class="kpis">${ms.map(m => `<div class="kpi"><b>${esc(m.v || '—')}</b><span>${esc(m.t)}</span></div>`).join('')}</div>` : ''}${para(n.prazo, 'Horizonte')}${kidsL('Frentes')}`; }
-  if (n.kind === 'depto') return `${head}${n.prop ? `<p class="lead">${esc(n.prop)}</p>` : ''}${para(n.resp, 'Responsável')}${kidsL('Setores e estratégias')}`;
-  if (n.kind === 'setor') return `${head}${n.prop ? `<p class="lead">${esc(n.prop)}</p>` : ''}${(n.fase || []).length ? jb(n.fase) : ''}${para(n.resp, 'Responsável')}${kidsL('Estratégias')}`;
-  if (n.kind === 'estrategia') {
-    const q = QUANDO.find(x => x[0] === n.quando), como = (n.como || []).filter(x => x.trim());
-    return `${head}${n.oque ? `<p class="lead">${esc(n.oque)}</p>` : ''}${para(n.porque, 'Por quê')}${como.length ? `<h6>Como</h6><ol>${como.map(x => `<li>${esc(x)}</li>`).join('')}</ol>` : ''}${jb(n.fase)}
-      ${(n.canais || []).length ? `<h6>Canais</h6><div class="chips">${n.canais.map(c => `<span class="chip on" style="--cc:var(--c)">${esc(c)}</span>`).join('')}</div>` : ''}
-      ${q || n.kpi ? `<div class="g2" style="margin-top:4px">${q ? `<div><h6>Quando</h6><span class="qd" style="--qc:${q[2]};height:24px;font-size:12px;padding:0 10px">${q[1]}</span></div>` : '<div></div>'}${n.kpi ? `<div><h6>Indicador</h6><p>${esc(n.kpi)}</p></div>` : ''}</div>` : ''}${kidsL('Etapas')}`;
-  }
-  if (n.kind === 'etapa') { const q = QUANDO.find(x => x[0] === n.quando), en = (n.entregas || []).filter(x => x.trim()); return `${head}${n.desc ? `<p class="lead">${esc(n.desc)}</p>` : ''}${en.length ? `<h6>Entregas</h6><ol>${en.map(x => `<li>${esc(x)}</li>`).join('')}</ol>` : ''}${q ? `<h6>Quando</h6><span class="qd" style="--qc:${q[2]};height:24px;font-size:12px;padding:0 10px">${q[1]}</span>` : ''}${kidsL('Próximas etapas')}`; }
-  return head;
 }
 document.addEventListener('keydown', e => {
   if (PRES) {
@@ -997,13 +1144,24 @@ document.addEventListener('click', async e => {
   if (a === 'logo-del') { cfgSet('logo', ''); drawDrawer(); render(); return; }
   /* editor */
   if (a === 'close') return closeModal();
+  if (a === 'mode') { const n0 = edNode(); if (!n0) return; ED.mode = ED.mode === 'read' ? 'edit' : 'read'; drawEd(); return; }
+  if (a === 'ed-ok') { const n0 = edNode(); if (n0 && filled(n0)) { ED.mode = 'read'; drawEd(); } else closeModal(); return; }
   if (a === 'goto') { closeModal(); return openEd(v); }
   const n = edNode(); if (!n) return;
-  if (a === 'tog') { const L = new Set(n[t.dataset.k] || []); L.has(v) ? L.delete(v) : L.add(v); t.classList.toggle('on', L.has(v)); return edSet(t.dataset.k, [...L]); }
+  if (a === 'tog') { const L = new Set(n[t.dataset.k] || []); L.has(v) ? L.delete(v) : L.add(v); t.classList.toggle('on', L.has(v)); edSet(t.dataset.k, [...L]); if (n.kind === 'lancamento' && t.dataset.k === 'canais') edPart('lc', lcHTML(edNode(), true)); return; }
+  if (a === 'st') { edSet('status', v); if (ED.mode === 'read') drawEd(true); else edPart('stp', stepper(edNode(), true)); return; }
+  if (a === 'acao-done') { edSet('status', n.status === 'done' ? 'todo' : 'done'); drawEd(true); return; }
+  if (a === 'chk-tog') { const L = clone(n.chk || []), i = +t.dataset.i; if (!L[i]) return; L[i].ok = !L[i].ok; edSet('chk', L); if (ED.mode === 'read') drawEd(true); else edPart('chk', chkHTML(edNode(), true, true)); return; }
+  if (a === 'chk-add') { edSet('chk', [...(n.chk || []), { t: '', ok: false }]); edPart('chk', chkHTML(edNode(), true, true)); $$('#chk [data-chk]').pop()?.focus(); return; }
+  if (a === 'chk-del') { edSet('chk', (n.chk || []).filter((_, i) => i !== +t.dataset.i)); edPart('chk', chkHTML(edNode(), true, true)); return; }
+  if (a === 'lc') { const lc = clone(n.lc || {}), c = t.dataset.c, L = new Set(lc[c] || []); L.has(v) ? L.delete(v) : L.add(v); lc[c] = [...L]; edSet('lc', lc); edPart('lc', lcHTML(edNode(), true)); return; }
+  if (a === 'verba') { edSet('verbaOn', !n.verbaOn); edPart('verba', verbaHTML(edNode())); if (edNode().verbaOn) $('#verba input')?.focus(); return; }
+  if (a === 'cpick') { $$('[data-act="cpick"]', $('#modal')).forEach(b => b.classList.toggle('on', b.dataset.v === v)); const ti = $('#modal .ttl'); if (ti) ti.value = v; edSet('title', v); return; }
+  if (a === 'pick') { edSet('escolha', n.escolha === v ? '' : v); edPart('opts', optsHTML(edNode(), brandNodes(), true)); refresh(); return; }
   if (a === 'one') { const nv = n[t.dataset.k] === v ? '' : v; $$(`[data-act="one"][data-k="${t.dataset.k}"]`, $('#modal')).forEach(b => b.classList.toggle('on', b.dataset.v === nv)); if (t.dataset.k === 'color') { $('#modal .mh .n-ic').style.setProperty('--c', nv || colorOf({ ...n, color: '' }, brandNodes())); } edSet(t.dataset.k, nv); if (t.dataset.k === 'color') refresh(); return; }
-  if (a === 'li-add') { const k = t.dataset.k; n[k] = [...(n[k] || []), '']; putNode(n); const max = k === 'como' ? 3 : 5, ph = k === 'como' ? 'Um movimento principal' : 'Uma entrega'; edPart('bl-' + k, blHTML(k, ph, n, max)); $$(`#bl-${k} input`).pop()?.focus(); return; }
-  if (a === 'li-del') { const k = t.dataset.k; n[k] = (n[k] || []).filter((_, i) => i !== +t.dataset.i); putNode(n); const max = k === 'como' ? 3 : 5, ph = k === 'como' ? 'Um movimento principal' : 'Uma entrega'; edPart('bl-' + k, blHTML(k, ph, n, max)); return; }
-  if (a === 'meta-add') { n.metas = [...(n.metas || []), { t: '', v: '' }]; putNode(n); edPart('metas', metasHTML(n)); $$('#metas [data-meta="t"]').pop()?.focus(); updNode(n.id); return; }
+  if (a === 'li-add') { const k = t.dataset.k; n[k] = [...(n[k] || []), '']; putNode(n); edPart('bl-' + k, blHTML(k, LI[k][0], n, LI[k][1])); $$(`#bl-${k} input`).pop()?.focus(); return; }
+  if (a === 'li-del') { const k = t.dataset.k; n[k] = (n[k] || []).filter((_, i) => i !== +t.dataset.i); putNode(n); edPart('bl-' + k, blHTML(k, LI[k][0], n, LI[k][1])); return; }
+  if (a === 'meta-add') { n.metas = [...(n.metas || []), { t: '', atual: '', alvo: '' }]; putNode(n); edPart('metas', metasHTML(n)); $$('#metas [data-meta="t"]').pop()?.focus(); updNode(n.id); return; }
   if (a === 'meta-del') { n.metas = (n.metas || []).filter((_, i) => i !== +t.dataset.i); putNode(n); edPart('metas', metasHTML(n)); updNode(n.id); return; }
   if (a === 'link-add') { n.links = [...(n.links || []), { u: '', t: '' }]; putNode(n); edPart('att', attHTML(n)); $$('#att [data-link="u"]').pop()?.focus(); return; }
   if (a === 'link-del') { n.links = (n.links || []).filter((_, i) => i !== +t.dataset.i); putNode(n); edPart('att', attHTML(n)); return; }
@@ -1026,7 +1184,8 @@ document.addEventListener('input', e => {
   if (t.dataset.cfg) { cfgSet(t.dataset.cfg, t.value); clearTimeout(t._r); t._r = setTimeout(render, 300); return; }
   if (t.dataset.cfgn) { cfgSet(t.dataset.cfgn, +t.value); clearTimeout(t._r); t._r = setTimeout(render, 120); return; }
   const n = edNode(); if (!n || !t.closest('#modal')) return;
-  if (t.dataset.f) { n[t.dataset.f] = t.value; putNode(n); if (t.dataset.f === 'title') { clearTimeout(t._r); t._r = setTimeout(() => updNode(n.id), 120); } return; }
+  if (t.dataset.f) { n[t.dataset.f] = t.value; putNode(n); clearTimeout(t._r); t._r = setTimeout(() => updNode(n.id), 150); if (t.dataset.f === 'title' && n.kind === 'canal') $$('[data-act="cpick"]', $('#modal')).forEach(b => b.classList.toggle('on', b.dataset.v === t.value)); return; }
+  if (t.dataset.chk) { const L = clone(n.chk || []); L[+t.dataset.chk] = { ...L[+t.dataset.chk], t: t.value }; n.chk = L; putNode(n); clearTimeout(t._r); t._r = setTimeout(() => updNode(n.id), 200); return; }
   if (t.dataset.li) { const L = [...(n[t.dataset.li] || [])]; L[+t.dataset.i] = t.value; n[t.dataset.li] = L; putNode(n); return; }
   if (t.dataset.meta) { const L = clone(n.metas || []); L[+t.dataset.i] = { ...L[+t.dataset.i], [t.dataset.meta]: t.value }; n.metas = L; putNode(n); clearTimeout(t._r); t._r = setTimeout(() => updNode(n.id), 200); return; }
   if (t.dataset.link) { const L = clone(n.links || []); L[+t.dataset.i] = { ...L[+t.dataset.i], [t.dataset.link]: t.value }; n.links = L; putNode(n); return; }
@@ -1063,7 +1222,7 @@ window.isAdmin = isAdmin;
   store.role = s.data.role; store.name = s.data.name || ''; store.board = s.data.board === 'us' ? 'us' : 'br'; rememberBoard(store.board);
   const d = await api('/api/docs');
   store.docs = d.data.docs || {}; store.since = d.data.now || 0; store.ready = true;
-  seedBrands(); render();
+  seedBrands(); migrate(); render();
   setInterval(poll, 10000);
 })();
 </script>
