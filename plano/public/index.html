@@ -111,6 +111,16 @@ svg.wires{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;p
 .n.folded .n-b{box-shadow:5px 5px 0 -1px #141417,5px 5px 0 0 var(--line),0 24px 48px -28px rgba(0,0,0,.85)}
 @media (hover:none){.n-fold{opacity:.85;transform:none}}
 .stage.pres .n-fold:not(.on){display:none}
+.n.s-l .n-add{right:auto;left:-13px}.n.s-l .n-fold{right:auto;left:-11px}.n.s-l .n-fold.on{left:-14px}
+.n.s-t .n-add{top:-13px;right:auto;left:50%;margin:0 0 0 -13px}.n.s-t .n-fold{top:-11px;right:auto;left:50%;margin:0 0 0 17px}.n.s-t .n-fold.on{top:-12px;margin:0 0 0 17px}
+.n.s-b .n-add{top:auto;bottom:-13px;right:auto;left:50%;margin:0 0 0 -13px}.n.s-b .n-fold{top:auto;bottom:-11px;right:auto;left:50%;margin:0 0 0 17px}.n.s-b .n-fold.on{bottom:-12px;margin:0 0 0 17px}
+.n-add.a-l{right:auto;left:-13px}.n-add.a-t{top:-13px;right:auto;left:50%;margin:0 0 0 -13px}.n-add.a-b{top:auto;bottom:-13px;right:auto;left:50%;margin:0 0 0 -13px}
+.k-nucleo.logo .n-b{padding:0;background:none;border-color:transparent;box-shadow:none;border-radius:0}
+.k-nucleo.logo:hover .n-b{border-color:transparent;transform:none}
+.n-logo{display:block;width:100%;height:auto;pointer-events:none;-webkit-user-drag:none;filter:drop-shadow(0 12px 30px rgba(0,0,0,.55));transition:filter .4s var(--ease)}
+.k-nucleo.logo:hover .n-logo{filter:drop-shadow(0 0 22px color-mix(in srgb,var(--c) 35%,transparent))}
+.k-nucleo.logo.cur .n-b{box-shadow:none}.k-nucleo.logo.cur .n-logo{filter:drop-shadow(0 0 30px color-mix(in srgb,var(--c) 45%,transparent))}
+.rd-logo{display:block;max-height:96px;max-width:min(280px,100%);margin:2px 0 14px}
 /* ---------- abas Jornada e Linha do tempo ---------- */
 .pane{flex:1;min-height:0;overflow:auto;border-radius:var(--radius);border:1px solid var(--line);background-color:#0e0e11;background-image:radial-gradient(rgba(255,255,255,.075) 1px,transparent 1.25px);background-size:22px 22px;padding:20px 20px 70px}
 .pane.in-r{animation:inR .45s var(--ease) both}.pane.in-l{animation:inL .45s var(--ease) both}
@@ -427,7 +437,7 @@ ST.etapa = ST.acao;
 const DONE_ST = { acao: 'done', etapa: 'done', campanha: 'encerrada', lancamento: 'lancado' };
 const stOf = n => { const L = ST[n.kind]; if (!L) return null; return L.find(x => x[0] === n.status) || (DONE_ST[n.kind] ? L[0] : null); };
 const LANC_IT = ['Cadastro', 'Fotos', 'Preço', 'Estoque', 'Ads', 'Seeding'];
-const FIELDS = { programa: ['status', 'prop', 'quem', 'como', 'canais', 'cadencia', 'painel', 'metas', 'resp'], nucleo: ['visao'], objetivo: ['frase', 'metas', 'prazo'], depto: ['prop', 'resp'], canal: ['status', 'fase', 'papel', 'sortimento', 'preco', 'midia', 'metas', 'resp'], setor: ['prop', 'resp'], estrategia: ['oque', 'porque', 'como', 'fase', 'canais', 'quando', 'kpi', 'resp'], publico: ['dor', 'gatilho', 'canais'], decisao: ['criterio', 'escolha', 'prazo'], acao: ['resp', 'prazo', 'quando', 'status', 'chk', 'nota'], campanha: ['status', 'inicio', 'fim', 'canais', 'oferta', 'verba', 'kpi', 'resultado', 'quando'], lancamento: ['data', 'canais', 'status', 'quando'], meta: ['atual', 'alvo', 'prazo', 'resp'] };
+const FIELDS = { nucleo: ['visao', 'logo'], programa: ['status', 'prop', 'quem', 'como', 'canais', 'cadencia', 'painel', 'metas', 'resp'], objetivo: ['frase', 'metas', 'prazo'], depto: ['prop', 'resp'], canal: ['status', 'fase', 'papel', 'sortimento', 'preco', 'midia', 'metas', 'resp'], setor: ['prop', 'resp'], estrategia: ['oque', 'porque', 'como', 'fase', 'canais', 'quando', 'kpi', 'resp'], publico: ['dor', 'gatilho', 'canais'], decisao: ['criterio', 'escolha', 'prazo'], acao: ['resp', 'prazo', 'quando', 'status', 'chk', 'nota'], campanha: ['status', 'inicio', 'fim', 'canais', 'oferta', 'verba', 'kpi', 'resultado', 'quando'], lancamento: ['data', 'canais', 'status', 'quando'], meta: ['atual', 'alvo', 'prazo', 'resp'] };
 FIELDS.etapa = FIELDS.acao;
 const hasVal = (k, v) => k === 'metas' ? (v || []).some(m => String(m.atual || m.alvo || m.v || '').trim()) : Array.isArray(v) ? v.some(x => typeof x === 'object' ? String(x.t || '').trim() : String(x).trim()) : !!String(v ?? '').trim();
 const filled = n => (FIELDS[n.kind] || []).some(k => hasVal(k, n[k])) || (n.links || []).some(l => l.u) || (n.att || []).length > 0;
@@ -497,7 +507,7 @@ async function setBoard(b) {
     closeModal(true); closeDrawer();
     store.board = b; store.role = s.data.role; store.name = s.data.name || '';
     store.docs = d.data.docs || {}; store.since = d.data.now || 0; store.queue = {};
-    rememberBoard(b); seedBrands(); migrate(); V = null; render();
+    rememberBoard(b); seedBrands(); migrate(); migrate3(); V = null; render();
   } finally { store.switching = false; }
 }
 
@@ -537,6 +547,21 @@ function migrate() {
   });
   commit('app/mig2', { t: Date.now() });
 }
+/* planos do modelo antigo: departamentos passam a sair da marca (dois lados) e a estrela-guia vai para cima */
+function migrate3() {
+  if (!isAdmin() || D('app/mig3')) return;
+  const all = docsOf('node/');
+  all.filter(n => n.kind === 'nucleo').forEach(r => {
+    let i = 0, moved = false;
+    all.filter(o => o.parent === r.id && o.kind === 'objetivo').forEach(o => {
+      const ds = all.filter(d => d.parent === o.id && d.kind === 'depto'); if (!ds.length) return;
+      ds.sort((a, b) => a.y - b.y).forEach(d => { const { id, ...b } = d; commit('node/' + id, { ...b, parent: r.id, side: i++ % 2 ? 'l' : 'r' }); });
+      const { id, ...b } = o; commit('node/' + id, { ...b, side: 't' }); moved = true;
+    });
+    if (moved) { const { id, ...b } = r; commit('node/' + id, { ...b, reorg: true }); }
+  });
+  commit('app/mig3', { t: Date.now() });
+}
 const labelOf = n => n.kind === 'nucleo' ? ((marca(n.marca) || {}).name || 'Marca') : (n.title || '');
 
 const UI = (() => { let s = {}; try { s = JSON.parse(localStorage.getItem('pln:ui') || '{}'); } catch (e) {} return { marca: {}, view: 'mapa', ...s }; })();
@@ -563,7 +588,7 @@ function seedPlan(withModel) {
   const mk = (kind, parent, extra = {}) => { const id = uid(); store.docs['node/' + id] = { marca: m, kind, parent, x: 0, y: 0, title: '', ...extra, u: Date.now() }; store.queue['node/' + id] = store.docs['node/' + id]; return id; };
   const root = mk('nucleo', null);
   if (withModel) {
-    const obj = mk('objetivo', root, { metas: [{ t: 'Faturamento', atual: '', alvo: '' }, { t: 'Presença nos canais', atual: '', alvo: '' }, { t: 'Recompra', atual: '', alvo: '' }] });
+    const obj = mk('objetivo', root, { side: 't', metas: [{ t: 'Faturamento', atual: '', alvo: '' }, { t: 'Presença nos canais', atual: '', alvo: '' }, { t: 'Recompra', atual: '', alvo: '' }] });
     const lojas = store.board === 'us' ? ['Amazon', 'Walmart', 'Chewy', 'TikTok Shop', 'Shopify'] : ['Mercado Livre', 'Amazon', 'Shopee', 'TikTok Shop', 'Shopify'];
     const deps = [
       ['Marketing', '#f472b6', 'Gerar demanda e construir a marca em todos os pontos de contato.', ['Conteúdo e social', 'Influência e seeding', 'Mídia paga', 'CRM e retenção']],
@@ -571,7 +596,7 @@ function seedPlan(withModel) {
       ['Produto e marca', '#a78bfa', 'Portfólio, embalagem e posicionamento coerentes em todos os canais.', ['Portfólio', 'Embalagem e página de produto', 'Posicionamento e preço']],
       ['Operações e experiência', '#2dd4bf', 'Entregar rápido e cuidar do cliente depois da compra.', ['Estoque e logística', store.board === 'us' ? 'Fulfillment (FBA)' : 'Fulfillment (Full / FBA)', 'Atendimento e reviews']]
     ];
-    deps.forEach(([t, c, p, ss], i) => { const d = mk('depto', obj, { title: t, color: c, prop: p }); ss.forEach(s => mk(i === 1 ? 'canal' : 'setor', d, { title: s })); });
+    deps.forEach(([t, c, p, ss], i) => { const d = mk('depto', root, { title: t, color: c, prop: p, side: i % 2 ? 'l' : 'r' }); ss.forEach(s => mk(i === 1 ? 'canal' : 'setor', d, { title: s })); });
   }
   savest('Salvando…'); clearTimeout(commit.t); commit.t = setTimeout(flush, 300);
   V = null; render(); requestAnimationFrame(() => { organize(false); fit(true); });
@@ -609,6 +634,8 @@ function render() {
   loadFold();
   if (UI.view !== 'mapa') { drawPane(); return; }
   drawWorld();
+  const ro = brandNodes().find(n => n.kind === 'nucleo' && n.reorg);
+  if (ro) requestAnimationFrame(() => { organize(); const { id, reorg, ...b } = N(ro.id); commit('node/' + id, b); setTimeout(() => fit(), 650); });
   if (!V) { loadView(); if (!V) requestAnimationFrame(() => fit(true)); else applyView(); } else applyView();
 }
 const refresh = () => UI.view === 'mapa' ? drawWorld() : drawPane();
@@ -627,7 +654,7 @@ function nodeHTML(n, list, offs = offOf(list)) {
   const pg = progOf(n, list, offs), pgRow = pg.total ? `<div class="n-meta"><span class="n-pg"><i style="width:${pg.pct}%"></i></span><span class="cnt">${pg.done}/${pg.total}</span></div>` : '';
   if (n.kind === 'nucleo') {
     const b = marca(n.marca) || {};
-    body = `<span class="n-ic">${esc((b.name || '?').trim()[0] || '?')}</span><div class="n-tx"><small>Plano omnichannel</small><b>${esc(b.name || 'Marca')}</b><span class="n-flag">${FLAG[store.board]}${PAIS[store.board].name}</span>${pgRow}</div>`;
+    body = n.logo ? `<img class="n-logo" src="${esc(n.logo)}" alt="${esc(b.name || 'Marca')}" draggable="false">` : `<span class="n-ic">${esc((b.name || '?').trim()[0] || '?')}</span><div class="n-tx"><small>Plano omnichannel</small><b>${esc(b.name || 'Marca')}</b><span class="n-flag">${FLAG[store.board]}${PAIS[store.board].name}</span>${pgRow}</div>`;
   } else {
     const m = [], st = stOf(n), k = n.kind;
     if (st) m.push(pill(st[1], st[2]));
@@ -651,10 +678,12 @@ function nodeHTML(n, list, offs = offOf(list)) {
     else if (!['acao', 'etapa'].includes(k)) meta += pgRow;
     body = `<span class="n-ic">${ic(n.kind)}</span><div class="n-tx"><small>${K.n}</small><b class="${n.title ? '' : 'ph'}">${esc(n.title || K.ph)}</b>${meta}</div>`;
   }
-  const fo = kids.length && FOLD.has(n.id), nd = kids.length ? descendants(n.id, list).length : 0;
-  const fb = !kids.length ? '' : fo ? `<button class="n-fold on" data-act="fold" title="Expandir (${nd} ${nd > 1 ? 'cards' : 'card'})" aria-label="Expandir">+${nd}</button>` : `<button class="n-fold" data-act="fold" title="Recolher" aria-label="Recolher">${ic('left')}</button>`;
-  const add = K.kids.length ? `<button class="n-add" data-act="add" aria-label="Adicionar abaixo de ${esc(labelOf(n) || K.n)}" title="Adicionar">${ic('plus')}</button>` : '';
-  return `<div class="n k-${n.kind}${fo ? ' folded' : ''}${offs.has(n.id) ? ' off' : ''}" data-id="${n.id}" style="left:${n.x}px;top:${n.y}px;width:${K.w}px;--c:${c}"><div class="n-b">${body}</div>${add}${fb}</div>`;
+  const nuc = n.kind === 'nucleo', sd = sideOf(n, list);
+  const fo = !nuc && kids.length && FOLD.has(n.id), nd = kids.length ? descendants(n.id, list).length : 0;
+  const fb = !kids.length || nuc ? '' : fo ? `<button class="n-fold on" data-act="fold" title="Expandir (${nd} ${nd > 1 ? 'cards' : 'card'})" aria-label="Expandir">+${nd}</button>` : `<button class="n-fold" data-act="fold" title="Recolher" aria-label="Recolher">${ic('left')}</button>`;
+  const lado = { r: 'à direita', l: 'à esquerda', t: 'em cima', b: 'embaixo' };
+  const add = nuc ? ['r', 'l', 't', 'b'].map(q => `<button class="n-add a-${q}" data-act="add" data-side="${q}" aria-label="Adicionar ${lado[q]} da marca" title="Adicionar ${lado[q]}">${ic('plus')}</button>`).join('') : K.kids.length ? `<button class="n-add" data-act="add" aria-label="Adicionar abaixo de ${esc(labelOf(n) || K.n)}" title="Adicionar">${ic('plus')}</button>` : '';
+  return `<div class="n k-${n.kind}${nuc ? (n.logo ? ' logo' : '') : ' s-' + sd}${fo ? ' folded' : ''}${offs.has(n.id) ? ' off' : ''}" data-id="${n.id}" style="left:${n.x}px;top:${n.y}px;width:${W(n)}px;--c:${c}"><div class="n-b">${body}</div>${add}${fb}</div>`;
 }
 function drawWorld() {
   const w = $('#world'); if (!w) return;
@@ -673,37 +702,57 @@ function drawWorld() {
   if (PRES) presMark();
 }
 function updNode(id) { if (!$(`.n[data-id="${id}"]`)) return; const list = brandNodes(), offs = offOf(list), up = [N(id), ...ancestors(N(id) || {}, list)].filter(Boolean); up.forEach(x => { const el = $(`.n[data-id="${x.id}"]`); if (el) el.outerHTML = nodeHTML(x, list, offs); }); drawWires(visNodes(list)); }
-const W = n => (KIND[n.kind] || KIND.setor).w;
+const W = n => n.kind === 'nucleo' && n.logo ? (n.logoW || 220) : (KIND[n.kind] || KIND.setor).w;
+/* lado do ramo: vem do card que sai direto da marca (r, l, t, b) */
+function sideOf(n, list) { if (!n || n.kind === 'nucleo') return 'c'; const m = new Map(list.map(x => [x.id, x])); let c = n; while (c.parent && m.get(c.parent) && m.get(c.parent).kind !== 'nucleo') c = m.get(c.parent); return c.side || 'r'; }
+const isV = sd => sd === 't' || sd === 'b';
+/* filhos na ordem de leitura: ramos de cima/baixo da esquerda para a direita, os outros de cima para baixo */
+function kidsOrd(n, list) {
+  const ks = list.filter(x => x.parent === n.id);
+  if (n.kind === 'nucleo') { const o = { t: 0, r: 1, b: 2, l: 3 }; return ks.sort((a, b) => (o[a.side || 'r'] - o[b.side || 'r']) || (isV(a.side) ? a.x - b.x : a.y - b.y)); }
+  return isV(sideOf(n, list)) ? ks.sort((a, b) => a.x - b.x) : ks.sort((a, b) => a.y - b.y);
+}
 function drawWires(list = visNodes(), pos) {
   const svg = $('#wires'); if (!svg) return;
   const m = new Map(list.map(n => [n.id, pos && pos[n.id] ? { ...n, ...pos[n.id] } : n]));
-  let out = ''; const offs = offOf(brandNodes());
+  let out = ''; const offs = offOf(brandNodes()); list = [...m.values()];
   for (const n of m.values()) {
     const p = n.parent && m.get(n.parent); if (!p) continue;
-    const x1 = p.x + W(p), y1 = p.y, x2 = n.x, y2 = n.y, dx = Math.max(40, Math.abs(x2 - x1) / 2);
+    const ph = hOf(p.id), ch = hOf(n.id), hg = Math.max(n.x - (p.x + W(p)), p.x - (n.x + W(n))), vg = Math.max((n.y - ch / 2) - (p.y + ph / 2), (p.y - ph / 2) - (n.y + ch / 2));
+    let d;
+    if (isV(sideOf(n, list)) || (sideOf(n, list) === 'c' && vg > 0 && vg > hg)) { const up = n.y < p.y, x1 = p.x + W(p) / 2, y1 = up ? p.y - ph / 2 : p.y + ph / 2, x2 = n.x + W(n) / 2, y2 = up ? n.y + ch / 2 : n.y - ch / 2, dy = Math.max(30, Math.abs(y2 - y1) / 2) * (up ? -1 : 1); d = `M${x1} ${y1} C${x1} ${y1 + dy},${x2} ${y2 - dy},${x2} ${y2}`; }
+    else { const lf = n.x + W(n) / 2 < p.x + W(p) / 2, x1 = lf ? p.x : p.x + W(p), x2 = lf ? n.x + W(n) : n.x, dx = Math.max(40, Math.abs(x2 - x1) / 2) * (lf ? -1 : 1); d = `M${x1} ${p.y} C${x1 + dx} ${p.y},${x2 - dx} ${n.y},${x2} ${n.y}`; }
     const c = colorOf(n, list);
-    out += `<path class="wire${offs.has(n.id) ? ' off' : ''}" data-w="${n.id}" d="M${x1} ${y1} C${x1 + dx} ${y1},${x2 - dx} ${y2},${x2} ${y2}" stroke="${c}" stroke-opacity=".45"/>`;
+    out += `<path class="wire${offs.has(n.id) ? ' off' : ''}" data-w="${n.id}" d="${d}" stroke="${c}" stroke-opacity=".45"/>`;
   }
   svg.innerHTML = out;
 }
 function hOf(id) { const el = $(`.n[data-id="${id}"]`); return el ? el.offsetHeight : 64; }
-/* árvore arrumada da esquerda para a direita */
-function organize(ask_) {
-  const all = brandNodes(), list = visNodes(all); const root = list.find(n => !n.parent || !list.some(x => x.id === n.parent)); if (!root) return;
-  const GX = 90, GY = 16, span = new Map();
-  const sp = n => { const ks = kidsOf(n.id, list); const s = Math.max(hOf(n.id), ks.reduce((a, k) => a + sp(k), 0) + GY * Math.max(0, ks.length - 1)); span.set(n.id, s); return s; };
-  sp(root);
-  const pos = {};
-  const place = (n, x, top) => {
-    const ks = kidsOf(n.id, list), s = span.get(n.id); pos[n.id] = { x, y: top + s / 2 };
-    const tot = ks.reduce((a, k) => a + span.get(k.id), 0) + GY * Math.max(0, ks.length - 1);
-    let t = top + (s - tot) / 2; ks.forEach(k => { place(k, x + W(n) + GX, t); t += span.get(k.id) + GY; });
-  };
-  place(root, 0, -span.get(root.id) / 2);
-  const roots = list.filter(n => n !== root && !pos[n.id]);
-  let extra = span.get(root.id) / 2 + 60; roots.forEach(r => { sp(r); place(r, 0, extra); extra += span.get(r.id) + 40; });
+/* mapa mental: a marca no centro e os ramos para direita, esquerda, cima e baixo */
+function organize() {
+  const all = brandNodes(), list = visNodes(all); const root = list.find(n => n.kind === 'nucleo') || list.find(n => !n.parent || !list.some(x => x.id === n.parent)); if (!root) return;
+  const GX = 90, GY = 16, GV = 60, GH = 18, pos = {}, sH = new Map(), sV = new Map(), H = n => hOf(n.id);
+  const kH = n => list.filter(x => x.parent === n.id).sort((a, b) => a.y - b.y), kV = n => list.filter(x => x.parent === n.id).sort((a, b) => a.x - b.x);
+  const spH = n => { const ks = kH(n); const v = Math.max(H(n), ks.reduce((a, k) => a + spH(k), 0) + GY * Math.max(0, ks.length - 1)); sH.set(n.id, v); return v; };
+  const spV = n => { const ks = kV(n); const v = Math.max(W(n), ks.reduce((a, k) => a + spV(k), 0) + GH * Math.max(0, ks.length - 1)); sV.set(n.id, v); return v; };
+  const placeH = (n, x, top, dir) => { const v = sH.get(n.id); pos[n.id] = { x, y: top + v / 2 }; const ks = kH(n), tot = ks.reduce((a, k) => a + sH.get(k.id), 0) + GY * Math.max(0, ks.length - 1); let t = top + (v - tot) / 2; ks.forEach(k => { placeH(k, dir > 0 ? x + W(n) + GX : x - GX - W(k), t, dir); t += sH.get(k.id) + GY; }); };
+  const placeV = (n, left, cy, dir) => { const v = sV.get(n.id); pos[n.id] = { x: left + (v - W(n)) / 2, y: cy }; const ks = kV(n); if (!ks.length) return; const tot = ks.reduce((a, k) => a + sV.get(k.id), 0) + GH * Math.max(0, ks.length - 1), hm = Math.max(...ks.map(H)), ky = cy + dir * (H(n) / 2 + GV + hm / 2); let l = left + (v - tot) / 2; ks.forEach(k => { placeV(k, l, ky, dir); l += sV.get(k.id) + GH; }); };
+  const rw = W(root), rh = H(root); pos[root.id] = { x: -rw / 2, y: 0 };
+  const rk = list.filter(x => x.parent === root.id), side = sd => rk.filter(k => (k.side || 'r') === sd);
+  [['r', 1], ['l', -1]].forEach(([sd, dir]) => { const ks = side(sd).sort((a, b) => a.y - b.y); ks.forEach(spH); const tot = ks.reduce((a, k) => a + sH.get(k.id), 0) + GY * Math.max(0, ks.length - 1); let t = -tot / 2; ks.forEach(k => { placeH(k, dir > 0 ? rw / 2 + GX : -rw / 2 - GX - W(k), t, dir); t += sH.get(k.id) + GY; }); });
+  const lr = Object.entries(pos).filter(([id]) => id !== root.id).map(([id, q]) => { const n = list.find(x => x.id === id); return { a: q.x, b: q.x + W(n), t: q.y - H(n) / 2, u: q.y + H(n) / 2 }; });
+  [['t', -1], ['b', 1]].forEach(([sd, dir]) => {
+    const ks = side(sd).sort((a, b) => a.x - b.x); if (!ks.length) return; ks.forEach(spV);
+    const tot = ks.reduce((a, k) => a + sV.get(k.id), 0) + GH * Math.max(0, ks.length - 1), hm = Math.max(...ks.map(H)), L = -tot / 2, R = tot / 2;
+    const hit = lr.filter(o => o.b > L && o.a < R);
+    const edge = dir < 0 ? Math.min(-rh / 2, ...hit.map(o => o.t)) : Math.max(rh / 2, ...hit.map(o => o.u));
+    const cy = edge + dir * (GV + hm / 2); let l = L; ks.forEach(k => { placeV(k, l, cy, dir); l += sV.get(k.id) + GH; });
+  });
+  const rest = list.filter(n => !pos[n.id] && !(n.parent && list.some(x => x.id === n.parent)));
+  let extra = Math.max(...Object.entries(pos).map(([id, q]) => q.y + H(list.find(x => x.id === id)) / 2)) + 80;
+  rest.forEach(r => { spH(r); placeH(r, -W(r) / 2, extra, 1); extra += sH.get(r.id) + 40; });
   FOLD.forEach(fid => { const f = all.find(x => x.id === fid), q = pos[fid]; if (!f || !q) return; descendants(fid, all).forEach(d => { if (!pos[d.id]) pos[d.id] = { x: d.x + q.x - f.x, y: d.y + q.y - f.y }; }); });
-  all.forEach(n => { const p = pos[n.id]; if (p && (Math.round(p.x) !== Math.round(n.x) || Math.round(p.y) !== Math.round(n.y))) putNode({ ...n, x: Math.round(p.x), y: Math.round(p.y) }); });
+  all.forEach(n => { const q = pos[n.id]; if (q && (Math.round(q.x) !== Math.round(n.x) || Math.round(q.y) !== Math.round(n.y))) putNode({ ...n, x: Math.round(q.x), y: Math.round(q.y) }); });
   animateTo(pos);
 }
 function animateTo(pos) {
@@ -719,19 +768,23 @@ function animateTo(pos) {
   };
   requestAnimationFrame(step);
 }
-/* lugar livre para um card novo, ao lado do pai e abaixo dos irmãos */
-function freeSpot(p, kind, list) {
-  const x = p.x + W(p) + 90, sib = kidsOf(p.id, list), w = KIND[kind].w, h = 64;
-  let y = sib.length ? Math.max(...sib.map(s => s.y + hOf(s.id) / 2)) + 16 + h / 2 : p.y;
-  const hit = yy => list.some(o => o.x < x + w && o.x + W(o) > x && Math.abs(o.y - yy) < (hOf(o.id) + h) / 2 + 10);
-  for (let i = 0; i < 200 && hit(y); i++) y += 20;
+/* lugar livre para um card novo, para fora do pai no lado do ramo */
+function freeSpot(p, kind, list, sd) {
+  const w = KIND[kind].w, h = 64, v = isV(sd), sib = list.filter(x => x.parent === p.id && (p.kind !== 'nucleo' || (x.side || 'r') === sd));
+  let x, y;
+  if (!v) { x = sd === 'l' ? p.x - 90 - w : p.x + W(p) + 90; y = sib.length ? Math.max(...sib.map(q => q.y + hOf(q.id) / 2)) + 16 + h / 2 : p.y; }
+  else { const d = sd === 't' ? -1 : 1; y = p.y + d * (hOf(p.id) / 2 + 60 + h / 2); x = sib.length ? Math.max(...sib.map(q => q.x + W(q))) + 18 : p.x + W(p) / 2 - w / 2; }
+  const hit = (xx, yy) => list.some(o => o.x < xx + w && o.x + W(o) > xx && Math.abs(o.y - yy) < (hOf(o.id) + h) / 2 + 10);
+  for (let i = 0; i < 200 && hit(x, y); i++) { if (v) x += 20; else y += 20; }
   return { x, y };
 }
-function createChild(pid, kind, at) {
+function createChild(pid, kind, at, sd) {
   const all = brandNodes(), p = all.find(n => n.id === pid); if (!p) return;
   if (FOLD.has(pid)) setFold(pid, false);
-  const list = visNodes(all), { x, y } = at || freeSpot(p, kind, list), id = uid();
-  putNode({ id, marca: p.marca, kind, parent: pid, x: Math.round(x), y: Math.round(y), title: '' });
+  if (p.kind === 'nucleo' && !sd) { const rk = all.filter(x => x.parent === pid), c = q => rk.filter(x => (x.side || 'r') === q).length; sd = c('l') < c('r') ? 'l' : 'r'; }
+  const side = p.kind === 'nucleo' ? sd : sideOf(p, all);
+  const list = visNodes(all), { x, y } = at || freeSpot(p, kind, list, side), id = uid();
+  putNode({ id, marca: p.marca, kind, parent: pid, x: Math.round(x), y: Math.round(y), title: '', ...(p.kind === 'nucleo' ? { side } : {}) });
   drawWorld(); $(`.n[data-id="${id}"]`)?.classList.add('born');
   ensureVisible(id);
 }
@@ -811,18 +864,25 @@ function endPtr(e) {
   if (!d.moved) { openEd(d.node.id); return; }
   $('#gh').hidden = true; $('#gv').hidden = true;
   d.sub.forEach(s => { const p = d.pos[s.id]; if (p) putNode({ ...N(s.id), x: p.x, y: p.y }); $(`.n[data-id="${s.id}"]`)?.classList.remove('drag'); });
+  const nn = N(d.node.id), rt = nn && nn.parent && N(nn.parent);
+  if (rt && rt.kind === 'nucleo') {
+    const h1 = hOf(nn.id), h0 = hOf(rt.id), hg = Math.max(nn.x - (rt.x + W(rt)), rt.x - (nn.x + W(nn))), vg = Math.max((nn.y - h1 / 2) - (rt.y + h0 / 2), (rt.y - h0 / 2) - (nn.y + h1 / 2));
+    const sd = vg > 0 && vg > hg ? (nn.y < rt.y ? 't' : 'b') : (nn.x + W(nn) / 2 < rt.x + W(rt) / 2 ? 'l' : 'r');
+    if ((nn.side || 'r') !== sd) { putNode({ ...nn, side: sd }); drawWorld(); }
+  }
 }
 document.addEventListener('pointerup', endPtr);
 document.addEventListener('pointercancel', endPtr);
 document.addEventListener('wheel', e => {
   const st = $('#stage'); if (!st || !st.contains(e.target) || $('#modal') || e.target.closest('.slide')) return; e.preventDefault();
   const r = st.getBoundingClientRect();
-  if (e.ctrlKey || e.metaKey) zoomAt(Math.exp(-e.deltaY * 0.0025), e.clientX - r.left, e.clientY - r.top);
-  else { V.x -= e.shiftKey ? e.deltaY : e.deltaX; V.y -= e.shiftKey ? 0 : e.deltaY; applyView(); }
+  /* scroll do mouse = zoom no ponto do cursor (pinça do trackpad também) */
+  const dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaMode === 2 ? e.deltaY * 400 : e.deltaY;
+  zoomAt(Math.exp(-dy * (e.ctrlKey ? 0.01 : 0.0015)), e.clientX - r.left, e.clientY - r.top);
 }, { passive: false });
 
 /* ---------- menu de adicionar (pills de vidro) ---------- */
-function openAdd(id, cx, cy) {
+function openAdd(id, cx, cy, sd) {
   closeAdd(); const n = N(id); if (!n) return;
   const ks = (KIND[n.kind] || KIND.setor).kids;
   const m = document.createElement('div'); m.className = 'addm'; m.id = 'addm';
@@ -830,14 +890,14 @@ function openAdd(id, cx, cy) {
   document.body.appendChild(m);
   const r = m.getBoundingClientRect();
   m.style.left = clamp(cx - 24, 8, innerWidth - r.width - 8) + 'px'; m.style.top = clamp(cy - 17, 8, innerHeight - r.height - 8) + 'px';
-  m.dataset.p = id;
+  m.dataset.p = id; m.dataset.side = sd || '';
 }
 function closeAdd() { $('#addm')?.remove(); }
 let ADRAG = null;
 document.addEventListener('pointerdown', e => {
   const b = e.target.closest('#addm button');
   if (!b) { if ($('#addm') && !e.target.closest('.n-add')) closeAdd(); return; }
-  e.preventDefault(); ADRAG = { kind: b.dataset.kind, p: $('#addm').dataset.p, sx: e.clientX, sy: e.clientY, moved: false };
+  e.preventDefault(); ADRAG = { kind: b.dataset.kind, p: $('#addm').dataset.p, side: $('#addm').dataset.side, sx: e.clientX, sy: e.clientY, moved: false };
 }, true);
 document.addEventListener('pointermove', e => {
   if (!ADRAG) return;
@@ -847,9 +907,9 @@ document.addEventListener('pointermove', e => {
 document.addEventListener('pointerup', e => {
   if (!ADRAG) return; const a = ADRAG; ADRAG = null; $('#ghostn')?.remove(); closeAdd();
   const st = $('#stage'); if (!st) return;
-  if (!a.moved) return createChild(a.p, a.kind);
+  if (!a.moved) return createChild(a.p, a.kind, null, a.side);
   const s = st.getBoundingClientRect(); if (e.clientX < s.left || e.clientX > s.right || e.clientY < s.top || e.clientY > s.bottom) return;
-  const w = toWorld(e.clientX, e.clientY); createChild(a.p, a.kind, { x: w.x, y: w.y });
+  const w = toWorld(e.clientX, e.clientY); createChild(a.p, a.kind, { x: w.x, y: w.y }, a.side);
 }, true);
 
 /* =================== editor (pop-up de cada tipo) =================== */
@@ -891,7 +951,8 @@ const optsHTML = (n, list, live) => { const ks = kidsOf(n.id, list); if (!ks.len
 /* formulário de cada tipo */
 function edForm(n, list) {
   const k = n.kind;
-  if (k === 'nucleo') { const b = marca(n.marca) || {}; return `<div class="f"><h5>Visão da marca <span>abre a apresentação</span></h5><textarea class="inp" rows="3" data-f="visao" placeholder="Em uma frase: o que a ${esc(b.name || 'marca')} quer ser para o cliente">${esc(n.visao || '')}</textarea></div>`; }
+  if (k === 'nucleo') { const b = marca(n.marca) || {}; return `<div class="f"><h5>Logo da marca <span>SVG de preferência · fica no centro do mapa</span></h5><div class="row" style="flex-wrap:wrap">${n.logo ? `<img src="${esc(n.logo)}" alt="" style="height:44px;max-width:200px;object-fit:contain"><button class="pill sm" data-act="nlogo-del">Remover</button>` : ''}<label class="pill sm">${n.logo ? 'Trocar' : 'Escolher arquivo'}<input type="file" id="nlogo-in" accept="image/svg+xml,image/png,image/webp,image/jpeg" hidden></label></div></div>
+    ${n.logo ? `<div class="f"><h5>Tamanho do logo <span id="nlogo-v">${n.logoW || 220}px</span></h5><input type="range" min="80" max="560" step="4" data-nlogo value="${n.logoW || 220}"></div>` : ''}<div class="f"><h5>Visão da marca <span>abre a apresentação</span></h5><textarea class="inp" rows="3" data-f="visao" placeholder="Em uma frase: o que a ${esc(b.name || 'marca')} quer ser para o cliente">${esc(n.visao || '')}</textarea></div>`; }
   if (k === 'objetivo') return `${fArea('frase', 'Por que este é o norte', 'O que muda para a marca quando chegarmos lá', n)}${fMetas(n)}${fText('prazo', 'Horizonte', 'Ex.: até dez/2027', n)}`;
   if (k === 'programa') return `${fStep(n)}${fArea('prop', 'Propósito', 'Para que o programa existe', n)}${fText('quem', 'Quem participa', 'Ex.: microinfluenciadores, veterinários', n)}${fList('como', 'Como funciona', n)}${fCanais(n)}<div class="g2">${fText('cadencia', 'Cadência', 'Ex.: 4 conteúdos/semana', n)}${fText('painel', 'Painel do programa', 'Ex.: parceiros-do.meucaos.com', n)}</div>${fMetas(n, 'Metas do programa')}${fCor(n)}${more(`${fText('resp', 'Responsável', 'Quem toca o programa', n)}${fAtt(n)}`)}`;
   if (k === 'depto') return `${fArea('prop', 'Propósito', 'O que este departamento entrega para o plano', n)}${fText('resp', 'Responsável', 'Quem lidera', n)}${fCor(n)}`;
@@ -925,7 +986,7 @@ function readHTML(n, list, live, pres) {
   const q = QUANDO.find(x => x[0] === n.quando), qP = q ? pill(q[1], q[2]) : '';
   if (n.kind === 'nucleo') {
     const all = brandNodes(), b = marca(n.marca) || {}, cnt = k => all.filter(x => x.kind === k).length, obj = list.find(x => x.kind === 'objetivo');
-    return `${pres ? `<span class="kl">${FLAG[store.board].replace('<svg', '<svg style="width:18px;height:12px;border-radius:2px"')}Plano omnichannel · ${PAIS[store.board].name}</span>` : ''}<h1>${esc(b.name || 'Marca')}</h1>${lead(n.visao)}${obj && obj.title ? `<h6>Estrela-guia</h6><p class="lead" style="color:var(--text)">${esc(obj.title)}</p>` : ''}
+    return `${pres ? `<span class="kl">${FLAG[store.board].replace('<svg', '<svg style="width:18px;height:12px;border-radius:2px"')}Plano omnichannel · ${PAIS[store.board].name}</span>` : ''}${n.logo ? `<img class="rd-logo" src="${esc(n.logo)}" alt="">` : ''}<h1>${esc(b.name || 'Marca')}</h1>${lead(n.visao)}${obj && obj.title ? `<h6>Estrela-guia</h6><p class="lead" style="color:var(--text)">${esc(obj.title)}</p>` : ''}
       <div class="stats">${[['depto', 'departamentos'], ['programa', 'programas'], ['canal', 'canais'], ['estrategia', 'estratégias'], ['acao', 'ações'], ['campanha', 'campanhas'], ['lancamento', 'lançamentos']].filter(([k]) => cnt(k)).map(([k, l]) => `<div><b>${cnt(k)}</b><span>${l}</span></div>`).join('')}</div>${pgL}`;
   }
   const head = `${crumb}${pres ? `<span class="kl">${ic(n.kind, 'width:14px;height:14px')}${K.n}</span>` : ''}<h1 class="${n.title ? '' : 'ph'}">${esc(n.title || K.ph)}</h1>`;
@@ -1047,7 +1108,7 @@ document.addEventListener('pointercancel', endTdrag);
 let PRES = null;
 function presSeq() {
   const all = visNodes(), offs = offOf(brandNodes()), list = all.filter(n => !offs.has(n.id)), root = list.find(n => n.kind === 'nucleo') || list[0], out = [];
-  const walk = n => { out.push(n.id); kidsOf(n.id, list).forEach(walk); };
+  const walk = n => { out.push(n.id); kidsOrd(n, list).forEach(walk); };
   if (root) walk(root); list.filter(n => !out.includes(n.id)).forEach(n => out.push(n.id));
   return out;
 }
@@ -1132,7 +1193,7 @@ document.addEventListener('click', async e => {
   if (a === 'open') return openEd(v);
   if (a === 'board') return setBoard(v);
   if (a === 'seed') return seedPlan(v === '1');
-  if (a === 'add') { e.stopPropagation(); const el = t.closest('.n'), r = t.getBoundingClientRect(); openAdd(el.dataset.id, r.right + 6, r.top + r.height / 2); return; }
+  if (a === 'add') { e.stopPropagation(); const el = t.closest('.n'), r = t.getBoundingClientRect(), sd = t.dataset.side || ''; const ax = sd === 'l' ? r.left - 230 : sd === 't' || sd === 'b' ? r.left - 10 : r.right + 6, ay = sd === 't' ? r.top - 120 : r.top + r.height / 2; openAdd(el.dataset.id, ax, ay, sd); return; }
   if (a === 'organize') { if (await ask('Reorganizar o mapa desta marca?', 'Organizar')) organize(); return; }
   if (a === 'fit') return fit();
   if (a === 'zoom') { const s = $('#stage').getBoundingClientRect(); return zoomAt(v === '1' ? 1.2 : 1 / 1.2, s.width / 2, s.height / 2); }
@@ -1166,6 +1227,7 @@ document.addEventListener('click', async e => {
   if (a === 'lc') { const lc = clone(n.lc || {}), c = t.dataset.c, L = new Set(lc[c] || []); L.has(v) ? L.delete(v) : L.add(v); lc[c] = [...L]; edSet('lc', lc); edPart('lc', lcHTML(edNode(), true)); return; }
   if (a === 'verba') { edSet('verbaOn', !n.verbaOn); edPart('verba', verbaHTML(edNode())); if (edNode().verbaOn) $('#verba input')?.focus(); return; }
   if (a === 'cpick') { $$('[data-act="cpick"]', $('#modal')).forEach(b => b.classList.toggle('on', b.dataset.v === v)); const ti = $('#modal .ttl'); if (ti) ti.value = v; edSet('title', v); return; }
+  if (a === 'nlogo-del') { const w0 = W(n); n.logo = ''; n.x = Math.round(n.x + (w0 - W(n)) / 2); putNode(n); drawEd(true); drawWorld(); return; }
   if (a === 'pick') { edSet('escolha', n.escolha === v ? '' : v); edPart('opts', optsHTML(edNode(), brandNodes(), true)); refresh(); return; }
   if (a === 'one') { const nv = n[t.dataset.k] === v ? '' : v; $$(`[data-act="one"][data-k="${t.dataset.k}"]`, $('#modal')).forEach(b => b.classList.toggle('on', b.dataset.v === nv)); if (t.dataset.k === 'color') { $('#modal .mh .n-ic').style.setProperty('--c', nv || colorOf({ ...n, color: '' }, brandNodes())); } edSet(t.dataset.k, nv); if (t.dataset.k === 'color') refresh(); return; }
   if (a === 'li-add') { const k = t.dataset.k; n[k] = [...(n[k] || []), '']; putNode(n); edPart('bl-' + k, blHTML(k, LIph(n, k), n, LI[k][1])); $$(`#bl-${k} input`).pop()?.focus(); return; }
@@ -1177,7 +1239,7 @@ document.addEventListener('click', async e => {
   if (a === 'att-del') { if (!(await ask('Excluir este anexo?', 'Excluir'))) return; const m = edNode(); m.att = (m.att || []).filter(x => x.id !== v); putNode(m); edPart('att', attHTML(m)); api('/api/files/' + v, { method: 'DELETE' }); return; }
   if (a === 'dup') {
     const id = uid(), list = brandNodes(), p = list.find(x => x.id === n.parent), { id: _o, ...b } = clone(n);
-    const at = p ? freeSpot(p, n.kind, list) : { x: n.x, y: n.y + 90 };
+    const at = p ? freeSpot(p, n.kind, list, p.kind === 'nucleo' ? (n.side || 'r') : sideOf(p, list)) : { x: n.x, y: n.y + 90 };
     putNode({ ...b, id, title: n.title ? n.title + ' (cópia)' : '', att: [], x: Math.round(at.x), y: Math.round(at.y) }); closeModal(); refresh(); $(`.n[data-id="${id}"]`)?.classList.add('born'); openEd(id); return;
   }
   if (a === 'del') {
@@ -1194,6 +1256,7 @@ document.addEventListener('input', e => {
   if (t.dataset.cfgn) { cfgSet(t.dataset.cfgn, +t.value); clearTimeout(t._r); t._r = setTimeout(render, 120); return; }
   const n = edNode(); if (!n || !t.closest('#modal')) return;
   if (t.dataset.f) { n[t.dataset.f] = t.value; putNode(n); clearTimeout(t._r); t._r = setTimeout(() => updNode(n.id), 150); if (t.dataset.f === 'title' && n.kind === 'canal') $$('[data-act="cpick"]', $('#modal')).forEach(b => b.classList.toggle('on', b.dataset.v === t.value)); return; }
+  if (t.dataset.nlogo !== undefined) { const w0 = W(n); n.logoW = +t.value; n.x = Math.round(n.x + (w0 - n.logoW) / 2); putNode(n); const lv = $('#nlogo-v'); if (lv) lv.textContent = n.logoW + 'px'; clearTimeout(t._r); t._r = setTimeout(() => updNode(n.id), 30); return; }
   if (t.dataset.chk) { const L = clone(n.chk || []); L[+t.dataset.chk] = { ...L[+t.dataset.chk], t: t.value }; n.chk = L; putNode(n); clearTimeout(t._r); t._r = setTimeout(() => updNode(n.id), 200); return; }
   if (t.dataset.li) { const L = [...(n[t.dataset.li] || [])]; L[+t.dataset.i] = t.value; n[t.dataset.li] = L; putNode(n); return; }
   if (t.dataset.meta) { const L = clone(n.metas || []); L[+t.dataset.i] = { ...L[+t.dataset.i], [t.dataset.meta]: t.value }; n.metas = L; putNode(n); clearTimeout(t._r); t._r = setTimeout(() => updNode(n.id), 200); return; }
@@ -1202,6 +1265,11 @@ document.addEventListener('input', e => {
 document.addEventListener('change', e => {
   const t = e.target;
   if (t.id === 'file-in' && t.files.length) { uploadFiles([...t.files]); t.value = ''; return; }
+  if (t.id === 'nlogo-in' && t.files[0]) {
+    const f = t.files[0]; t.value = '';
+    if (f.size > 900 * 1024) { toast('Logo muito grande (máx. 900 KB). Prefira SVG.', 'r'); return; }
+    const rd = new FileReader(); rd.onload = () => { const n = edNode(); if (!n) return; const w0 = W(n); n.logo = rd.result; n.logoW = n.logoW || 220; n.x = Math.round(n.x + (w0 - n.logoW) / 2); putNode(n); drawEd(true); drawWorld(); }; rd.readAsDataURL(f); return;
+  }
   if (t.id === 'logo-in' && t.files[0]) { const rd = new FileReader(); rd.onload = () => { cfgSet('logo', rd.result); drawDrawer(); render(); }; rd.readAsDataURL(t.files[0]); }
   if (t.dataset.mn) { render(); drawDrawer(); }
 });
@@ -1231,7 +1299,7 @@ window.isAdmin = isAdmin;
   store.role = s.data.role; store.name = s.data.name || ''; store.board = s.data.board === 'us' ? 'us' : 'br'; rememberBoard(store.board);
   const d = await api('/api/docs');
   store.docs = d.data.docs || {}; store.since = d.data.now || 0; store.ready = true;
-  seedBrands(); migrate(); render();
+  seedBrands(); migrate(); migrate3(); render();
   setInterval(poll, 10000);
 })();
 </script>
