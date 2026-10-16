@@ -112,9 +112,7 @@ svg.wires{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;p
 @media (hover:none){.n-fold{opacity:.85;transform:none}}
 .stage.pres .n-fold:not(.on){display:none}
 .n.s-l .n-add{right:auto;left:-13px}.n.s-l .n-fold{right:auto;left:-11px}.n.s-l .n-fold.on{left:-14px}
-.n.s-t .n-add{top:-13px;right:auto;left:50%;margin:0 0 0 -13px}.n.s-t .n-fold{top:-11px;right:auto;left:50%;margin:0 0 0 17px}.n.s-t .n-fold.on{top:-12px;margin:0 0 0 17px}
-.n.s-b .n-add{top:auto;bottom:-13px;right:auto;left:50%;margin:0 0 0 -13px}.n.s-b .n-fold{top:auto;bottom:-11px;right:auto;left:50%;margin:0 0 0 17px}.n.s-b .n-fold.on{bottom:-12px;margin:0 0 0 17px}
-.n-add.a-l{right:auto;left:-13px}.n-add.a-t{top:-13px;right:auto;left:50%;margin:0 0 0 -13px}.n-add.a-b{top:auto;bottom:-13px;right:auto;left:50%;margin:0 0 0 -13px}
+.n-add.a-l{right:auto;left:-13px}
 .k-nucleo.logo .n-b{padding:0;background:none;border-color:transparent;box-shadow:none;border-radius:0}
 .k-nucleo.logo:hover .n-b{border-color:transparent;transform:none}
 .n-logo{display:block;width:100%;height:auto;pointer-events:none;-webkit-user-drag:none;filter:drop-shadow(0 12px 30px rgba(0,0,0,.55));transition:filter .4s var(--ease)}
@@ -507,7 +505,7 @@ async function setBoard(b) {
     closeModal(true); closeDrawer();
     store.board = b; store.role = s.data.role; store.name = s.data.name || '';
     store.docs = d.data.docs || {}; store.since = d.data.now || 0; store.queue = {};
-    rememberBoard(b); seedBrands(); migrate(); migrate3(); V = null; render();
+    rememberBoard(b); seedBrands(); migrate(); migrate3(); migrate4(); V = null; render();
   } finally { store.switching = false; }
 }
 
@@ -556,11 +554,22 @@ function migrate3() {
     all.filter(o => o.parent === r.id && o.kind === 'objetivo').forEach(o => {
       const ds = all.filter(d => d.parent === o.id && d.kind === 'depto'); if (!ds.length) return;
       ds.sort((a, b) => a.y - b.y).forEach(d => { const { id, ...b } = d; commit('node/' + id, { ...b, parent: r.id, side: i++ % 2 ? 'l' : 'r' }); });
-      const { id, ...b } = o; commit('node/' + id, { ...b, side: 't' }); moved = true;
+      const { id, ...b } = o; commit('node/' + id, { ...b, side: i % 2 ? 'l' : 'r' }); moved = true;
     });
     if (moved) { const { id, ...b } = r; commit('node/' + id, { ...b, reorg: true }); }
   });
   commit('app/mig3', { t: Date.now() });
+}
+/* sem ramos em cima/embaixo: o que estava lá vai para o lado com menos ramos */
+function migrate4() {
+  if (!isAdmin() || D('app/mig4')) return;
+  const all = docsOf('node/');
+  all.filter(n => n.kind === 'nucleo').forEach(r => {
+    const rk = all.filter(k => k.parent === r.id), cnt = q => rk.filter(k => (k.side || 'r') === q).length; let moved = false;
+    rk.filter(k => k.side === 't' || k.side === 'b').forEach(k => { const sd = cnt('l') < cnt('r') ? 'l' : 'r'; k.side = sd; const { id, ...b } = k; commit('node/' + id, b); moved = true; });
+    if (moved) { const { id, ...b } = r; commit('node/' + id, { ...b, reorg: true }); }
+  });
+  commit('app/mig4', { t: Date.now() });
 }
 const labelOf = n => n.kind === 'nucleo' ? ((marca(n.marca) || {}).name || 'Marca') : (n.title || '');
 
@@ -588,7 +597,7 @@ function seedPlan(withModel) {
   const mk = (kind, parent, extra = {}) => { const id = uid(); store.docs['node/' + id] = { marca: m, kind, parent, x: 0, y: 0, title: '', ...extra, u: Date.now() }; store.queue['node/' + id] = store.docs['node/' + id]; return id; };
   const root = mk('nucleo', null);
   if (withModel) {
-    const obj = mk('objetivo', root, { side: 't', metas: [{ t: 'Faturamento', atual: '', alvo: '' }, { t: 'Presença nos canais', atual: '', alvo: '' }, { t: 'Recompra', atual: '', alvo: '' }] });
+    const obj = mk('objetivo', root, { side: 'r', metas: [{ t: 'Faturamento', atual: '', alvo: '' }, { t: 'Presença nos canais', atual: '', alvo: '' }, { t: 'Recompra', atual: '', alvo: '' }] });
     const lojas = store.board === 'us' ? ['Amazon', 'Walmart', 'Chewy', 'TikTok Shop', 'Shopify'] : ['Mercado Livre', 'Amazon', 'Shopee', 'TikTok Shop', 'Shopify'];
     const deps = [
       ['Marketing', '#f472b6', 'Gerar demanda e construir a marca em todos os pontos de contato.', ['Conteúdo e social', 'Influência e seeding', 'Mídia paga', 'CRM e retenção']],
@@ -596,7 +605,7 @@ function seedPlan(withModel) {
       ['Produto e marca', '#a78bfa', 'Portfólio, embalagem e posicionamento coerentes em todos os canais.', ['Portfólio', 'Embalagem e página de produto', 'Posicionamento e preço']],
       ['Operações e experiência', '#2dd4bf', 'Entregar rápido e cuidar do cliente depois da compra.', ['Estoque e logística', store.board === 'us' ? 'Fulfillment (FBA)' : 'Fulfillment (Full / FBA)', 'Atendimento e reviews']]
     ];
-    deps.forEach(([t, c, p, ss], i) => { const d = mk('depto', root, { title: t, color: c, prop: p, side: i % 2 ? 'l' : 'r' }); ss.forEach(s => mk(i === 1 ? 'canal' : 'setor', d, { title: s })); });
+    deps.forEach(([t, c, p, ss], i) => { const d = mk('depto', root, { title: t, color: c, prop: p, side: i % 2 ? 'r' : 'l' }); ss.forEach(s => mk(i === 1 ? 'canal' : 'setor', d, { title: s })); });
   }
   savest('Salvando…'); clearTimeout(commit.t); commit.t = setTimeout(flush, 300);
   V = null; render(); requestAnimationFrame(() => { organize(false); fit(true); });
@@ -681,8 +690,8 @@ function nodeHTML(n, list, offs = offOf(list)) {
   const nuc = n.kind === 'nucleo', sd = sideOf(n, list);
   const fo = !nuc && kids.length && FOLD.has(n.id), nd = kids.length ? descendants(n.id, list).length : 0;
   const fb = !kids.length || nuc ? '' : fo ? `<button class="n-fold on" data-act="fold" title="Expandir (${nd} ${nd > 1 ? 'cards' : 'card'})" aria-label="Expandir">+${nd}</button>` : `<button class="n-fold" data-act="fold" title="Recolher" aria-label="Recolher">${ic('left')}</button>`;
-  const lado = { r: 'à direita', l: 'à esquerda', t: 'em cima', b: 'embaixo' };
-  const add = nuc ? ['r', 'l', 't', 'b'].map(q => `<button class="n-add a-${q}" data-act="add" data-side="${q}" aria-label="Adicionar ${lado[q]} da marca" title="Adicionar ${lado[q]}">${ic('plus')}</button>`).join('') : K.kids.length ? `<button class="n-add" data-act="add" aria-label="Adicionar abaixo de ${esc(labelOf(n) || K.n)}" title="Adicionar">${ic('plus')}</button>` : '';
+  const lado = { r: 'à direita', l: 'à esquerda' };
+  const add = nuc ? ['r', 'l'].map(q => `<button class="n-add a-${q}" data-act="add" data-side="${q}" aria-label="Adicionar ${lado[q]} da marca" title="Adicionar ${lado[q]}">${ic('plus')}</button>`).join('') : K.kids.length ? `<button class="n-add" data-act="add" aria-label="Adicionar abaixo de ${esc(labelOf(n) || K.n)}" title="Adicionar">${ic('plus')}</button>` : '';
   return `<div class="n k-${n.kind}${nuc ? (n.logo ? ' logo' : '') : ' s-' + sd}${fo ? ' folded' : ''}${offs.has(n.id) ? ' off' : ''}" data-id="${n.id}" style="left:${n.x}px;top:${n.y}px;width:${W(n)}px;--c:${c}"><div class="n-b">${body}</div>${add}${fb}</div>`;
 }
 function drawWorld() {
@@ -705,12 +714,11 @@ function updNode(id) { if (!$(`.n[data-id="${id}"]`)) return; const list = brand
 const W = n => n.kind === 'nucleo' && n.logo ? (n.logoW || 220) : (KIND[n.kind] || KIND.setor).w;
 /* lado do ramo: vem do card que sai direto da marca (r, l, t, b) */
 function sideOf(n, list) { if (!n || n.kind === 'nucleo') return 'c'; const m = new Map(list.map(x => [x.id, x])); let c = n; while (c.parent && m.get(c.parent) && m.get(c.parent).kind !== 'nucleo') c = m.get(c.parent); return c.side || 'r'; }
-const isV = sd => sd === 't' || sd === 'b';
-/* filhos na ordem de leitura: ramos de cima/baixo da esquerda para a direita, os outros de cima para baixo */
+/* filhos na ordem de leitura: ramos da direita, depois os da esquerda, de cima para baixo */
 function kidsOrd(n, list) {
   const ks = list.filter(x => x.parent === n.id);
-  if (n.kind === 'nucleo') { const o = { t: 0, r: 1, b: 2, l: 3 }; return ks.sort((a, b) => (o[a.side || 'r'] - o[b.side || 'r']) || (isV(a.side) ? a.x - b.x : a.y - b.y)); }
-  return isV(sideOf(n, list)) ? ks.sort((a, b) => a.x - b.x) : ks.sort((a, b) => a.y - b.y);
+  if (n.kind === 'nucleo') { const o = { r: 0, l: 1 }; return ks.sort((a, b) => (o[a.side || 'r'] - o[b.side || 'r']) || a.y - b.y); }
+  return ks.sort((a, b) => a.y - b.y);
 }
 function drawWires(list = visNodes(), pos) {
   const svg = $('#wires'); if (!svg) return;
@@ -718,36 +726,24 @@ function drawWires(list = visNodes(), pos) {
   let out = ''; const offs = offOf(brandNodes()); list = [...m.values()];
   for (const n of m.values()) {
     const p = n.parent && m.get(n.parent); if (!p) continue;
-    const ph = hOf(p.id), ch = hOf(n.id), hg = Math.max(n.x - (p.x + W(p)), p.x - (n.x + W(n))), vg = Math.max((n.y - ch / 2) - (p.y + ph / 2), (p.y - ph / 2) - (n.y + ch / 2));
-    let d;
-    if (isV(sideOf(n, list)) || (sideOf(n, list) === 'c' && vg > 0 && vg > hg)) { const up = n.y < p.y, x1 = p.x + W(p) / 2, y1 = up ? p.y - ph / 2 : p.y + ph / 2, x2 = n.x + W(n) / 2, y2 = up ? n.y + ch / 2 : n.y - ch / 2, dy = Math.max(30, Math.abs(y2 - y1) / 2) * (up ? -1 : 1); d = `M${x1} ${y1} C${x1} ${y1 + dy},${x2} ${y2 - dy},${x2} ${y2}`; }
-    else { const lf = n.x + W(n) / 2 < p.x + W(p) / 2, x1 = lf ? p.x : p.x + W(p), x2 = lf ? n.x + W(n) : n.x, dx = Math.max(40, Math.abs(x2 - x1) / 2) * (lf ? -1 : 1); d = `M${x1} ${p.y} C${x1 + dx} ${p.y},${x2 - dx} ${n.y},${x2} ${n.y}`; }
+    const gap = p.kind === 'nucleo' && p.logo ? 22 : 0; /* respiro entre o logo e o começo dos fios */
+    const lf = n.x + W(n) / 2 < p.x + W(p) / 2, x1 = lf ? p.x - gap : p.x + W(p) + gap, x2 = lf ? n.x + W(n) : n.x, dx = Math.max(40, Math.abs(x2 - x1) / 2) * (lf ? -1 : 1), d = `M${x1} ${p.y} C${x1 + dx} ${p.y},${x2 - dx} ${n.y},${x2} ${n.y}`;
     const c = colorOf(n, list);
     out += `<path class="wire${offs.has(n.id) ? ' off' : ''}" data-w="${n.id}" d="${d}" stroke="${c}" stroke-opacity=".45"/>`;
   }
   svg.innerHTML = out;
 }
 function hOf(id) { const el = $(`.n[data-id="${id}"]`); return el ? el.offsetHeight : 64; }
-/* mapa mental: a marca no centro e os ramos para direita, esquerda, cima e baixo */
+/* mapa mental: a marca no centro e os ramos para a direita e a esquerda */
 function organize() {
   const all = brandNodes(), list = visNodes(all); const root = list.find(n => n.kind === 'nucleo') || list.find(n => !n.parent || !list.some(x => x.id === n.parent)); if (!root) return;
-  const GX = 90, GY = 16, GV = 60, GH = 18, pos = {}, sH = new Map(), sV = new Map(), H = n => hOf(n.id);
-  const kH = n => list.filter(x => x.parent === n.id).sort((a, b) => a.y - b.y), kV = n => list.filter(x => x.parent === n.id).sort((a, b) => a.x - b.x);
+  const GX = 90, GY = 16, pos = {}, sH = new Map(), H = n => hOf(n.id);
+  const kH = n => list.filter(x => x.parent === n.id).sort((a, b) => a.y - b.y);
   const spH = n => { const ks = kH(n); const v = Math.max(H(n), ks.reduce((a, k) => a + spH(k), 0) + GY * Math.max(0, ks.length - 1)); sH.set(n.id, v); return v; };
-  const spV = n => { const ks = kV(n); const v = Math.max(W(n), ks.reduce((a, k) => a + spV(k), 0) + GH * Math.max(0, ks.length - 1)); sV.set(n.id, v); return v; };
   const placeH = (n, x, top, dir) => { const v = sH.get(n.id); pos[n.id] = { x, y: top + v / 2 }; const ks = kH(n), tot = ks.reduce((a, k) => a + sH.get(k.id), 0) + GY * Math.max(0, ks.length - 1); let t = top + (v - tot) / 2; ks.forEach(k => { placeH(k, dir > 0 ? x + W(n) + GX : x - GX - W(k), t, dir); t += sH.get(k.id) + GY; }); };
-  const placeV = (n, left, cy, dir) => { const v = sV.get(n.id); pos[n.id] = { x: left + (v - W(n)) / 2, y: cy }; const ks = kV(n); if (!ks.length) return; const tot = ks.reduce((a, k) => a + sV.get(k.id), 0) + GH * Math.max(0, ks.length - 1), hm = Math.max(...ks.map(H)), ky = cy + dir * (H(n) / 2 + GV + hm / 2); let l = left + (v - tot) / 2; ks.forEach(k => { placeV(k, l, ky, dir); l += sV.get(k.id) + GH; }); };
-  const rw = W(root), rh = H(root); pos[root.id] = { x: -rw / 2, y: 0 };
+  const rw = W(root), rg = root.logo ? 22 : 0; pos[root.id] = { x: -rw / 2, y: 0 };
   const rk = list.filter(x => x.parent === root.id), side = sd => rk.filter(k => (k.side || 'r') === sd);
-  [['r', 1], ['l', -1]].forEach(([sd, dir]) => { const ks = side(sd).sort((a, b) => a.y - b.y); ks.forEach(spH); const tot = ks.reduce((a, k) => a + sH.get(k.id), 0) + GY * Math.max(0, ks.length - 1); let t = -tot / 2; ks.forEach(k => { placeH(k, dir > 0 ? rw / 2 + GX : -rw / 2 - GX - W(k), t, dir); t += sH.get(k.id) + GY; }); });
-  const lr = Object.entries(pos).filter(([id]) => id !== root.id).map(([id, q]) => { const n = list.find(x => x.id === id); return { a: q.x, b: q.x + W(n), t: q.y - H(n) / 2, u: q.y + H(n) / 2 }; });
-  [['t', -1], ['b', 1]].forEach(([sd, dir]) => {
-    const ks = side(sd).sort((a, b) => a.x - b.x); if (!ks.length) return; ks.forEach(spV);
-    const tot = ks.reduce((a, k) => a + sV.get(k.id), 0) + GH * Math.max(0, ks.length - 1), hm = Math.max(...ks.map(H)), L = -tot / 2, R = tot / 2;
-    const hit = lr.filter(o => o.b > L && o.a < R);
-    const edge = dir < 0 ? Math.min(-rh / 2, ...hit.map(o => o.t)) : Math.max(rh / 2, ...hit.map(o => o.u));
-    const cy = edge + dir * (GV + hm / 2); let l = L; ks.forEach(k => { placeV(k, l, cy, dir); l += sV.get(k.id) + GH; });
-  });
+  [['r', 1], ['l', -1]].forEach(([sd, dir]) => { const ks = side(sd).sort((a, b) => a.y - b.y); ks.forEach(spH); const tot = ks.reduce((a, k) => a + sH.get(k.id), 0) + GY * Math.max(0, ks.length - 1); let t = -tot / 2; ks.forEach(k => { placeH(k, dir > 0 ? rw / 2 + GX + rg : -rw / 2 - GX - rg - W(k), t, dir); t += sH.get(k.id) + GY; }); });
   const rest = list.filter(n => !pos[n.id] && !(n.parent && list.some(x => x.id === n.parent)));
   let extra = Math.max(...Object.entries(pos).map(([id, q]) => q.y + H(list.find(x => x.id === id)) / 2)) + 80;
   rest.forEach(r => { spH(r); placeH(r, -W(r) / 2, extra, 1); extra += sH.get(r.id) + 40; });
@@ -770,12 +766,11 @@ function animateTo(pos) {
 }
 /* lugar livre para um card novo, para fora do pai no lado do ramo */
 function freeSpot(p, kind, list, sd) {
-  const w = KIND[kind].w, h = 64, v = isV(sd), sib = list.filter(x => x.parent === p.id && (p.kind !== 'nucleo' || (x.side || 'r') === sd));
-  let x, y;
-  if (!v) { x = sd === 'l' ? p.x - 90 - w : p.x + W(p) + 90; y = sib.length ? Math.max(...sib.map(q => q.y + hOf(q.id) / 2)) + 16 + h / 2 : p.y; }
-  else { const d = sd === 't' ? -1 : 1; y = p.y + d * (hOf(p.id) / 2 + 60 + h / 2); x = sib.length ? Math.max(...sib.map(q => q.x + W(q))) + 18 : p.x + W(p) / 2 - w / 2; }
+  const w = KIND[kind].w, h = 64, sib = list.filter(x => x.parent === p.id && (p.kind !== 'nucleo' || (x.side || 'r') === sd));
+  const x = sd === 'l' ? p.x - 90 - w : p.x + W(p) + 90;
+  let y = sib.length ? Math.max(...sib.map(q => q.y + hOf(q.id) / 2)) + 16 + h / 2 : p.y;
   const hit = (xx, yy) => list.some(o => o.x < xx + w && o.x + W(o) > xx && Math.abs(o.y - yy) < (hOf(o.id) + h) / 2 + 10);
-  for (let i = 0; i < 200 && hit(x, y); i++) { if (v) x += 20; else y += 20; }
+  for (let i = 0; i < 200 && hit(x, y); i++) y += 20;
   return { x, y };
 }
 function createChild(pid, kind, at, sd) {
@@ -866,8 +861,7 @@ function endPtr(e) {
   d.sub.forEach(s => { const p = d.pos[s.id]; if (p) putNode({ ...N(s.id), x: p.x, y: p.y }); $(`.n[data-id="${s.id}"]`)?.classList.remove('drag'); });
   const nn = N(d.node.id), rt = nn && nn.parent && N(nn.parent);
   if (rt && rt.kind === 'nucleo') {
-    const h1 = hOf(nn.id), h0 = hOf(rt.id), hg = Math.max(nn.x - (rt.x + W(rt)), rt.x - (nn.x + W(nn))), vg = Math.max((nn.y - h1 / 2) - (rt.y + h0 / 2), (rt.y - h0 / 2) - (nn.y + h1 / 2));
-    const sd = vg > 0 && vg > hg ? (nn.y < rt.y ? 't' : 'b') : (nn.x + W(nn) / 2 < rt.x + W(rt) / 2 ? 'l' : 'r');
+    const sd = nn.x + W(nn) / 2 < rt.x + W(rt) / 2 ? 'l' : 'r';
     if ((nn.side || 'r') !== sd) { putNode({ ...nn, side: sd }); drawWorld(); }
   }
 }
@@ -1193,7 +1187,7 @@ document.addEventListener('click', async e => {
   if (a === 'open') return openEd(v);
   if (a === 'board') return setBoard(v);
   if (a === 'seed') return seedPlan(v === '1');
-  if (a === 'add') { e.stopPropagation(); const el = t.closest('.n'), r = t.getBoundingClientRect(), sd = t.dataset.side || ''; const ax = sd === 'l' ? r.left - 230 : sd === 't' || sd === 'b' ? r.left - 10 : r.right + 6, ay = sd === 't' ? r.top - 120 : r.top + r.height / 2; openAdd(el.dataset.id, ax, ay, sd); return; }
+  if (a === 'add') { e.stopPropagation(); const el = t.closest('.n'), r = t.getBoundingClientRect(), sd = t.dataset.side || ''; const ax = sd === 'l' ? r.left - 230 : r.right + 6, ay = r.top + r.height / 2; openAdd(el.dataset.id, ax, ay, sd); return; }
   if (a === 'organize') { if (await ask('Reorganizar o mapa desta marca?', 'Organizar')) organize(); return; }
   if (a === 'fit') return fit();
   if (a === 'zoom') { const s = $('#stage').getBoundingClientRect(); return zoomAt(v === '1' ? 1.2 : 1 / 1.2, s.width / 2, s.height / 2); }
@@ -1299,7 +1293,7 @@ window.isAdmin = isAdmin;
   store.role = s.data.role; store.name = s.data.name || ''; store.board = s.data.board === 'us' ? 'us' : 'br'; rememberBoard(store.board);
   const d = await api('/api/docs');
   store.docs = d.data.docs || {}; store.since = d.data.now || 0; store.ready = true;
-  seedBrands(); migrate(); migrate3(); render();
+  seedBrands(); migrate(); migrate3(); migrate4(); render();
   setInterval(poll, 10000);
 })();
 </script>
