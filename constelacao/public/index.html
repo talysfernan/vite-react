@@ -381,6 +381,10 @@ a.rv-ch:hover{border-color:rgba(255,255,255,.25);color:var(--text)}
 .dch.late{color:#fca5a5;border-color:rgba(248,113,113,.35);background:rgba(248,113,113,.08)}.dch.soon{color:#fde68a}
 .dch input{position:absolute;inset:0;opacity:0;width:100%;cursor:var(--cur-hand),pointer;color-scheme:dark}
 .dch svg{width:12px;height:12px}
+.dn{height:24px;padding:0 10px 0 4px;border-radius:999px;display:inline-flex;align-items:center;gap:7px;font-size:11.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);transition:all .25s var(--ease)}
+.dn i{width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,.3);display:grid;place-items:center;transition:all .25s var(--ease)}.dn i svg{width:10px;height:10px;stroke-width:3;opacity:0;transition:opacity .2s}
+.dn:hover{border-color:rgba(255,255,255,.2);color:var(--text-2)}
+.dn.on{color:#86efac;border-color:rgba(74,222,128,.35);background:rgba(74,222,128,.08)}.dn.on i{background:#4ade80;border-color:#4ade80;color:#0b0b0d}.dn.on i svg{opacity:1}
 .pch{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;border:1px dashed rgba(255,255,255,.2);color:var(--dim);position:relative}
 .pch select{position:absolute;inset:0;opacity:0;cursor:var(--cur-hand),pointer}
 .pch svg{width:12px;height:12px}
@@ -845,7 +849,7 @@ const labelOf = n => n.kind === 'dia' ? (n.day ? `Dia ${n.day}` + (n.title ? ' �
 /* tarefas (tópicos de pauta não contam) */
 const realTasks = n => (n.tasks || []).filter(t => t.kind !== 'topico');
 function progOf(n) { const T = realTasks(n), d = T.filter(t => t.st === 'done').length; return { done: d, total: T.length, pct: T.length ? Math.round(d / T.length * 100) : n.status === 'done' ? 100 : 0, late: T.some(t => t.st !== 'done' && t.due && t.due < todayISO()), blocked: T.filter(t => t.st === 'blocked').length }; }
-const isDone = n => { const p = progOf(n); return p.total ? p.done === p.total : n.status === 'done'; };
+const isDone = n => { if (n.status === 'done') return true; if (n.status === 'open') return false; const p = progOf(n); return !!p.total && p.done === p.total; };
 /* marcos e canais/lojas têm o card do que fazer */
 const isWork = n => n.kind === 'marco' || n.kind === 'canal';
 function monthProg(list) { const T = list.filter(isWork).flatMap(n => realTasks(n)); const d = T.filter(t => t.st === 'done').length; return { done: d, total: T.length, pct: T.length ? Math.round(d / T.length * 100) : 0, late: T.filter(t => t.st !== 'done' && t.due && t.due < todayISO()).length, blocked: T.filter(t => t.st === 'blocked').length }; }
@@ -1514,6 +1518,7 @@ function dwMarco(n) {
     <div class="dw-meta">
       <div class="mf2"><span>Responsáveis</span><div class="who-ch">${P.map(x => `<button class="${(n.who || []).includes(x.id) ? 'on' : ''}" data-act="dw-who" data-v="${x.id}" title="${esc(x.name)}">${av(x, 26)}</button>`).join('') || '<span class="c-mut">Cadastre em Ajustes</span>'}</div></div>
       <div class="mf2"><span>Prazo</span>${dSel({ id: '_', due: n.due, st: isDone(n) ? 'done' : '' }).replace('data-tk="_" data-f="due"', 'data-nf="due"')}</div>
+      <div class="mf2"><span>Status</span><button class="dn ${isDone(n) ? 'on' : ''}" data-act="dw-done" title="Marcar como ${isDone(n) ? 'não feito' : 'feito'}"><i>${ic('check')}</i>${isDone(n) ? 'Feito' : 'Não feito'}</button></div>
       ${C.length ? `<div class="mf2"><span>Canais</span><div class="chips">${C.map(c => `<button class="c-whob ${(n.canais || []).includes(c.id) ? 'on' : ''}" data-act="dw-canal" data-v="${c.id}" title="${esc(labelOf(c))}"><span class="pch" style="border:0;background:${colorOf(c)}33">${c.icon && iconById(c.icon) ? `<img src="${esc(iconById(c.icon).src)}" alt="" style="width:15px;height:15px">` : bic(c.bi || 'r_note')}</span></button>`).join('')}</div></div>` : ''}
       ${cn ? '' : `<div class="mf2"><span>Cor da pílula</span><div class="chips cols">${colRow(n)}</div></div>`}
       ${M && M[0] !== 'texto' ? `<div class="dw-prog">${ringSvg(p.pct)}<div><b>${p.pct}%</b><small>${p.total ? `${p.done} de ${p.total}` : 'sem tarefas'}</small></div></div>` : ''}
@@ -1558,7 +1563,7 @@ function dwView(n) {
   const kindTag = cn ? `<span class="dw-kind cn"><span class="cn-ic" style="background:${colorOf(n)}">${canalIcon(n)}</span>${M ? M[1] : 'Pill'}</span>` : `<span class="dw-kind">${ic(M ? M[2] : 'marco')}${M ? M[1] : 'Marco'}</span>`;
   const meta = [(n.who || []).map(rvAv).join(''), rvDue(n.due, isDone(n)), (n.canais || []).map(N).filter(Boolean).map(c => `<span class="rv-ch"><span class="cn-ic" style="background:${colorOf(c)}">${rvIc(c)}</span>${esc(labelOf(c))}</span>`).join(''),
     n.link ? `<a class="rv-ch" href="${esc(n.link)}" target="_blank" rel="noopener">${ic('link')}${esc(n.link.replace(/^https?:\/\/(www\.)?/, '').slice(0, 36))}</a>` : '',
-    p.total && n.modelo !== 'texto' ? `<span class="rv-ch ${p.done === p.total ? 'ok' : ''}">${ic('check')}${p.done} de ${p.total} feitas</span>` : ''].join('');
+    p.total && n.modelo !== 'texto' ? `<span class="rv-ch ${p.done === p.total ? 'ok' : ''}">${ic('check')}${p.done} de ${p.total} feitas</span>` : '', isDone(n) ? `<span class="rv-ch ok">${ic('check')}Feito</span>` : ''].join('');
   const body = rvBody(n), files = rvFiles(n), notes = n.notes ? `<section class="sec"><h5>${ic('note', 'width:13px;height:13px')}Notas</h5><p class="rv-note">${esc(n.notes)}</p></section>` : '';
   return `<div class="dw-h">
     <div class="dw-top">${kindTag}${par ? `<button class="crumb" data-act="open" data-id="${par.id}">${ic('left', 'width:11px;height:11px')}${esc(labelOf(par))}</button>` : ''}<span class="sp"></span>${sl ? `<span class="selo-tag" style="--sc:${sl[2]}">${seloSvg(sl[2])}${sl[1]}</span>` : ''}<button class="dw-x" data-act="dw-close" aria-label="Fechar">${ic('x')}</button></div>
@@ -1899,6 +1904,7 @@ const ACT = {
   open: a => { const n = N(a.dataset.id); if (!n) return; if (UI.view !== 'cst' || !NODES.has(n.id)) return goto(n.id); drawer(n.id); },
   close: () => closeModal(),
   'dw-close': () => closeDrawer(),
+  'dw-done': () => dwSet(x => { const d = isDone(x); x.status = d ? 'open' : 'done'; log(x, d ? 'marcou como não feito' : 'marcou como feito'); }),
   'dw-nolb': () => dwSet(x => { x.nolb = !x.nolb; }),
   'dw-edit': () => { if (!DW.id) return; DW.edit = true; drawer(DW.id, 1); },
   'dw-view': () => { if (!DW.id) return; saveRt(); DW.edit = false; drawer(DW.id, -1); },
@@ -1959,6 +1965,8 @@ const ACT = {
       tx(() => { const a1 = N(x), b1 = N(y); a1.links = (a1.links || []).filter(k => k !== y); b1.links = (b1.links || []).filter(k => k !== x); putNode(a1); putNode(b1); }); refresh(); toast('Conexão apagada', 'g'); }
   }
 };
+/* data: sempre abre o calendário ao clicar (também depois de escolhida) */
+document.addEventListener('click', e => { const d = e.target.closest('.dch input[type=date],.cd input[type=date]'); if (d && d.showPicker) { e.preventDefault(); try { d.showPicker(); } catch (er) {} } }, true);
 document.addEventListener('click', e => { const a = e.target.closest('[data-act]'); if (!a || a.disabled) return; const f = ACT[a.dataset.act]; if (f) { e.preventDefault(); e.stopPropagation(); f(a); } });
 document.addEventListener('keydown', e => {
   const typing = busyTyping();
