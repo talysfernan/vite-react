@@ -175,7 +175,7 @@ svg.c-wires{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
 .k-dia.today .c-b{border-color:#4ade80;animation:dToday 2.6s ease-in-out infinite}
 @keyframes dToday{0%,100%{box-shadow:0 0 0 3px #0c0c0f,0 0 0 3px rgba(74,222,128,0)}50%{box-shadow:0 0 0 3px #0c0c0f,0 0 0 7px rgba(74,222,128,.16),0 0 18px rgba(74,222,128,.45)}}
 .k-dia.past .c-b{border-color:#5a5a63;color:var(--text-2)}
-.k-dia .c-dal{position:absolute;right:-3px;top:-3px;width:9px;height:9px;border-radius:50%;background:#f87171;box-shadow:0 0 0 2px #0c0c0f,0 0 10px #f87171}
+.c-dal{position:absolute;right:-3px;top:-3px;width:9px;height:9px;border-radius:50%;background:#f87171;box-shadow:0 0 0 2px #0c0c0f,0 0 10px #f87171}
 .c-lb{position:absolute;left:0;top:calc(var(--kh,20px) + 8px);transform:translateX(-50%);white-space:nowrap;font-size:11.5px;font-weight:600;color:#d8d8e0;padding:2px 8px;border-radius:7px;background:rgba(16,16,20,.86);border:1px solid rgba(255,255,255,.07);pointer-events:none}
 .c-lb.on{pointer-events:auto;background:none;border:0;padding:0}
 .c-lb.d{background:#0c0c0f;border:0;padding:1px 6px;border-radius:6px;font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:lowercase;color:var(--muted);top:calc(var(--kh,15px) + 6px)}
@@ -505,6 +505,13 @@ details.more summary{list-style:none;color:var(--muted);font-size:12px;display:i
 .resp button{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 12px 0 7px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);color:var(--text-2);transition:all .2s}
 .resp button:hover{border-color:rgba(255,255,255,.2);color:#fff}.resp button.on{color:#fff;background:color-mix(in srgb,var(--c) 14%,transparent);border-color:color-mix(in srgb,var(--c) 45%,transparent)}.resp button.on svg{color:#4ade80}
 @media (max-width:1000px){.dw-h{padding:18px 18px 4px}.dw-b{padding:16px 18px 22px}.dw-f{padding:10px 18px;flex-wrap:wrap}}
+.k-canal .c-b{position:relative}
+.cn-ic{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;margin-left:-2px;color:#fff}.cn-ic img{width:13px;height:13px;object-fit:contain}.cn-ic svg{width:11px;height:11px;stroke-width:2.2}
+.dw-kind.cn{padding-left:3px}
+details.ap{border-radius:14px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.02)}
+details.ap summary{list-style:none;display:flex;align-items:center;gap:8px;padding:11px 14px;font-size:12.5px;font-weight:600;color:var(--text-2)}details.ap summary small{font-weight:400;color:var(--muted)}
+details.ap summary::after{content:'';margin-left:auto;width:7px;height:7px;border-right:1.6px solid var(--muted);border-bottom:1.6px solid var(--muted);transform:rotate(45deg);transition:transform .25s var(--ease)}details.ap[open] summary::after{transform:rotate(-135deg)}
+.ap-b{display:flex;flex-direction:column;gap:12px;padding:2px 14px 14px}
 #gate{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px;background:rgba(8,8,10,.35);animation:fade .35s both}
 #gate.soft{background:rgba(8,8,10,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 #gate.out{animation:fadeOut .42s var(--ease) forwards}
@@ -684,7 +691,7 @@ async function setBoard(b) {
 }
 
 /* =================== configuração e cadastros =================== */
-const CFG0 = () => ({ title: { text: 'Constelação · ' + PAIS[store.board].name, color: '#26262b', size: 14 }, logo: '', logoSize: 70, sz: 'm', dayMode: 'livre', iconSize: 44 });
+const CFG0 = () => ({ title: { text: 'Constelação · ' + PAIS[store.board].name, color: '#26262b', size: 14 }, logo: '', logoSize: 70, sz: 'm', dayMode: 'livre', iconSize: 30 });
 function cfg() { const c = D('app/cfg') || {}, d = CFG0(); const o = { ...d, ...c }; o.title = { ...d.title, ...(c.title || {}) }; return o; }
 function setDeep(o, path, v) { const k = path.split('.'); let x = o; while (k.length > 1) { const h = k.shift(); x[h] = x[h] && typeof x[h] === 'object' ? x[h] : {}; x = x[h]; } x[k[0]] = v; }
 function cfgSet(path, v) { const c = clone(D('app/cfg') || {}); setDeep(c, path, v); commit('app/cfg', c); }
@@ -704,7 +711,7 @@ const av = (p, s = 22) => p ? `<span class="c-avt" style="--pc:${p.color || '#85
 const kindOf = n => KINDS[n.cat] ? n.cat : ['ponto', 'decisao'].includes(n.cat) ? 'dia' : n.cat === 'loja' ? 'canal' : n.cat === 'marco' && n.lv === undefined ? 'dia' : 'marco';
 function nz(raw, id) {
   const n = { ...raw, id }, k = kindOf(raw); n.kind = k;
-  if (k === 'marco') {
+  if (k === 'marco' || k === 'canal') {
     n.tasks = raw.tasks || (raw.chk || []).map(c => ({ id: c.id || uid(), t: c.t || '', st: c.ok ? 'done' : 'todo' }));
     /* o modelo é escolhido uma vez; itens antigos com tarefas já entram como Lista */
     n.modelo = raw.modelo || (n.tasks.length ? 'lista' : '');
@@ -742,7 +749,9 @@ const labelOf = n => n.kind === 'dia' ? (n.day ? `Dia ${n.day}` + (n.title ? ' �
 const realTasks = n => (n.tasks || []).filter(t => t.kind !== 'topico');
 function progOf(n) { const T = realTasks(n), d = T.filter(t => t.st === 'done').length; return { done: d, total: T.length, pct: T.length ? Math.round(d / T.length * 100) : n.status === 'done' ? 100 : 0, late: T.some(t => t.st !== 'done' && t.due && t.due < todayISO()), blocked: T.filter(t => t.st === 'blocked').length }; }
 const isDone = n => { const p = progOf(n); return p.total ? p.done === p.total : n.status === 'done'; };
-function monthProg(list) { const T = list.filter(n => n.kind === 'marco').flatMap(n => realTasks(n)); const d = T.filter(t => t.st === 'done').length; return { done: d, total: T.length, pct: T.length ? Math.round(d / T.length * 100) : 0, late: T.filter(t => t.st !== 'done' && t.due && t.due < todayISO()).length, blocked: T.filter(t => t.st === 'blocked').length }; }
+/* marcos e canais/lojas têm o card do que fazer */
+const isWork = n => n.kind === 'marco' || n.kind === 'canal';
+function monthProg(list) { const T = list.filter(isWork).flatMap(n => realTasks(n)); const d = T.filter(t => t.st === 'done').length; return { done: d, total: T.length, pct: T.length ? Math.round(d / T.length * 100) : 0, late: T.filter(t => t.st !== 'done' && t.due && t.due < todayISO()).length, blocked: T.filter(t => t.st === 'blocked').length }; }
 /* o tamanho do marco segue o quanto ele tem dentro */
 const infoOf = n => realTasks(n).length + (n.att || []).length + (n.notes ? 1 : 0) + Math.min(2, (n.who || []).length) + Math.min(6, Math.round(String(n.doc || '').replace(/<[^>]+>/g, '').length / 160));
 const szOf = n => n.sz || (infoOf(n) <= 2 ? 's' : infoOf(n) <= 7 ? 'm' : 'l');
@@ -816,7 +825,7 @@ function nodeHTML(n, list) {
   if (k === 'dia') {
     const iso = n.day ? `${n.month}-${String(n.day).padStart(2, '0')}` : '';
     body = `${ed ? inp : `<b>${n.day || '·'}</b>`}`;
-    const late = iso && iso < todayISO() && list.some(x => x.parent === n.id && x.kind === 'marco' && !isDone(x));
+    const late = iso && iso < todayISO() && list.some(x => x.parent === n.id && isWork(x) && !isDone(x));
     if (late) body += '<i class="c-dal" title="Ficou pendência deste dia"></i>';
     below = [iso ? wday(iso) : '', n.title || ''].filter(Boolean).join(' · ');
   } else if (k === 'marco') {
@@ -824,7 +833,7 @@ function nodeHTML(n, list) {
     const ring = `<svg class="c-ring ${p.total && p.done === p.total ? 'full' : ''} ${p.total ? '' : 'none'}" viewBox="0 0 36 36"><circle class="bg" cx="18" cy="18" r="${R}"/><circle class="fg" cx="18" cy="18" r="${R}" style="stroke-dasharray:${p.pct / 100 * C} ${C}"/></svg>`;
     const sl = n.selo ? SELOS[0] : null;
     body = `${ring}${ed ? inp : `<b>${esc(labelOf(n))}</b>`}${p.total ? `<span class="c-cnt">${p.done}/${p.total}</span>` : ''}${p.late ? '<i class="c-late" title="Tem tarefa atrasada"></i>' : ''}${who.length ? `<span class="c-avs">${who.map(x => av(x, 18)).join('')}</span>` : ''}${sl ? `<button class="c-selo" data-act="selo-x" data-id="${n.id}" title="Selo ${sl[1]} · clique para tirar" aria-label="Tirar selo ${sl[1]}">${seloSvg(sl[2])}</button>` : ''}`;
-  } else if (k === 'canal') { body = canalIcon(n); below = labelOf(n); }
+  } else if (k === 'canal') { const p = progOf(n); body = `${canalIcon(n)}${p.late ? '<i class="c-dal" title="Tem tarefa atrasada"></i>' : ''}`; below = labelOf(n) + (p.total ? ` · ${p.done}/${p.total}` : ''); }
   else if (k === 'comentario') body = ed ? `<textarea class="c-ined c-intx" id="ined-in" placeholder="Escreva o comentário" spellcheck="false">${esc(n.title || '')}</textarea>` : `<p class="c-tx${n.title ? '' : ' ph'}">${esc(n.title || 'Comentário')}</p>`;
   else if (k === 'periodo') body = `${ed ? inp : `<b>${esc(labelOf(n))}</b>`}<i class="c-brk" style="width:${n.w || 220}px"></i>`;
   const per = k === 'periodo' ? `<i class="c-stripe" style="width:${n.w || 220}px"></i><span class="c-ph l"></span><span class="c-ph r"></span>` : '';
@@ -886,7 +895,7 @@ function reconcile(first) {
     if (el._c !== cls) { const born = el.classList.contains('born'); el.className = cls + (born ? ' born' : ''); el._c = cls; }
     el.style.setProperty('--c', col);
     if (k === 'marco') { const s = szOf(n); el.style.setProperty('--ph', { s: '28px', m: '34px', l: '42px' }[s]); el.style.setProperty('--pf', { s: '11.5px', m: '12.5px', l: '14.5px' }[s]); el.style.setProperty('--pl', { s: '5px', m: '6px', l: '7px' }[s]); }
-    if (k === 'canal') el.style.setProperty('--iz2', (c.iconSize || 44) + 'px');
+    if (k === 'canal') el.style.setProperty('--iz2', (c.iconSize || 30) + 'px');
     if (k === 'comentario') el.style.setProperty('--tw', (n.w || 240) + 'px');
     if (k === 'periodo') el.style.setProperty('--w', (n.w || 220) + 'px');
     const b = el.querySelector('.c-b'), gs = c.sz === 's' ? .86 : c.sz === 'l' ? 1.18 : 1;
@@ -1242,7 +1251,7 @@ function createNode(kind, ctx = {}, extra = {}) {
   const p = ctx.parent ? N(ctx.parent) : null, mk = curMk(), c = cfg();
   let { x, y } = ctx; if (x == null) ({ x, y } = freeSpot(p ? p.id : null));
   const n = { id: uid(), month: UI.month, mk, kind, title: '', x: Math.round(x), y: Math.round(y), parent: p ? p.id : null, via: p && ctx.via != null ? ctx.via : null, brands: mk === 'geral' ? [] : [mk], who: [], links: [], by: store.name, t: Date.now(), ...extra };
-  if (kind === 'marco') Object.assign(n, { modelo: extra.modelo || '', tasks: extra.tasks || [] });
+  if (kind === 'marco' || kind === 'canal') Object.assign(n, { modelo: extra.modelo || '', tasks: extra.tasks || [] });
   if (kind === 'dia') { y = 0; n.y = 0; if (c.dayMode === 'regua') { const off = UI.macro ? mIdx(UI.month) * MW() : 0; n.day = clamp(Math.round((n.x - off) / DW0), 1, dim(UI.month)); n.x = off + n.day * DW0; } else if (n.day == null) { const ds = monthNodes().filter(d => d.kind === 'dia' && d.day).map(d => d.day); n.day = UI.month === curMonth() && !ds.includes(nowBR().getUTCDate()) ? nowBR().getUTCDate() : Math.min(dim(UI.month), (ds.length ? Math.max(...ds) : 0) + 1); } }
   if (kind === 'periodo') { n.w = UI.macro ? 620 : 220; if (Math.abs(n.y) < 80) n.y = 0; }
   if (kind === 'comentario') { n.w = 240; n.color = '#facc15'; }
@@ -1267,7 +1276,7 @@ const gadDef = () => ({ prazos: true, travados: true, bloco: true });
 const gadOn = g => !!({ ...gadDef(), ...(UI.gad || {}) })[g];
 const blocoPath = () => 'node/bloco~' + curMk() + '~' + (UI.macro ? curYear() : UI.month);
 /* todas as tarefas da constelação atual (com o marco de onde vêm) */
-const tasksOf = (list, all) => list.filter(n => n.kind === 'marco').flatMap(n => realTasks(n).map(t => ({ t, n })));
+const tasksOf = (list, all) => list.filter(isWork).flatMap(n => realTasks(n).map(t => ({ t, n })));
 function gadBody(g) {
   const k = curMk(), today = todayISO(), lim = addDays(today, 7);
   const rowG = (n, label, right, cls = '', tid = '') => `<button class="c-gr" data-act="gfly" data-id="${n.id}" data-t="${tid}"><i class="c-sdot" style="--sc:${colorOf(n)}"></i><span>${esc(label)}</span><small class="${cls}">${right}</small></button>`;
@@ -1293,7 +1302,7 @@ function gadgets() {
 function mePanel() {
   const el = $('#me'); if (!el) return; el.hidden = !UI.me; if (!UI.me) return;
   const P = pessoas(), who = pessoa(UI.meP) ? UI.meP : P[0]?.id || '', today = todayISO(), wk = addDays(today, 7);
-  const T = who ? allNodes().filter(n => n.kind === 'marco').flatMap(n => realTasks(n).filter(t => t.who === who && t.st !== 'done').map(t => ({ t, n }))) : [];
+  const T = who ? allNodes().filter(isWork).flatMap(n => realTasks(n).filter(t => t.who === who && t.st !== 'done').map(t => ({ t, n }))) : [];
   const sec = (k, l, c, L) => L.length ? `<section class="me-s"><h6 style="--sc:${c}"><i></i>${l}<em>${L.length}</em></h6>${L.slice(0, 12).map(({ t, n }) => `<div class="me-r"><button class="cb" data-act="me-done" data-id="${n.id}" data-t="${t.id}" aria-label="Concluir">${ic('check')}</button><button class="t" data-act="gfly" data-id="${n.id}" data-t="${t.id}"><b>${esc(t.t || 'Tarefa')}</b><small>${esc(labelOf(n))} · ${esc(mkName(mkOf(n)))}${t.due ? ' · ' + dueTxt(t.due) : ''}</small></button></div>`).join('')}</section>` : '';
   const late = T.filter(x => x.t.due && x.t.due < today), hoje = T.filter(x => x.t.due === today), sem = T.filter(x => x.t.due > today && x.t.due <= wk), sp = T.filter(x => !x.t.due);
   const h = `<div class="me-h"><div class="row"><b>Meu dia</b><span class="sp"></span><button class="pill sm icon ghost" data-act="me" aria-label="Fechar">${ic('x')}</button></div>
@@ -1373,7 +1382,7 @@ function mTexto(n) {
 const MV = { lista: mLista, quadro: mQuadro, etapas: mEtapas, conteudo: mConteudo, pauta: mPauta, texto: mTexto };
 /* escolher o modelo: uma vez, no começo */
 function mPick(n) {
-  return `<div class="pk-h"><b>Como este marco vai ser trabalhado?</b><span>Escolha um modelo. Dá para trocar depois em “Trocar modelo”, sem perder nada.</span></div>
+  return `<div class="pk-h"><b>${n.kind === 'canal' ? 'O que vai ser feito neste canal?' : 'Como este marco vai ser trabalhado?'}</b><span>Escolha um modelo. Dá para trocar depois em “Trocar modelo”, sem perder nada.</span></div>
   <div class="pk">${MODELS.map(([k, l, i, d]) => `<button class="pk-c" data-act="dw-model" data-v="${k}"><span class="pk-i">${ic(i)}</span><b>${l}</b><small>${d}</small></button>`).join('')}</div>
   ${tpls().length ? `<div class="tplbar"><span>${ic('tpl', 'width:14px;height:14px;vertical-align:-2px')} Ou comece de um modelo salvo:</span>${tpls().map(t => `<button class="pill sm" data-act="tpl-use" data-v="${t.id}">${esc(t.name)}</button>`).join('')}</div>` : ''}`;
 }
@@ -1386,19 +1395,25 @@ function attHTML(n) {
   <div><button class="pill sm" data-act="att-new">${ic('link', 'width:13px;height:13px')}Adicionar link</button></div>`;
 }
 function dwMarco(n) {
-  const p = progOf(n), P = pessoas(), C = monthNodes().filter(x => x.kind === 'canal'), par = n.parent && N(n.parent), mdl = MV[n.modelo] ? n.modelo : '', M = MODELS.find(m => m[0] === mdl), sl = n.selo ? SELOS[0] : null;
+  const p = progOf(n), P = pessoas(), cn = n.kind === 'canal', C = cn ? [] : monthNodes().filter(x => x.kind === 'canal'), par = n.parent && N(n.parent), mdl = MV[n.modelo] ? n.modelo : '', M = MODELS.find(m => m[0] === mdl), sl = n.selo ? SELOS[0] : null;
+  const kindTag = cn ? `<span class="dw-kind cn"><span class="cn-ic" style="background:${colorOf(n)}">${canalIcon(n)}</span>${M ? M[1] : 'Canal / loja'}</span>` : `<span class="dw-kind">${ic(M ? M[2] : 'marco')}${M ? M[1] : 'Marco'}</span>`;
+  /* canal/loja: a aparência fica numa seção que abre e fecha */
+  const ap = cn ? `<details class="ap" ${UI.dwAp ? 'open' : ''} ontoggle="UI.dwAp = this.open"><summary>${ic('palette', 'width:13px;height:13px')}Aparência <small>ícone, cor e link</small></summary><div class="ap-b">
+    <div class="icg">${icons().map(x => `<button class="${n.icon === x.id ? 'on' : ''}" data-act="dw-icon" data-v="${x.id}" title="${esc(x.name)}"><img src="${esc(x.src)}" alt=""></button>`).join('')}${BUILTIN.map(([i, l]) => `<button class="${!n.icon && n.bi === i ? 'on' : ''}" data-act="dw-bi" data-v="${i}" title="${l}">${ic(i)}</button>`).join('')}</div>
+    ${isAdmin() ? '<p class="c-mut">Os ícones das suas lojas e redes entram em Ajustes → Ícones (SVG).</p>' : ''}
+    <div class="row" style="flex-wrap:wrap;gap:14px"><div class="mf2"><span>Cor</span><div class="chips cols">${colRow(n)}</div></div><label class="mf2" style="flex:1;min-width:220px"><span>Link</span><input class="inp sm" data-nf="link" value="${esc(n.link || '')}" placeholder="https://"></label></div></div></details>` : '';
   return `<div class="dw-h">
-    <div class="dw-top"><span class="dw-kind">${ic(M ? M[2] : 'marco')}${M ? M[1] : 'Marco'}</span>${par ? `<button class="crumb" data-act="open" data-id="${par.id}">${ic('left', 'width:11px;height:11px')}${esc(labelOf(par))}</button>` : ''}<span class="sp"></span>${sl ? `<button class="selo-tag" style="--sc:${sl[2]}" data-act="selo-x" data-id="${n.id}" title="Tirar o selo">${seloSvg(sl[2])}${sl[1]}${ic('x', 'width:11px;height:11px')}</button>` : ''}<button class="dw-x" data-act="dw-close" aria-label="Fechar">${ic('x')}</button></div>
-    <input class="dw-t" data-nf="title" value="${esc(n.title || '')}" placeholder="Nome do marco" autocomplete="off">
+    <div class="dw-top">${kindTag}${par ? `<button class="crumb" data-act="open" data-id="${par.id}">${ic('left', 'width:11px;height:11px')}${esc(labelOf(par))}</button>` : ''}<span class="sp"></span>${sl ? `<button class="selo-tag" style="--sc:${sl[2]}" data-act="selo-x" data-id="${n.id}" title="Tirar o selo">${seloSvg(sl[2])}${sl[1]}${ic('x', 'width:11px;height:11px')}</button>` : ''}<button class="dw-x" data-act="dw-close" aria-label="Fechar">${ic('x')}</button></div>
+    <input class="dw-t" data-nf="title" value="${esc(n.title || '')}" placeholder="${cn ? esc(labelOf({ ...n, title: '' })) : 'Nome do marco'}" autocomplete="off">
     <div class="dw-meta">
       <div class="mf2"><span>Responsáveis</span><div class="who-ch">${P.map(x => `<button class="${(n.who || []).includes(x.id) ? 'on' : ''}" data-act="dw-who" data-v="${x.id}" title="${esc(x.name)}">${av(x, 26)}</button>`).join('') || '<span class="c-mut">Cadastre em Ajustes</span>'}</div></div>
       <div class="mf2"><span>Prazo</span>${dSel({ id: '_', due: n.due, st: isDone(n) ? 'done' : '' }).replace('data-tk="_" data-f="due"', 'data-nf="due"')}</div>
       ${C.length ? `<div class="mf2"><span>Canais</span><div class="chips">${C.map(c => `<button class="c-whob ${(n.canais || []).includes(c.id) ? 'on' : ''}" data-act="dw-canal" data-v="${c.id}" title="${esc(labelOf(c))}"><span class="pch" style="border:0;background:${colorOf(c)}33">${c.icon && iconById(c.icon) ? `<img src="${esc(iconById(c.icon).src)}" alt="" style="width:15px;height:15px">` : ic(c.bi || 'r_note')}</span></button>`).join('')}</div></div>` : ''}
-      <div class="mf2"><span>Cor da pílula</span><div class="chips cols">${colRow(n)}</div></div>
+      ${cn ? '' : `<div class="mf2"><span>Cor da pílula</span><div class="chips cols">${colRow(n)}</div></div>`}
       ${M && M[0] !== 'texto' ? `<div class="dw-prog">${ringSvg(p.pct)}<div><b>${p.pct}%</b><small>${p.total ? `${p.done} de ${p.total}` : 'sem tarefas'}</small></div></div>` : ''}
     </div>
   </div>
-  <div class="dw-b" id="dwb">
+  <div class="dw-b" id="dwb">${ap}
     <div class="mbody">${M ? MV[mdl](n) : mPick(n)}</div>
     <section class="sec"><h5>${ic('clip', 'width:13px;height:13px')}Arquivos e links</h5>${attHTML(n)}</section>
     <section class="sec"><h5>${ic('note', 'width:13px;height:13px')}Notas</h5><textarea class="inp" rows="3" data-nf="notes" placeholder="Contexto, combinados, ideias…">${esc(n.notes || '')}</textarea></section>
@@ -1409,7 +1424,7 @@ function dwMarco(n) {
 function dwSmall(n) {
   const k = n.kind, list = monthNodes(), kids = list.filter(x => x.parent === n.id);
   const head = `<div class="dw-h"><div class="dw-top"><span class="dw-kind">${ic(k)}${KINDS[k][0]}</span><span class="sp"></span><button class="dw-x" data-act="dw-close" aria-label="Fechar">${ic('x')}</button></div>`;
-  const legs = `<section class="sec"><h5>${ic('const', 'width:13px;height:13px')}${k === 'dia' ? 'Pernas deste dia' : 'Ligados aqui'}<em>${kids.length || ''}</em></h5><div class="legs">${kids.map(x => { const p = x.kind === 'marco' ? progOf(x) : null; return `<button class="leg" data-act="open" data-id="${x.id}"><i class="c-sdot" style="--sc:${colorOf(x)}"></i><span>${esc(labelOf(x))}</span>${p ? `<small>${p.done}/${p.total}</small><span class="legb"><i style="width:${p.pct}%"></i></span>` : `<small>${KINDS[x.kind][0]}</small>`}</button>`; }).join('') || '<p class="c-mut">Nada sai daqui ainda.</p>'}</div><div style="margin-top:8px"><button class="pill sm" data-act="dw-leg">${ic('plus', 'width:12px;height:12px')}Novo marco saindo daqui</button></div></section>`;
+  const legs = `<section class="sec"><h5>${ic('const', 'width:13px;height:13px')}${k === 'dia' ? 'Pernas deste dia' : 'Ligados aqui'}<em>${kids.length || ''}</em></h5><div class="legs">${kids.map(x => { const p = isWork(x) ? progOf(x) : null; return `<button class="leg" data-act="open" data-id="${x.id}"><i class="c-sdot" style="--sc:${colorOf(x)}"></i><span>${esc(labelOf(x))}</span>${p ? `<small>${p.done}/${p.total}</small><span class="legb"><i style="width:${p.pct}%"></i></span>` : `<small>${KINDS[x.kind][0]}</small>`}</button>`; }).join('') || '<p class="c-mut">Nada sai daqui ainda.</p>'}</div><div style="margin-top:8px"><button class="pill sm" data-act="dw-leg">${ic('plus', 'width:12px;height:12px')}Novo marco saindo daqui</button></div></section>`;
   let body = '';
   if (k === 'dia') { const iso = n.day ? `${n.month}-${String(n.day).padStart(2, '0')}` : ''; body = `${head}
     <div class="row" style="align-items:flex-end;gap:14px"><label class="field" style="width:90px"><span>Dia</span><input class="inp" type="number" min="1" max="${dim(n.month)}" data-nf="day" value="${n.day || ''}" style="font-size:20px;font-weight:700;height:44px;text-align:center"></label><label class="field" style="flex:1"><span>Rótulo (opcional)</span><input class="inp" data-nf="title" value="${esc(n.title || '')}" placeholder="ex.: lançamento, live, entrega"></label></div>
@@ -1433,9 +1448,9 @@ function drawer(id, dir) {
   const same = DW.id === id && el.classList.contains('on'), b0 = el.querySelector('.dw-b'), sc = same && b0 ? b0.scrollTop : 0;
   const ae = document.activeElement, key = same && ae && el.contains(ae) ? (ae.id === 'rt' ? '#rt' : ae.dataset.tk ? `[data-tk="${ae.dataset.tk}"][data-f="${ae.dataset.f}"]` : ae.dataset.nf ? `[data-nf="${ae.dataset.nf}"]` : ae.dataset.add ? `[data-add="${ae.dataset.add}"]` : '') : '';
   const was = DW.id; DW.id = id; SEL = id;
-  el.className = 'dw' + (n.kind === 'marco' ? '' : ' sm');
+  el.className = 'dw' + (isWork(n) ? '' : ' sm');
   el.style.setProperty('--c', colorOf(n));
-  el.innerHTML = n.kind === 'marco' ? dwMarco(n) : dwSmall(n);
+  el.innerHTML = isWork(n) ? dwMarco(n) : dwSmall(n);
   const b = el.querySelector('.dw-b'); if (b) { b.scrollTop = sc; if (dir) b.classList.add(dir > 0 ? 'in-r' : 'in-l'); }
   if (key) { const t = el.querySelector(key); if (t) { t.focus({ preventScroll: true }); if (t.setSelectionRange && t.type !== 'date' && t.type !== 'number') try { const L = t.value.length; t.setSelectionRange(L, L); } catch (e) {} } }
   $$('.nt,.tp-d textarea,.kcard textarea', el).forEach(t => { t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; });
@@ -1631,7 +1646,7 @@ function refresh() { if (UI.view === 'cst' && $('#world')) { reconcile(); mkTabs
 
 /* =================== TAREFAS (todas do mês) =================== */
 function vLista() {
-  const list = monthNodes().filter(n => n.kind === 'marco'), rows = list.flatMap(n => realTasks(n).filter(t => !UI.who || t.who === UI.who).map(t => ({ t, n }))).sort((a, b) => (a.t.st === 'done') - (b.t.st === 'done') || (a.t.due || '9').localeCompare(b.t.due || '9'));
+  const list = monthNodes().filter(isWork), rows = list.flatMap(n => realTasks(n).filter(t => !UI.who || t.who === UI.who).map(t => ({ t, n }))).sort((a, b) => (a.t.st === 'done') - (b.t.st === 'done') || (a.t.due || '9').localeCompare(b.t.due || '9'));
   const pr = monthProg(list);
   return `<div class="vlist"><div class="row"><b style="font-size:15px">${esc(mkName(curMk()))} · ${UI.macro ? curYear() : monthName(UI.month)}</b><span class="sp"></span><span class="sub">${pr.done}/${pr.total} feitas · ${pr.pct}%</span></div>
   ${rows.length ? `<div class="node tbl"><div class="tr h"><span></span><span>Tarefa</span><span>Marco</span><span>Quem</span><span>Prazo</span><span>Status</span></div>${rows.map(({ t, n }) => { const p = pessoa(t.who), s = STc(t.st), late = t.due && t.st !== 'done' && t.due < todayISO();
@@ -1639,7 +1654,7 @@ function vLista() {
 }
 /* =================== PESSOAS =================== */
 function vPessoas() {
-  const P = pessoas(), T = monthNodes().filter(n => n.kind === 'marco').flatMap(n => realTasks(n).map(t => ({ t, n })));
+  const P = pessoas(), T = monthNodes().filter(isWork).flatMap(n => realTasks(n).map(t => ({ t, n })));
   return `<div class="vlist"><div class="row"><b style="font-size:15px">Pessoas · ${esc(mkName(curMk()))}</b><span class="sp"></span>${isAdmin() ? `<button class="pill sm" data-act="ent" data-k="pessoa" data-id="">${ic('plus')}Pessoa</button>` : ''}</div>
   ${P.length ? `<div class="pgrid">${P.map(p => { const mine = T.filter(x => x.t.who === p.id), open = mine.filter(x => x.t.st !== 'done'), late = open.filter(x => x.t.due && x.t.due < todayISO()).length, t = time(p.team);
     return `<div class="node pc"><div class="pch2">${av(p, 42)}<div><b>${esc(p.name)}</b><span>${esc(p.role || '')}${t ? ` · ${esc(t.name)}` : ''}</span></div></div>
@@ -1658,9 +1673,9 @@ function vSet() {
   if (tab === 'pessoa') b = `<h2>Pessoas e times</h2><p>Quem faz as tarefas. Os times servem de filtro no mapa.</p>
     ${pessoas().map(x => row('pessoa', x, esc([x.role, (time(x.team) || {}).name].filter(Boolean).join(' · ')))).join('')}<div><button class="pill sm white" data-act="ent" data-k="pessoa" data-id="">${ic('plus')}Nova pessoa</button></div>
     <p class="c-mut" style="margin:10px 0 0;letter-spacing:.12em;text-transform:uppercase;font-size:10.5px">Times</p>${times().map(x => row('time', x, `${pessoas().filter(p => p.team === x.id).length} pessoas`)).join('')}<div><button class="pill sm" data-act="ent" data-k="time" data-id="">${ic('plus')}Novo time</button></div>`;
-  if (tab === 'icones') { const I = icons(), sz = c.iconSize || 44; b = `<h2>Ícones de lojas e canais</h2><p>Envie os SVG das suas lojas e redes. Eles aparecem nos Canais do mapa, nas constelações e no Conteúdo.</p>
+  if (tab === 'icones') { const I = icons(), sz = c.iconSize || 30; b = `<h2>Ícones de lojas e canais</h2><p>Envie os SVG das suas lojas e redes. Eles aparecem nos Canais do mapa, nas constelações e no Conteúdo.</p>
     <div class="node sc"><label class="drop" style="cursor:pointer">${ic('upload', 'width:20px;height:20px')}<span><b>Enviar SVG</b><small>pode escolher vários de uma vez · até 80 KB cada</small></span><input type="file" id="svg-in" accept=".svg,image/svg+xml" multiple hidden></label>
-    <label class="field"><span>Tamanho no mapa · ${sz}px</span><input type="range" class="range" min="28" max="88" step="2" data-cfg-num="iconSize" value="${sz}"></label></div>
+    <label class="field"><span>Tamanho no mapa · ${sz}px</span><input type="range" class="range" min="22" max="88" step="2" data-cfg-num="iconSize" value="${sz}"></label></div>
     ${I.length ? `<div class="icl" style="--isz:${sz}px">${I.map(x => `<div class="icc"><button class="pill sm icon ghost x" data-act="ic-del" data-v="${x.id}" aria-label="Excluir ícone">${ic('x')}</button><span class="pv" style="background:radial-gradient(circle at 32% 28%,${x.color || '#33333a'}66,#18181c 70%)"><img src="${esc(x.src)}" alt=""></span><input class="inp sm" data-icn="${x.id}" value="${esc(x.name)}"><input type="color" data-icc="${x.id}" value="${x.color || '#f0559a'}" title="Cor do círculo" style="width:100%;height:24px;border:0;background:none"></div>`).join('')}</div>` : '<div class="empty node">Nenhum ícone enviado ainda.</div>'}`; }
   if (tab === 'tpl') { const T = tpls(); b = `<h2>Modelos de marco</h2><p>Marcos prontos com as tarefas de sempre. Crie abrindo um marco e usando “Salvar como modelo”.</p>
     ${T.map(t => `<div class="node sc"><div class="er"><span class="dw-kind" style="--c:#c4b5fd">${ic(MODELS.find(m => m[0] === t.modelo)?.[2] || 'm_lista')}</span><div style="flex:1"><input class="inp sm" data-tpln="${t.id}" value="${esc(t.name)}"><span style="display:block;margin-top:4px">${(t.tasks || []).filter(x => x.kind !== 'topico').length} tarefas · ${MODELS.find(m => m[0] === t.modelo)?.[1] || 'Lista'}${t.selo ? ' · selo ' + ((SELOS[0]) || [])[1] : ''}</span></div><button class="pill sm icon ghost" data-act="tpl-del" data-v="${t.id}" aria-label="Excluir modelo">${ic('trash')}</button></div></div>`).join('') || '<div class="empty node">Nenhum modelo ainda.</div>'}`; }
