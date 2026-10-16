@@ -189,6 +189,7 @@ svg.c-wires{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
 .c-ring{width:calc(var(--ph,34px) - 10px);height:calc(var(--ph,34px) - 10px);flex:none;transform:rotate(-90deg)}
 .c-ring circle{fill:none;stroke-width:3.4}.c-ring .bg{stroke:rgba(255,255,255,.12)}.c-ring .fg{stroke:var(--c);stroke-linecap:round;transition:stroke-dasharray .6s var(--ease)}
 .c-ring.full .fg{stroke:#4ade80}
+.c-dot{width:calc(var(--ph,34px) * .32);height:calc(var(--ph,34px) * .32);border-radius:50%;background:var(--c);flex:none;margin-left:calc(var(--ph,34px) * .2)}
 .c-ring.none .bg{stroke:color-mix(in srgb,var(--c) 70%,transparent);stroke-width:5}
 /* gaveta fechada (só leitura) */
 .rv-t{font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1.2;padding:2px 0 4px;overflow-wrap:anywhere}.rv-t.ph{color:var(--dim)}
@@ -946,9 +947,9 @@ function nodeHTML(n, list) {
 
     below = [iso ? wday(iso) : '', n.title || ''].filter(Boolean).join(' · ');
   } else if (k === 'marco') {
-    const ring = '<svg class="c-ring none" viewBox="0 0 36 36"><circle class="bg" cx="18" cy="18" r="15.9"/></svg>';
+    const ring = '<i class="c-dot"></i>';
     const sl = n.selo ? SELOS[0] : null;
-    body = `${ring}${ed ? inp : `<b>${esc(labelOf(n))}</b>`}${who.length ? `<span class="c-avs">${who.map(x => av(x, 18)).join('')}</span>` : ''}${sl ? `<button class="c-selo" data-act="selo-x" data-id="${n.id}" title="Selo ${sl[1]} · clique para tirar" aria-label="Tirar selo ${sl[1]}">${seloSvg(sl[2])}</button>` : ''}`;
+    body = `${ring}${ed ? inp : `<b>${esc(labelOf(n))}</b>`}${who.length && cfg().pillWho ? `<span class="c-avs">${who.map(x => av(x, 18)).join('')}</span>` : ''}${sl ? `<button class="c-selo" data-act="selo-x" data-id="${n.id}" title="Selo ${sl[1]} · clique para tirar" aria-label="Tirar selo ${sl[1]}">${seloSvg(sl[2])}</button>` : ''}`;
   } else if (k === 'canal') { body = canalIcon(n); below = n.nolb ? '' : labelOf(n); }
   else if (k === 'comentario') body = ed ? `<textarea class="c-ined c-intx" id="ined-in" placeholder="Escreva o comentário" spellcheck="false">${esc(n.title || '')}</textarea>` : `<p class="c-tx${n.title ? '' : ' ph'}">${esc(n.title || 'Comentário')}</p>`;
   else if (k === 'periodo') body = `${ed ? inp : `<b>${esc(labelOf(n))}</b>`}<i class="c-brk" style="width:${n.w || 220}px"></i>`;
@@ -1895,6 +1896,7 @@ function vSet() {
     <div class="node sc"><b>Título</b><div class="row"><input class="inp sm" data-cfg="title.text" value="${esc(c.title.text)}"><input type="color" data-cfg="title.color" value="${esc(c.title.color)}" style="width:44px;height:30px;border:0;background:none"></div><label class="field"><span>Tamanho</span><input type="range" class="range" min="10" max="30" data-cfg-num="title.size" value="${c.title.size}"></label></div>
     <div class="node sc"><b>Logo</b><div class="row"><label class="pill sm">${ic('plus')}${c.logo ? 'Trocar logo' : 'Enviar logo'}<input type="file" accept="image/*" id="logo-in" hidden></label>${c.logo ? '<button class="pill sm ghost" data-act="logo-del">Remover</button>' : ''}</div><label class="field"><span>Altura</span><input type="range" class="range" min="28" max="200" data-cfg-num="logoSize" value="${c.logoSize}"></label></div>
     <div class="node sc"><b>Tamanho dos elementos</b><nav class="seg">${[['s', 'Pequenos'], ['m', 'Médios'], ['l', 'Grandes']].map(([k, l]) => `<button class="pill sm ${(c.sz || 'm') === k ? 'on' : ''}" data-act="cfg" data-k="sz" data-v="${k}">${l}</button>`).join('')}</nav><span class="c-mut">Vale para todo o mapa. Os marcos ainda crescem sozinhos conforme o que têm dentro.</span></div>
+    <div class="node sc"><button class="row" data-act="cfg-tog" data-k="pillWho" style="gap:10px;align-items:center;text-align:left"><i class="switch ${c.pillWho ? 'on' : ''}"></i><span><b style="display:block">Responsáveis na pílula</b><small class="c-mut">mostra as iniciais de quem cuida do marco dentro da pílula</small></span></button></div>
     <div class="node sc"><div class="row"><b>Textos do mapa</b><span class="sp"></span>${c.txt && Object.keys(c.txt).length ? '<button class="pill sm ghost" data-act="txt-reset">Voltar ao padrão</button>' : ''}</div>${TXT.map(([k, l, d, s0, b0]) => { const v = (c.txt || {})[k] || {}, s = v.s || s0, b = v.b != null ? v.b : !!b0; return `<div class="txr"><span><b>${l}</b><small>${d}</small></span><input type="range" class="range" min="9" max="24" step="0.5" data-txs="${k}" value="${s}"><em>${s}px</em><button class="pill sm ${b ? 'on' : ''}" data-act="txtb" data-k="${k}" title="Negrito" aria-label="Negrito"><b>B</b></button></div>`; }).join('')}</div>
     <div class="node sc"><b>Dias</b><nav class="seg">${[['livre', 'Livre'], ['regua', 'Régua do mês']].map(([k, l]) => `<button class="pill sm ${(c.dayMode || 'livre') === k ? 'on' : ''}" data-act="cfg" data-k="dayMode" data-v="${k}">${l}</button>`).join('')}</nav><span class="c-mut">${c.dayMode === 'regua' ? 'A linha do mês mostra 1 a 31 e cada Dia encaixa na sua data ao arrastar.' : 'Você posiciona cada Dia onde quiser e digita o número.'}</span></div>`;
   return `<div class="set"><nav class="set-nav">${SETT.map(([k, l, i]) => `<button class="${tab === k ? 'on' : ''}" data-act="stab" data-v="${k}">${ic(i)}${l}</button>`).join('')}</nav><div class="set-b">${b}</div></div>`;
@@ -1960,6 +1962,7 @@ const ACT = {
   'dw-edit': () => { if (!DW.id) return; DW.edit = true; drawer(DW.id, 1); },
   'dw-view': () => { if (!DW.id) return; saveRt(); DW.edit = false; drawer(DW.id, -1); },
   txtb: a => { const k = a.dataset.k, d = TXT.find(x => x[0] === k), v = ((cfg().txt || {})[k] || {}).b; cfgSet(`txt.${k}.b`, !(v != null ? v : d[4])); txtCss(); render(); },
+  'cfg-tog': a => { cfgSet(a.dataset.k, !cfg()[a.dataset.k]); render(); },
   'txt-reset': () => { cfgSet('txt', {}); txtCss(); render(); },
   'selo-x': a => { const n = N(a.dataset.id); if (!n || !n.selo) return; const s = (SELOS[0]); tx(() => { delete n.selo; log(n, `tirou o selo ${s ? s[1] : ''}`); putNode(n); }); refresh(); if (DW.id === n.id) drawer(n.id); toast('Selo tirado · Ctrl+Z desfaz'); },
   'dw-model': a => { const n = dwNode(); if (!n) return; n.modelo = a.dataset.v; log(n, `escolheu o modelo ${MODELS.find(m => m[0] === n.modelo)[1]}`); putNode(n); refresh(); drawer(n.id, 1); },
