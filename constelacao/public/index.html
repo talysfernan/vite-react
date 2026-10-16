@@ -1263,7 +1263,7 @@ document.addEventListener('pointermove', e => {
     for (const k of drag.ids) { const n = store.docs['node/' + k], s = drag.start[k], wx = Math.round(s.x + ddx); n.x = UI.macro ? wx - mIdx(n.month) * MW() : wx; n.y = k === drag.id ? ny : Math.round(s.y + ddy); }
     st.classList.toggle('magnet', snap && !regua); drag.dirty = true; NODES.get(drag.id)?.classList.add('lift'); document.body.classList.add('dragging'); kick(); return;
   }
-  if (drag.kind === 'per') { const n = store.docs['node/' + drag.id], s = drag.side === 'l' ? -1 : 1; n.w = Math.max(60, Math.round(drag.w0 + s * dx)); n.x = Math.round(drag.x0 + s * (n.w - drag.w0) / 2); drag.dirty = true; refresh(); return; }
+  if (drag.kind === 'per') { const n = store.docs['node/' + drag.id], s = drag.side === 'l' ? -1 : 1; n.w = Math.max(90, Math.round(drag.w0 + s * dx * 2)); drag.dirty = true; refresh(); return; }
   if (drag.kind === 'rz') { const n = store.docs['node/' + drag.id]; n.w = clamp(Math.round(drag.w0 + dx), 140, 640); n.x = Math.round(drag.x0 - (UI.macro ? mIdx(n.month) * MW() : 0) + (n.w - drag.w0) / 2); drag.dirty = true; refresh(); return; }
   if (drag.kind === 'knob') { drag.to = toWorld(e.clientX, e.clientY); st.classList.add('kdrag');
     if (drag.pick) { let g = $('#ghost'); if (!g) { g = document.createElement('div'); g.id = 'ghost'; g.className = 'c-ghost c-ghost-s'; g.innerHTML = dockIcon(drag.pick) + `<span>${KINDS[drag.pick][0]}</span>`; document.body.appendChild(g); } g.style.left = e.clientX + 'px'; g.style.top = e.clientY + 'px'; }
