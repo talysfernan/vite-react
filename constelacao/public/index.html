@@ -190,6 +190,39 @@ svg.c-wires{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
 .c-ring circle{fill:none;stroke-width:3.4}.c-ring .bg{stroke:rgba(255,255,255,.12)}.c-ring .fg{stroke:var(--c);stroke-linecap:round;transition:stroke-dasharray .6s var(--ease)}
 .c-ring.full .fg{stroke:#4ade80}
 .c-ring.none .bg{stroke:color-mix(in srgb,var(--c) 70%,transparent);stroke-width:5}
+/* gaveta fechada (só leitura) */
+.rv-t{font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1.2;padding:2px 0 4px;overflow-wrap:anywhere}.rv-t.ph{color:var(--dim)}
+.rv-meta{display:flex;flex-wrap:wrap;gap:8px;padding:2px 0 16px;border-bottom:1px solid rgba(255,255,255,.07)}
+.rv-ch{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 11px 0 8px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);color:var(--text-2);font-size:12px;font-weight:550;text-decoration:none}
+.rv-ch svg{width:14px;height:14px}.rv-ch .c-avt{margin-left:-3px}.rv-ch.late{color:#fca5a5;border-color:rgba(248,113,113,.35)}.rv-ch.ok{color:#86efac;border-color:rgba(74,222,128,.3)}
+a.rv-ch:hover{border-color:rgba(255,255,255,.25);color:var(--text)}
+.rv-ch .cn-ic{width:18px;height:18px;margin-left:-2px}
+.rv{display:flex;flex-direction:column;gap:22px}
+.rv-empty{color:var(--muted);font-size:13px;padding:26px 0;text-align:center;border:1px dashed rgba(255,255,255,.1);border-radius:14px}
+.rv-g{display:flex;flex-direction:column;gap:2px}
+.rv-gh{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:650;color:var(--text);margin:4px 0 6px}.rv-gh small{color:var(--muted);font-weight:500;font-variant-numeric:tabular-nums}
+.rv-tk{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:11px;background:rgba(255,255,255,.025);font-size:13px;line-height:1.4}
+.rv-tk>.tx{flex:1;min-width:0;overflow-wrap:anywhere}.rv-tk small{color:var(--muted);font-size:11.5px;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+.rv-tk.done>.tx{color:var(--muted);text-decoration:line-through}
+.rv-st{width:9px;height:9px;border-radius:50%;flex:none;background:var(--sc);box-shadow:0 0 0 3px color-mix(in srgb,var(--sc) 18%,transparent)}
+.rv-tk .rv-n{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;flex:none;font-size:11px;font-weight:700;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
+.rv-tk.done .rv-n{background:rgba(74,222,128,.15);border-color:rgba(74,222,128,.35);color:#86efac}
+.rv-tk .rv-d{width:38px;flex:none;text-align:center;line-height:1}.rv-tk .rv-d b{display:block;font-size:16px}.rv-tk .rv-d i{font-style:normal;font-size:10px;color:var(--muted)}
+.rv-tk .pch{width:24px;height:24px}
+.rv-kb{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.rv-kc{padding:10px;border-radius:13px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;gap:6px}
+.rv-kc h6{display:flex;align-items:center;gap:7px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}.rv-kc h6 i{width:7px;height:7px;border-radius:50%;background:var(--sc)}
+.rv-kc p{padding:7px 9px;border-radius:9px;background:rgba(255,255,255,.04);font-size:12.5px;overflow-wrap:anywhere}
+.rv-mt{display:flex;flex-wrap:wrap;gap:8px}
+.rv-tp{padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.025);display:flex;flex-direction:column;gap:5px}.rv-tp b{font-size:13px}.rv-tp p{color:var(--text-2);font-size:12.5px;padding-left:10px;border-left:2px solid color-mix(in srgb,var(--c) 60%,transparent)}
+.rt-view{font-size:14px;line-height:1.65;color:var(--text);overflow-wrap:anywhere}
+.rt-view h3{font-size:17px;margin:10px 0 4px}.rt-view ul,.rt-view ol{padding-left:22px}.rt-view blockquote{border-left:2px solid var(--line-2);padding-left:12px;color:var(--text-2)}.rt-view table{border-collapse:collapse;width:100%}.rt-view td,.rt-view th{border:1px solid var(--line);padding:6px 8px}.rt-view a{color:var(--blue)}.rt-view p+p{margin-top:8px}
+.rv-note{white-space:pre-wrap;font-size:13px;line-height:1.6;color:var(--text-2);overflow-wrap:anywhere}
+.rv-files{display:flex;flex-wrap:wrap;gap:8px}
+.rv-legs{display:flex;flex-direction:column;gap:2px}
+.dw-edit-b svg{width:14px;height:14px}
+.txr{display:grid;grid-template-columns:150px 1fr 48px auto;align-items:center;gap:12px;padding:6px 0}.txr span b{display:block;font-size:12.5px;color:var(--text)}.txr span small{color:var(--muted);font-size:11px}.txr em{font-style:normal;color:var(--text-2);font-variant-numeric:tabular-nums;font-size:12px;text-align:right}
+.txr .pill.on{background:#f4f4f5;color:#111}
 .c-cnt{font-size:.82em;font-weight:600;color:var(--text-2);font-variant-numeric:tabular-nums}
 .c-late{width:7px;height:7px;border-radius:50%;background:#f87171;box-shadow:0 0 8px #f87171;flex:none}
 .c-avs{display:inline-flex;margin-right:-5px}.c-avs .c-avt{margin-left:-5px;box-shadow:0 0 0 1.8px #18181c}.c-avs .c-avt:first-child{margin-left:0}
@@ -660,7 +693,7 @@ const BUILTIN = [['b_amazon', 'Amazon', '#ff9900'], ['b_ml', 'Mercado Livre', '#
 const REDE_IC = { TikTok: 'r_note', Instagram: 'r_cam', YouTube: 'r_play', Facebook: 'r_chat', 'E-mail': 'r_mail', Site: 'r_globe', Live: 'r_live' };
 
 /* ---------- tipos do mapa e modelos de afazeres ---------- */
-const KINDS = { marco: ['Marco', '#a5a8f7'], dia: ['Dia', '#e7e7ea'], canal: ['Canal / loja', '#f0559a'], comentario: ['Comentário', '#facc15'], periodo: ['Período', '#facc15'] };
+const KINDS = { marco: ['Marco', '#a5a8f7'], dia: ['Dia', '#e7e7ea'], canal: ['Pill', '#f0559a'], comentario: ['Comentário', '#facc15'], periodo: ['Período', '#facc15'] };
 const LV = [['leve', 'Leve'], ['imp', 'Importante'], ['crit', 'Crítico']];
 const MODELS = [['lista', 'Lista por pessoa', 'm_lista', 'Tarefas com responsável, prazo e status, agrupadas por pessoa'], ['quadro', 'Quadro', 'm_quadro', 'Cartões em colunas: a fazer, fazendo, revisão e feito'], ['etapas', 'Etapas', 'm_etapas', 'Uma sequência com datas, como um cronograma'], ['conteudo', 'Conteúdo', 'm_conteudo', 'Calendário de posts: data, canal, formato e status'], ['pauta', 'Pauta', 'm_pauta', 'Reunião com tópicos e decisões que viram tarefa'], ['texto', 'Descritivo', 'm_texto', 'Um texto que explica algo, com negrito, listas e tabela, e quem é responsável']];
 /* selo: triângulo com ! que se cola na pílula */
@@ -677,7 +710,7 @@ const ST = [['todo', 'A fazer', '#85858e'], ['doing', 'Fazendo', '#60a5fa'], ['r
 const STc = k => ST.find(s => s[0] === k) || ST[0];
 const CST = [['todo', 'Ideia', 'pen'], ['doing', 'Produção', 'clock'], ['review', 'Aprovado', 'check'], ['done', 'Publicado', 'arrow']];
 const FMT = ['Feed', 'Carrossel', 'Reels', 'Stories', 'TikTok', 'Shorts', 'Live', 'E-mail', 'Blog', 'Anúncio'];
-const DOCK = [['marco', 'Marco'], ['dia', 'Dia'], ['canal', 'Canal'], ['comentario', 'Comentário'], ['periodo', 'Período']];
+const DOCK = [['marco', 'Marco'], ['dia', 'Dia'], ['canal', 'Pill'], ['comentario', 'Comentário'], ['periodo', 'Período']];
 
 /* =================== estado / sincronização / desfazer =================== */
 const BOARD0 = (() => { const q = new URLSearchParams(location.search).get('pais'); if (q === 'br' || q === 'us') return q; try { const v = localStorage.getItem('cst:board'); if (v === 'br' || v === 'us') return v; } catch (e) {} return /^constelacao-us\./.test(location.hostname) ? 'us' : 'br'; })();
@@ -889,15 +922,13 @@ function nodeHTML(n, list) {
   if (k === 'dia') {
     const iso = n.day ? `${n.month}-${String(n.day).padStart(2, '0')}` : '';
     body = `${ed ? inp : `<b>${n.day || '·'}</b>`}`;
-    const late = iso && iso < todayISO() && list.some(x => x.parent === n.id && isWork(x) && !isDone(x));
-    if (late) body += '<i class="c-dal" title="Ficou pendência deste dia"></i>';
+
     below = [iso ? wday(iso) : '', n.title || ''].filter(Boolean).join(' · ');
   } else if (k === 'marco') {
-    const p = progOf(n), R = 15.9, C = 2 * Math.PI * R;
-    const ring = `<svg class="c-ring ${p.total && p.done === p.total ? 'full' : ''} ${p.total ? '' : 'none'}" viewBox="0 0 36 36"><circle class="bg" cx="18" cy="18" r="${R}"/><circle class="fg" cx="18" cy="18" r="${R}" style="stroke-dasharray:${p.pct / 100 * C} ${C}"/></svg>`;
+    const ring = '<svg class="c-ring none" viewBox="0 0 36 36"><circle class="bg" cx="18" cy="18" r="15.9"/></svg>';
     const sl = n.selo ? SELOS[0] : null;
-    body = `${ring}${ed ? inp : `<b>${esc(labelOf(n))}</b>`}${p.total ? `<span class="c-cnt">${p.done}/${p.total}</span>` : ''}${p.late ? '<i class="c-late" title="Tem tarefa atrasada"></i>' : ''}${who.length ? `<span class="c-avs">${who.map(x => av(x, 18)).join('')}</span>` : ''}${sl ? `<button class="c-selo" data-act="selo-x" data-id="${n.id}" title="Selo ${sl[1]} · clique para tirar" aria-label="Tirar selo ${sl[1]}">${seloSvg(sl[2])}</button>` : ''}`;
-  } else if (k === 'canal') { const p = progOf(n); body = `${canalIcon(n)}${p.late ? '<i class="c-dal" title="Tem tarefa atrasada"></i>' : ''}`; below = labelOf(n) + (p.total ? ` · ${p.done}/${p.total}` : ''); }
+    body = `${ring}${ed ? inp : `<b>${esc(labelOf(n))}</b>`}${who.length ? `<span class="c-avs">${who.map(x => av(x, 18)).join('')}</span>` : ''}${sl ? `<button class="c-selo" data-act="selo-x" data-id="${n.id}" title="Selo ${sl[1]} · clique para tirar" aria-label="Tirar selo ${sl[1]}">${seloSvg(sl[2])}</button>` : ''}`;
+  } else if (k === 'canal') { body = canalIcon(n); below = n.nolb ? '' : labelOf(n); }
   else if (k === 'comentario') body = ed ? `<textarea class="c-ined c-intx" id="ined-in" placeholder="Escreva o comentário" spellcheck="false">${esc(n.title || '')}</textarea>` : `<p class="c-tx${n.title ? '' : ' ph'}">${esc(n.title || 'Comentário')}</p>`;
   else if (k === 'periodo') body = `${ed ? inp : `<b>${esc(labelOf(n))}</b>`}<i class="c-brk" style="width:${n.w || 220}px"></i>`;
   const per = k === 'periodo' ? `<i class="c-stripe" style="width:${n.w || 220}px"></i><span class="c-ph l"></span><span class="c-ph r"></span>` : '';
@@ -940,7 +971,17 @@ function visible(list) {
   for (const n of list) if (F.has(n.id) && !hide.has(n.id)) descendants(n.id, list).forEach(x => hide.add(x.id));
   return hide.size ? list.filter(n => !hide.has(n.id)) : list;
 }
+/* Ajustes → Visual → Textos do mapa: tamanho e negrito de cada tipo */
+const TXT = [['marco', 'Marco', 'texto da pílula', 12.5, 1], ['dia', 'Dia', 'número', 13, 1], ['lbl', 'Legendas', 'nome do canal e dia da semana', 11.5, 1], ['comentario', 'Comentário', 'texto do bloco', 12.5, 0], ['periodo', 'Período', 'nome do período', 12, 1]];
+const TXR = { marco: '.k-marco .c-b', dia: '.k-dia .c-b b', lbl: '.c-lb,.c-lb.d', comentario: '.c-tx', periodo: '.k-periodo .c-b b' };
+function txtCss() {
+  const t = cfg().txt || {}; let css = '';
+  for (const k in TXR) { const v = t[k] || {}; if (v.s || v.b != null) css += `${TXR[k]}{${v.s ? `font-size:${v.s}px!important;` : ''}${v.b != null ? `font-weight:${v.b ? 700 : 450}!important;` : ''}}`; }
+  let el = $('#txtcss'); if (!el) { el = document.createElement('style'); el.id = 'txtcss'; document.head.appendChild(el); }
+  if (el.textContent !== css) el.textContent = css;
+}
 function reconcile(first) {
+  txtCss();
   const nodesEl = $('#nodes'); if (!nodesEl) return;
   const all = monthNodes(), list = visible(all), ids = new Set(list.map(n => n.id)), f = hasF(), c = cfg(), today = todayISO();
   if (SEL && !ids.has(SEL)) SEL = '';
@@ -954,7 +995,7 @@ function reconcile(first) {
     if (!el) { el = document.createElement('div'); el.dataset.id = n.id; nodesEl.appendChild(el); NODES.set(n.id, el); if (!first) el.classList.add('born'); const pp = !first && n.parent && POS[n.parent]; POS[n.id] = pp ? { x: pp.x, y: pp.y } : { x: n.x, y: n.y }; }
     const iso = k === 'dia' && n.day ? `${n.month}-${String(n.day).padStart(2, '0')}` : '';
     const sel = DW.id === n.id ? ' open' : SEL === n.id || INED === n.id ? ' sel' : '';
-    const cls = `c-n k-${k}${k === 'marco' ? ` lv-imp${n.selo ? ' has-selo' : ''}` : ''}${c.sz !== 'm' ? ' gs-' + c.sz : ''}${k === 'marco' && isDone(n) ? ' st-done' : ''}${k === 'dia' ? (n.day ? iso === today ? ' today' : iso < today ? ' past' : '' : ' blank') : ''}${f && !matchF(n) && k === 'marco' ? ' dim' : ''}${n.carried ? ' carried' : ''}${sel}${INED === n.id ? ' ined' : ''}`;
+    const cls = `c-n k-${k}${k === 'marco' ? ` lv-imp${n.selo ? ' has-selo' : ''}` : ''}${c.sz !== 'm' ? ' gs-' + c.sz : ''}${k === 'dia' ? (n.day ? iso === today ? ' today' : iso < today ? ' past' : '' : ' blank') : ''}${f && !matchF(n) && k === 'marco' ? ' dim' : ''}${n.carried ? ' carried' : ''}${sel}${INED === n.id ? ' ined' : ''}`;
     if (el._h !== html && !(INED === n.id && el.querySelector('#ined-in'))) { el.innerHTML = html; el._h = html; }
     if (el._c !== cls) { const born = el.classList.contains('born'); el.className = cls + (born ? ' born' : ''); el._c = cls; }
     el.style.setProperty('--c', col);
@@ -1460,11 +1501,12 @@ function attHTML(n) {
 }
 function dwMarco(n) {
   const p = progOf(n), P = pessoas(), cn = n.kind === 'canal', C = cn ? [] : monthNodes().filter(x => x.kind === 'canal'), par = n.parent && N(n.parent), mdl = MV[n.modelo] ? n.modelo : '', M = MODELS.find(m => m[0] === mdl), sl = n.selo ? SELOS[0] : null;
-  const kindTag = cn ? `<span class="dw-kind cn"><span class="cn-ic" style="background:${colorOf(n)}">${canalIcon(n)}</span>${M ? M[1] : 'Canal / loja'}</span>` : `<span class="dw-kind">${ic(M ? M[2] : 'marco')}${M ? M[1] : 'Marco'}</span>`;
+  const kindTag = cn ? `<span class="dw-kind cn"><span class="cn-ic" style="background:${colorOf(n)}">${canalIcon(n)}</span>${M ? M[1] : 'Pill'}</span>` : `<span class="dw-kind">${ic(M ? M[2] : 'marco')}${M ? M[1] : 'Marco'}</span>`;
   /* canal/loja: a aparência fica numa seção que abre e fecha */
   const ap = cn ? `<details class="ap" ${UI.dwAp ? 'open' : ''} ontoggle="UI.dwAp = this.open"><summary>${ic('palette', 'width:13px;height:13px')}Aparência <small>ícone, cor e link</small></summary><div class="ap-b">
     <div class="icg">${icons().map(x => `<button class="${n.icon === x.id ? 'on' : ''}" data-act="dw-icon" data-v="${x.id}" title="${esc(x.name)}"><img src="${esc(x.src)}" alt=""></button>`).join('')}${BUILTIN.map(([i, l, c]) => `<button class="${!n.icon && n.bi === i ? 'on' : ''}" data-act="dw-bi" data-v="${i}" title="${l}" style="color:${c}">${bic(i)}</button>`).join('')}</div>
     ${isAdmin() ? '<p class="c-mut">Os ícones das suas lojas e redes entram em Ajustes → Ícones (SVG).</p>' : ''}
+    <button class="row nolb" data-act="dw-nolb" style="gap:10px;align-items:center"><i class="switch ${n.nolb ? '' : 'on'}"></i><span>Mostrar nome no mapa</span></button>
     <div class="row" style="flex-wrap:wrap;gap:14px"><div class="mf2"><span>Cor</span><div class="chips cols">${colRow(n)}</div></div><label class="mf2" style="flex:1;min-width:220px"><span>Link</span><input class="inp sm" data-nf="link" value="${esc(n.link || '')}" placeholder="https://"></label></div></div></details>` : '';
   return `<div class="dw-h">
     <div class="dw-top">${kindTag}${par ? `<button class="crumb" data-act="open" data-id="${par.id}">${ic('left', 'width:11px;height:11px')}${esc(labelOf(par))}</button>` : ''}<span class="sp"></span>${sl ? `<button class="selo-tag" style="--sc:${sl[2]}" data-act="selo-x" data-id="${n.id}" title="Tirar o selo">${seloSvg(sl[2])}${sl[1]}${ic('x', 'width:11px;height:11px')}</button>` : ''}<button class="dw-x" data-act="dw-close" aria-label="Fechar">${ic('x')}</button></div>
@@ -1483,7 +1525,57 @@ function dwMarco(n) {
     <section class="sec"><h5>${ic('note', 'width:13px;height:13px')}Notas</h5><textarea class="inp" rows="3" data-nf="notes" placeholder="Contexto, combinados, ideias…">${esc(n.notes || '')}</textarea></section>
     <details class="more" ${UI.hist ? 'open' : ''} ontoggle="UI.hist = this.open"><summary>Histórico</summary><div class="hist" style="margin-top:10px">${(n.log || []).slice().reverse().slice(0, 25).map(h => `<div><time>${new Date(h.t - 3 * 3600e3).toISOString().slice(5, 16).replace('T', ' ').replace(/^(\d\d)-(\d\d)/, '$2/$1')}</time><span>${esc(h.by || '')} ${esc(h.a)}</span></div>`).join('') || '<div>Nada registrado ainda.</div>'}</div></details>
   </div>
-  <div class="dw-f"><button class="pill sm danger ghost" data-act="dw-del">${ic('trash', 'width:13px;height:13px')}Excluir</button><button class="pill sm ghost" data-act="dw-dup">${ic('dup', 'width:13px;height:13px')}Duplicar</button>${M ? `<button class="pill sm ghost" data-act="dw-repick">${ic('m_quadro', 'width:13px;height:13px')}Trocar modelo</button>` : ''}${isAdmin() ? `<button class="pill sm ghost" data-act="tpl-save">${ic('tpl', 'width:13px;height:13px')}Salvar como modelo</button>` : ''}${n.carried ? '' : `<button class="pill sm ghost" data-act="carry">${ic('next', 'width:13px;height:13px')}Levar para ${monthName(addMonth(n.month, 1), false)}</button>`}<span class="sp"></span><button class="pill sm white" data-act="dw-close">Pronto</button></div>`;
+  <div class="dw-f"><button class="pill sm danger ghost" data-act="dw-del">${ic('trash', 'width:13px;height:13px')}Excluir</button><button class="pill sm ghost" data-act="dw-dup">${ic('dup', 'width:13px;height:13px')}Duplicar</button>${M ? `<button class="pill sm ghost" data-act="dw-repick">${ic('m_quadro', 'width:13px;height:13px')}Trocar modelo</button>` : ''}${isAdmin() ? `<button class="pill sm ghost" data-act="tpl-save">${ic('tpl', 'width:13px;height:13px')}Salvar como modelo</button>` : ''}${n.carried ? '' : `<button class="pill sm ghost" data-act="carry">${ic('next', 'width:13px;height:13px')}Levar para ${monthName(addMonth(n.month, 1), false)}</button>`}<span class="sp"></span><button class="pill sm white" data-act="dw-view">Pronto</button></div>`;
+}
+/* ---------- gaveta fechada: só o que foi preenchido ---------- */
+const rvAv = id => { const p = pessoa(id); return p ? `<span class="rv-ch">${av(p, 20)}${esc(p.name.split(' ')[0])}</span>` : ''; };
+const rvDue = (v, done) => { if (!v) return ''; const late = !done && v < todayISO(); return `<span class="rv-ch ${late ? 'late' : ''}">${ic('cal')}${fmtD(v)}${late ? ' · atrasado' : ''}</span>`; };
+const rvTk = (t, x = '') => { const s = STc(t.st), p = pessoa(t.who); return `<div class="rv-tk ${t.st === 'done' ? 'done' : ''}">${x || `<i class="rv-st" style="--sc:${s[2]}" title="${s[1]}"></i>`}<span class="tx">${esc(t.t || 'Sem nome')}</span><small>${p ? av(p, 18) + esc(p.name.split(' ')[0]) : ''}${t.due ? (p ? ' · ' : '') + fmtD(t.due) : ''}${t.st && t.st !== 'todo' ? ` · ${s[1]}` : ''}</small></div>`; };
+const rvIc = c => c.icon && iconById(c.icon) ? `<img src="${esc(iconById(c.icon).src)}" alt="" style="width:13px;height:13px;object-fit:contain">` : bic(c.bi || 'r_note');
+function rvBody(n) {
+  const T = realTasks(n), m = MV[n.modelo] ? n.modelo : '';
+  if (m === 'texto') return String(n.doc || '').replace(/<[^>]+>/g, '').trim() ? `<div class="rt-view">${cleanHtml(n.doc)}</div>` : '';
+  if (m === 'pauta') { const mt = n.meet || {}, P = (n.tasks || []).filter(t => t.kind === 'topico' && (t.t || t.dec));
+    const head = [mt.date ? `<span class="rv-ch">${ic('cal')}${fmtD(mt.date)}${mt.time ? ' · ' + esc(mt.time) : ''}</span>` : mt.time ? `<span class="rv-ch">${ic('clock')}${esc(mt.time)}</span>` : '', mt.where ? (/^https?:\/\//.test(mt.where) ? `<a class="rv-ch" href="${esc(mt.where)}" target="_blank" rel="noopener">${ic('link')}Entrar</a>` : `<span class="rv-ch">${ic('g_pin')}${esc(mt.where)}</span>`) : ''].join('');
+    return `${head ? `<div class="rv-mt">${head}</div>` : ''}${P.length ? `<div class="rv-g">${P.map((t, i) => `<div class="rv-tp"><b>${i + 1}. ${esc(t.t || 'Tópico')}</b>${t.dec ? `<p>${esc(t.dec)}</p>` : ''}</div>`).join('')}</div>` : ''}${T.length ? `<div class="rv-g"><div class="rv-gh">Tarefas que saíram da reunião <small>${T.filter(t => t.st === 'done').length}/${T.length}</small></div>${T.map(t => rvTk(t)).join('')}</div>` : ''}`; }
+  if (!T.length) return '';
+  if (m === 'quadro') return `<div class="rv-kb">${[['todo', 'A fazer'], ['doing', 'Fazendo'], ['review', 'Revisão'], ['done', 'Feito']].map(([k, l]) => { const L = T.filter(t => (t.st === 'blocked' ? 'todo' : t.st || 'todo') === k); return L.length ? `<div class="rv-kc" style="--sc:${STc(k)[2]}"><h6><i></i>${l} · ${L.length}</h6>${L.map(t => `<p>${esc(t.t || 'Sem nome')}</p>`).join('')}</div>` : ''; }).join('')}</div>`;
+  if (m === 'etapas') return `<div class="rv-g">${T.map((t, i) => rvTk({ ...t, due: '' }, `<span class="rv-n">${t.st === 'done' ? ic('check', 'width:11px;height:11px;stroke-width:3') : i + 1}</span>`).replace('</small>', `${t.start || t.due ? ` · ${[t.start, t.due].filter(Boolean).map(fmtD).join(' → ')}` : ''}</small>`)).join('')}</div>`;
+  if (m === 'conteudo') return `<div class="rv-g">${T.slice().sort((a, b) => (a.due || '9').localeCompare(b.due || '9')).map(t => { const ch = t.canal && N(t.canal), s = CST.find(c => c[0] === t.st) || CST[0];
+    return `<div class="rv-tk ${t.st === 'done' ? 'done' : ''}"><span class="rv-d" style="flex:none">${t.due ? `<b>${+t.due.slice(8)}</b><i>${wday(t.due)}</i>` : '<b>—</b>'}</span>${ch ? `<span class="pch" style="border:0;background:${colorOf(ch)}33">${rvIc(ch)}</span>` : ''}<span class="tx">${esc(t.t || 'Sem tema')}</span><small>${[t.fmt, ch ? labelOf(ch) : '', s[1]].filter(Boolean).map(esc).join(' · ')}</small></div>`; }).join('')}</div>`;
+  const P = pessoas(), G = [...P.filter(p => T.some(t => t.who === p.id)).map(p => [p, T.filter(t => t.who === p.id)]), [null, T.filter(t => !t.who || !pessoa(t.who))]].filter(g => g[1].length);
+  return G.map(([p, L]) => `<div class="rv-g">${G.length > 1 || p ? `<div class="rv-gh">${p ? av(p, 20) + esc(p.name) : 'Sem responsável'}<small>${L.filter(t => t.st === 'done').length}/${L.length}</small></div>` : ''}${L.map(t => rvTk(p ? { ...t, who: '' } : t)).join('')}</div>`).join('');
+}
+function rvFiles(n) {
+  const A = n.att || [], F = A.filter(a => a.file), L = A.filter(a => !a.file && a.u);
+  if (!F.length && !L.length) return '';
+  return `<section class="sec"><h5>${ic('clip', 'width:13px;height:13px')}Arquivos e links</h5>${F.length ? `<div class="files">${F.map(a => `<div class="file"><a class="th" href="${fileUrl(a)}" target="_blank" rel="noopener">${/^image\//.test(a.type || '') ? `<img src="${fileUrl(a)}" alt="" loading="lazy">` : esc((a.t.split('.').pop() || 'arq').slice(0, 4).toUpperCase())}</a><div class="fm"><b>${esc(a.t)}</b><small>${fmtSize(a.size || 0)}</small></div><a class="pill sm icon ghost" href="${fileUrl(a, 1)}" title="Baixar">${ic('down')}</a></div>`).join('')}</div>` : ''}${L.length ? `<div class="rv-files" style="margin-top:8px">${L.map(a => `<a class="rv-ch" href="${esc(a.u)}" target="_blank" rel="noopener">${ic('link')}${esc(a.t || a.u.replace(/^https?:\/\/(www\.)?/, '').slice(0, 40))}</a>`).join('')}</div>` : ''}</section>`;
+}
+const rvHist = n => (n.log || []).length ? `<details class="more" ${UI.hist ? 'open' : ''} ontoggle="UI.hist = this.open"><summary>Histórico</summary><div class="hist" style="margin-top:10px">${(n.log || []).slice().reverse().slice(0, 25).map(h => `<div><time>${new Date(h.t - 3 * 3600e3).toISOString().slice(5, 16).replace('T', ' ').replace(/^(\d\d)-(\d\d)/, '$2/$1')}</time><span>${esc(h.by || '')} ${esc(h.a)}</span></div>`).join('')}</div></details>` : '';
+const rvFoot = `<div class="dw-f"><span class="sp"></span><button class="pill sm white dw-edit-b" data-act="dw-edit">${ic('pen')}Editar conteúdo</button></div>`;
+function dwView(n) {
+  const cn = n.kind === 'canal', par = n.parent && N(n.parent), M = MODELS.find(m => m[0] === n.modelo), sl = n.selo ? SELOS[0] : null, p = progOf(n);
+  const kindTag = cn ? `<span class="dw-kind cn"><span class="cn-ic" style="background:${colorOf(n)}">${canalIcon(n)}</span>${M ? M[1] : 'Pill'}</span>` : `<span class="dw-kind">${ic(M ? M[2] : 'marco')}${M ? M[1] : 'Marco'}</span>`;
+  const meta = [(n.who || []).map(rvAv).join(''), rvDue(n.due, isDone(n)), (n.canais || []).map(N).filter(Boolean).map(c => `<span class="rv-ch"><span class="cn-ic" style="background:${colorOf(c)}">${rvIc(c)}</span>${esc(labelOf(c))}</span>`).join(''),
+    n.link ? `<a class="rv-ch" href="${esc(n.link)}" target="_blank" rel="noopener">${ic('link')}${esc(n.link.replace(/^https?:\/\/(www\.)?/, '').slice(0, 36))}</a>` : '',
+    p.total && n.modelo !== 'texto' ? `<span class="rv-ch ${p.done === p.total ? 'ok' : ''}">${ic('check')}${p.done} de ${p.total} feitas</span>` : ''].join('');
+  const body = rvBody(n), files = rvFiles(n), notes = n.notes ? `<section class="sec"><h5>${ic('note', 'width:13px;height:13px')}Notas</h5><p class="rv-note">${esc(n.notes)}</p></section>` : '';
+  return `<div class="dw-h">
+    <div class="dw-top">${kindTag}${par ? `<button class="crumb" data-act="open" data-id="${par.id}">${ic('left', 'width:11px;height:11px')}${esc(labelOf(par))}</button>` : ''}<span class="sp"></span>${sl ? `<span class="selo-tag" style="--sc:${sl[2]}">${seloSvg(sl[2])}${sl[1]}</span>` : ''}<button class="dw-x" data-act="dw-close" aria-label="Fechar">${ic('x')}</button></div>
+    <h2 class="rv-t">${esc(n.title || labelOf(n))}</h2>${meta ? `<div class="rv-meta">${meta}</div>` : ''}
+  </div>
+  <div class="dw-b" id="dwb"><div class="rv">${body || files || notes ? `${body}${files}${notes}` : '<p class="rv-empty">Nada preenchido ainda.</p>'}${rvHist(n)}</div></div>${rvFoot}`;
+}
+function dwSmallView(n) {
+  const k = n.kind, list = monthNodes(), kids = list.filter(x => x.parent === n.id);
+  const head = t => `<div class="dw-h"><div class="dw-top"><span class="dw-kind">${ic(k)}${KINDS[k][0]}</span><span class="sp"></span><button class="dw-x" data-act="dw-close" aria-label="Fechar">${ic('x')}</button></div>${t}`;
+  let b = '';
+  if (k === 'dia') { const iso = n.day ? `${n.month}-${String(n.day).padStart(2, '0')}` : '';
+    b = `${head(`<h2 class="rv-t">${n.day ? `Dia ${n.day}` : 'Dia sem número'}</h2><div class="rv-meta">${iso ? `<span class="rv-ch">${ic('cal')}${cap1(wday(iso))}, ${+iso.slice(8)} de ${MESES[+iso.slice(5, 7) - 1]}</span>` : ''}${n.title ? `<span class="rv-ch">${esc(n.title)}</span>` : ''}</div>`)}</div>
+    <div class="dw-b"><section class="sec"><h5>${ic('const', 'width:13px;height:13px')}Saindo deste dia<em>${kids.length || ''}</em></h5><div class="rv-legs">${kids.map(x => `<button class="leg" data-act="open" data-id="${x.id}"><i class="c-sdot" style="--sc:${colorOf(x)}"></i><span>${esc(labelOf(x))}</span><small>${x.kind === 'marco' ? (MODELS.find(m => m[0] === x.modelo) || [0, 'Marco'])[1] : KINDS[x.kind][0]}</small></button>`).join('') || '<p class="rv-empty">Nada sai daqui ainda.</p>'}</div></section></div>`; }
+  if (k === 'comentario') b = `${head('')}</div><div class="dw-b">${n.title ? `<p class="rv-note" style="font-size:15px;color:var(--text)">${esc(n.title)}</p>` : '<p class="rv-empty">Comentário vazio.</p>'}${n.parent && N(n.parent) ? `<div class="rv-meta" style="border:0"><span class="rv-ch">${ic('arrow')}Aponta para ${esc(labelOf(N(n.parent)))}</span></div>` : ''}</div>`;
+  if (k === 'periodo') b = `${head(`<h2 class="rv-t">${esc(n.title || 'Período')}</h2>${n.start || n.end ? `<div class="rv-meta"><span class="rv-ch">${ic('cal')}${[n.start, n.end].filter(Boolean).map(fmtD).join(' → ')}</span></div>` : ''}`)}</div><div class="dw-b"></div>`;
+  return b + rvFoot;
 }
 function dwSmall(n) {
   const k = n.kind, list = monthNodes(), kids = list.filter(x => x.parent === n.id);
@@ -1503,7 +1595,7 @@ function dwSmall(n) {
     <label class="field"><span>Apontar para (fio pontilhado)</span><select class="inp sm" data-par="1"><option value="">— sem fio —</option>${list.filter(x => x.id !== n.id && x.kind !== 'comentario').map(x => `<option value="${x.id}" ${n.parent === x.id ? 'selected' : ''}>${esc(labelOf(x))}</option>`).join('')}</select></label></div>`;
   if (k === 'periodo') body = `${head}<input class="dw-t" data-nf="title" value="${esc(n.title || '')}" placeholder="Nome do período (ex.: Black Friday)" autocomplete="off"></div>
     <div class="dw-b"><div class="row"><label class="field" style="flex:1"><span>Começa</span><input class="inp sm" type="date" data-nf="start" value="${esc(n.start || '')}"></label><label class="field" style="flex:1"><span>Termina</span><input class="inp sm" type="date" data-nf="end" value="${esc(n.end || '')}"></label></div><section class="sec"><h5>Cor</h5><div class="chips">${colRow(n)}</div></section><p class="c-mut">Arraste as pontas do período no mapa para mudar a largura.</p></div>`;
-  return body + `<div class="dw-f"><button class="pill sm danger ghost" data-act="dw-del">${ic('trash', 'width:13px;height:13px')}Excluir</button><span class="sp"></span><button class="pill sm white" data-act="dw-close">Pronto</button></div>`;
+  return body + `<div class="dw-f"><button class="pill sm danger ghost" data-act="dw-del">${ic('trash', 'width:13px;height:13px')}Excluir</button><span class="sp"></span><button class="pill sm white" data-act="dw-view">Pronto</button></div>`;
 }
 /* abre ou atualiza no lugar (sem piscar), mantendo rolagem e foco */
 function drawer(id, dir) {
@@ -1512,9 +1604,10 @@ function drawer(id, dir) {
   const same = DW.id === id && el.classList.contains('on'), b0 = el.querySelector('.dw-b'), sc = same && b0 ? b0.scrollTop : 0;
   const ae = document.activeElement, key = same && ae && el.contains(ae) ? (ae.id === 'rt' ? '#rt' : ae.dataset.tk ? `[data-tk="${ae.dataset.tk}"][data-f="${ae.dataset.f}"]` : ae.dataset.nf ? `[data-nf="${ae.dataset.nf}"]` : ae.dataset.add ? `[data-add="${ae.dataset.add}"]` : '') : '';
   const was = DW.id; DW.id = id; SEL = id;
-  el.className = 'dw' + (isWork(n) ? '' : ' sm');
+  if (was !== id || !same) DW.edit = isWork(n) ? !MV[n.modelo] && !realTasks(n).length && !n.doc && !(n.att || []).length && !n.notes : n.kind === 'comentario' ? !n.title : n.kind === 'dia' ? !n.day : false;
+  el.className = 'dw' + (isWork(n) ? '' : ' sm') + (DW.edit ? ' ed' : ' rd');
   el.style.setProperty('--c', colorOf(n));
-  el.innerHTML = isWork(n) ? dwMarco(n) : dwSmall(n);
+  el.innerHTML = isWork(n) ? (DW.edit ? dwMarco(n) : dwView(n)) : (DW.edit ? dwSmall(n) : dwSmallView(n));
   const b = el.querySelector('.dw-b'); if (b) { b.scrollTop = sc; if (dir) b.classList.add(dir > 0 ? 'in-r' : 'in-l'); }
   if (key) { const t = el.querySelector(key); if (t) { t.focus({ preventScroll: true }); if (t.setSelectionRange && t.type !== 'date' && t.type !== 'number') try { const L = t.value.length; t.setSelectionRange(L, L); } catch (e) {} } }
   $$('.nt,.tp-d textarea,.kcard textarea', el).forEach(t => { t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; });
@@ -1747,6 +1840,7 @@ function vSet() {
     <div class="node sc"><b>Título</b><div class="row"><input class="inp sm" data-cfg="title.text" value="${esc(c.title.text)}"><input type="color" data-cfg="title.color" value="${esc(c.title.color)}" style="width:44px;height:30px;border:0;background:none"></div><label class="field"><span>Tamanho</span><input type="range" class="range" min="10" max="30" data-cfg-num="title.size" value="${c.title.size}"></label></div>
     <div class="node sc"><b>Logo</b><div class="row"><label class="pill sm">${ic('plus')}${c.logo ? 'Trocar logo' : 'Enviar logo'}<input type="file" accept="image/*" id="logo-in" hidden></label>${c.logo ? '<button class="pill sm ghost" data-act="logo-del">Remover</button>' : ''}</div><label class="field"><span>Altura</span><input type="range" class="range" min="28" max="200" data-cfg-num="logoSize" value="${c.logoSize}"></label></div>
     <div class="node sc"><b>Tamanho dos elementos</b><nav class="seg">${[['s', 'Pequenos'], ['m', 'Médios'], ['l', 'Grandes']].map(([k, l]) => `<button class="pill sm ${(c.sz || 'm') === k ? 'on' : ''}" data-act="cfg" data-k="sz" data-v="${k}">${l}</button>`).join('')}</nav><span class="c-mut">Vale para todo o mapa. Os marcos ainda crescem sozinhos conforme o que têm dentro.</span></div>
+    <div class="node sc"><div class="row"><b>Textos do mapa</b><span class="sp"></span>${c.txt && Object.keys(c.txt).length ? '<button class="pill sm ghost" data-act="txt-reset">Voltar ao padrão</button>' : ''}</div>${TXT.map(([k, l, d, s0, b0]) => { const v = (c.txt || {})[k] || {}, s = v.s || s0, b = v.b != null ? v.b : !!b0; return `<div class="txr"><span><b>${l}</b><small>${d}</small></span><input type="range" class="range" min="9" max="24" step="0.5" data-txs="${k}" value="${s}"><em>${s}px</em><button class="pill sm ${b ? 'on' : ''}" data-act="txtb" data-k="${k}" title="Negrito" aria-label="Negrito"><b>B</b></button></div>`; }).join('')}</div>
     <div class="node sc"><b>Dias</b><nav class="seg">${[['livre', 'Livre'], ['regua', 'Régua do mês']].map(([k, l]) => `<button class="pill sm ${(c.dayMode || 'livre') === k ? 'on' : ''}" data-act="cfg" data-k="dayMode" data-v="${k}">${l}</button>`).join('')}</nav><span class="c-mut">${c.dayMode === 'regua' ? 'A linha do mês mostra 1 a 31 e cada Dia encaixa na sua data ao arrastar.' : 'Você posiciona cada Dia onde quiser e digita o número.'}</span></div>`;
   return `<div class="set"><nav class="set-nav">${SETT.map(([k, l, i]) => `<button class="${tab === k ? 'on' : ''}" data-act="stab" data-v="${k}">${ic(i)}${l}</button>`).join('')}</nav><div class="set-b">${b}</div></div>`;
 }
@@ -1805,6 +1899,11 @@ const ACT = {
   open: a => { const n = N(a.dataset.id); if (!n) return; if (UI.view !== 'cst' || !NODES.has(n.id)) return goto(n.id); drawer(n.id); },
   close: () => closeModal(),
   'dw-close': () => closeDrawer(),
+  'dw-nolb': () => dwSet(x => { x.nolb = !x.nolb; }),
+  'dw-edit': () => { if (!DW.id) return; DW.edit = true; drawer(DW.id, 1); },
+  'dw-view': () => { if (!DW.id) return; saveRt(); DW.edit = false; drawer(DW.id, -1); },
+  txtb: a => { const k = a.dataset.k, d = TXT.find(x => x[0] === k), v = ((cfg().txt || {})[k] || {}).b; cfgSet(`txt.${k}.b`, !(v != null ? v : d[4])); txtCss(); render(); },
+  'txt-reset': () => { cfgSet('txt', {}); txtCss(); render(); },
   'selo-x': a => { const n = N(a.dataset.id); if (!n || !n.selo) return; const s = (SELOS[0]); tx(() => { delete n.selo; log(n, `tirou o selo ${s ? s[1] : ''}`); putNode(n); }); refresh(); if (DW.id === n.id) drawer(n.id); toast('Selo tirado · Ctrl+Z desfaz'); },
   'dw-model': a => { const n = dwNode(); if (!n) return; n.modelo = a.dataset.v; log(n, `escolheu o modelo ${MODELS.find(m => m[0] === n.modelo)[1]}`); putNode(n); refresh(); drawer(n.id, 1); },
   'dw-repick': () => { const n = dwNode(); if (!n) return; n.modelo = ''; putNode(n); refresh(); drawer(n.id, -1); },
@@ -1882,6 +1981,7 @@ document.addEventListener('keydown', e => {
 /* textos: salva enquanto digita, sem redesenhar (foco e cursor ficam onde estão) */
 document.addEventListener('input', e => {
   const t = e.target;
+  if (t.dataset.txs) { cfgSet(`txt.${t.dataset.txs}.s`, +t.value); const em = t.parentNode.querySelector('em'); if (em) em.textContent = t.value + 'px'; reconcile(); return; }
   if (t.id === 'bloco') { clearTimeout(t._t); t._t = setTimeout(() => { const p = t.dataset.p; if (p) commit(p, { text: t.value, u: Date.now() }, false); }, 500); return; }
   if (t.matches('.nt,.tp-d textarea,.kcard textarea')) { t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; }
   if (t.dataset.tk && ['t', 'note', 'dec'].includes(t.dataset.f)) { clearTimeout(t._t); t._t = setTimeout(() => { const n = dwNode(); if (!n) return; const k = (n.tasks || []).find(x => x.id === t.dataset.tk); if (!k) return; k[t.dataset.f] = t.value; putNode(n); reconcile(); if (t.dataset.f === 'dec' && !!t.value !== !!t._had) { t._had = t.value; } }, 300); return; }
