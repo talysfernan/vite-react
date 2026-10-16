@@ -176,6 +176,7 @@ users  = [{ id, name, user, cargo, email, note, pass(hash), passEnc, active,
   - Anexos: `POST /api/files` (corpo = arquivo, cabeçalhos `x-name`, `x-board`), `GET /api/blob/:id?b=br|us[&dl=1]`, `DELETE /api/files/:id`; guardados em partes de 1,8 MB nas tabelas `files`/`file_parts` do Durable Object do país (fora da foto diária e do export).
   - Teste local com o servidor real: `.dev.vars` com `SESSION_SECRET=...` e `npx wrangler dev`; login local pela senha de emergência padrão.
   - Antes de publicar, anotar a versão atual (`/workers/scripts/caos-constelacao/deployments`) para poder voltar.
+- `plano/` — painel **Plano Omnichannel** (worker `caos-plano`) em **plano.meucaos.com**, área Marketing → Estratégias no Quintal. Mesmo esquema da Constelação: país por `x-board`/cookie `pln_b`/`?pais=`, chaves `plano-br`/`plano-us`, `index.html` e arquivos do PWA embutidos no código pelo `site.js` (sem assets). Teste: `python3 plano/preview.py <saída>`. Já está no backup diário do Drive (`plano-br`/`plano-us`).
 - Fluxo das correções:
   1. Uma correção por vez, só o que foi pedido.
   2. Testar no navegador (Playwright) com a API simulada.
