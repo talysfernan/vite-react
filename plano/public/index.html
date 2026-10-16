@@ -99,6 +99,54 @@ svg.wires{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;p
 .n-add:hover{background:rgba(255,255,255,.16)}
 @media (hover:none){.n-add{opacity:.85;transform:none}}
 .stage.pres .n-add{display:none}
+.n-fold{position:absolute;right:-11px;top:50%;margin-top:17px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:var(--text-2);opacity:0;transform:scale(.7);
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(10px) saturate(1.4);-webkit-backdrop-filter:blur(10px) saturate(1.4);transition:opacity .2s,transform .25s var(--ease),background .2s;z-index:3}
+.n-fold svg{width:11px;height:11px}
+.n:hover .n-fold,.n-fold:focus-visible{opacity:1;transform:none}
+.n-fold:hover{background:rgba(255,255,255,.14);color:var(--text)}
+.n-fold.on{opacity:1;transform:none;margin-top:-12px;right:-14px;width:auto;min-width:28px;height:24px;padding:0 8px;border-radius:999px;font-size:11px;font-weight:600;color:var(--c);border-color:color-mix(in srgb,var(--c) 45%,transparent);background:color-mix(in srgb,var(--c) 12%,rgba(20,20,24,.7))}
+.n.folded .n-add{display:none}
+.n.folded .n-b{box-shadow:5px 5px 0 -1px #141417,5px 5px 0 0 var(--line),0 24px 48px -28px rgba(0,0,0,.85)}
+@media (hover:none){.n-fold{opacity:.85;transform:none}}
+.stage.pres .n-fold:not(.on){display:none}
+/* ---------- abas Jornada e Linha do tempo ---------- */
+.pane{flex:1;min-height:0;overflow:auto;border-radius:var(--radius);border:1px solid var(--line);background-color:#0e0e11;background-image:radial-gradient(rgba(255,255,255,.075) 1px,transparent 1.25px);background-size:22px 22px;padding:20px 20px 70px}
+.pane.in-r{animation:inR .45s var(--ease) both}.pane.in-l{animation:inL .45s var(--ease) both}
+@keyframes inR{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:none}}
+@keyframes inL{from{opacity:0;transform:translateX(-26px)}to{opacity:1;transform:none}}
+.ph-h{display:flex;align-items:flex-end;gap:12px;margin:0 2px 16px;flex-wrap:wrap}
+.ph-h h2{font-size:17px;font-weight:600;letter-spacing:-.01em}.ph-h p{color:var(--muted);font-size:12px}
+.jgrid{display:grid;grid-template-columns:170px repeat(4,minmax(170px,1fr));gap:8px;min-width:860px}
+.jh{padding:11px 13px;border-radius:14px;color:var(--jc);background:color-mix(in srgb,var(--jc) 9%,transparent);border:1px solid color-mix(in srgb,var(--jc) 28%,transparent);display:flex;align-items:center;gap:8px}
+.jh b{font-size:13px}.jh span{color:var(--muted);font-size:11.5px}.jh em{margin-left:auto;font-style:normal;font-size:11px;opacity:.8}
+.jr0{padding:11px 13px;border-radius:14px;background:linear-gradient(180deg,#1c1c20,#17171a);border:1px solid var(--line);display:flex;flex-direction:column;justify-content:center;gap:5px}
+.jr0 b{font-weight:600;font-size:12.5px}.jr0 span{font-size:11px;color:var(--muted);display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+.jr0 span i{width:7px;height:7px;border-radius:50%;background:var(--jc);display:inline-block}
+.jcell{min-height:58px;padding:7px;border-radius:14px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);display:flex;flex-direction:column;gap:6px}
+.jcell.hole{border-style:dashed;border-color:rgba(255,255,255,.09);align-items:center;justify-content:center;color:var(--dim);font-size:11px}
+.sc{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:10px;background:linear-gradient(180deg,#1f1f23,#19191c);border:1px solid var(--line);text-align:left;font-size:12px;color:var(--text);transition:border-color .2s,transform .25s var(--ease);width:100%}
+.sc:hover{border-color:var(--line-2);transform:translateY(-2px)}
+.sc i{width:7px;height:7px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c);flex:none}
+.sc span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pnote{margin-top:14px;color:var(--muted);font-size:12px}
+.tl{display:grid;grid-template-columns:repeat(var(--n),minmax(250px,1fr));gap:14px;align-items:start;min-width:calc(var(--n) * 260px)}
+.tcol{border-radius:18px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);padding:12px;min-height:240px;transition:border-color .25s,background .25s}
+.tcol.over{border-color:color-mix(in srgb,var(--qc) 55%,transparent);background:color-mix(in srgb,var(--qc) 6%,transparent)}
+.th{display:flex;align-items:center;gap:8px;margin:2px 2px 4px}
+.th b{height:26px;padding:0 12px;border-radius:999px;display:inline-flex;align-items:center;font-size:12.5px;color:var(--qc);background:color-mix(in srgb,var(--qc) 13%,transparent);border:1px solid color-mix(in srgb,var(--qc) 35%,transparent)}
+.th span{color:var(--muted);font-size:11.5px}
+.tg{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:14px 2px 7px;display:flex;gap:7px;align-items:center}
+.tg i{width:7px;height:7px;border-radius:50%;background:var(--c);display:inline-block}
+.tc{width:100%;display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:13px;background:linear-gradient(180deg,#1c1c20,#17171a);border:1px solid var(--line);text-align:left;margin-bottom:6px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;transition:border-color .2s,transform .25s var(--ease),opacity .2s}
+.tc:hover{border-color:var(--line-2);transform:translateY(-2px)}
+.tc .n-ic{width:26px;height:26px;border-radius:8px}.tc .n-ic svg{width:13px;height:13px}
+.tc b{display:block;font-size:12.5px;font-weight:600;line-height:1.3}.tc b.ph{color:var(--dim);font-weight:500}
+.tc small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.tc .jr{margin-top:6px}
+.tc.lift{opacity:.25}
+.tc.ghost{position:fixed;z-index:90;pointer-events:none;width:260px;transform:rotate(2deg);box-shadow:0 30px 60px -20px rgba(0,0,0,.95);border-color:var(--line-2)}
+.tempty{color:var(--dim);font-size:11.5px;text-align:center;padding:26px 8px;border:1px dashed rgba(255,255,255,.07);border-radius:13px;margin-top:10px}
+.vseg .pill svg{width:14px;height:14px}
 .n.dim{opacity:.18;filter:saturate(.3)}
 .n.cur .n-b{border-color:color-mix(in srgb,var(--c) 70%,#fff 0%);box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 14%,transparent),0 0 40px color-mix(in srgb,var(--c) 30%,transparent),0 24px 48px -28px rgba(0,0,0,.85)}
 .n.born .n-b{animation:born .5s var(--ease) both}
@@ -253,7 +301,8 @@ body.locked #app{filter:blur(18px) saturate(.7);pointer-events:none;user-select:
   .top{gap:8px}
   .slide{left:10px;right:10px;top:auto;bottom:70px;width:auto;max-height:52%;padding:20px}
   .slide h1{font-size:22px}
-  .dock .lbl{display:none}
+  .dock .lbl,.vseg .vl{display:none}
+  .vseg .pill{padding:0 10px}
   .g2{grid-template-columns:1fr}
   .mod{padding:18px 16px}
   .gearfab{right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px))}
@@ -281,6 +330,7 @@ const IC = {
   x: '<path d="M6 6l12 12M18 6 6 18"/>', plus: '<path d="M12 5v14M5 12h14"/>', minus: '<path d="M5 12h14"/>',
   trash: '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>', left: '<path d="M15 6l-6 6 6 6"/>', right: '<path d="M9 6l6 6-6 6"/>',
   fit: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>', copy: '<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
+  jorn: '<path d="M3 12h4l3-7 4 14 3-7h4"/>', tempo: '<path d="M3 12h18"/><circle cx="6" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="18" cy="12" r="2"/><path d="M6 6v2M12 16v2M18 6v2"/>',
   play: '<path d="M7 5v14l12-7z"/>', tree: '<rect x="3" y="9" width="5" height="6" rx="1.5"/><rect x="16" y="3" width="5" height="5" rx="1.5"/><rect x="16" y="16" width="5" height="5" rx="1.5"/><path d="M8 12h4M12 5.5v13M12 5.5h4M12 18.5h4"/>',
   link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
   clip: '<path d="M20 11.5l-8.2 8.2a5 5 0 0 1-7.1-7.1l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7l-8.5 8.5a1.7 1.7 0 0 1-2.4-2.4l7.8-7.8"/>',
@@ -389,7 +439,15 @@ function colorOf(n, list) {
 }
 const labelOf = n => n.kind === 'nucleo' ? ((marca(n.marca) || {}).name || 'Marca') : (n.title || '');
 
-const UI = (() => { let s = {}; try { s = JSON.parse(localStorage.getItem('pln:ui') || '{}'); } catch (e) {} return { marca: {}, ...s }; })();
+const UI = (() => { let s = {}; try { s = JSON.parse(localStorage.getItem('pln:ui') || '{}'); } catch (e) {} return { marca: {}, view: 'mapa', ...s }; })();
+const VIEWS = [['mapa', 'Mapa', 'tree'], ['jornada', 'Jornada', 'jorn'], ['tempo', 'Linha do tempo', 'tempo']];
+if (!VIEWS.some(v => v[0] === UI.view)) UI.view = 'mapa';
+/* ramos recolhidos: guardados por pessoa, neste navegador */
+const FK = () => 'pln:fold:' + store.board + ':' + curMarca();
+let FOLD = new Set();
+function loadFold() { try { FOLD = new Set(JSON.parse(localStorage.getItem(FK()) || '[]')); } catch (e) { FOLD = new Set(); } }
+function setFold(id, on) { on ? FOLD.add(id) : FOLD.delete(id); try { localStorage.setItem(FK(), JSON.stringify([...FOLD])); } catch (e) {} }
+function visNodes(list = brandNodes()) { const hide = new Set(); list.forEach(n => { if (FOLD.has(n.id)) descendants(n.id, list).forEach(d => hide.add(d.id)); }); return list.filter(n => !hide.has(n.id)); }
 const saveUI = () => { try { localStorage.setItem('pln:ui', JSON.stringify(UI)); } catch (e) {} };
 function curMarca() { const M = marcas(); const m = UI.marca[store.board]; return M.find(x => x.id === m) ? m : (M[0] || {}).id || ''; }
 
@@ -433,10 +491,10 @@ function render() {
   ${c.logo ? `<div class="hero"><img src="${c.logo}" alt="Logo" id="hero-logo" style="height:${c.logoSize}px"></div>` : ''}
   <div class="titlebar">${titlePillHTML()}</div>
   <header class="top">
-    <div class="top-l"><nav class="seg" aria-label="Marca">${M.map(b => `<button class="pill ${b.id === m ? 'on' : ''}" data-act="marca" data-v="${b.id}"><span class="bdot" style="--c:${b.color}"></span>${esc(b.name)}</button>`).join('') || '<span class="muted" style="padding:0 10px">Nenhuma marca</span>'}</nav></div>
+    <div class="top-l"><nav class="seg vseg" aria-label="Vista">${VIEWS.map(([k, l, i]) => `<button class="pill ${UI.view === k ? 'on' : ''}" data-act="view" data-v="${k}" title="${l}">${ic(i)}<span class="vl">${l}</span></button>`).join('')}</nav><nav class="seg" aria-label="Marca">${M.map(b => `<button class="pill ${b.id === m ? 'on' : ''}" data-act="marca" data-v="${b.id}"><span class="bdot" style="--c:${b.color}"></span>${esc(b.name)}</button>`).join('') || '<span class="muted" style="padding:0 10px">Nenhuma marca</span>'}</nav></div>
     <div class="top-r"><div class="save-st" id="savest"></div><nav class="seg flags" aria-label="País">${Object.keys(PAIS).map(k => `<button class="pill ${store.board === k ? 'on' : ''}" data-act="board" data-v="${k}" title="Plano ${PAIS[k].name}" aria-label="Plano ${PAIS[k].name}" aria-pressed="${store.board === k}">${FLAG[k]}</button>`).join('')}</nav></div>
   </header>
-  <div class="wrap"><div class="stage" id="stage"><div class="world" id="world"></div>
+  ${UI.view === 'mapa' ? `<div class="wrap"><div class="stage" id="stage"><div class="world" id="world"></div>
     <div class="dock" id="dock">
       <button data-act="organize" title="Organizar o mapa">${ic('tree')}<span class="lbl">Organizar</span></button>
       <button data-act="fit" title="Enquadrar">${ic('fit')}</button>
@@ -445,11 +503,15 @@ function render() {
       <span class="sep"></span>
       <button class="play" data-act="present" title="Apresentar (tela cheia)">${ic('play', 'width:13px;height:13px;fill:currentColor')}<span class="lbl">Apresentar</span></button>
     </div>
-  </div></div>
+  </div></div>` : `<div class="wrap"><div class="pane ${render.dir || ''}" id="pane"></div></div>`}
   ${isAdmin() ? `<button class="gearfab" data-act="settings" aria-label="Ajustes" title="Ajustes">${ic('gear')}</button>` : ''}`;
+  render.dir = '';
+  loadFold();
+  if (UI.view !== 'mapa') { drawPane(); return; }
   drawWorld();
   if (!V) { loadView(); if (!V) requestAnimationFrame(() => fit(true)); else applyView(); } else applyView();
 }
+const refresh = () => UI.view === 'mapa' ? drawWorld() : drawPane();
 
 /* =================== mapa =================== */
 let V = null;
@@ -478,7 +540,9 @@ function nodeHTML(n, list) {
     }
     body = `<span class="n-ic">${ic(n.kind)}</span><div class="n-tx"><small>${K.n}</small><b class="${n.title ? '' : 'ph'}">${esc(n.title || K.ph)}</b>${meta}</div>`;
   }
-  return `<div class="n k-${n.kind}" data-id="${n.id}" style="left:${n.x}px;top:${n.y}px;width:${K.w}px;--c:${c}"><div class="n-b">${body}</div><button class="n-add" data-act="add" aria-label="Adicionar abaixo de ${esc(labelOf(n) || K.n)}" title="Adicionar">${ic('plus')}</button></div>`;
+  const fo = kids.length && FOLD.has(n.id), nd = kids.length ? descendants(n.id, list).length : 0;
+  const fb = !kids.length ? '' : fo ? `<button class="n-fold on" data-act="fold" title="Expandir (${nd} ${nd > 1 ? 'cards' : 'card'})" aria-label="Expandir">+${nd}</button>` : `<button class="n-fold" data-act="fold" title="Recolher" aria-label="Recolher">${ic('left')}</button>`;
+  return `<div class="n k-${n.kind}${fo ? ' folded' : ''}" data-id="${n.id}" style="left:${n.x}px;top:${n.y}px;width:${K.w}px;--c:${c}"><div class="n-b">${body}</div><button class="n-add" data-act="add" aria-label="Adicionar abaixo de ${esc(labelOf(n) || K.n)}" title="Adicionar">${ic('plus')}</button>${fb}</div>`;
 }
 function drawWorld() {
   const w = $('#world'); if (!w) return;
@@ -491,13 +555,14 @@ function drawWorld() {
     $('#dock').hidden = true; return;
   }
   $('#dock').hidden = false;
-  w.innerHTML = `<svg class="wires" id="wires"></svg>${list.map(n => nodeHTML(n, list)).join('')}<div class="guide h" id="gh" hidden></div><div class="guide v" id="gv" hidden></div>`;
-  drawWires(list);
+  const vis = visNodes(list);
+  w.innerHTML = `<svg class="wires" id="wires"></svg>${vis.map(n => nodeHTML(n, list)).join('')}<div class="guide h" id="gh" hidden></div><div class="guide v" id="gv" hidden></div>`;
+  drawWires(vis);
   if (PRES) presMark();
 }
-function updNode(id) { const n = N(id); const el = $(`.n[data-id="${id}"]`); if (!n || !el) return; const list = brandNodes(); el.outerHTML = nodeHTML(n, list); if (n.parent) { const p = $(`.n[data-id="${n.parent}"]`), pn = N(n.parent); if (p && pn) p.outerHTML = nodeHTML(pn, list); } drawWires(list); }
+function updNode(id) { const n = N(id); const el = $(`.n[data-id="${id}"]`); if (!n || !el) return; const list = brandNodes(); el.outerHTML = nodeHTML(n, list); if (n.parent) { const p = $(`.n[data-id="${n.parent}"]`), pn = N(n.parent); if (p && pn) p.outerHTML = nodeHTML(pn, list); } drawWires(visNodes(list)); }
 const W = n => (KIND[n.kind] || KIND.setor).w;
-function drawWires(list = brandNodes(), pos) {
+function drawWires(list = visNodes(), pos) {
   const svg = $('#wires'); if (!svg) return;
   const m = new Map(list.map(n => [n.id, pos && pos[n.id] ? { ...n, ...pos[n.id] } : n]));
   let out = '';
@@ -512,7 +577,7 @@ function drawWires(list = brandNodes(), pos) {
 function hOf(id) { const el = $(`.n[data-id="${id}"]`); return el ? el.offsetHeight : 64; }
 /* árvore arrumada da esquerda para a direita */
 function organize(ask_) {
-  const list = brandNodes(); const root = list.find(n => !n.parent || !list.some(x => x.id === n.parent)); if (!root) return;
+  const all = brandNodes(), list = visNodes(all); const root = list.find(n => !n.parent || !list.some(x => x.id === n.parent)); if (!root) return;
   const GX = 90, GY = 16, span = new Map();
   const sp = n => { const ks = kidsOf(n.id, list); const s = Math.max(hOf(n.id), ks.reduce((a, k) => a + sp(k), 0) + GY * Math.max(0, ks.length - 1)); span.set(n.id, s); return s; };
   sp(root);
@@ -525,14 +590,15 @@ function organize(ask_) {
   place(root, 0, -span.get(root.id) / 2);
   const roots = list.filter(n => n !== root && !pos[n.id]);
   let extra = span.get(root.id) / 2 + 60; roots.forEach(r => { sp(r); place(r, 0, extra); extra += span.get(r.id) + 40; });
-  list.forEach(n => { const p = pos[n.id]; if (p && (Math.round(p.x) !== Math.round(n.x) || Math.round(p.y) !== Math.round(n.y))) putNode({ ...n, x: Math.round(p.x), y: Math.round(p.y) }); });
+  FOLD.forEach(fid => { const f = all.find(x => x.id === fid), q = pos[fid]; if (!f || !q) return; descendants(fid, all).forEach(d => { if (!pos[d.id]) pos[d.id] = { x: d.x + q.x - f.x, y: d.y + q.y - f.y }; }); });
+  all.forEach(n => { const p = pos[n.id]; if (p && (Math.round(p.x) !== Math.round(n.x) || Math.round(p.y) !== Math.round(n.y))) putNode({ ...n, x: Math.round(p.x), y: Math.round(p.y) }); });
   animateTo(pos);
 }
 function animateTo(pos) {
   if (reduced()) { drawWorld(); return; }
   $$('.n').forEach(el => { const p = pos[el.dataset.id]; if (!p) return; el.style.transition = 'left .5s var(--ease),top .5s var(--ease),opacity .45s,filter .45s'; el.style.left = p.x + 'px'; el.style.top = p.y + 'px'; });
   // os fios acompanham os cards durante a animação
-  const t0 = performance.now(), list = brandNodes();
+  const t0 = performance.now(), list = visNodes();
   const step = t => {
     const wr = $('#world')?.getBoundingClientRect(); if (!wr) return;
     const cur = Object.fromEntries($$('.n').map(el => { const r = el.getBoundingClientRect(); return [el.dataset.id, { x: (r.left - wr.left) / V.z, y: (r.top - wr.top + r.height / 2) / V.z }]; }));
@@ -550,8 +616,9 @@ function freeSpot(p, kind, list) {
   return { x, y };
 }
 function createChild(pid, kind, at) {
-  const list = brandNodes(), p = list.find(n => n.id === pid); if (!p) return;
-  const { x, y } = at || freeSpot(p, kind, list), id = uid();
+  const all = brandNodes(), p = all.find(n => n.id === pid); if (!p) return;
+  if (FOLD.has(pid)) setFold(pid, false);
+  const list = visNodes(all), { x, y } = at || freeSpot(p, kind, list), id = uid();
   putNode({ id, marca: p.marca, kind, parent: pid, x: Math.round(x), y: Math.round(y), title: '' });
   drawWorld(); $(`.n[data-id="${id}"]`)?.classList.add('born');
   ensureVisible(id);
@@ -568,7 +635,7 @@ function bounds(list) {
   list.forEach(n => { const h = hOf(n.id); a = Math.min(a, n.x); c = Math.max(c, n.x + W(n)); b = Math.min(b, n.y - h / 2); d = Math.max(d, n.y + h / 2); });
   return { x: a, y: b, w: c - a, h: d - b };
 }
-function fit(instant, list = brandNodes(), area) {
+function fit(instant, list = visNodes(), area) {
   const st = $('#stage'); if (!st || !list.length) { V = V || { x: 0, y: 0, z: 1 }; return; }
   const s = st.getBoundingClientRect(), A = area || { x: 0, y: 0, w: s.width, h: s.height - 64 }, B = bounds(list), pad = 50;
   const z = clamp(Math.min((A.w - pad * 2) / Math.max(B.w, 1), (A.h - pad * 2) / Math.max(B.h, 1)), .2, 1.15);
@@ -588,14 +655,14 @@ const toWorld = (cx, cy) => { const s = $('#stage').getBoundingClientRect(); ret
 let DRAG = null; const PTR = new Map();
 document.addEventListener('pointerdown', e => {
   const st = $('#stage'); if (!st || !st.contains(e.target) || e.button > 0) return;
-  if (e.target.closest('.dock,.slide,.pbar,.empty,.n-add')) return;
+  if (e.target.closest('.dock,.slide,.pbar,.empty,.n-add,.n-fold')) return;
   PTR.set(e.pointerId, { x: e.clientX, y: e.clientY });
   if (PTR.size === 2) { const [a, b] = [...PTR.values()]; DRAG = { pinch: true, d0: Math.hypot(a.x - b.x, a.y - b.y), z0: V.z }; return; }
   const el = e.target.closest('.n');
   if (el && !PRES) {
     const list = brandNodes(), n = list.find(x => x.id === el.dataset.id); if (!n) return;
     const sub = [n, ...descendants(n.id, list)];
-    DRAG = { node: n, sub, sx: e.clientX, sy: e.clientY, moved: false, list, others: list.filter(o => !sub.includes(o)), pos: {} };
+    const vis = visNodes(list); DRAG = { node: n, sub, sx: e.clientX, sy: e.clientY, moved: false, list: vis, others: vis.filter(o => !sub.includes(o)), pos: {} };
   } else if (el && PRES) { DRAG = { tap: el.dataset.id, sx: e.clientX, sy: e.clientY }; }
   else DRAG = { pan: true, sx: e.clientX, sy: e.clientY, vx: V.x, vy: V.y };
 });
@@ -683,7 +750,7 @@ function modal(html, cls = '') {
   s.addEventListener('mousedown', e => { if (e.target === s) closeModal(); });
   return s;
 }
-function closeModal(silent) { const m = $('#modal'); if (m) m.remove(); if (!silent) { const was = ED.id; ED.id = ''; if (was) { updNode(was); } } }
+function closeModal(silent) { const m = $('#modal'); if (m) m.remove(); if (!silent) { const was = ED.id; ED.id = ''; if (was) { if (UI.view === 'mapa') updNode(was); else drawPane(); } } }
 const fArea = (k, label, ph, n, rows = 2) => `<div class="f"><h5>${label}</h5><textarea class="inp" rows="${rows}" data-f="${k}" placeholder="${esc(ph)}">${esc(n[k] || '')}</textarea></div>`;
 const fText = (k, label, ph, n) => `<div class="f"><h5>${label}</h5><input class="inp" data-f="${k}" placeholder="${esc(ph)}" value="${esc(n[k] || '')}" autocomplete="off"></div>`;
 const blHTML = (k, ph, n, max) => { const L = n[k] || []; return `${L.map((v, i) => `<div class="row"><span class="num">${i + 1}</span><input class="inp" data-li="${k}" data-i="${i}" placeholder="${esc(ph)}" value="${esc(v)}" autocomplete="off"><button class="xb" data-act="li-del" data-k="${k}" data-i="${i}" aria-label="Remover">${ic('x')}</button></div>`).join('')}${L.length < max ? `<button class="addl" data-act="li-add" data-k="${k}">${ic('plus')}Adicionar</button>` : ''}`; };
@@ -731,10 +798,73 @@ async function uploadFiles(files) {
   }
 }
 
+/* =================== abas Jornada e Linha do tempo =================== */
+function crumbOf(n, list) { return ancestors(n, list).filter(a => !['nucleo', 'objetivo'].includes(a.kind)).map(a => a.title || KIND[a.kind].n).join(' › '); }
+const deptoOf = (n, list) => ancestors(n, list).find(a => a.kind === 'depto');
+function drawPane() {
+  const el = $('#pane'); if (!el) return; const y = el.scrollTop;
+  const list = brandNodes(), b = marca(curMarca()) || {};
+  if (!curMarca()) { el.innerHTML = '<div class="tempty">Nenhuma marca cadastrada.</div>'; return; }
+  if (!list.length) { el.innerHTML = `<div class="tempty">O plano da ${esc(b.name)} · ${PAIS[store.board].name} ainda está vazio.<br><br><button class="pill sm" data-act="view" data-v="mapa">${ic('tree')}Montar no mapa</button></div>`; return; }
+  el.innerHTML = UI.view === 'jornada' ? vJornada(list, b) : vTempo(list, b);
+  el.scrollTop = y;
+}
+function vJornada(list, b) {
+  const E = list.filter(n => n.kind === 'estrategia'), chs = CANAIS[store.board].filter(c => E.some(n => (n.canais || []).includes(c)));
+  const rows = chs.map(c => [c, E.filter(n => (n.canais || []).includes(c))]);
+  const semCanal = E.filter(n => !(n.canais || []).length && (n.fase || []).length); if (semCanal.length) rows.push(['Sem canal', semCanal]);
+  const semFase = E.filter(n => !(n.fase || []).length).length;
+  const sc = n => `<button class="sc" data-act="open" data-v="${n.id}" style="--c:${colorOf(n, list)}" title="${esc(crumbOf(n, list))}"><i></i><span>${esc(n.title || KIND.estrategia.ph)}</span></button>`;
+  const head = `<div class="ph-h"><div><h2>Jornada do cliente · ${esc(b.name)}</h2><p>Onde cada canal age — e onde está o buraco.</p></div></div>`;
+  if (!rows.length) return head + `<div class="tempty">Nenhuma estratégia com jornada ainda.<br>Marque a jornada e os canais no pop-up de cada estratégia.</div>`;
+  return head + `<div class="jgrid"><div></div>${JORN.map(j => `<div class="jh" style="--jc:${j[4]}"><b>${j[2]}</b><span>${j[3]}</span><em>${E.filter(n => (n.fase || []).includes(j[0])).length}</em></div>`).join('')}
+    ${rows.map(([c, ns]) => { const cnt = JORN.map(j => ns.filter(n => (n.fase || []).includes(j[0])).length), mx = Math.max(...cnt);
+      return `<div class="jr0"><b>${esc(c)}</b><span>${mx ? JORN.filter((j, i) => cnt[i] === mx).map(j => `<i style="--jc:${j[4]}"></i>${j[3]}`).join(' · ') : 'sem jornada'}</span></div>${JORN.map(j => { const cs = ns.filter(n => (n.fase || []).includes(j[0])); return cs.length ? `<div class="jcell">${cs.map(sc).join('')}</div>` : '<div class="jcell hole">sem ação</div>'; }).join('')}`; }).join('')}
+  </div>${semFase ? `<p class="pnote">${semFase} ${semFase > 1 ? 'estratégias ainda não têm' : 'estratégia ainda não tem'} jornada marcada.</p>` : ''}`;
+}
+const TCOLS = [...QUANDO, ['', 'Sem prazo', '#85858e']];
+function vTempo(list, b) {
+  const items = list.filter(n => n.kind === 'estrategia' || n.kind === 'etapa');
+  const cols = TCOLS.filter(c => c[0] || items.some(n => !n.quando));
+  const card = n => { const fs = n.fase || []; return `<button class="tc" data-tc="${n.id}" style="--c:${colorOf(n, list)}"><span class="n-ic">${ic(n.kind)}</span><span style="min-width:0"><b class="${n.title ? '' : 'ph'}">${esc(n.title || KIND[n.kind].ph)}</b><small>${esc(crumbOf(n, list))}</small>${n.kind === 'estrategia' && fs.length ? `<span class="jr">${JORN.map(j => `<i class="${fs.includes(j[0]) ? 'on' : ''}" style="--jc:${j[4]}">${j[1]}</i>`).join('')}</span>` : ''}</span></button>`; };
+  const col = ([k, l, c]) => {
+    const ns = items.filter(n => (n.quando || '') === k), groups = new Map();
+    ns.forEach(n => { const d = deptoOf(n, list), key = d ? d.id : ''; if (!groups.has(key)) groups.set(key, { d, ns: [] }); groups.get(key).ns.push(n); });
+    return `<div class="tcol" data-q="${k}" style="--qc:${c}"><div class="th"><b>${l}</b><span>${ns.length}</span></div>${ns.length ? [...groups.values()].map(g => `<div class="tg" style="--c:${g.d ? colorOf(g.d, list) : '#85858e'}"><i></i>${esc(g.d ? g.d.title || 'Departamento' : 'Sem departamento')}</div>${g.ns.map(card).join('')}`).join('') : '<div class="tempty">Arraste estratégias ou etapas para cá</div>'}</div>`;
+  };
+  return `<div class="ph-h"><div><h2>Linha do tempo · ${esc(b.name)}</h2><p>Estratégias e etapas por horizonte. Arraste entre as colunas.</p></div></div>
+    ${items.length ? `<div class="tl" style="--n:${cols.length}">${cols.map(col).join('')}</div>` : '<div class="tempty">Nenhuma estratégia ou etapa ainda. Crie no mapa pelo “+” de cada setor.</div>'}`;
+}
+/* arrastar cards entre Agora / Próximo / Depois */
+let TDRAG = null;
+document.addEventListener('pointerdown', e => {
+  const c = e.target.closest('.tc'); if (!c || e.button > 0) return;
+  TDRAG = { id: c.dataset.tc, el: c, sx: e.clientX, sy: e.clientY, moved: false };
+});
+document.addEventListener('pointermove', e => {
+  if (!TDRAG) return;
+  if (!TDRAG.moved) { if (Math.hypot(e.clientX - TDRAG.sx, e.clientY - TDRAG.sy) < 6) return; TDRAG.moved = true; const g = TDRAG.el.cloneNode(true); g.classList.add('ghost'); document.body.appendChild(g); TDRAG.g = g; TDRAG.el.classList.add('lift'); }
+  TDRAG.g.style.left = e.clientX - 30 + 'px'; TDRAG.g.style.top = e.clientY - 20 + 'px';
+  const over = document.elementFromPoint(e.clientX, e.clientY)?.closest('.tcol');
+  $$('.tcol').forEach(t => t.classList.toggle('over', t === over));
+});
+function endTdrag(e) {
+  if (!TDRAG) return; const d = TDRAG; TDRAG = null;
+  if (!d.moved) { if (e.type === 'pointerup') openEd(d.id); return; }
+  d.g.remove(); d.el.classList.remove('lift');
+  const over = $('.tcol.over'); $$('.tcol').forEach(t => t.classList.remove('over'));
+  if (!over || e.type === 'pointercancel') return;
+  const n = N(d.id); if (!n || (n.quando || '') === over.dataset.q) return;
+  n.quando = over.dataset.q; putNode(n); drawPane();
+  if (navigator.vibrate) try { navigator.vibrate(8); } catch (er) {}
+}
+document.addEventListener('pointerup', endTdrag);
+document.addEventListener('pointercancel', endTdrag);
+
 /* =================== apresentação =================== */
 let PRES = null;
 function presSeq() {
-  const list = brandNodes(), root = list.find(n => n.kind === 'nucleo') || list[0], out = [];
+  const list = visNodes(), root = list.find(n => n.kind === 'nucleo') || list[0], out = [];
   const walk = n => { out.push(n.id); kidsOf(n.id, list).forEach(walk); };
   if (root) walk(root); list.filter(n => !out.includes(n.id)).forEach(n => out.push(n.id));
   return out;
@@ -756,14 +886,14 @@ function stopPres() {
 }
 function presGoId(id) { if (!PRES) return; const i = PRES.seq.indexOf(id); if (i >= 0) presGo(i); }
 function presMark() {
-  if (!PRES) return; const list = brandNodes(), n = list.find(x => x.id === PRES.seq[PRES.i]); if (!n) return;
+  if (!PRES) return; const list = visNodes(), n = list.find(x => x.id === PRES.seq[PRES.i]); if (!n) return;
   const keep = new Set(n.kind === 'nucleo' ? list.map(x => x.id) : [n.id, ...ancestors(n, list).map(a => a.id), ...descendants(n.id, list).map(d => d.id)]);
   $$('.n').forEach(el => { el.classList.toggle('dim', !keep.has(el.dataset.id)); el.classList.toggle('cur', el.dataset.id === n.id); });
   $$('.wire').forEach(w => w.classList.toggle('dim', !keep.has(w.dataset.w)));
 }
 function presGo(i) {
   if (!PRES) return; PRES.seq = presSeq(); PRES.i = clamp(i, 0, PRES.seq.length - 1);
-  const list = brandNodes(), n = list.find(x => x.id === PRES.seq[PRES.i]); if (!n) return;
+  const list = visNodes(), n = list.find(x => x.id === PRES.seq[PRES.i]); if (!n) return;
   presMark();
   const st = $('#stage').getBoundingClientRect(), mob = innerWidth <= 760, sl = $('#slide');
   const sw = mob ? 0 : sl.offsetWidth + 36, sh = mob ? sl.offsetHeight + 80 : 70;
@@ -783,7 +913,7 @@ function slideHTML(n, list) {
   const ks = kidsOf(n.id, list);
   const kidsL = (h) => ks.length ? `<h6>${h}</h6><div class="kids">${ks.map(k => `<button class="chip" data-act="pgo" data-v="${k.id}">${ic(k.kind, 'width:13px;height:13px')}${esc(k.title || KIND[k.kind].n)}</button>`).join('')}</div>` : '';
   if (n.kind === 'nucleo') {
-    const b = marca(n.marca) || {}, cnt = k => list.filter(x => x.kind === k).length, obj = list.find(x => x.kind === 'objetivo');
+    const all = brandNodes(), b = marca(n.marca) || {}, cnt = k => all.filter(x => x.kind === k).length, obj = list.find(x => x.kind === 'objetivo');
     return `<span class="kl">${FLAG[store.board].replace('<svg', '<svg style="width:18px;height:12px;border-radius:2px"')}Plano omnichannel · ${PAIS[store.board].name}</span><h1>${esc(b.name || 'Marca')}</h1>
       ${n.visao ? `<p class="lead">${esc(n.visao)}</p>` : ''}${obj && obj.title ? `<h6>Estrela-guia</h6><p class="lead" style="color:var(--text)">${esc(obj.title)}</p>` : ''}
       <div class="stats"><div><b>${cnt('depto')}</b><span>departamentos</span></div><div><b>${cnt('setor')}</b><span>setores</span></div><div><b>${cnt('estrategia')}</b><span>estratégias</span></div><div><b>${cnt('etapa')}</b><span>etapas</span></div></div>`;
@@ -841,6 +971,9 @@ document.addEventListener('click', async e => {
   const t = e.target.closest('[data-act]'); if (!t) return;
   const a = t.dataset.act, v = t.dataset.v;
   if (a === 'marca') { UI.marca[store.board] = v; saveUI(); V = null; render(); return; }
+  if (a === 'view') { if (v === UI.view) return; const ix = k => VIEWS.findIndex(x => x[0] === k); render.dir = ix(v) > ix(UI.view) ? 'in-r' : 'in-l'; closeAdd(); UI.view = v; saveUI(); V = null; render(); return; }
+  if (a === 'fold') { e.stopPropagation(); const id = t.closest('.n').dataset.id; setFold(id, !FOLD.has(id)); drawWorld(); return; }
+  if (a === 'open') return openEd(v);
   if (a === 'board') return setBoard(v);
   if (a === 'seed') return seedPlan(v === '1');
   if (a === 'add') { e.stopPropagation(); const el = t.closest('.n'), r = t.getBoundingClientRect(); openAdd(el.dataset.id, r.right + 6, r.top + r.height / 2); return; }
@@ -867,7 +1000,7 @@ document.addEventListener('click', async e => {
   if (a === 'goto') { closeModal(); return openEd(v); }
   const n = edNode(); if (!n) return;
   if (a === 'tog') { const L = new Set(n[t.dataset.k] || []); L.has(v) ? L.delete(v) : L.add(v); t.classList.toggle('on', L.has(v)); return edSet(t.dataset.k, [...L]); }
-  if (a === 'one') { const nv = n[t.dataset.k] === v ? '' : v; $$(`[data-act="one"][data-k="${t.dataset.k}"]`, $('#modal')).forEach(b => b.classList.toggle('on', b.dataset.v === nv)); if (t.dataset.k === 'color') { $('#modal .mh .n-ic').style.setProperty('--c', nv || colorOf({ ...n, color: '' }, brandNodes())); } edSet(t.dataset.k, nv); if (t.dataset.k === 'color') drawWorld(); return; }
+  if (a === 'one') { const nv = n[t.dataset.k] === v ? '' : v; $$(`[data-act="one"][data-k="${t.dataset.k}"]`, $('#modal')).forEach(b => b.classList.toggle('on', b.dataset.v === nv)); if (t.dataset.k === 'color') { $('#modal .mh .n-ic').style.setProperty('--c', nv || colorOf({ ...n, color: '' }, brandNodes())); } edSet(t.dataset.k, nv); if (t.dataset.k === 'color') refresh(); return; }
   if (a === 'li-add') { const k = t.dataset.k; n[k] = [...(n[k] || []), '']; putNode(n); const max = k === 'como' ? 3 : 5, ph = k === 'como' ? 'Um movimento principal' : 'Uma entrega'; edPart('bl-' + k, blHTML(k, ph, n, max)); $$(`#bl-${k} input`).pop()?.focus(); return; }
   if (a === 'li-del') { const k = t.dataset.k; n[k] = (n[k] || []).filter((_, i) => i !== +t.dataset.i); putNode(n); const max = k === 'como' ? 3 : 5, ph = k === 'como' ? 'Um movimento principal' : 'Uma entrega'; edPart('bl-' + k, blHTML(k, ph, n, max)); return; }
   if (a === 'meta-add') { n.metas = [...(n.metas || []), { t: '', v: '' }]; putNode(n); edPart('metas', metasHTML(n)); $$('#metas [data-meta="t"]').pop()?.focus(); updNode(n.id); return; }
@@ -878,12 +1011,12 @@ document.addEventListener('click', async e => {
   if (a === 'dup') {
     const id = uid(), list = brandNodes(), p = list.find(x => x.id === n.parent), { id: _o, ...b } = clone(n);
     const at = p ? freeSpot(p, n.kind, list) : { x: n.x, y: n.y + 90 };
-    putNode({ ...b, id, title: n.title ? n.title + ' (cópia)' : '', att: [], x: Math.round(at.x), y: Math.round(at.y) }); closeModal(); drawWorld(); $(`.n[data-id="${id}"]`)?.classList.add('born'); openEd(id); return;
+    putNode({ ...b, id, title: n.title ? n.title + ' (cópia)' : '', att: [], x: Math.round(at.x), y: Math.round(at.y) }); closeModal(); refresh(); $(`.n[data-id="${id}"]`)?.classList.add('born'); openEd(id); return;
   }
   if (a === 'del') {
     const list = brandNodes(), ds = descendants(n.id, list), nm = n.title || KIND[n.kind].n;
     if (!(await ask(ds.length ? `Excluir “${nm}” e os ${ds.length} cards abaixo dele?` : `Excluir “${nm}”?`, 'Excluir'))) return;
-    [n, ...ds].forEach(x => commit('node/' + x.id, null)); ED.id = ''; closeModal(true); drawWorld(); return;
+    [n, ...ds].forEach(x => commit('node/' + x.id, null)); ED.id = ''; closeModal(true); refresh(); return;
   }
 });
 document.addEventListener('input', e => {
