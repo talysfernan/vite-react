@@ -196,9 +196,11 @@ svg.wires{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;p
 /* mini barra da Persona (entre as duas barras) */
 .dock3{display:flex;align-items:center;gap:4px;padding:5px 6px 5px 12px;border-radius:18px;background:rgba(24,24,28,.62);border:1px solid rgba(255,255,255,.08);-webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 22px 44px -20px rgba(0,0,0,.95);flex:none}
 .dock3 .d3l{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-right:4px}
-.dock3 button{position:relative;width:36px;height:36px;border-radius:12px;display:grid;place-items:center;cursor:grab;touch-action:none;transition:background .2s,transform .25s var(--ease)}
-.dock3 button:hover{background:rgba(255,255,255,.07);transform:translateY(-3px)}
-.dock3 button i{position:absolute;right:1px;bottom:1px;width:14px;height:14px;border-radius:5px;font-size:9px;font-style:normal;font-weight:700;display:grid;place-items:center;color:#111;background:var(--pc)}
+.dock3 button{position:relative;width:36px;height:36px;border-radius:12px;display:grid;place-items:center;color:var(--text-2);cursor:grab;touch-action:none;transition:background .2s,color .2s,transform .25s var(--ease)}
+.dock3 button:hover{background:rgba(255,255,255,.07);color:var(--text);transform:translateY(-3px)}
+.dock3 button svg{transition:transform .25s var(--ease)}.dock3 button:hover svg{transform:scale(1.08)}
+.dock3 button i{position:absolute;right:2px;bottom:2px;min-width:13px;height:13px;padding:0 2px;border-radius:4px;font-size:8.5px;font-style:normal;font-weight:700;line-height:1;display:grid;place-items:center;color:var(--text-2);background:rgba(30,30,34,.85);border:1px solid rgba(255,255,255,.16)}
+.dock3 .d3a{width:22px;height:22px;background:none}
 .pav{border-radius:50%;display:grid;place-items:center;font-weight:700;color:#111;background:var(--pc);overflow:hidden;flex:none}
 .pav img{width:100%;height:100%;object-fit:cover;display:block}
 .f-persona{display:flex;align-items:center;gap:12px;padding:10px 16px 10px 10px;border-radius:18px;max-width:340px;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 10%,#1c1c20),#17171a);border:1px solid color-mix(in srgb,var(--c) 40%,var(--line));box-shadow:0 24px 48px -28px rgba(0,0,0,.85)}
@@ -604,6 +606,8 @@ const pv = v => v && typeof v === 'object' && !Array.isArray(v) ? true : Array.i
 const ptabsOf = sl => PTABS.filter(t => t[0] !== 'teste' || sl === 'B');
 const pFilled = P => P && ptabsOf(P.slot).some(t => t[2].some(k => pv(P[k])));
 function pAvatar(P, sl, size) { const c = PSLOT[sl].c; return `<span class="pav" style="--pc:${c};width:${size}px;height:${size}px;font-size:${Math.round(size * .38)}px">${P && P.foto ? `<img src="/api/blob/${esc(P.foto.id)}?b=${store.board}" alt="" draggable="false">` : esc(P && P.nome ? ini(P.nome) : sl)}</span>`; }
+/* botão da barra: avatar em traço (ou a foto) + selinho A/B no padrão de vidro */
+const dockAv = sl => { const P = personaOf(sl); return `${P && P.foto ? `<span class="pav d3a"><img src="/api/blob/${esc(P.foto.id)}?b=${store.board}" alt="" draggable="false"></span>` : ic('f_person')}<i>${sl}</i>`; };
 function ensurePersona(sl) { if (!personaOf(sl)) commit('node/' + pid(sl), { marca: curMarca(), persona: true, slot: sl }); return pid(sl); }
 /* itens soltos: arrastar da segunda barra para qualquer lugar do mapa */
 const FREE = {
@@ -738,7 +742,7 @@ function render() {
       <span class="sep"></span>
       <button class="play" data-act="present" title="Apresentar (tela cheia)">${ic('play', 'width:13px;height:13px;fill:currentColor')}<span class="lbl">Apresentar</span></button>
     </div>
-    <div class="dock3" id="dock3" aria-label="Persona: clique para abrir, arraste para o mapa"><span class="d3l">Persona</span>${['A', 'B'].map(sl => `<button data-pk="${sl}" title="Persona ${sl} · ${PSLOT[sl].n.toLowerCase()} · clique para abrir, arraste para o mapa" aria-label="Persona ${sl}">${pAvatar(personaOf(sl), sl, 28)}<i style="--pc:${PSLOT[sl].c}">${sl}</i></button>`).join('')}</div>
+    <div class="dock3" id="dock3" aria-label="Persona: clique para abrir, arraste para o mapa"><span class="d3l">Persona</span>${['A', 'B'].map(sl => `<button data-pk="${sl}" title="Persona ${sl} · ${PSLOT[sl].n.toLowerCase()} · clique para abrir, arraste para o mapa" aria-label="Persona ${sl}">${dockAv(sl)}</button>`).join('')}</div>
     <div class="dock2" id="dock2" aria-label="Itens soltos: arraste para o mapa">${Object.entries(FREE).filter(([k, f]) => !f.hide).map(([k, f], i) => `${i === 4 || i === 8 ? '<span class="sep"></span>' : ''}<button data-fk="${k}" title="${f.n} · arraste para o mapa" aria-label="${f.n}">${ic(k)}</button>`).join('')}</div></div>
   </div></div>` : `<div class="wrap"><div class="pane ${render.dir || ''}" id="pane"></div></div>`}
   ${isAdmin() ? `<button class="gearfab" data-act="settings" aria-label="Ajustes" title="Ajustes">${ic('gear')}</button>` : ''}`;
@@ -836,7 +840,7 @@ function createFree(k, wx, wy, extra = {}) {
   const id = uid(), F = FREE[k]; putNode({ id, marca: curMarca(), free: true, kind: k, x: Math.round(wx), y: Math.round(wy), lock: false, ...clone(F.mk), ...extra });
   drawWorld(); $(`.fx[data-fx="${id}"]`)?.classList.add('born');
 }
-function updNode(id) { const nf = N(id); if (nf && nf.free) return updFx(id); if (nf && nf.persona) { $$('.fx.f-persona').forEach(el => updFx(el.dataset.fx)); const b = $(`.dock3 [data-pk="${nf.slot}"]`); if (b) b.innerHTML = `${pAvatar(nf, nf.slot, 28)}<i style="--pc:${PSLOT[nf.slot].c}">${nf.slot}</i>`; return; } if (!$(`.n[data-id="${id}"]`)) return; const list = brandNodes(), offs = offOf(list), up = [N(id), ...ancestors(N(id) || {}, list)].filter(Boolean); up.forEach(x => { const el = $(`.n[data-id="${x.id}"]`); if (el) el.outerHTML = nodeHTML(x, list, offs); }); drawWires(visNodes(list)); }
+function updNode(id) { const nf = N(id); if (nf && nf.free) return updFx(id); if (nf && nf.persona) { $$('.fx.f-persona').forEach(el => updFx(el.dataset.fx)); const b = $(`.dock3 [data-pk="${nf.slot}"]`); if (b) b.innerHTML = dockAv(nf.slot); return; } if (!$(`.n[data-id="${id}"]`)) return; const list = brandNodes(), offs = offOf(list), up = [N(id), ...ancestors(N(id) || {}, list)].filter(Boolean); up.forEach(x => { const el = $(`.n[data-id="${x.id}"]`); if (el) el.outerHTML = nodeHTML(x, list, offs); }); drawWires(visNodes(list)); }
 const W = n => n.kind === 'nucleo' && n.logo ? (n.logoW || 220) : (KIND[n.kind] || KIND.setor).w;
 /* lado do ramo: vem do card que sai direto da marca (r, l, t, b) */
 function sideOf(n, list) { if (!n || n.kind === 'nucleo') return 'c'; const m = new Map(list.map(x => [x.id, x])); let c = n; while (c.parent && m.get(c.parent) && m.get(c.parent).kind !== 'nucleo') c = m.get(c.parent); return c.side || 'r'; }
