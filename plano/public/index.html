@@ -191,7 +191,10 @@ svg.wires{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;p
 .dock2 button:hover svg{transform:scale(1.08)}.dock2 button svg{transition:transform .25s var(--ease)}
 .dock2 .sep{width:1px;height:22px;background:rgba(255,255,255,.08);margin:0 4px;flex:none}
 .stage.pres .dock2{display:none}
-@media (max-width:1280px){.dock2{left:50%;transform:translateX(-50%);bottom:62px}}
+.docks{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:7;display:flex;align-items:center;justify-content:center;gap:8px;width:max-content;max-width:calc(100% - 28px)}
+.docks .dock,.docks .dock2{position:static;transform:none;left:auto;bottom:auto}
+@media (max-width:1100px){.docks{flex-wrap:wrap-reverse;width:calc(100% - 28px)}}
+.stage.pres .docks{display:none}
 .fx{position:absolute;z-index:3;cursor:grab;user-select:none;-webkit-user-select:none;transition:opacity .45s var(--ease),filter .45s}
 .fx.locked{cursor:pointer}.fx.drag{z-index:6;cursor:grabbing}.fx.dim{opacity:.15}
 .fx.born{animation:born .45s var(--ease) both}
@@ -692,7 +695,7 @@ function render() {
     <div class="top-r"><div class="save-st" id="savest"></div><nav class="seg flags" aria-label="País">${Object.keys(PAIS).map(k => `<button class="pill ${store.board === k ? 'on' : ''}" data-act="board" data-v="${k}" title="Plano ${PAIS[k].name}" aria-label="Plano ${PAIS[k].name}" aria-pressed="${store.board === k}">${FLAG[k]}</button>`).join('')}</nav></div>
   </header>
   ${UI.view === 'mapa' ? `<div class="wrap"><div class="stage" id="stage"><div class="world" id="world"></div>
-    <div class="dock" id="dock">
+    <div class="docks" id="docks"><div class="dock" id="dock">
       <button data-act="organize" title="Organizar o mapa">${ic('tree')}<span class="lbl">Organizar</span></button>
       <button data-act="fit" title="Enquadrar">${ic('fit')}</button>
       <span class="sep"></span>
@@ -700,7 +703,7 @@ function render() {
       <span class="sep"></span>
       <button class="play" data-act="present" title="Apresentar (tela cheia)">${ic('play', 'width:13px;height:13px;fill:currentColor')}<span class="lbl">Apresentar</span></button>
     </div>
-    <div class="dock2" id="dock2" aria-label="Itens soltos: arraste para o mapa">${Object.entries(FREE).map(([k, f], i) => `${i === 4 || i === 8 ? '<span class="sep"></span>' : ''}<button data-fk="${k}" title="${f.n} · arraste para o mapa" aria-label="${f.n}">${ic(k)}</button>`).join('')}</div>
+    <div class="dock2" id="dock2" aria-label="Itens soltos: arraste para o mapa">${Object.entries(FREE).map(([k, f], i) => `${i === 4 || i === 8 ? '<span class="sep"></span>' : ''}<button data-fk="${k}" title="${f.n} · arraste para o mapa" aria-label="${f.n}">${ic(k)}</button>`).join('')}</div></div>
   </div></div>` : `<div class="wrap"><div class="pane ${render.dir || ''}" id="pane"></div></div>`}
   ${isAdmin() ? `<button class="gearfab" data-act="settings" aria-label="Ajustes" title="Ajustes">${ic('gear')}</button>` : ''}`;
   render.dir = '';
@@ -762,13 +765,13 @@ function drawWorld() {
   const w = $('#world'); if (!w) return;
   const list = brandNodes(), st = $('#stage');
   $('.empty', st)?.remove();
-  if (!curMarca()) { w.innerHTML = ''; st.insertAdjacentHTML('beforeend', `<div class="empty"><div class="node"><h2>Nenhuma marca cadastrada</h2><p>${isAdmin() ? 'Cadastre as marcas na engrenagem, no canto inferior direito.' : 'Peça ao admin para cadastrar as marcas.'}</p></div></div>`); $('#dock').hidden = true; return; }
+  if (!curMarca()) { w.innerHTML = ''; st.insertAdjacentHTML('beforeend', `<div class="empty"><div class="node"><h2>Nenhuma marca cadastrada</h2><p>${isAdmin() ? 'Cadastre as marcas na engrenagem, no canto inferior direito.' : 'Peça ao admin para cadastrar as marcas.'}</p></div></div>`); $('#docks').hidden = true; return; }
   if (!list.length) {
     w.innerHTML = ''; const b = marca(curMarca()) || {};
     st.insertAdjacentHTML('beforeend', `<div class="empty"><div class="node"><span class="n-ic" style="--c:${b.color};margin:0 auto;width:44px;height:44px;font-weight:700;font-size:18px">${esc((b.name || '?')[0])}</span><h2>Plano da ${esc(b.name)} · ${PAIS[store.board].name}</h2><p>Comece com o modelo (estrela-guia, departamentos e setores sugeridos) ou monte do zero.</p><div class="row"><button class="pill white" data-act="seed" data-v="1">Começar com o modelo</button><button class="pill" data-act="seed" data-v="0">Em branco</button></div></div></div>`);
-    $('#dock').hidden = true; return;
+    $('#docks').hidden = true; return;
   }
-  $('#dock').hidden = false;
+  $('#docks').hidden = false;
   const vis = visNodes(list), offs = offOf(list);
   const fx = freeNodes();
   w.innerHTML = `${fx.filter(f => f.kind === 'f_area').map(fxHTML).join('')}<svg class="wires" id="wires"></svg>${vis.map(n => nodeHTML(n, list, offs)).join('')}${fx.filter(f => f.kind !== 'f_area').map(fxHTML).join('')}<div class="guide h" id="gh" hidden></div><div class="guide v" id="gv" hidden></div>`;
@@ -899,6 +902,29 @@ function zoomAt(f, cx, cy) { const z = clamp(V.z * f, 0.15, 2.6); const k = z / 
 const toWorld = (cx, cy) => { const s = $('#stage').getBoundingClientRect(); return { x: (cx - s.left - V.x) / V.z, y: (cy - s.top - V.y) / V.z }; };
 
 /* ---------- arrastar (com ímã), mover o mapa, pinça ---------- */
+/* retângulos (no mundo) dos outros itens soltos e dos cards, para o ímã */
+function magnetRects(self) {
+  const out = [];
+  $$('.fx').forEach(el => { if (el !== self) out.push({ x: parseFloat(el.style.left), y: parseFloat(el.style.top), w: el.offsetWidth, h: el.offsetHeight }); });
+  $$('.n').forEach(el => { const h = el.offsetHeight; out.push({ x: parseFloat(el.style.left), y: parseFloat(el.style.top) - h / 2, w: el.offsetWidth, h }); });
+  return out;
+}
+function magnetFx(d, nx, ny) {
+  const w = d.el.offsetWidth, h = d.el.offsetHeight, th = 8 / V.z, xs = [nx, nx + w / 2, nx + w], ys = [ny, ny + h / 2, ny + h];
+  let bx = null, by = null;
+  for (const r of d.cands) {
+    const cx = [r.x, r.x + r.w / 2, r.x + r.w], cy = [r.y, r.y + r.h / 2, r.y + r.h];
+    for (const a of xs) for (const c of cx) { const dd = c - a; if (Math.abs(dd) < th && (!bx || Math.abs(dd) < Math.abs(bx.d))) bx = { d: dd, at: c, r }; }
+    for (const a of ys) for (const c of cy) { const dd = c - a; if (Math.abs(dd) < th && (!by || Math.abs(dd) < Math.abs(by.d))) by = { d: dd, at: c, r }; }
+  }
+  if (bx) nx += bx.d; if (by) ny += by.d;
+  const gh = $('#gh'), gv = $('#gv');
+  if (bx) { const t0 = Math.min(ny, bx.r.y) - 16, t1 = Math.max(ny + h, bx.r.y + bx.r.h) + 16; Object.assign(gv.style, { left: bx.at + 'px', top: t0 + 'px', height: (t1 - t0) + 'px' }); gv.hidden = false; } else gv.hidden = true;
+  if (by) { const l0 = Math.min(nx, by.r.x) - 16, l1 = Math.max(nx + w, by.r.x + by.r.w) + 16; Object.assign(gh.style, { left: l0 + 'px', top: by.at + 'px', width: (l1 - l0) + 'px' }); gh.hidden = false; } else gh.hidden = true;
+  const key = (bx ? bx.at : '') + '|' + (by ? by.at : '');
+  if (key !== d.snap) { if ((bx || by) && navigator.vibrate) try { navigator.vibrate(8); } catch (er) {} d.snap = key; }
+  return { x: Math.round(nx), y: Math.round(ny) };
+}
 let DRAG = null; const PTR = new Map();
 document.addEventListener('pointerdown', e => {
   const st = $('#stage'); if (!st || !st.contains(e.target) || e.button > 0) return;
@@ -907,7 +933,7 @@ document.addEventListener('pointerdown', e => {
   if (PTR.size === 2) { const [a, b] = [...PTR.values()]; DRAG = { pinch: true, d0: Math.hypot(a.x - b.x, a.y - b.y), z0: V.z }; return; }
   const rs = !PRES && e.target.closest('.fx-rs'), fe = !PRES && e.target.closest('.fx');
   if (rs) { const fel = rs.closest('.fx'); DRAG = { rs: N(fel.dataset.fx), el: fel, sx: e.clientX, sy: e.clientY, w0: fel.offsetWidth, h0: fel.offsetHeight, moved: false }; return; }
-  if (fe) { const fn = N(fe.dataset.fx); if (!fn) return; DRAG = fn.lock ? { pan: true, fxTap: fn.id, sx: e.clientX, sy: e.clientY, vx: V.x, vy: V.y } : { fx: fn, el: fe, sx: e.clientX, sy: e.clientY, moved: false }; return; }
+  if (fe) { const fn = N(fe.dataset.fx); if (!fn) return; DRAG = fn.lock ? { pan: true, fxTap: fn.id, sx: e.clientX, sy: e.clientY, vx: V.x, vy: V.y } : { fx: fn, el: fe, sx: e.clientX, sy: e.clientY, moved: false, cands: magnetRects(fe) }; return; }
   const el = e.target.closest('.n');
   if (el && !PRES) {
     const list = brandNodes(), n = list.find(x => x.id === el.dataset.id); if (!n) return;
@@ -922,7 +948,7 @@ document.addEventListener('pointermove', e => {
   if (DRAG.pinch) { if (PTR.size < 2) return; const [a, b] = [...PTR.values()], s = $('#stage').getBoundingClientRect(); const d = Math.hypot(a.x - b.x, a.y - b.y); zoomAt((DRAG.z0 * d / DRAG.d0) / V.z, (a.x + b.x) / 2 - s.left, (a.y + b.y) / 2 - s.top); return; }
   const dx = e.clientX - DRAG.sx, dy = e.clientY - DRAG.sy;
   if (DRAG.rs) { DRAG.moved = true; DRAG.el.style.width = Math.max(90, DRAG.w0 + dx / V.z) + 'px'; if (DRAG.rs.kind === 'f_area') DRAG.el.style.height = Math.max(70, DRAG.h0 + dy / V.z) + 'px'; return; }
-  if (DRAG.fx) { if (!DRAG.moved && Math.hypot(dx, dy) < 5) return; if (!DRAG.moved) { DRAG.moved = true; DRAG.el.classList.add('drag'); $('#stage').classList.add('grab'); } DRAG.nx = Math.round(DRAG.fx.x + dx / V.z); DRAG.ny = Math.round(DRAG.fx.y + dy / V.z); DRAG.el.style.left = DRAG.nx + 'px'; DRAG.el.style.top = DRAG.ny + 'px'; return; }
+  if (DRAG.fx) { if (!DRAG.moved && Math.hypot(dx, dy) < 5) return; if (!DRAG.moved) { DRAG.moved = true; DRAG.el.classList.add('drag'); $('#stage').classList.add('grab'); } const q = magnetFx(DRAG, DRAG.fx.x + dx / V.z, DRAG.fx.y + dy / V.z); DRAG.nx = q.x; DRAG.ny = q.y; DRAG.el.style.left = DRAG.nx + 'px'; DRAG.el.style.top = DRAG.ny + 'px'; return; }
   if (DRAG.pan) { if (Math.abs(dx) + Math.abs(dy) > 2) $('#stage').classList.add('grab'); V.x = DRAG.vx + dx; V.y = DRAG.vy + dy; applyView(); return; }
   if (DRAG.tap) return;
   if (!DRAG.moved && Math.hypot(dx, dy) < 5) return;
@@ -947,7 +973,7 @@ function endPtr(e) {
   DRAG = null; $('#stage')?.classList.remove('grab');
   if (e.type === 'pointercancel') { if (d.node || d.fx || d.rs) drawWorld(); return; }
   if (d.rs) { if (d.moved) { const n = N(d.rs.id); n.w = Math.round(d.el.offsetWidth); if (n.kind === 'f_area') n.h = Math.round(d.el.offsetHeight); putNode(n); } return; }
-  if (d.fx) { d.el.classList.remove('drag'); if (!d.moved) { openFx(d.fx.id); return; } const n = N(d.fx.id); n.x = d.nx; n.y = d.ny; putNode(n); return; }
+  if (d.fx) { d.el.classList.remove('drag'); $('#gh').hidden = true; $('#gv').hidden = true; if (!d.moved) { openFx(d.fx.id); return; } const n = N(d.fx.id); n.x = d.nx; n.y = d.ny; putNode(n); return; }
   if (d.fxTap) { if (Math.hypot(e.clientX - d.sx, e.clientY - d.sy) < 6) openFx(d.fxTap); return; }
   if (d.tap) { if (Math.hypot(e.clientX - d.sx, e.clientY - d.sy) < 6) presGoId(d.tap); return; }
   if (!d.node) return;
