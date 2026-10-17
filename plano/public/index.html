@@ -193,9 +193,32 @@ svg.wires{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;p
 .stage.pres .dock2{display:none}
 .docks{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:7;display:flex;align-items:center;justify-content:center;gap:8px;width:max-content;max-width:calc(100% - 28px)}
 .docks .dock,.docks .dock2{position:static;transform:none;left:auto;bottom:auto}
+/* mini barra da Persona (entre as duas barras) */
+.dock3{display:flex;align-items:center;gap:4px;padding:5px 6px 5px 12px;border-radius:18px;background:rgba(24,24,28,.62);border:1px solid rgba(255,255,255,.08);-webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 22px 44px -20px rgba(0,0,0,.95);flex:none}
+.dock3 .d3l{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-right:4px}
+.dock3 button{position:relative;width:36px;height:36px;border-radius:12px;display:grid;place-items:center;cursor:grab;touch-action:none;transition:background .2s,transform .25s var(--ease)}
+.dock3 button:hover{background:rgba(255,255,255,.07);transform:translateY(-3px)}
+.dock3 button i{position:absolute;right:1px;bottom:1px;width:14px;height:14px;border-radius:5px;font-size:9px;font-style:normal;font-weight:700;display:grid;place-items:center;color:#111;background:var(--pc)}
+.pav{border-radius:50%;display:grid;place-items:center;font-weight:700;color:#111;background:var(--pc);overflow:hidden;flex:none}
+.pav img{width:100%;height:100%;object-fit:cover;display:block}
+.f-persona{display:flex;align-items:center;gap:12px;padding:10px 16px 10px 10px;border-radius:18px;max-width:340px;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 10%,#1c1c20),#17171a);border:1px solid color-mix(in srgb,var(--c) 40%,var(--line));box-shadow:0 24px 48px -28px rgba(0,0,0,.85)}
+.fx-pp{min-width:0}.fx-pp small{display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--c);font-weight:600}
+.fx-pp b{display:block;font-size:14px;font-weight:600}.fx-pp em{display:block;font-size:12px;color:var(--text-2);font-style:italic;margin-top:2px}.fx-pp span{display:block;font-size:11px;color:var(--muted);margin-top:3px}
+.mod.pmod{width:min(700px,100%)}
+.ptabs{margin:2px 0 14px;display:flex;flex-wrap:wrap}.ptabs .pill small{font-size:10.5px;color:var(--muted);margin-left:2px}
+.phead{display:flex;align-items:center;gap:14px;margin-bottom:6px}.phead b{display:block;font-size:20px;font-weight:650;letter-spacing:-.01em}.phead em{display:block;color:var(--text-2);font-style:italic;margin-top:2px}
+.aud{margin-top:6px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07)}
+.aud h6{margin:0 0 8px!important}
+.gbar{display:flex;height:10px;border-radius:6px;overflow:hidden;background:rgba(255,255,255,.06)}.gbar i{display:block;height:100%}
+.glab{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-top:5px}
+.fxa{display:grid;grid-template-columns:52px 1fr 44px;gap:8px;align-items:center;font-size:11.5px;color:var(--text-2);margin-top:5px}.fxa span:last-child{text-align:right;color:var(--muted)}
+.fxa .pgt{height:6px}
+.objl{display:flex;flex-direction:column;gap:6px}.objl div{padding:9px 12px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07)}.objl b{display:block;font-size:13px}.objl span{font-size:12.5px;color:var(--text-2)}
+.jfase{display:grid;grid-template-columns:96px 1fr;gap:8px;align-items:baseline;margin-top:6px}.jfase b{font-size:12px;color:var(--jc)}.jfase span{font-size:13px;color:var(--text-2)}
+@media (max-width:760px){.dock3 .d3l{display:none}}
 @media (max-width:1100px){.docks{flex-wrap:wrap-reverse;width:calc(100% - 28px)}}
 .stage.pres .docks{display:none}
-.fx{position:absolute;z-index:3;cursor:grab;user-select:none;-webkit-user-select:none;transition:opacity .45s var(--ease),filter .45s}
+.fx{position:absolute;z-index:3;width:max-content;cursor:grab;user-select:none;-webkit-user-select:none;transition:opacity .45s var(--ease),filter .45s}
 .fx.locked{cursor:pointer}.fx.drag{z-index:6;cursor:grabbing}.fx.dim{opacity:.15}
 .fx.born{animation:born .45s var(--ease) both}
 .fx-lock{position:absolute;top:-10px;right:-10px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:var(--text-2);cursor:pointer;background:rgba(30,30,34,.72);border:1px solid rgba(255,255,255,.16);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);opacity:0;transform:scale(.8);transition:opacity .2s,transform .25s var(--ease),color .2s;z-index:2}
@@ -569,8 +592,19 @@ const docsOf = pre => Object.entries(store.docs).filter(([k, v]) => k.startsWith
 const marcas = () => docsOf('marca/').sort((a, b) => (a.t || 0) - (b.t || 0));
 const marca = id => D('marca/' + id);
 const N = id => (D('node/' + id) ? { ...D('node/' + id), id } : null);
-const brandNodes = (m = curMarca()) => docsOf('node/').filter(n => n.marca === m && !n.free);
+const brandNodes = (m = curMarca()) => docsOf('node/').filter(n => n.marca === m && !n.free && !n.persona);
 const freeNodes = (m = curMarca()) => docsOf('node/').filter(n => n.marca === m && n.free);
+/* Persona A (principal) e B (secundária, para testes): uma de cada por marca e país */
+const PSLOT = { A: { n: 'Principal', c: '#4ade80' }, B: { n: 'Secundária · testes', c: '#a78bfa' } };
+const pid = (sl, m = curMarca()) => 'pr_' + m + '_' + sl;
+const personaOf = sl => N(pid(sl));
+const CRIT = ['Preço', 'Cheiro', 'Sem pó', 'Sustentável', 'Rende mais', 'Entrega rápida', 'Praticidade', 'Marca confiável', 'Indicação do veterinário', 'Embalagem'];
+const PTABS = [['quem', 'Quem é', ['foto', 'nome', 'frase', 'idade', 'genero', 'regiao', 'renda', 'ocupacao', 'moradia', 'pets', 'audFonte', 'audMulheres', 'audFaixas', 'audEstado']], ['busca', 'O que busca', ['jobs', 'objetivos', 'dores', 'gatilhos', 'objecoes', 'criterios']], ['onde', 'Onde está', ['cDesc', 'cComp', 'influencias', 'usaHoje', 'frequencia', 'ticket']], ['falar', 'Como falar', ['tom', 'mensagens', 'evitar', 'fSee', 'fThink', 'fDo', 'fCare']], ['teste', 'Teste', ['hipotese', 'medir']]];
+const pv = v => v && typeof v === 'object' && !Array.isArray(v) ? true : Array.isArray(v) ? v.some(x => x && typeof x === 'object' ? Object.values(x).some(y => String(y ?? '').trim()) : String(x ?? '').trim()) : !!String(v ?? '').trim();
+const ptabsOf = sl => PTABS.filter(t => t[0] !== 'teste' || sl === 'B');
+const pFilled = P => P && ptabsOf(P.slot).some(t => t[2].some(k => pv(P[k])));
+function pAvatar(P, sl, size) { const c = PSLOT[sl].c; return `<span class="pav" style="--pc:${c};width:${size}px;height:${size}px;font-size:${Math.round(size * .38)}px">${P && P.foto ? `<img src="/api/blob/${esc(P.foto.id)}?b=${store.board}" alt="" draggable="false">` : esc(P && P.nome ? ini(P.nome) : sl)}</span>`; }
+function ensurePersona(sl) { if (!personaOf(sl)) commit('node/' + pid(sl), { marca: curMarca(), persona: true, slot: sl }); return pid(sl); }
 /* itens soltos: arrastar da segunda barra para qualquer lugar do mapa */
 const FREE = {
   f_title: { n: 'Título', c: '#e7e7ea', mk: { text: '' } },
@@ -582,7 +616,8 @@ const FREE = {
   f_date: { n: 'Data', c: '#facc15', mk: { date: '', label: '' } },
   f_tag: { n: 'Etiqueta', c: '#f472b6', mk: { text: '' } },
   f_img: { n: 'Imagem', c: '#e7e7ea', mk: { w: 240 }, rs: 1 },
-  f_area: { n: 'Área', c: '#60a5fa', mk: { label: '', w: 420, h: 260 }, rs: 2 }
+  f_area: { n: 'Área', c: '#60a5fa', mk: { label: '', w: 420, h: 260 }, rs: 2 },
+  f_persona: { n: 'Persona', c: '#4ade80', mk: {}, hide: 1 }
 };
 function putNode(n) { const { id, ...b } = n; b.u = Date.now(); commit('node/' + id, b); }
 const kidsOf = (id, list) => list.filter(n => n.parent === id).sort((a, b) => a.y - b.y);
@@ -703,7 +738,8 @@ function render() {
       <span class="sep"></span>
       <button class="play" data-act="present" title="Apresentar (tela cheia)">${ic('play', 'width:13px;height:13px;fill:currentColor')}<span class="lbl">Apresentar</span></button>
     </div>
-    <div class="dock2" id="dock2" aria-label="Itens soltos: arraste para o mapa">${Object.entries(FREE).map(([k, f], i) => `${i === 4 || i === 8 ? '<span class="sep"></span>' : ''}<button data-fk="${k}" title="${f.n} · arraste para o mapa" aria-label="${f.n}">${ic(k)}</button>`).join('')}</div></div>
+    <div class="dock3" id="dock3" aria-label="Persona: clique para abrir, arraste para o mapa"><span class="d3l">Persona</span>${['A', 'B'].map(sl => `<button data-pk="${sl}" title="Persona ${sl} · ${PSLOT[sl].n.toLowerCase()} · clique para abrir, arraste para o mapa" aria-label="Persona ${sl}">${pAvatar(personaOf(sl), sl, 28)}<i style="--pc:${PSLOT[sl].c}">${sl}</i></button>`).join('')}</div>
+    <div class="dock2" id="dock2" aria-label="Itens soltos: arraste para o mapa">${Object.entries(FREE).filter(([k, f]) => !f.hide).map(([k, f], i) => `${i === 4 || i === 8 ? '<span class="sep"></span>' : ''}<button data-fk="${k}" title="${f.n} · arraste para o mapa" aria-label="${f.n}">${ic(k)}</button>`).join('')}</div></div>
   </div></div>` : `<div class="wrap"><div class="pane ${render.dir || ''}" id="pane"></div></div>`}
   ${isAdmin() ? `<button class="gearfab" data-act="settings" aria-label="Ajustes" title="Ajustes">${ic('gear')}</button>` : ''}`;
   render.dir = '';
@@ -790,16 +826,17 @@ function fxHTML(n) {
   else if (k === 'f_date') b = `${ic('f_date')}<b>${n.date ? fmtD(n.date) + ' ' + n.date.slice(0, 4) : 'Data'}</b>${n.label ? `<span>${esc(n.label)}</span>` : ''}`;
   else if (k === 'f_tag') b = `<span>${esc(n.text || 'Etiqueta')}</span>`;
   else if (k === 'f_img') b = n.img ? `<img src="/api/blob/${esc(n.img.id)}?b=${store.board}" alt="${esc(n.img.name || '')}" draggable="false">` : `<div class="fx-imgph">${ic('f_img', 'width:22px;height:22px;margin:0 auto')}Clique para escolher a imagem</div>`;
+  else if (k === 'f_persona') { const sl = n.slot === 'B' ? 'B' : 'A', P = personaOf(sl) || {}, ln = [P.idade, P.regiao].filter(Boolean).join(' · '); b = `${pAvatar(P, sl, 44)}<span class="fx-pp"><small>Persona ${sl} · ${PSLOT[sl].n.toLowerCase()}</small><b>${esc(P.nome || 'Persona ' + sl)}</b>${P.frase ? `<em>“${esc(P.frase)}”</em>` : ''}${ln ? `<span>${esc(ln)}</span>` : ''}</span>`; }
   else if (k === 'f_area') b = `<span class="fx-al ${n.label ? '' : 'ph'}">${esc(n.label || 'Área')}</span>`;
   const sz = `${n.w && F.rs ? `width:${n.w}px;` : ''}${n.h && F.rs === 2 ? `height:${n.h}px;` : ''}`;
-  return `<div class="fx ${k.replace('_', '-')}${n.lock ? ' locked' : ''}" data-fx="${n.id}" style="left:${n.x}px;top:${n.y}px;${sz}--c:${c}">${b}<button class="fx-lock" data-act="fx-lock" title="${n.lock ? 'Posição travada · clique para destravar' : 'Travar posição'}" aria-label="${n.lock ? 'Destravar posição' : 'Travar posição'}">${ic(n.lock ? 'lock' : 'unlock')}</button>${F.rs && !n.lock ? '<span class="fx-rs" title="Arraste para mudar o tamanho"></span>' : ''}</div>`;
+  return `<div class="fx ${k.replace('_', '-')}${n.lock ? ' locked' : ''}" data-fx="${n.id}" style="left:${n.x}px;top:${n.y}px;${sz}--c:${k === 'f_persona' ? PSLOT[n.slot === 'B' ? 'B' : 'A'].c : c}">${b}<button class="fx-lock" data-act="fx-lock" title="${n.lock ? 'Posição travada · clique para destravar' : 'Travar posição'}" aria-label="${n.lock ? 'Destravar posição' : 'Travar posição'}">${ic(n.lock ? 'lock' : 'unlock')}</button>${F.rs && !n.lock ? '<span class="fx-rs" title="Arraste para mudar o tamanho"></span>' : ''}</div>`;
 }
 function updFx(id) { const el = $(`.fx[data-fx="${id}"]`), n = N(id); if (el && n) el.outerHTML = fxHTML(n); }
-function createFree(k, wx, wy) {
-  const id = uid(), F = FREE[k]; putNode({ id, marca: curMarca(), free: true, kind: k, x: Math.round(wx), y: Math.round(wy), lock: false, ...clone(F.mk) });
+function createFree(k, wx, wy, extra = {}) {
+  const id = uid(), F = FREE[k]; putNode({ id, marca: curMarca(), free: true, kind: k, x: Math.round(wx), y: Math.round(wy), lock: false, ...clone(F.mk), ...extra });
   drawWorld(); $(`.fx[data-fx="${id}"]`)?.classList.add('born');
 }
-function updNode(id) { const nf = N(id); if (nf && nf.free) return updFx(id); if (!$(`.n[data-id="${id}"]`)) return; const list = brandNodes(), offs = offOf(list), up = [N(id), ...ancestors(N(id) || {}, list)].filter(Boolean); up.forEach(x => { const el = $(`.n[data-id="${x.id}"]`); if (el) el.outerHTML = nodeHTML(x, list, offs); }); drawWires(visNodes(list)); }
+function updNode(id) { const nf = N(id); if (nf && nf.free) return updFx(id); if (nf && nf.persona) { $$('.fx.f-persona').forEach(el => updFx(el.dataset.fx)); const b = $(`.dock3 [data-pk="${nf.slot}"]`); if (b) b.innerHTML = `${pAvatar(nf, nf.slot, 28)}<i style="--pc:${PSLOT[nf.slot].c}">${nf.slot}</i>`; return; } if (!$(`.n[data-id="${id}"]`)) return; const list = brandNodes(), offs = offOf(list), up = [N(id), ...ancestors(N(id) || {}, list)].filter(Boolean); up.forEach(x => { const el = $(`.n[data-id="${x.id}"]`); if (el) el.outerHTML = nodeHTML(x, list, offs); }); drawWires(visNodes(list)); }
 const W = n => n.kind === 'nucleo' && n.logo ? (n.logoW || 220) : (KIND[n.kind] || KIND.setor).w;
 /* lado do ramo: vem do card que sai direto da marca (r, l, t, b) */
 function sideOf(n, list) { if (!n || n.kind === 'nucleo') return 'c'; const m = new Map(list.map(x => [x.id, x])); let c = n; while (c.parent && m.get(c.parent) && m.get(c.parent).kind !== 'nucleo') c = m.get(c.parent); return c.side || 'r'; }
@@ -903,14 +940,16 @@ const toWorld = (cx, cy) => { const s = $('#stage').getBoundingClientRect(); ret
 
 /* ---------- arrastar (com ímã), mover o mapa, pinça ---------- */
 /* retângulos (no mundo) dos outros itens soltos e dos cards, para o ímã */
-function magnetRects(self) {
+function magnetRects(skip) {
   const out = [];
-  $$('.fx').forEach(el => { if (el !== self) out.push({ x: parseFloat(el.style.left), y: parseFloat(el.style.top), w: el.offsetWidth, h: el.offsetHeight }); });
-  $$('.n').forEach(el => { const h = el.offsetHeight; out.push({ x: parseFloat(el.style.left), y: parseFloat(el.style.top) - h / 2, w: el.offsetWidth, h }); });
+  $$('.fx').forEach(el => { if (!skip(el)) out.push({ x: parseFloat(el.style.left), y: parseFloat(el.style.top), w: el.offsetWidth, h: el.offsetHeight }); });
+  $$('.n').forEach(el => { if (skip(el)) return; const h = el.offsetHeight; out.push({ x: parseFloat(el.style.left), y: parseFloat(el.style.top) - h / 2, w: el.offsetWidth, h }); });
   return out;
 }
-function magnetFx(d, nx, ny) {
-  const w = d.el.offsetWidth, h = d.el.offsetHeight, th = 8 / V.z, xs = [nx, nx + w / 2, nx + w], ys = [ny, ny + h / 2, ny + h];
+const magnetFx = (d, nx, ny) => snapRect(d, nx, ny, d.el.offsetWidth, d.el.offsetHeight);
+/* ímã: bordas e centro do retângulo arrastado contra os vizinhos, com guias tracejadas */
+function snapRect(d, nx, ny, w, h) {
+  const th = 8 / V.z, xs = [nx, nx + w / 2, nx + w], ys = [ny, ny + h / 2, ny + h];
   let bx = null, by = null;
   for (const r of d.cands) {
     const cx = [r.x, r.x + r.w / 2, r.x + r.w], cy = [r.y, r.y + r.h / 2, r.y + r.h];
@@ -928,17 +967,17 @@ function magnetFx(d, nx, ny) {
 let DRAG = null; const PTR = new Map();
 document.addEventListener('pointerdown', e => {
   const st = $('#stage'); if (!st || !st.contains(e.target) || e.button > 0) return;
-  if (e.target.closest('.dock,.dock2,.slide,.pbar,.empty,.n-add,.n-fold,.fx-lock,.fx-ck')) return;
+  if (e.target.closest('.docks,.dock,.dock2,.dock3,.slide,.pbar,.empty,.n-add,.n-fold,.fx-lock,.fx-ck')) return;
   PTR.set(e.pointerId, { x: e.clientX, y: e.clientY });
   if (PTR.size === 2) { const [a, b] = [...PTR.values()]; DRAG = { pinch: true, d0: Math.hypot(a.x - b.x, a.y - b.y), z0: V.z }; return; }
   const rs = !PRES && e.target.closest('.fx-rs'), fe = !PRES && e.target.closest('.fx');
   if (rs) { const fel = rs.closest('.fx'); DRAG = { rs: N(fel.dataset.fx), el: fel, sx: e.clientX, sy: e.clientY, w0: fel.offsetWidth, h0: fel.offsetHeight, moved: false }; return; }
-  if (fe) { const fn = N(fe.dataset.fx); if (!fn) return; DRAG = fn.lock ? { pan: true, fxTap: fn.id, sx: e.clientX, sy: e.clientY, vx: V.x, vy: V.y } : { fx: fn, el: fe, sx: e.clientX, sy: e.clientY, moved: false, cands: magnetRects(fe) }; return; }
+  if (fe) { const fn = N(fe.dataset.fx); if (!fn) return; DRAG = fn.lock ? { pan: true, fxTap: fn.id, sx: e.clientX, sy: e.clientY, vx: V.x, vy: V.y } : { fx: fn, el: fe, sx: e.clientX, sy: e.clientY, moved: false, cands: magnetRects(el => el === fe) }; return; }
   const el = e.target.closest('.n');
   if (el && !PRES) {
     const list = brandNodes(), n = list.find(x => x.id === el.dataset.id); if (!n) return;
     const sub = [n, ...descendants(n.id, list)];
-    const vis = visNodes(list); DRAG = { node: n, sub, sx: e.clientX, sy: e.clientY, moved: false, list: vis, others: vis.filter(o => !sub.includes(o)), pos: {} };
+    const vis = visNodes(list), ids = new Set(sub.map(x => x.id)); DRAG = { node: n, sub, sx: e.clientX, sy: e.clientY, moved: false, list: vis, pos: {}, cands: magnetRects(el => ids.has(el.dataset.id)) };
   } else if (el && PRES) { DRAG = { tap: el.dataset.id, sx: e.clientX, sy: e.clientY }; }
   else DRAG = { pan: true, sx: e.clientX, sy: e.clientY, vx: V.x, vy: V.y };
 });
@@ -954,14 +993,8 @@ document.addEventListener('pointermove', e => {
   if (!DRAG.moved && Math.hypot(dx, dy) < 5) return;
   if (!DRAG.moved) { DRAG.moved = true; DRAG.sub.forEach(s => $(`.n[data-id="${s.id}"]`)?.classList.add('drag')); $('#stage').classList.add('grab'); }
   let wx = dx / V.z, wy = dy / V.z;
-  // ímã: alinha com cards vizinhos (centro na vertical, borda esquerda na horizontal)
-  const n = DRAG.node, nx = n.x + wx, ny = n.y + wy, th = 8 / V.z; let gy = null, gx = null;
-  for (const o of DRAG.others) { if (gy == null && Math.abs(o.y - ny) < th) { wy = o.y - n.y; gy = o; } if (gx == null && Math.abs(o.x - nx) < th) { wx = o.x - n.x; gx = o; } }
-  const snapKey = (gy ? gy.id : '') + '|' + (gx ? gx.id : '');
-  if (snapKey !== DRAG.snap) { if ((gx || gy) && navigator.vibrate) try { navigator.vibrate(8); } catch (er) {} DRAG.snap = snapKey; }
-  const gh = $('#gh'), gv = $('#gv');
-  if (gy) { const a = Math.min(gy.x, n.x + wx), b = Math.max(gy.x + W(gy), n.x + wx + W(n)); Object.assign(gh.style, { left: a + 'px', top: gy.y + 'px', width: (b - a) + 'px' }); gh.hidden = false; } else gh.hidden = true;
-  if (gx) { const a = Math.min(gx.y, n.y + wy) - 40, b = Math.max(gx.y, n.y + wy) + 40; Object.assign(gv.style, { left: gx.x + 'px', top: a + 'px', height: (b - a) + 'px' }); gv.hidden = false; } else gv.hidden = true;
+  // ímã: bordas e centro do card contra cards e itens soltos vizinhos
+  const n = DRAG.node, h = hOf(n.id), q = snapRect(DRAG, n.x + wx, n.y + wy - h / 2, W(n), h); wx = q.x - n.x; wy = q.y + h / 2 - n.y;
   DRAG.pos = {};
   DRAG.sub.forEach(s => { const p = { x: Math.round(s.x + wx), y: Math.round(s.y + wy) }; DRAG.pos[s.id] = p; const el = $(`.n[data-id="${s.id}"]`); if (el) { el.style.left = p.x + 'px'; el.style.top = p.y + 'px'; } });
   drawWires(DRAG.list, DRAG.pos);
@@ -1009,7 +1042,7 @@ function openAdd(id, cx, cy, sd) {
 }
 function closeAdd() { $('#addm')?.remove(); }
 let FADD = null;
-document.addEventListener('pointerdown', e => { const b = e.target.closest('.dock2 [data-fk]'); if (!b || e.button > 0) return; e.preventDefault(); FADD = { k: b.dataset.fk, sx: e.clientX, sy: e.clientY, moved: false }; }, true);
+document.addEventListener('pointerdown', e => { const b = e.target.closest('.dock2 [data-fk], .dock3 [data-pk]'); if (!b || e.button > 0) return; e.preventDefault(); FADD = b.dataset.pk ? { k: 'f_persona', slot: b.dataset.pk, sx: e.clientX, sy: e.clientY, moved: false } : { k: b.dataset.fk, sx: e.clientX, sy: e.clientY, moved: false }; }, true);
 document.addEventListener('pointermove', e => {
   if (!FADD) return;
   if (!FADD.moved && Math.hypot(e.clientX - FADD.sx, e.clientY - FADD.sy) > 6) { FADD.moved = true; const g = document.createElement('div'); g.className = 'ghostn'; g.id = 'ghostf'; g.innerHTML = `${ic(FADD.k, 'width:13px;height:13px;vertical-align:-2px;margin-right:6px')}${FREE[FADD.k].n}`; document.body.appendChild(g); }
@@ -1017,9 +1050,11 @@ document.addEventListener('pointermove', e => {
 });
 document.addEventListener('pointerup', e => {
   if (!FADD) return; const f = FADD; FADD = null; $('#ghostf')?.remove(); const st = $('#stage'); if (!st) return; const s = st.getBoundingClientRect();
-  if (!f.moved) { const w = toWorld(s.left + s.width / 2, s.top + s.height / 2); return createFree(f.k, w.x - 60 + (Math.random() * 40 - 20), w.y - 20 + (Math.random() * 40 - 20)); }
+  if (!f.moved && f.slot) return openPersona(f.slot);
+  if (f.slot) ensurePersona(f.slot);
+  if (!f.moved) { const w = toWorld(s.left + s.width / 2, s.top + s.height / 2); return createFree(f.k, w.x - 60 + (Math.random() * 40 - 20), w.y - 20 + (Math.random() * 40 - 20), f.slot ? { slot: f.slot } : {}); }
   if (e.clientX < s.left || e.clientX > s.right || e.clientY < s.top || e.clientY > s.bottom) return;
-  const w = toWorld(e.clientX, e.clientY); createFree(f.k, w.x - 12, w.y - 14);
+  const w = toWorld(e.clientX, e.clientY); createFree(f.k, w.x - 12, w.y - 14, f.slot ? { slot: f.slot } : {});
 }, true);
 let ADRAG = null;
 document.addEventListener('pointerdown', e => {
@@ -1153,15 +1188,72 @@ function fxForm(n) {
   if (k === 'f_area') return `${fText('label', 'Nome da área', 'Ex.: Q1 · Lançamentos', n)}${fCor(n)}${lockRow(n)}`;
   return '';
 }
+/* ===== Persona: cadastro em abas, abre lendo; "Editar" troca no lugar ===== */
+const LIP = { jobs: ['Quando…, quero…, para…', 3], mensagens: ['Uma mensagem que funciona', 4] };
+const plist = (k, label, P) => `<div class="f"><h5>${label}</h5><div class="bl" id="bl-${k}">${blHTML(k, LIP[k][0], P, LIP[k][1])}</div></div>`;
+const pchips = (k, label, opts, P) => `<div class="f"><h5>${label}</h5><div class="chips">${opts.map(c => `<button class="chip ${(P[k] || []).includes(c) ? 'on' : ''}" data-act="tog" data-k="${k}" data-v="${esc(c)}">${esc(c)}</button>`).join('')}</div></div>`;
+const objHTML = P => `${(P.objecoes || []).map((o, i) => `<div class="row"><input class="inp" data-obj="o" data-i="${i}" placeholder="Objeção (ex.: é cara)" value="${esc(o.o || '')}" autocomplete="off"><input class="inp" data-obj="r" data-i="${i}" placeholder="Como respondemos" value="${esc(o.r || '')}" autocomplete="off"><button class="xb" data-act="obj-del" data-i="${i}" aria-label="Remover">${ic('x')}</button></div>`).join('')}${(P.objecoes || []).length < 5 ? `<button class="addl" data-act="obj-add">${ic('plus')}Objeção</button>` : ''}`;
+function pForm(P, tab) {
+  if (tab === 'quem') return `<div class="f"><h5>Foto</h5><div class="row">${pAvatar(P, P.slot, 48)}<label class="pill sm">${P.foto ? 'Trocar' : 'Escolher foto'}<input type="file" id="pfoto-in" accept="image/*" hidden></label>${P.foto ? '<button class="pill sm" data-act="pfoto-del">Remover</button>' : ''}</div></div>
+    <div class="g2">${fText('nome', 'Nome', 'Ex.: Marina, tutora consciente', P)}${fText('frase', 'Frase que resume', 'Ex.: “Quero cuidar bem sem complicar”', P)}</div>
+    <div class="g2">${fText('idade', 'Idade', 'Ex.: 25–44 anos', P)}${fText('genero', 'Gênero', 'Ex.: Mulher', P)}</div>
+    <div class="g2">${fText('regiao', 'Cidade / região', 'Ex.: São Paulo', P)}${fText('renda', 'Renda / classe', 'Ex.: B, R$ 6–12 mil', P)}</div>
+    <div class="g2">${fText('ocupacao', 'Ocupação', 'Ex.: CLT, trabalha híbrido', P)}${fText('moradia', 'Como mora', 'Ex.: apartamento, mora com o parceiro', P)}</div>
+    ${fArea('pets', 'Pets', 'Ex.: 2 gatos adultos, caixa de areia no banheiro', P)}
+    <div class="aud"><h6>Dados do público</h6>${fText('audFonte', 'Fonte', 'Ex.: Instagram Insights · out/2026', P)}<div class="g2">${fText('audMulheres', 'Mulheres (%)', 'Ex.: 70,5', P)}${fText('audHomens', 'Homens (%)', 'Ex.: 29,5', P)}</div>${fArea('audFaixas', 'Faixa etária', 'Ex.: 25–34: 34% · 35–44: 24,6%', P)}${fText('audEstado', 'Principal estado', 'Ex.: São Paulo · 63%', P)}</div>`;
+  if (tab === 'busca') return `${plist('jobs', 'Jobs-to-be-done <span>a tarefa que ela quer resolver</span>', P)}${fArea('objetivos', 'Objetivos', 'O que ela quer conquistar', P)}${fArea('dores', 'Dores', 'O que incomoda hoje', P)}${fArea('gatilhos', 'Gatilhos de compra', 'O que faz ela comprar agora', P)}<div class="f"><h5>Objeções <span>e como respondemos</span></h5><div class="bl" id="objs">${objHTML(P)}</div></div>${pchips('criterios', 'Critérios de decisão', CRIT, P)}`;
+  if (tab === 'onde') return `${pchips('cDesc', 'Onde descobre', CANAIS[store.board], P)}${pchips('cComp', 'Onde compra', CANAIS[store.board], P)}${fArea('influencias', 'Quem ela segue', 'Perfis, criadores, veterinários', P)}${fText('usaHoje', 'O que usa hoje', 'Marca ou concorrente atual', P)}<div class="g2">${fText('frequencia', 'Frequência de compra', 'Ex.: a cada 3 semanas', P)}${fText('ticket', 'Ticket médio', 'Ex.: R$ 90', P)}</div>`;
+  if (tab === 'falar') return `${fText('tom', 'Tom de voz', 'Ex.: próximo, leve, sem jargão', P)}${plist('mensagens', 'Mensagens que funcionam', P)}${fArea('evitar', 'Evitar', 'Palavras e abordagens que afastam', P)}<div class="f"><h5>O que ela precisa ouvir em cada fase</h5>${JORN.map(j => `<div class="jfase" style="--jc:${j[4]}"><b>${j[2]} · ${j[3]}</b><input class="inp sm" data-f="f${j[2]}" placeholder="Mensagem para ${j[3].toLowerCase()}" value="${esc(P['f' + j[2]] || '')}" autocomplete="off"></div>`).join('')}</div>`;
+  if (tab === 'teste') return `${fArea('hipotese', 'Hipótese de teste', 'O que queremos validar com esta persona', P, 3)}${fText('medir', 'Como medir', 'Ex.: CTR dos anúncios, conversão no ML', P)}`;
+  return '';
+}
+function audHTML(P) {
+  const m = num(P.audMulheres), h = num(P.audHomens), fx = [...String(P.audFaixas || '').matchAll(/([0-9]+\s*[–\-+]\s*[0-9]*\+?)\s*:?\s*([0-9]+(?:[.,][0-9]+)?)\s*%/g)].map(x => [x[1].replace(/\s/g, ''), num(x[2])]), mx = Math.max(1, ...fx.map(x => x[1]));
+  if (!(isFinite(m) || isFinite(h) || fx.length || P.audEstado)) return '';
+  return `<div class="aud"><h6>Dados do público${P.audFonte ? ` · ${esc(P.audFonte)}` : ''}</h6>${isFinite(m) || isFinite(h) ? `<div class="gbar"><i style="width:${m || 0}%;background:#f472b6"></i><i style="width:${h || 0}%;background:#60a5fa"></i></div><div class="glab"><span>Mulheres ${esc(P.audMulheres || '—')}%</span><span>Homens ${esc(P.audHomens || '—')}%</span></div>` : ''}
+    ${fx.length ? `<div style="margin-top:12px">${fx.map(([f, v]) => `<div class="fxa"><span>${esc(f)}</span><div class="pgt"><i style="width:${Math.round(v / mx * 100)}%"></i></div><span>${String(v).replace('.', ',')}%</span></div>`).join('')}</div>` : ''}${P.audEstado ? `<p style="margin-top:10px;font-size:12.5px;color:var(--text-2)">Principal estado: <b style="color:var(--text)">${esc(P.audEstado)}</b></p>` : ''}</div>`;
+}
+function pRead(P, tab) {
+  const info = rows => { const r = rows.filter(x => x[1]); return r.length ? `<div class="info">${r.map(([l, v]) => `<div><h6>${l}</h6><p>${esc(v)}</p></div>`).join('')}</div>` : ''; };
+  const ol = L => { const l = (L || []).filter(x => String(x).trim()); return l.length ? `<ol>${l.map(x => `<li>${esc(x)}</li>`).join('')}</ol>` : ''; };
+  let o = '';
+  if (tab === 'quem') o = `${info([['Idade', P.idade], ['Gênero', P.genero], ['Cidade / região', P.regiao], ['Renda / classe', P.renda], ['Ocupação', P.ocupacao], ['Como mora', P.moradia]])}${para(P.pets, 'Pets')}${audHTML(P)}`;
+  else if (tab === 'busca') { const ob = (P.objecoes || []).filter(x => x.o || x.r); o = `${ol(P.jobs) ? `<h6>Jobs-to-be-done</h6>${ol(P.jobs)}` : ''}${para(P.objetivos, 'Objetivos')}${para(P.dores, 'Dores')}${para(P.gatilhos, 'Gatilhos de compra')}${ob.length ? `<h6>Objeções</h6><div class="objl">${ob.map(x => `<div><b>${esc(x.o || '—')}</b>${x.r ? `<span>→ ${esc(x.r)}</span>` : ''}</div>`).join('')}</div>` : ''}${(P.criterios || []).length ? `<h6>Critérios de decisão</h6>${chipsRO(P.criterios)}` : ''}`; }
+  else if (tab === 'onde') o = `${(P.cDesc || []).length ? `<h6>Onde descobre</h6>${chipsRO(P.cDesc)}` : ''}${(P.cComp || []).length ? `<h6>Onde compra</h6>${chipsRO(P.cComp)}` : ''}${para(P.influencias, 'Quem ela segue')}${info([['O que usa hoje', P.usaHoje], ['Frequência de compra', P.frequencia], ['Ticket médio', P.ticket]])}`;
+  else if (tab === 'falar') { const fs = JORN.filter(j => String(P['f' + j[2]] || '').trim()); o = `${info([['Tom de voz', P.tom]])}${ol(P.mensagens) ? `<h6>Mensagens que funcionam</h6>${ol(P.mensagens)}` : ''}${para(P.evitar, 'Evitar')}${fs.length ? `<h6>Em cada fase</h6>${fs.map(j => `<div class="jfase" style="--jc:${j[4]}"><b>${j[2]} · ${j[3]}</b><span>${esc(P['f' + j[2]])}</span></div>`).join('')}` : ''}`; }
+  else if (tab === 'teste') o = `${para(P.hipotese, 'Hipótese de teste')}${info([['Como medir', P.medir]])}`;
+  return o || '<p class="muted" style="padding:18px 0">Nada preenchido nesta aba ainda.</p>';
+}
+function openPersona(sl, fxId) {
+  closeAdd(); const id = ensurePersona(sl), P = N(id);
+  ED.id = id; ED.persona = true; ED.pfx = fxId || ''; ED.mode = pFilled(P) ? 'read' : 'edit';
+  let t = ''; try { t = localStorage.getItem('pln:ptab') || ''; } catch (e) {}
+  ED.ptab = ptabsOf(sl).some(x => x[0] === t) ? t : 'quem';
+  const s = modal(`<div class="mh"><span class="n-ic" id="pic">${ic('f_person')}</span><b>Persona</b><nav class="seg" style="margin-left:6px" id="pslot"></nav><span class="sp"></span><button class="pill sm icon ghost" data-act="close" aria-label="Fechar">${ic('x')}</button></div><div id="phead"></div><nav class="seg ptabs" id="ptabs"></nav><div id="edb"></div><div class="mf" id="mf"></div>`, 'pmod');
+  drawPersona();
+}
+function drawPersona(keep) {
+  const P = edNode(), m = $('#modal .mod'); if (!P || !m) return; const sl = P.slot, rd = ED.mode === 'read', y = m.scrollTop;
+  m.style.setProperty('--c', PSLOT[sl].c); $('#pic').style.setProperty('--c', PSLOT[sl].c);
+  if (!ptabsOf(sl).some(x => x[0] === ED.ptab)) ED.ptab = 'quem';
+  $('#pslot').innerHTML = ['A', 'B'].map(x => `<button class="pill sm ${x === sl ? 'on' : ''}" data-act="p-slot" data-v="${x}">${x} · ${PSLOT[x].n.split(' ·')[0]}</button>`).join('');
+  $('#phead').innerHTML = rd ? `<div class="phead">${pAvatar(P, sl, 56)}<div><b>${esc(P.nome || 'Persona ' + sl)}</b>${P.frase ? `<em>“${esc(P.frase)}”</em>` : ''}</div></div>` : '';
+  $('#ptabs').innerHTML = ptabsOf(sl).map(([k, l, fs]) => `<button class="pill sm ${ED.ptab === k ? 'on' : ''}" data-act="p-tab" data-v="${k}">${l} <small>${fs.filter(f => pv(P[f])).length}/${fs.length}</small></button>`).join('');
+  $('#edb').innerHTML = rd ? `<div class="rd">${pRead(P, ED.ptab)}</div>` : pForm(P, ED.ptab);
+  $('#mf').innerHTML = rd ? `<button class="pill sm" data-act="p-mode">${ic('pencil')}Editar</button><span class="sp"></span><button class="pill white" data-act="close">Fechar</button>`
+    : `${ED.pfx ? `<button class="pill sm danger" data-act="p-unmap">${ic('trash')}Tirar do mapa</button>` : ''}<span class="sp"></span><button class="pill white" data-act="p-ok">Pronto</button>`;
+  m.scrollTop = keep ? y : 0;
+}
 function openFx(id) {
   closeAdd(); const n = N(id); if (!n) return; const F = FREE[n.kind] || FREE.f_text;
-  ED.id = id; ED.mode = 'edit';
+  if (n.kind === 'f_persona') return openPersona(n.slot === 'B' ? 'B' : 'A', id);
+  ED.id = id; ED.mode = 'edit'; ED.persona = false;
   const s = modal(`<div class="mh"><span class="n-ic" style="--c:${n.color || F.c}">${ic(n.kind)}</span><b>${F.n}</b><span class="sp"></span><button class="pill sm icon ghost" data-act="close" aria-label="Fechar">${ic('x')}</button></div><div id="edb">${fxForm(n)}</div><div class="mf" id="mf"><button class="pill sm danger" data-act="del">${ic('trash')}Excluir</button><button class="pill sm" data-act="dup">${ic('copy')}Duplicar</button><span class="sp"></span><button class="pill white" data-act="close">Pronto</button></div>`, 'sm');
   setTimeout(() => $('#edb input:not([type=file]),#edb textarea', s)?.focus(), 40);
 }
 function openEd(id, mode) {
   closeAdd(); const n = N(id); if (!n) return; const list = brandNodes(), K = KIND[n.kind] || KIND.setor;
-  ED.id = id; ED.mode = mode || (filled(n) ? 'read' : 'edit');
+  ED.id = id; ED.mode = mode || (filled(n) ? 'read' : 'edit'); ED.persona = false;
   const c = colorOf(n, list), nuc = n.kind === 'nucleo', wide = ['estrategia', 'campanha', 'lancamento', 'canal', 'programa'].includes(n.kind);
   const s = modal(`<div class="mh"><span class="n-ic" style="--c:${c}">${nuc ? esc(((marca(n.marca) || {}).name || '?')[0]) : ic(n.kind)}</span><b>${K.n}</b><span class="sp"></span><button class="pill sm icon ghost" data-act="close" aria-label="Fechar">${ic('x')}</button></div><div id="edb"></div><div class="mf" id="mf"></div>`, wide ? '' : 'sm');
   $('.mod', s).style.setProperty('--c', c);
@@ -1369,6 +1461,17 @@ document.addEventListener('click', async e => {
   if (a === 'ed-ok') { const n0 = edNode(); if (n0 && filled(n0)) { ED.mode = 'read'; drawEd(); } else closeModal(); return; }
   if (a === 'goto') { closeModal(); return openEd(v); }
   const n = edNode(); if (!n) return;
+  if (ED.persona) {
+    if (a === 'p-tab') { ED.ptab = v; try { localStorage.setItem('pln:ptab', v); } catch (er) {} return drawPersona(); }
+    if (a === 'p-mode') { ED.mode = ED.mode === 'read' ? 'edit' : 'read'; return drawPersona(); }
+    if (a === 'p-ok') { ED.mode = 'read'; return drawPersona(); }
+    if (a === 'p-slot') { if (v === n.slot) return; ED.id = ensurePersona(v); ED.pfx = ''; ED.mode = pFilled(N(ED.id)) ? 'read' : 'edit'; return drawPersona(); }
+    if (a === 'p-unmap') { if (!ED.pfx) return; if (!(await ask('Tirar este card da persona do mapa? O cadastro continua salvo.', 'Excluir'))) return; commit('node/' + ED.pfx, null); ED.pfx = ''; closeModal(true); ED.id = ''; drawWorld(); return; }
+    if (a === 'obj-add') { edSet('objecoes', [...(n.objecoes || []), { o: '', r: '' }]); edPart('objs', objHTML(edNode())); $$('#objs [data-obj="o"]').pop()?.focus(); return; }
+    if (a === 'obj-del') { edSet('objecoes', (n.objecoes || []).filter((_, i) => i !== +t.dataset.i)); edPart('objs', objHTML(edNode())); return; }
+    if (a === 'pfoto-del') { const f = n.foto; edSet('foto', null); if (f) api('/api/files/' + f.id, { method: 'DELETE' }); return drawPersona(true); }
+    if (a === 'li-add' || a === 'li-del') { const k = t.dataset.k, L = [...(n[k] || [])]; if (a === 'li-add') L.push(''); else L.splice(+t.dataset.i, 1); edSet(k, L); edPart('bl-' + k, blHTML(k, LIP[k][0], edNode(), LIP[k][1])); if (a === 'li-add') $$(`#bl-${k} input`).pop()?.focus(); return; }
+  }
   if (a === 'tog') { const L = new Set(n[t.dataset.k] || []); L.has(v) ? L.delete(v) : L.add(v); t.classList.toggle('on', L.has(v)); edSet(t.dataset.k, [...L]); if (n.kind === 'lancamento' && t.dataset.k === 'canais') edPart('lc', lcHTML(edNode(), true)); return; }
   if (a === 'st') { edSet('status', v); if (ED.mode === 'read') drawEd(true); else edPart('stp', stepper(edNode(), true)); return; }
   if (a === 'acao-done') { edSet('status', n.status === 'done' ? 'todo' : 'done'); drawEd(true); return; }
@@ -1411,6 +1514,7 @@ document.addEventListener('input', e => {
   const n = edNode(); if (!n || !t.closest('#modal')) return;
   if (t.dataset.f) { n[t.dataset.f] = t.value; putNode(n); clearTimeout(t._r); t._r = setTimeout(() => updNode(n.id), 150); if (t.dataset.f === 'title' && n.kind === 'canal') $$('[data-act="cpick"]', $('#modal')).forEach(b => b.classList.toggle('on', b.dataset.v === t.value)); return; }
   if (t.dataset.nlogo !== undefined) { const w0 = W(n); n.logoW = +t.value; n.x = Math.round(n.x + (w0 - n.logoW) / 2); putNode(n); const lv = $('#nlogo-v'); if (lv) lv.textContent = n.logoW + 'px'; clearTimeout(t._r); t._r = setTimeout(() => updNode(n.id), 30); return; }
+  if (t.dataset.obj) { const L = clone(n.objecoes || []); L[+t.dataset.i] = { ...L[+t.dataset.i], [t.dataset.obj]: t.value }; n.objecoes = L; putNode(n); return; }
   if (t.dataset.chk) { const L = clone(n.chk || []); L[+t.dataset.chk] = { ...L[+t.dataset.chk], t: t.value }; n.chk = L; putNode(n); clearTimeout(t._r); t._r = setTimeout(() => updNode(n.id), 200); return; }
   if (t.dataset.li) { const L = [...(n[t.dataset.li] || [])]; L[+t.dataset.i] = t.value; n[t.dataset.li] = L; putNode(n); return; }
   if (t.dataset.meta) { const L = clone(n.metas || []); L[+t.dataset.i] = { ...L[+t.dataset.i], [t.dataset.meta]: t.value }; n.metas = L; putNode(n); clearTimeout(t._r); t._r = setTimeout(() => updNode(n.id), 200); return; }
@@ -1419,6 +1523,14 @@ document.addEventListener('input', e => {
 document.addEventListener('change', e => {
   const t = e.target;
   if (t.id === 'file-in' && t.files.length) { uploadFiles([...t.files]); t.value = ''; return; }
+  if (t.id === 'pfoto-in' && t.files[0]) {
+    const f = t.files[0]; t.value = ''; if (f.size > 20 * 1024 * 1024) { toast('Imagem maior que 20 MB', 'r'); return; }
+    fetch('/api/files', { method: 'POST', credentials: 'same-origin', headers: { 'content-type': f.type || 'application/octet-stream', 'x-name': encodeURIComponent(f.name), 'x-board': store.board }, body: f }).then(r => r.ok ? r.json() : null).catch(() => null).then(a => {
+      if (!a) { toast('Não foi possível enviar a foto', 'r'); return; }
+      const n = edNode(); if (!n) return; const old = n.foto; n.foto = { id: a.id, name: a.name }; putNode(n); updNode(n.id); drawPersona(true); if (old) api('/api/files/' + old.id, { method: 'DELETE' });
+    });
+    return;
+  }
   if (t.id === 'fximg-in' && t.files[0]) {
     const f = t.files[0]; t.value = ''; if (f.size > 20 * 1024 * 1024) { toast('Imagem maior que 20 MB', 'r'); return; }
     toast('Enviando imagem…');
