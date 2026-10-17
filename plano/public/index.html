@@ -182,6 +182,49 @@ svg.wires{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;p
 .dock .zl{font-size:11px;color:var(--muted);min-width:38px;text-align:center;font-variant-numeric:tabular-nums}
 .dock .play{color:var(--text);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12)}
 .stage.pres .dock{display:none}
+/* segunda barra: itens soltos para arrastar */
+.dock2{position:absolute;left:14px;bottom:14px;z-index:7;display:flex;align-items:center;gap:2px;padding:5px;border-radius:18px;background:rgba(24,24,28,.62);border:1px solid rgba(255,255,255,.08);
+  -webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 22px 44px -20px rgba(0,0,0,.95);max-width:calc(100% - 28px);overflow-x:auto;scrollbar-width:none}
+.dock2::-webkit-scrollbar{display:none}
+.dock2 button{width:36px;height:36px;flex:none;border-radius:12px;display:grid;place-items:center;color:var(--text-2);cursor:grab;touch-action:none;transition:background .2s,color .2s,transform .25s var(--ease)}
+.dock2 button:hover{background:rgba(255,255,255,.07);color:var(--text);transform:translateY(-3px)}
+.dock2 button:hover svg{transform:scale(1.08)}.dock2 button svg{transition:transform .25s var(--ease)}
+.dock2 .sep{width:1px;height:22px;background:rgba(255,255,255,.08);margin:0 4px;flex:none}
+.stage.pres .dock2{display:none}
+@media (max-width:1280px){.dock2{left:50%;transform:translateX(-50%);bottom:62px}}
+.fx{position:absolute;z-index:3;cursor:grab;user-select:none;-webkit-user-select:none;transition:opacity .45s var(--ease),filter .45s}
+.fx.locked{cursor:pointer}.fx.drag{z-index:6;cursor:grabbing}.fx.dim{opacity:.15}
+.fx.born{animation:born .45s var(--ease) both}
+.fx-lock{position:absolute;top:-10px;right:-10px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:var(--text-2);cursor:pointer;background:rgba(30,30,34,.72);border:1px solid rgba(255,255,255,.16);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);opacity:0;transform:scale(.8);transition:opacity .2s,transform .25s var(--ease),color .2s;z-index:2}
+.fx-lock svg{width:11px;height:11px}
+.fx:hover .fx-lock,.fx-lock:focus-visible{opacity:1;transform:none}
+.fx.locked .fx-lock{opacity:.8;transform:none;color:var(--yellow)}
+.fx-rs{position:absolute;right:-6px;bottom:-6px;width:14px;height:14px;border-radius:5px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);cursor:grab;opacity:0;transition:opacity .2s;z-index:2}
+.fx:hover .fx-rs{opacity:1}
+@media (hover:none){.fx-lock{opacity:.85;transform:none}.fx-rs{opacity:.7}}
+.stage.pres .fx-lock,.stage.pres .fx-rs{display:none}
+.fx-t{display:inline-flex;align-items:center;white-space:nowrap;border-radius:999px;font-weight:650;letter-spacing:-.01em;color:var(--text);background:color-mix(in srgb,var(--c) 14%,rgba(24,24,28,.78));border:1px solid color-mix(in srgb,var(--c) 42%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.fx-t.s-s{font-size:13px;padding:6px 14px}.fx-t.s-m{font-size:18px;padding:9px 20px}.fx-t.s-g{font-size:28px;padding:12px 30px}
+.fx-tx{padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--c) 7%,rgba(24,24,28,.82));border:1px solid color-mix(in srgb,var(--c) 24%,var(--line));font-size:13px;line-height:1.5;color:var(--text-2);white-space:pre-wrap;word-break:break-word}
+.fx-tx.ph{color:var(--dim)}
+.f-list{width:220px;padding:12px 14px;border-radius:14px;background:linear-gradient(180deg,#1c1c20,#17171a);border:1px solid var(--line);box-shadow:0 24px 48px -28px rgba(0,0,0,.85)}
+.fx-lh{display:flex;align-items:center;gap:8px}.fx-lh b{flex:1;font-size:12.5px;font-weight:600}.fx-lh span{font-size:11px;color:var(--muted)}
+.fx-li{display:flex;align-items:flex-start;gap:8px;margin-top:8px;font-size:12.5px;color:var(--text-2);line-height:1.35}
+.fx-ck{width:18px;height:18px;border-radius:6px;display:grid;place-items:center;border:1px solid var(--line-2);color:transparent;flex:none;cursor:pointer;transition:all .2s}.fx-ck svg{width:11px;height:11px}
+.fx-li.ok .fx-ck{background:rgba(74,222,128,.18);border-color:rgba(74,222,128,.5);color:var(--green)}.fx-li.ok span{text-decoration:line-through;color:var(--muted)}
+.f-person{display:flex;align-items:center;gap:9px;padding:5px 14px 5px 5px;border-radius:999px;background:rgba(24,24,28,.78);border:1px solid var(--line);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);white-space:nowrap}
+.fx-av{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:12px;color:#111;background:var(--c);flex:none}
+.fx-pn b{display:block;font-size:12.5px;font-weight:600}.fx-pn b.ph{color:var(--dim)}.fx-pn small{display:block;font-size:11px;color:var(--muted)}
+.f-num{padding:12px 16px;border-radius:14px;background:color-mix(in srgb,var(--c) 7%,rgba(24,24,28,.82));border:1px solid color-mix(in srgb,var(--c) 30%,var(--line));min-width:120px}
+.fx-nv{display:block;font-size:28px;font-weight:700;letter-spacing:-.02em;line-height:1.1;color:var(--c)}.f-num small{display:block;margin-top:2px;font-size:11.5px;color:var(--muted)}
+.f-link,.f-date,.f-tag{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.f-link{height:32px;padding:0 12px;border-radius:10px;background:rgba(24,24,28,.78);border:1px solid var(--line);font-size:12.5px;color:var(--blue)}.f-link svg{width:14px;height:14px}
+.f-date{height:34px;padding:0 12px;border-radius:10px;background:color-mix(in srgb,var(--c) 10%,rgba(24,24,28,.82));border:1px solid color-mix(in srgb,var(--c) 35%,transparent);font-size:12.5px}.f-date b{color:var(--c);font-weight:600}.f-date span{color:var(--text-2)}.f-date svg{width:14px;height:14px;color:var(--c)}
+.f-tag{height:24px;padding:0 10px;border-radius:7px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--c);background:color-mix(in srgb,var(--c) 15%,rgba(20,20,24,.6));border:1px solid color-mix(in srgb,var(--c) 42%,transparent)}
+.f-img img{display:block;width:100%;border-radius:12px;pointer-events:none;-webkit-user-drag:none}
+.fx-imgph{height:140px;border-radius:12px;border:1px dashed var(--line-2);display:grid;place-items:center;align-content:center;gap:6px;color:var(--muted);font-size:12px;background:rgba(24,24,28,.5)}
+.f-area{z-index:auto;border-radius:20px;border:1.5px dashed color-mix(in srgb,var(--c) 45%,transparent);background:color-mix(in srgb,var(--c) 5%,transparent)}
+.fx-al{position:absolute;left:14px;top:10px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--c)}.fx-al.ph{opacity:.5}
 
 /* vazio */
 .empty{position:absolute;inset:0;display:grid;place-items:center;z-index:4;padding:20px}
@@ -402,7 +445,13 @@ const IC = {
   lancamento: '<path d="M5 19l3-1 8-8a5 5 0 0 0 0-7 5 5 0 0 0-7 0l-8 8-1 3"/><path d="M9 15l-3-3M14 6l4 4"/>',
   meta: '<path d="M4 20h16"/><path d="M7 16l4-5 3 3 5-7"/><path d="M15 7h4v4"/>',
   pencil: '<path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/>', eye: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
-  check: '<path d="M5 12l5 5 9-10"/>'
+  check: '<path d="M5 12l5 5 9-10"/>',
+  f_title: '<rect x="2.5" y="8" width="19" height="8" rx="4"/><path d="M8 12h8"/>', f_text: '<path d="M4 6h16M4 10h16M4 14h11M4 18h7"/>',
+  f_list: '<path d="M10 6h10M10 12h10M10 18h10"/><path d="M3 6l1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/>', f_person: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  f_num: '<path d="M5 9h14M5 15h14M10 4L8 20M16 4l-2 16"/>', f_link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+  f_date: '<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>', f_tag: '<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8" r="1.5"/>',
+  f_img: '<rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5L5 20"/>', f_area: '<rect x="3" y="3" width="18" height="18" rx="4" stroke-dasharray="3 3"/>',
+  lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>', unlock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 7.6-1.8"/>'
 };
 IC.etapa = IC.acao;
 const ic = (n, s = '') => `<svg class="i" viewBox="0 0 24 24" style="${s}">${IC[n] || ''}</svg>`;
@@ -517,7 +566,21 @@ const docsOf = pre => Object.entries(store.docs).filter(([k, v]) => k.startsWith
 const marcas = () => docsOf('marca/').sort((a, b) => (a.t || 0) - (b.t || 0));
 const marca = id => D('marca/' + id);
 const N = id => (D('node/' + id) ? { ...D('node/' + id), id } : null);
-const brandNodes = (m = curMarca()) => docsOf('node/').filter(n => n.marca === m);
+const brandNodes = (m = curMarca()) => docsOf('node/').filter(n => n.marca === m && !n.free);
+const freeNodes = (m = curMarca()) => docsOf('node/').filter(n => n.marca === m && n.free);
+/* itens soltos: arrastar da segunda barra para qualquer lugar do mapa */
+const FREE = {
+  f_title: { n: 'Título', c: '#e7e7ea', mk: { text: '' } },
+  f_text: { n: 'Texto', c: '#e7e7ea', mk: { text: '', w: 240 }, rs: 1 },
+  f_list: { n: 'Lista de afazeres', c: '#4ade80', mk: { title: '', chk: [] } },
+  f_person: { n: 'Pessoa', c: '#60a5fa', mk: { name: '', role: '' } },
+  f_num: { n: 'Número', c: '#4ade80', mk: { value: '', label: '' } },
+  f_link: { n: 'Link', c: '#60a5fa', mk: { label: '', url: '' } },
+  f_date: { n: 'Data', c: '#facc15', mk: { date: '', label: '' } },
+  f_tag: { n: 'Etiqueta', c: '#f472b6', mk: { text: '' } },
+  f_img: { n: 'Imagem', c: '#e7e7ea', mk: { w: 240 }, rs: 1 },
+  f_area: { n: 'Área', c: '#60a5fa', mk: { label: '', w: 420, h: 260 }, rs: 2 }
+};
 function putNode(n) { const { id, ...b } = n; b.u = Date.now(); commit('node/' + id, b); }
 const kidsOf = (id, list) => list.filter(n => n.parent === id).sort((a, b) => a.y - b.y);
 function descendants(id, list) { const out = [], seen = new Set([id]); const walk = pid => list.forEach(n => { if (n.parent === pid && !seen.has(n.id)) { seen.add(n.id); out.push(n); walk(n.id); } }); walk(id); return out; }
@@ -637,6 +700,7 @@ function render() {
       <span class="sep"></span>
       <button class="play" data-act="present" title="Apresentar (tela cheia)">${ic('play', 'width:13px;height:13px;fill:currentColor')}<span class="lbl">Apresentar</span></button>
     </div>
+    <div class="dock2" id="dock2" aria-label="Itens soltos: arraste para o mapa">${Object.entries(FREE).map(([k, f], i) => `${i === 4 || i === 8 ? '<span class="sep"></span>' : ''}<button data-fk="${k}" title="${f.n} · arraste para o mapa" aria-label="${f.n}">${ic(k)}</button>`).join('')}</div>
   </div></div>` : `<div class="wrap"><div class="pane ${render.dir || ''}" id="pane"></div></div>`}
   ${isAdmin() ? `<button class="gearfab" data-act="settings" aria-label="Ajustes" title="Ajustes">${ic('gear')}</button>` : ''}`;
   render.dir = '';
@@ -706,11 +770,33 @@ function drawWorld() {
   }
   $('#dock').hidden = false;
   const vis = visNodes(list), offs = offOf(list);
-  w.innerHTML = `<svg class="wires" id="wires"></svg>${vis.map(n => nodeHTML(n, list, offs)).join('')}<div class="guide h" id="gh" hidden></div><div class="guide v" id="gv" hidden></div>`;
+  const fx = freeNodes();
+  w.innerHTML = `${fx.filter(f => f.kind === 'f_area').map(fxHTML).join('')}<svg class="wires" id="wires"></svg>${vis.map(n => nodeHTML(n, list, offs)).join('')}${fx.filter(f => f.kind !== 'f_area').map(fxHTML).join('')}<div class="guide h" id="gh" hidden></div><div class="guide v" id="gv" hidden></div>`;
   drawWires(vis);
   if (PRES) presMark();
 }
-function updNode(id) { if (!$(`.n[data-id="${id}"]`)) return; const list = brandNodes(), offs = offOf(list), up = [N(id), ...ancestors(N(id) || {}, list)].filter(Boolean); up.forEach(x => { const el = $(`.n[data-id="${x.id}"]`); if (el) el.outerHTML = nodeHTML(x, list, offs); }); drawWires(visNodes(list)); }
+const ini = s => String(s || '').trim().split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
+function fxHTML(n) {
+  const F = FREE[n.kind] || FREE.f_text, c = n.color || F.c, k = n.kind; let b = '';
+  if (k === 'f_title') b = `<span class="fx-t s-${n.size || 'm'}">${esc(n.text || 'Título')}</span>`;
+  else if (k === 'f_text') b = `<div class="fx-tx ${n.text ? '' : 'ph'}">${esc(n.text || 'Escreva aqui…')}</div>`;
+  else if (k === 'f_list') { const L = n.chk || []; b = `<div class="fx-lh"><b>${esc(n.title || 'Afazeres')}</b>${L.length ? `<span>${L.filter(x => x.ok).length}/${L.length}</span>` : ''}</div>${L.length ? L.map((x, i) => `<div class="fx-li ${x.ok ? 'ok' : ''}"><button class="fx-ck" data-act="fx-ck" data-i="${i}" aria-label="${x.ok ? 'Desmarcar' : 'Marcar'}">${ic('check')}</button><span>${esc(x.t || '—')}</span></div>`).join('') : '<div class="fx-li"><span style="color:var(--dim)">Clique para adicionar itens</span></div>'}`; }
+  else if (k === 'f_person') b = `<span class="fx-av">${esc(n.name ? ini(n.name) : '')}${n.name ? '' : ic('f_person', 'width:15px;height:15px')}</span><span class="fx-pn"><b class="${n.name ? '' : 'ph'}">${esc(n.name || 'Pessoa')}</b>${n.role ? `<small>${esc(n.role)}</small>` : ''}</span>`;
+  else if (k === 'f_num') b = `<b class="fx-nv">${esc(n.value || '0')}</b><small>${esc(n.label || 'Indicador')}</small>`;
+  else if (k === 'f_link') b = `${ic('f_link')}<span>${esc(n.label || n.url || 'Link')}</span>`;
+  else if (k === 'f_date') b = `${ic('f_date')}<b>${n.date ? fmtD(n.date) + ' ' + n.date.slice(0, 4) : 'Data'}</b>${n.label ? `<span>${esc(n.label)}</span>` : ''}`;
+  else if (k === 'f_tag') b = `<span>${esc(n.text || 'Etiqueta')}</span>`;
+  else if (k === 'f_img') b = n.img ? `<img src="/api/blob/${esc(n.img.id)}?b=${store.board}" alt="${esc(n.img.name || '')}" draggable="false">` : `<div class="fx-imgph">${ic('f_img', 'width:22px;height:22px;margin:0 auto')}Clique para escolher a imagem</div>`;
+  else if (k === 'f_area') b = `<span class="fx-al ${n.label ? '' : 'ph'}">${esc(n.label || 'Área')}</span>`;
+  const sz = `${n.w && F.rs ? `width:${n.w}px;` : ''}${n.h && F.rs === 2 ? `height:${n.h}px;` : ''}`;
+  return `<div class="fx ${k.replace('_', '-')}${n.lock ? ' locked' : ''}" data-fx="${n.id}" style="left:${n.x}px;top:${n.y}px;${sz}--c:${c}">${b}<button class="fx-lock" data-act="fx-lock" title="${n.lock ? 'Posição travada · clique para destravar' : 'Travar posição'}" aria-label="${n.lock ? 'Destravar posição' : 'Travar posição'}">${ic(n.lock ? 'lock' : 'unlock')}</button>${F.rs && !n.lock ? '<span class="fx-rs" title="Arraste para mudar o tamanho"></span>' : ''}</div>`;
+}
+function updFx(id) { const el = $(`.fx[data-fx="${id}"]`), n = N(id); if (el && n) el.outerHTML = fxHTML(n); }
+function createFree(k, wx, wy) {
+  const id = uid(), F = FREE[k]; putNode({ id, marca: curMarca(), free: true, kind: k, x: Math.round(wx), y: Math.round(wy), lock: false, ...clone(F.mk) });
+  drawWorld(); $(`.fx[data-fx="${id}"]`)?.classList.add('born');
+}
+function updNode(id) { const nf = N(id); if (nf && nf.free) return updFx(id); if (!$(`.n[data-id="${id}"]`)) return; const list = brandNodes(), offs = offOf(list), up = [N(id), ...ancestors(N(id) || {}, list)].filter(Boolean); up.forEach(x => { const el = $(`.n[data-id="${x.id}"]`); if (el) el.outerHTML = nodeHTML(x, list, offs); }); drawWires(visNodes(list)); }
 const W = n => n.kind === 'nucleo' && n.logo ? (n.logoW || 220) : (KIND[n.kind] || KIND.setor).w;
 /* lado do ramo: vem do card que sai direto da marca (r, l, t, b) */
 function sideOf(n, list) { if (!n || n.kind === 'nucleo') return 'c'; const m = new Map(list.map(x => [x.id, x])); let c = n; while (c.parent && m.get(c.parent) && m.get(c.parent).kind !== 'nucleo') c = m.get(c.parent); return c.side || 'r'; }
@@ -798,6 +884,7 @@ function bounds(list) {
 function fit(instant, list = visNodes(), area) {
   const st = $('#stage'); if (!st || !list.length) { V = V || { x: 0, y: 0, z: 1 }; return; }
   const s = st.getBoundingClientRect(), A = area || { x: 0, y: 0, w: s.width, h: s.height - 64 }, B = bounds(list), pad = 50;
+  if (!area) $$('.fx').forEach(el => { const x = parseFloat(el.style.left), y = parseFloat(el.style.top), x2 = Math.max(B.x + B.w, x + el.offsetWidth), y2 = Math.max(B.y + B.h, y + el.offsetHeight); B.x = Math.min(B.x, x); B.y = Math.min(B.y, y); B.w = x2 - B.x; B.h = y2 - B.y; });
   const z = clamp(Math.min((A.w - pad * 2) / Math.max(B.w, 1), (A.h - pad * 2) / Math.max(B.h, 1)), .2, 1.15);
   const to = { z, x: A.x + A.w / 2 - (B.x + B.w / 2) * z, y: A.y + A.h / 2 - (B.y + B.h / 2) * z };
   if (instant || !V) { V = to; applyView(); } else camTo(to);
@@ -815,9 +902,12 @@ const toWorld = (cx, cy) => { const s = $('#stage').getBoundingClientRect(); ret
 let DRAG = null; const PTR = new Map();
 document.addEventListener('pointerdown', e => {
   const st = $('#stage'); if (!st || !st.contains(e.target) || e.button > 0) return;
-  if (e.target.closest('.dock,.slide,.pbar,.empty,.n-add,.n-fold')) return;
+  if (e.target.closest('.dock,.dock2,.slide,.pbar,.empty,.n-add,.n-fold,.fx-lock,.fx-ck')) return;
   PTR.set(e.pointerId, { x: e.clientX, y: e.clientY });
   if (PTR.size === 2) { const [a, b] = [...PTR.values()]; DRAG = { pinch: true, d0: Math.hypot(a.x - b.x, a.y - b.y), z0: V.z }; return; }
+  const rs = !PRES && e.target.closest('.fx-rs'), fe = !PRES && e.target.closest('.fx');
+  if (rs) { const fel = rs.closest('.fx'); DRAG = { rs: N(fel.dataset.fx), el: fel, sx: e.clientX, sy: e.clientY, w0: fel.offsetWidth, h0: fel.offsetHeight, moved: false }; return; }
+  if (fe) { const fn = N(fe.dataset.fx); if (!fn) return; DRAG = fn.lock ? { pan: true, fxTap: fn.id, sx: e.clientX, sy: e.clientY, vx: V.x, vy: V.y } : { fx: fn, el: fe, sx: e.clientX, sy: e.clientY, moved: false }; return; }
   const el = e.target.closest('.n');
   if (el && !PRES) {
     const list = brandNodes(), n = list.find(x => x.id === el.dataset.id); if (!n) return;
@@ -831,6 +921,8 @@ document.addEventListener('pointermove', e => {
   if (!DRAG) return;
   if (DRAG.pinch) { if (PTR.size < 2) return; const [a, b] = [...PTR.values()], s = $('#stage').getBoundingClientRect(); const d = Math.hypot(a.x - b.x, a.y - b.y); zoomAt((DRAG.z0 * d / DRAG.d0) / V.z, (a.x + b.x) / 2 - s.left, (a.y + b.y) / 2 - s.top); return; }
   const dx = e.clientX - DRAG.sx, dy = e.clientY - DRAG.sy;
+  if (DRAG.rs) { DRAG.moved = true; DRAG.el.style.width = Math.max(90, DRAG.w0 + dx / V.z) + 'px'; if (DRAG.rs.kind === 'f_area') DRAG.el.style.height = Math.max(70, DRAG.h0 + dy / V.z) + 'px'; return; }
+  if (DRAG.fx) { if (!DRAG.moved && Math.hypot(dx, dy) < 5) return; if (!DRAG.moved) { DRAG.moved = true; DRAG.el.classList.add('drag'); $('#stage').classList.add('grab'); } DRAG.nx = Math.round(DRAG.fx.x + dx / V.z); DRAG.ny = Math.round(DRAG.fx.y + dy / V.z); DRAG.el.style.left = DRAG.nx + 'px'; DRAG.el.style.top = DRAG.ny + 'px'; return; }
   if (DRAG.pan) { if (Math.abs(dx) + Math.abs(dy) > 2) $('#stage').classList.add('grab'); V.x = DRAG.vx + dx; V.y = DRAG.vy + dy; applyView(); return; }
   if (DRAG.tap) return;
   if (!DRAG.moved && Math.hypot(dx, dy) < 5) return;
@@ -853,7 +945,10 @@ function endPtr(e) {
   if (!DRAG) return; const d = DRAG;
   if (d.pinch) { if (PTR.size < 2) DRAG = null; return; }
   DRAG = null; $('#stage')?.classList.remove('grab');
-  if (e.type === 'pointercancel') { if (d.node) drawWorld(); return; }
+  if (e.type === 'pointercancel') { if (d.node || d.fx || d.rs) drawWorld(); return; }
+  if (d.rs) { if (d.moved) { const n = N(d.rs.id); n.w = Math.round(d.el.offsetWidth); if (n.kind === 'f_area') n.h = Math.round(d.el.offsetHeight); putNode(n); } return; }
+  if (d.fx) { d.el.classList.remove('drag'); if (!d.moved) { openFx(d.fx.id); return; } const n = N(d.fx.id); n.x = d.nx; n.y = d.ny; putNode(n); return; }
+  if (d.fxTap) { if (Math.hypot(e.clientX - d.sx, e.clientY - d.sy) < 6) openFx(d.fxTap); return; }
   if (d.tap) { if (Math.hypot(e.clientX - d.sx, e.clientY - d.sy) < 6) presGoId(d.tap); return; }
   if (!d.node) return;
   if (!d.moved) { openEd(d.node.id); return; }
@@ -887,6 +982,19 @@ function openAdd(id, cx, cy, sd) {
   m.dataset.p = id; m.dataset.side = sd || '';
 }
 function closeAdd() { $('#addm')?.remove(); }
+let FADD = null;
+document.addEventListener('pointerdown', e => { const b = e.target.closest('.dock2 [data-fk]'); if (!b || e.button > 0) return; e.preventDefault(); FADD = { k: b.dataset.fk, sx: e.clientX, sy: e.clientY, moved: false }; }, true);
+document.addEventListener('pointermove', e => {
+  if (!FADD) return;
+  if (!FADD.moved && Math.hypot(e.clientX - FADD.sx, e.clientY - FADD.sy) > 6) { FADD.moved = true; const g = document.createElement('div'); g.className = 'ghostn'; g.id = 'ghostf'; g.innerHTML = `${ic(FADD.k, 'width:13px;height:13px;vertical-align:-2px;margin-right:6px')}${FREE[FADD.k].n}`; document.body.appendChild(g); }
+  if (FADD.moved) { const g = $('#ghostf'); g.style.left = e.clientX + 'px'; g.style.top = e.clientY + 'px'; }
+});
+document.addEventListener('pointerup', e => {
+  if (!FADD) return; const f = FADD; FADD = null; $('#ghostf')?.remove(); const st = $('#stage'); if (!st) return; const s = st.getBoundingClientRect();
+  if (!f.moved) { const w = toWorld(s.left + s.width / 2, s.top + s.height / 2); return createFree(f.k, w.x - 60 + (Math.random() * 40 - 20), w.y - 20 + (Math.random() * 40 - 20)); }
+  if (e.clientX < s.left || e.clientX > s.right || e.clientY < s.top || e.clientY > s.bottom) return;
+  const w = toWorld(e.clientX, e.clientY); createFree(f.k, w.x - 12, w.y - 14);
+}, true);
 let ADRAG = null;
 document.addEventListener('pointerdown', e => {
   const b = e.target.closest('#addm button');
@@ -1004,6 +1112,27 @@ function readHTML(n, list, live, pres) {
 
 /* pop-up: abre lendo; o lápis troca para edição no mesmo lugar */
 const DUP = ['programa', 'setor', 'canal', 'estrategia', 'acao', 'etapa', 'campanha', 'lancamento', 'meta', 'publico'];
+const lockRow = n => `<div class="f vb" style="margin-top:16px"><button class="switch ${n.lock ? 'on' : ''}" data-act="fx-lock-ed" aria-label="Travar posição" aria-pressed="${!!n.lock}"></button><h5 style="margin:0">Travar posição</h5><span class="muted" style="font-size:11.5px">travado não arrasta nem muda de tamanho</span></div>`;
+function fxForm(n) {
+  const k = n.kind;
+  if (k === 'f_title') return `${fText('text', 'Texto', 'Título', n)}<div class="f"><h5>Tamanho</h5><div class="chips">${[['s', 'Pequeno'], ['m', 'Médio'], ['g', 'Grande']].map(([v, l]) => `<button class="chip ${(n.size || 'm') === v ? 'on' : ''}" data-act="one" data-k="size" data-v="${v}">${l}</button>`).join('')}</div></div>${fCor(n)}${lockRow(n)}`;
+  if (k === 'f_text') return `${fArea('text', 'Texto', 'Escreva aqui…', n, 5)}${fCor(n)}${lockRow(n)}`;
+  if (k === 'f_list') return `${fText('title', 'Título', 'Afazeres', n)}<div class="f"><h5>Itens</h5><div class="bl" id="chk">${chkHTML(n, true, true)}</div></div>${lockRow(n)}`;
+  if (k === 'f_person') return `<div class="g2">${fText('name', 'Nome', 'Ex.: Charles', n)}${fText('role', 'Função', 'Ex.: Marketplaces', n)}</div>${fCor(n)}${lockRow(n)}`;
+  if (k === 'f_num') return `<div class="g2">${fText('value', 'Número', 'Ex.: 1.200', n)}${fText('label', 'O que é', 'Ex.: vendas/mês', n)}</div>${fCor(n)}${lockRow(n)}`;
+  if (k === 'f_link') { const u = String(n.url || '').trim(); return `${fText('label', 'Nome', 'Ex.: Planilha de preços', n)}${fText('url', 'Endereço', 'https://', n)}${u ? `<div class="f"><a class="lnk" href="${esc(/^https?:\/\//.test(u) ? u : 'https://' + u)}" target="_blank" rel="noopener">${ic('link', 'width:13px;height:13px')}Abrir link</a></div>` : ''}${lockRow(n)}`; }
+  if (k === 'f_date') return `<div class="g2">${fDate('date', 'Data', n)}${fText('label', 'O que acontece', 'Ex.: Black Friday', n)}</div>${fCor(n)}${lockRow(n)}`;
+  if (k === 'f_tag') return `${fText('text', 'Texto', 'Ex.: Prioridade', n)}${fCor(n)}${lockRow(n)}`;
+  if (k === 'f_img') return `<div class="f"><h5>Imagem</h5><div class="row" style="flex-wrap:wrap">${n.img ? `<img src="/api/blob/${esc(n.img.id)}?b=${store.board}" alt="" style="height:64px;max-width:200px;border-radius:8px;object-fit:cover">` : ''}<label class="pill sm">${n.img ? 'Trocar' : 'Escolher imagem'}<input type="file" id="fximg-in" accept="image/*" hidden></label></div></div>${lockRow(n)}`;
+  if (k === 'f_area') return `${fText('label', 'Nome da área', 'Ex.: Q1 · Lançamentos', n)}${fCor(n)}${lockRow(n)}`;
+  return '';
+}
+function openFx(id) {
+  closeAdd(); const n = N(id); if (!n) return; const F = FREE[n.kind] || FREE.f_text;
+  ED.id = id; ED.mode = 'edit';
+  const s = modal(`<div class="mh"><span class="n-ic" style="--c:${n.color || F.c}">${ic(n.kind)}</span><b>${F.n}</b><span class="sp"></span><button class="pill sm icon ghost" data-act="close" aria-label="Fechar">${ic('x')}</button></div><div id="edb">${fxForm(n)}</div><div class="mf" id="mf"><button class="pill sm danger" data-act="del">${ic('trash')}Excluir</button><button class="pill sm" data-act="dup">${ic('copy')}Duplicar</button><span class="sp"></span><button class="pill white" data-act="close">Pronto</button></div>`, 'sm');
+  setTimeout(() => $('#edb input:not([type=file]),#edb textarea', s)?.focus(), 40);
+}
 function openEd(id, mode) {
   closeAdd(); const n = N(id); if (!n) return; const list = brandNodes(), K = KIND[n.kind] || KIND.setor;
   ED.id = id; ED.mode = mode || (filled(n) ? 'read' : 'edit');
@@ -1118,14 +1247,14 @@ function stopPres() {
   if (!PRES) return; PRES = null; document.body.classList.remove('pres-on');
   try { if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); } catch (e) {}
   $$('.slide,.pbar,.pdots').forEach(e => e.remove()); $('#stage')?.classList.remove('pres');
-  $$('.n').forEach(e => e.classList.remove('dim', 'cur')); $$('.wire').forEach(w => w.classList.remove('dim'));
+  $$('.n,.fx').forEach(e => e.classList.remove('dim', 'cur')); $$('.wire').forEach(w => w.classList.remove('dim'));
   setTimeout(() => { loadView(); if (V) camTo(V); else fit(); }, 80);
 }
 function presGoId(id) { if (!PRES) return; const i = PRES.seq.indexOf(id); if (i >= 0) presGo(i); }
 function presMark() {
   if (!PRES) return; const list = visNodes(), n = list.find(x => x.id === PRES.seq[PRES.i]); if (!n) return;
   const keep = new Set(n.kind === 'nucleo' ? list.map(x => x.id) : [n.id, ...ancestors(n, list).map(a => a.id), ...descendants(n.id, list).map(d => d.id)]);
-  $$('.n').forEach(el => { el.classList.toggle('dim', !keep.has(el.dataset.id)); el.classList.toggle('cur', el.dataset.id === n.id); });
+  $$('.n').forEach(el => { el.classList.toggle('dim', !keep.has(el.dataset.id)); el.classList.toggle('cur', el.dataset.id === n.id); }); $$('.fx').forEach(el => el.classList.add('dim'));
   $$('.wire').forEach(w => w.classList.toggle('dim', !keep.has(w.dataset.w)));
 }
 function presGo(i) {
@@ -1185,6 +1314,8 @@ document.addEventListener('click', async e => {
   if (a === 'view') { if (v === UI.view) return; const ix = k => VIEWS.findIndex(x => x[0] === k); render.dir = ix(v) > ix(UI.view) ? 'in-r' : 'in-l'; closeAdd(); UI.view = v; saveUI(); V = null; render(); return; }
   if (a === 'fold') { e.stopPropagation(); const id = t.closest('.n').dataset.id; setFold(id, !FOLD.has(id)); drawWorld(); return; }
   if (a === 'open') return openEd(v);
+  if (a === 'fx-lock') { e.stopPropagation(); const id = t.closest('.fx').dataset.fx, f = N(id); if (!f) return; f.lock = !f.lock; putNode(f); updFx(id); toast(f.lock ? 'Posição travada' : 'Posição destravada'); return; }
+  if (a === 'fx-ck') { e.stopPropagation(); const id = t.closest('.fx').dataset.fx, f = N(id); if (!f) return; const L = clone(f.chk || []), i = +t.dataset.i; if (!L[i]) return; L[i].ok = !L[i].ok; f.chk = L; putNode(f); updFx(id); return; }
   if (a === 'board') return setBoard(v);
   if (a === 'seed') return seedPlan(v === '1');
   if (a === 'add') { e.stopPropagation(); const el = t.closest('.n'), r = t.getBoundingClientRect(), sd = t.dataset.side || ''; const ax = sd === 'l' ? r.left - 230 : r.right + 6, ay = r.top + r.height / 2; openAdd(el.dataset.id, ax, ay, sd); return; }
@@ -1231,6 +1362,9 @@ document.addEventListener('click', async e => {
   if (a === 'link-add') { n.links = [...(n.links || []), { u: '', t: '' }]; putNode(n); edPart('att', attHTML(n)); $$('#att [data-link="u"]').pop()?.focus(); return; }
   if (a === 'link-del') { n.links = (n.links || []).filter((_, i) => i !== +t.dataset.i); putNode(n); edPart('att', attHTML(n)); return; }
   if (a === 'att-del') { if (!(await ask('Excluir este anexo?', 'Excluir'))) return; const m = edNode(); m.att = (m.att || []).filter(x => x.id !== v); putNode(m); edPart('att', attHTML(m)); api('/api/files/' + v, { method: 'DELETE' }); return; }
+  if (a === 'fx-lock-ed') { edSet('lock', !n.lock); t.classList.toggle('on', !!edNode().lock); t.setAttribute('aria-pressed', String(!!edNode().lock)); return; }
+  if (a === 'dup' && n.free) { const id = uid(), { id: _o, ...b } = clone(n); putNode({ ...b, id, x: n.x + 28, y: n.y + 28, lock: false }); closeModal(true); ED.id = ''; drawWorld(); $(`.fx[data-fx="${id}"]`)?.classList.add('born'); return; }
+  if (a === 'del' && n.free) { if (!(await ask(`Excluir ${(FREE[n.kind] || { n: 'item' }).n.toLowerCase()}?`, 'Excluir'))) return; if (n.img) api('/api/files/' + n.img.id, { method: 'DELETE' }); commit('node/' + n.id, null); ED.id = ''; closeModal(true); drawWorld(); return; }
   if (a === 'dup') {
     const id = uid(), list = brandNodes(), p = list.find(x => x.id === n.parent), { id: _o, ...b } = clone(n);
     const at = p ? freeSpot(p, n.kind, list, p.kind === 'nucleo' ? (n.side || 'r') : sideOf(p, list)) : { x: n.x, y: n.y + 90 };
@@ -1259,6 +1393,15 @@ document.addEventListener('input', e => {
 document.addEventListener('change', e => {
   const t = e.target;
   if (t.id === 'file-in' && t.files.length) { uploadFiles([...t.files]); t.value = ''; return; }
+  if (t.id === 'fximg-in' && t.files[0]) {
+    const f = t.files[0]; t.value = ''; if (f.size > 20 * 1024 * 1024) { toast('Imagem maior que 20 MB', 'r'); return; }
+    toast('Enviando imagem…');
+    fetch('/api/files', { method: 'POST', credentials: 'same-origin', headers: { 'content-type': f.type || 'application/octet-stream', 'x-name': encodeURIComponent(f.name), 'x-board': store.board }, body: f }).then(r => r.ok ? r.json() : null).catch(() => null).then(a => {
+      if (!a) { toast('Não foi possível enviar a imagem', 'r'); return; }
+      const n = edNode(); if (!n) return; const old = n.img; n.img = { id: a.id, name: a.name }; putNode(n); updFx(n.id); edPart('edb', fxForm(n)); if (old) api('/api/files/' + old.id, { method: 'DELETE' });
+    });
+    return;
+  }
   if (t.id === 'nlogo-in' && t.files[0]) {
     const f = t.files[0]; t.value = '';
     if (f.size > 900 * 1024) { toast('Logo muito grande (máx. 900 KB). Prefira SVG.', 'r'); return; }
