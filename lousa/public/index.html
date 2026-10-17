@@ -1,0 +1,826 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#0b0b0d">
+<title>CAO(S) · Lousa</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<style>
+:root{
+  --bg:#0b0b0d; --node:#19191c; --node-2:#1f1f23; --well:#141416; --line:#2a2a30; --line-2:#36363d;
+  --text:#ededf0; --text-2:#b6b6be; --muted:#85858e; --dim:#5a5a63;
+  --green:#4ade80; --yellow:#facc15; --red:#f87171; --blue:#60a5fa;
+  --radius:18px; --r-sm:12px; --ease:cubic-bezier(.2,.8,.2,1);
+  --font:"Inter","SF Pro Display","Segoe UI Variable","Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+  --glass:rgba(25,25,28,.72); --gline:rgba(255,255,255,.1);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;overscroll-behavior:none}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+svg.i{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;display:block}
+#cv{position:fixed;inset:0;width:100vw;height:100vh;touch-action:none;display:block}
+body.locked #cv,body.locked .ui{visibility:hidden}
+
+/* topo: logo + título */
+.head{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;z-index:5}
+.head img{height:26px;width:auto;display:block}
+.tpill{display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 13px;border-radius:999px;background:var(--glass);border:1px solid var(--gline);backdrop-filter:blur(14px) saturate(1.4);-webkit-backdrop-filter:blur(14px) saturate(1.4);color:var(--text-2);font-size:12.5px;font-weight:600;letter-spacing:.01em}
+.tpill .dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);transition:background .3s,box-shadow .3s}
+.tpill .dot.off{background:var(--yellow);box-shadow:0 0 8px var(--yellow)}
+
+/* barras em vidro */
+.bar{position:fixed;display:flex;align-items:center;gap:2px;padding:5px;border-radius:16px;background:var(--glass);border:1px solid var(--gline);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);box-shadow:0 1px 0 rgba(255,255,255,.035) inset,0 24px 48px -28px rgba(0,0,0,.85);z-index:10}
+.tools{left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%)}
+.sep{width:1px;height:20px;background:rgba(255,255,255,.1);margin:0 5px;flex:none}
+.tb{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;color:var(--muted);transition:transform .25s var(--ease),background .2s,color .2s;flex:none;position:relative}
+.tb svg{transition:transform .25s var(--ease)}
+.tb:hover{transform:translateY(-3px);color:var(--text)}
+.tb:hover svg{transform:scale(1.1)}
+.tb.on{background:rgba(255,255,255,.12);color:var(--text);box-shadow:0 0 0 1px rgba(255,255,255,.14) inset}
+.tb:disabled{opacity:.3;pointer-events:none}
+.sw{width:30px;height:34px;display:grid;place-items:center;flex:none;transition:transform .25s var(--ease)}
+.sw i{width:16px;height:16px;border-radius:50%;background:var(--c);box-shadow:0 0 0 1px rgba(255,255,255,.18) inset;transition:transform .25s var(--ease),box-shadow .2s}
+.sw:hover{transform:translateY(-3px)}
+.sw.on i{transform:scale(1.15);box-shadow:0 0 0 2px var(--bg),0 0 0 3.5px var(--c)}
+.sz{width:30px;height:34px;display:grid;place-items:center;flex:none;border-radius:10px;transition:transform .25s var(--ease),background .2s}
+.sz i{border-radius:50%;background:var(--muted);transition:background .2s}
+.sz:hover{transform:translateY(-3px)}.sz:hover i,.sz.on i{background:var(--text)}
+.sz.on{background:rgba(255,255,255,.1)}
+.stylebtn{display:none}
+.stylepop{display:contents}
+@media (max-width:760px){
+  .stylebtn{display:grid}
+  .stylepop{display:none;position:fixed;left:50%;bottom:calc(132px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);flex-wrap:nowrap;justify-content:center;max-width:calc(100vw - 24px)}
+  .stylepop .sw,.stylepop .sz{width:28px}
+  .stylepop.open{display:flex}
+  .tools .sep.wide{display:none}
+}
+.zoom{left:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));padding:4px}
+.zoom .tb{width:30px;height:30px}
+.zoom .zv{min-width:48px;height:30px;border-radius:10px;font-size:11.5px;font-weight:600;color:var(--text-2);font-variant-numeric:tabular-nums;transition:background .2s}
+.zoom .zv:hover{background:rgba(255,255,255,.08)}
+@media (max-width:760px){.zoom{display:none}}
+.selbar{left:50%;top:0;transform:translate(-50%,-100%);padding:4px;display:none}
+.selbar.show{display:flex}
+.selbar .tb{width:30px;height:30px}
+.selbar .tb.dg:hover{color:var(--red)}
+
+/* engrenagem isolada no canto */
+.gearfab{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:12;width:44px;height:44px;border-radius:15px;display:grid;place-items:center;color:var(--muted);background:var(--glass);border:1px solid var(--gline);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:color .3s,transform .5s var(--ease)}
+.gearfab:hover,.gearfab.on{color:var(--text);transform:rotate(60deg)}
+.gearfab svg{width:19px;height:19px}
+@media (max-width:760px){.gearfab{right:12px;bottom:calc(84px + env(safe-area-inset-bottom,0px));width:38px;height:38px;border-radius:13px}}
+.drawer{position:fixed;right:18px;bottom:calc(72px + env(safe-area-inset-bottom,0px));width:300px;max-width:calc(100vw - 32px);max-height:calc(100vh - 120px);overflow:auto;z-index:12;padding:14px;border-radius:var(--radius);background:linear-gradient(180deg,rgba(28,28,32,.92),rgba(23,23,26,.92));border:1px solid var(--line);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 1px 0 rgba(255,255,255,.035) inset,0 24px 48px -20px rgba(0,0,0,.9);opacity:0;transform:translateY(8px) scale(.98);pointer-events:none;transition:opacity .25s var(--ease),transform .3s var(--ease)}
+.drawer.open{opacity:1;transform:none;pointer-events:auto}
+@media (max-width:760px){.drawer{right:12px;bottom:calc(130px + env(safe-area-inset-bottom,0px))}}
+.drawer h4{margin:2px 0 8px;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);font-weight:700}
+.drawer .sec+.sec{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.drawer .row{display:flex;gap:8px;align-items:center}
+.drawer .hint{color:var(--muted);font-size:11.5px;line-height:1.45;margin:0 0 8px}
+.pill{height:34px;padding:0 14px;border-radius:11px;background:var(--node);border:1px solid var(--line);color:var(--text-2);display:inline-flex;align-items:center;gap:7px;transition:background .2s,color .2s,border-color .2s;white-space:nowrap}
+.pill:hover{color:var(--text);border-color:var(--line-2)}
+.pill.white{background:#f4f4f5;color:#111;border-color:#f4f4f5}
+.pill.dg{background:#3a1717;border-color:#5a2222;color:#fecaca}
+.pill.sm{height:30px;padding:0 11px;border-radius:10px;font-size:12px}
+.inp{height:34px;border-radius:10px;background:var(--well);border:1px solid var(--line);padding:0 12px;color:var(--text);font:inherit;outline:none;flex:1;min-width:0}
+.inp:focus{border-color:var(--line-2)}
+.inp.pw{-webkit-text-security:disc}
+.bk{display:flex;align-items:center;justify-content:space-between;padding:6px 0;color:var(--text-2);font-size:12px}
+.bk a{color:var(--muted);text-decoration:none}.bk a:hover{color:var(--text)}
+
+/* texto na lousa */
+#ted{position:fixed;z-index:8;margin:0;padding:0;border:0;outline:none;background:transparent;resize:none;overflow:hidden;white-space:pre;font-family:var(--font);line-height:1.25;caret-color:currentColor;-webkit-user-select:text;user-select:text;min-width:2ch}
+
+/* janela de confirmação */
+.scrim{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.5);display:grid;place-items:center;animation:fade .2s var(--ease)}
+.ask{width:min(340px,calc(100vw - 32px));padding:18px;border-radius:var(--radius);background:linear-gradient(180deg,#1c1c20,#17171a);border:1px solid var(--line);box-shadow:0 1px 0 rgba(255,255,255,.035) inset,0 24px 48px -28px rgba(0,0,0,.85);animation:pop .3s var(--ease)}
+.ask h3{margin:0 0 16px;font-size:14px;font-weight:600;line-height:1.4}
+.ask .row{display:flex;gap:8px;justify-content:flex-end}
+@keyframes fade{from{opacity:0}}
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.97)}}
+.toast{position:fixed;left:50%;bottom:calc(80px + env(safe-area-inset-bottom,0px));transform:translate(-50%,8px);z-index:60;padding:9px 15px;border-radius:12px;background:rgba(25,25,28,.92);border:1px solid var(--line);color:var(--text-2);font-size:12.5px;opacity:0;transition:opacity .25s var(--ease),transform .3s var(--ease);pointer-events:none;max-width:calc(100vw - 32px);text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast.r{color:#fecaca;border-color:#5a2222}
+#gate{position:fixed;inset:0;z-index:70;display:grid;place-items:center;background:var(--bg)}
+.gate-in{width:200px;height:44px;border-radius:13px;background:var(--well);border:1px solid var(--line);color:var(--text);text-align:center;font-size:18px;letter-spacing:.3em;outline:none;-webkit-text-security:disc}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body class="locked">
+<canvas id="cv"></canvas>
+<div class="ui">
+  <div class="head"><img id="hero-logo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8IS0tIENyZWF0b3I6IENvcmVsRFJBVyAyMDI2IC0tPg0KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbDpzcGFjZT0icHJlc2VydmUiIHdpZHRoPSI2MC44MzQ0bW0iIGhlaWdodD0iMTYuOTQyMW1tIiB2ZXJzaW9uPSIxLjEiIHN0eWxlPSJzaGFwZS1yZW5kZXJpbmc6Z2VvbWV0cmljUHJlY2lzaW9uOyB0ZXh0LXJlbmRlcmluZzpnZW9tZXRyaWNQcmVjaXNpb247IGltYWdlLXJlbmRlcmluZzpvcHRpbWl6ZVF1YWxpdHk7IGZpbGwtcnVsZTpldmVub2RkOyBjbGlwLXJ1bGU6ZXZlbm9kZCINCnZpZXdCb3g9IjAgMCAxNjY3MzMuODQgNDY0MzQuNiINCiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayINCiB4bWxuczp4b2RtPSJodHRwOi8vd3d3LmNvcmVsLmNvbS9jb3JlbGRyYXcvb2RtLzIwMDMiPg0KIDxkZWZzPg0KICA8c3R5bGUgdHlwZT0idGV4dC9jc3MiPg0KICAgPCFbQ0RBVEFbDQogICAgLmZpbDkge2ZpbGw6I0IwRTY1M30NCiAgICAuZmlsNyB7ZmlsbDojREZERkRGfQ0KICAgIC5maWw4IHtmaWxsOndoaXRlfQ0KICAgIC5maWw2IHtmaWxsOndoaXRlfQ0KICAgIC5maWwzIHtmaWxsOiMxOTE5MUI7ZmlsbC1ydWxlOm5vbnplcm99DQogICAgLmZpbDQge2ZpbGw6I0IwRTY1MztmaWxsLXJ1bGU6bm9uemVyb30NCiAgICAuZmlsNSB7ZmlsbDojREZERkRGO2ZpbGwtcnVsZTpub256ZXJvfQ0KICAgIC5maWwxIHtmaWxsOiNFRkFDRDA7ZmlsbC1ydWxlOm5vbnplcm99DQogICAgLmZpbDAge2ZpbGw6I0Y0RjRGNDtmaWxsLXJ1bGU6bm9uemVyb30NCiAgICAuZmlsMiB7ZmlsbDp3aGl0ZTtmaWxsLXJ1bGU6bm9uemVyb30NCiAgIF1dPg0KICA8L3N0eWxlPg0KIDwvZGVmcz4NCiA8ZyBpZD0iQ2FtYWRhX3gwMDIwXzEiPg0KICA8bWV0YWRhdGEgaWQ9IkNvcmVsQ29ycElEXzBDb3JlbC1MYXllciIvPg0KICA8ZyBpZD0iXzI1MzY4ODI0MzU2NDgiPg0KICAgPGc+DQogICAgPGc+DQogICAgIDxwb2x5Z29uIGNsYXNzPSJmaWwwIiBwb2ludHM9Ijg5Nzg5Ljk0LDAgOTIzMjYuNTMsMCA5MjMyNi41Myw0ODc4LjA0IDk0NjY3Ljk4LDQ4NzguMDQgOTQ2NjcuOTgsNzIxOS40OSAxMTQxODAuNzEsNzIxOS40OSAxMTQxODAuNzEsNDg3OC4wNCAxMTY3MTcuMyw0ODc4LjA0IDExNjcxNy4zLDAgMTE5MDU4Ljc1LDAgMTE5MDU4Ljc1LDQ4NzguMDQgMTIxNTk1LjM1LDQ4NzguMDQgMTIxNTk1LjM1LDk3NTYuMDkgMTE2NzE3LjMsOTc1Ni4wOSAxMTY3MTcuMywxMjA5Ny44MSAxMTkwNTguNzUsMTIwOTcuODEgMTE5MDU4Ljc1LDE0NjM0LjQxIDEyMTU5NS4zNSwxNDYzNC40MSAxMjE1OTUuMzUsMTk1MTIuNDUgMTIzOTM2LjgsMTk1MTIuNDUgMTIzOTM2LjgsMjY3MzEuOTQgMTIxNTk1LjM1LDI2NzMxLjk0IDEyMTU5NS4zNSwyOTI2OC44MSAxMTkwNTguNzUsMjkyNjguODEgMTE5MDU4Ljc1LDMxNjEwLjI2IDExNjcxNy4zLDMxNjEwLjI2IDExNjcxNy4zLDM0MTQ2Ljg2IDExNDE4MC43MSwzNDE0Ni44NiAxMTQxODAuNzEsMzkwMjQuOSAxMDkzMDIuMzksMzkwMjQuOSAxMDkzMDIuMzksMzY0ODguMzEgMTA2OTYwLjk0LDM2NDg4LjMxIDEwNjk2MC45NCwzOTAyNC45IDEwMjA4Mi45LDM5MDI0LjkgMTAyMDgyLjksMzY0ODguMzEgOTk1NDYuMywzNjQ4OC4zMSA5OTU0Ni4zLDM5MDI0LjkgOTQ2NjcuOTgsMzkwMjQuOSA5NDY2Ny45OCwzNDE0Ni44NiA5MjMyNi41MywzNDE0Ni44NiA5MjMyNi41MywzMTYxMC4yNiA4OTc4OS45NCwzMTYxMC4yNiA4OTc4OS45NCwyOTI2OC44MSA4NzQ0OC40OSwyOTI2OC44MSA4NzQ0OC40OSwyNjczMS45NCA4NDkxMS45LDI2NzMxLjk0IDg0OTExLjksMTk1MTIuNDUgODc0NDguNDksMTk1MTIuNDUgODc0NDguNDksMTQ2MzQuNDEgODk3ODkuOTQsMTQ2MzQuNDEgODk3ODkuOTQsMTIwOTcuODEgOTIzMjYuNTMsMTIwOTcuODEgOTIzMjYuNTMsOTc1Ni4wOSA4NzQ0OC40OSw5NzU2LjA5IDg3NDQ4LjQ5LDQ4NzguMDQgODk3ODkuOTQsNDg3OC4wNCAiLz4NCiAgICAgPHBhdGggY2xhc3M9ImZpbDEiIGQ9Ik04OTc4OS45NCAyMzQxLjQ1bDI1MzYuNTkgMCAwIDI1MzYuNTkgMjM0MS40NSAwIDAgMjM0MS40NSAtNDg3OC4wNCAwIDAgLTQ4NzguMDR6bTI2OTI3LjM2IDBsMjM0MS40NSAwIDAgNDg3OC4wNCAtNDg3OC4wNCAwIDAgLTIzNDEuNDUgMjUzNi41OSAwIDAgLTI1MzYuNTl6Ii8+DQogICAgIDxwYXRoIGNsYXNzPSJmaWwyIiBkPSJNOTIzMjYuNTMgMTIwOTcuODFsNDg3OC4zMiAwIDAgMjUzNi41OSAtNDg3OC4zMiAwIDAgLTI1MzYuNTl6bS0yNTM2LjU5IDI1MzYuNTlsMjUzNi41OSAwIDAgMjM0MS40NSAtMjUzNi41OSAwIDAgLTIzNDEuNDV6Ii8+DQogICAgIDxwb2x5Z29uIGNsYXNzPSJmaWwzIiBwb2ludHM9IjkyMzI2LjUzLDE2OTc1Ljg2IDk5NTQ2LjMsMTY5NzUuODYgOTk1NDYuMywyNDM5MC40OSA5MjMyNi41MywyNDM5MC40OSAiLz4NCiAgICAgPHBvbHlnb24gY2xhc3M9ImZpbDQiIHBvaW50cz0iOTQ2NjcuOTgsMTk1MTIuNDUgOTcyMDQuODUsMTk1MTIuNDUgOTcyMDQuODUsMjIwNDkuMDQgOTQ2NjcuOTgsMjIwNDkuMDQgIi8+DQogICAgIDxnPg0KICAgICAgPHBvbHlnb24gY2xhc3M9ImZpbDMiIHBvaW50cz0iMTA2OTYwLjk0LDI3OTAyLjgxIDEwOTMwMi4zOSwyNzkwMi44MSAxMDkzMDIuMzksMzA0MzkuNjcgMTA2OTYwLjk0LDMwNDM5LjY3ICIvPg0KICAgICAgPHBvbHlnb24gY2xhc3M9ImZpbDMiIHBvaW50cz0iOTk1NDYuMywyNzkwMi44MSAxMDIwODIuOSwyNzkwMi44MSAxMDIwODIuOSwzMDQzOS42NyA5OTU0Ni4zLDMwNDM5LjY3ICIvPg0KICAgICAgPHBvbHlnb24gY2xhc3M9ImZpbDMiIHBvaW50cz0iMTAyMDgyLjksMjU1NjEuMzYgMTA2OTYwLjk0LDI1NTYxLjM2IDEwNjk2MC45NCwyNzkwMi44MSAxMDIwODIuOSwyNzkwMi44MSAiLz4NCiAgICAgPC9nPg0KICAgICA8Zz4NCiAgICAgIDxwb2x5Z29uIGNsYXNzPSJmaWwzIiBwb2ludHM9IjExNDE4MC43MSwyMjA0OS4wNCAxMTY3MTcuMywyMjA0OS4wNCAxMTY3MTcuMywyNDM5MC40OSAxMTQxODAuNzEsMjQzOTAuNDkgIi8+DQogICAgICA8cG9seWdvbiBjbGFzcz0iZmlsMyIgcG9pbnRzPSIxMDkzMDIuMzksMjIwNDkuMDQgMTExNjQzLjg0LDIyMDQ5LjA0IDExMTY0My44NCwyNDM5MC40OSAxMDkzMDIuMzksMjQzOTAuNDkgIi8+DQogICAgICA8cG9seWdvbiBjbGFzcz0iZmlsMyIgcG9pbnRzPSIxMTE2NDMuODQsMTk1MTIuNDUgMTE0MTgwLjcxLDE5NTEyLjQ1IDExNDE4MC43MSwyMjA0OS4wNCAxMTE2NDMuODQsMjIwNDkuMDQgIi8+DQogICAgICA8cG9seWdvbiBjbGFzcz0iZmlsMyIgcG9pbnRzPSIxMTQxODAuNzEsMTY5NzUuODYgMTE2NzE3LjMsMTY5NzUuODYgMTE2NzE3LjMsMTk1MTIuNDUgMTE0MTgwLjcxLDE5NTEyLjQ1ICIvPg0KICAgICAgPHBvbHlnb24gY2xhc3M9ImZpbDMiIHBvaW50cz0iMTA5MzAyLjM5LDE2OTc1Ljg2IDExMTY0My44NCwxNjk3NS44NiAxMTE2NDMuODQsMTk1MTIuNDUgMTA5MzAyLjM5LDE5NTEyLjQ1ICIvPg0KICAgICA8L2c+DQogICAgPC9nPg0KICAgIDxwb2x5Z29uIGNsYXNzPSJmaWw1IiBwb2ludHM9IjExNjcxNy4zLDMxNjEwLjI2IDExNjcxNy4zLDM0MTQ2Ljg2IDExNDE4MC43MSwzNDE0Ni44NiAxMTQxODAuNzEsMzkwMjQuOSAxMDkzMDIuMzksMzkwMjQuOSAxMDkzMDIuMzksMzY0ODguMDMgMTA2OTYxLjIxLDM2NDg4LjAzIDEwNjk2MS4yMSwzOTAyNC45IDEwMjA4Mi45LDM5MDI0LjkgMTAyMDgyLjksMzY0ODguMDMgOTk1NDYuMywzNjQ4OC4wMyA5OTU0Ni4zLDM5MDI0LjkgOTQ2NjcuOTgsMzkwMjQuOSA5NDY2Ny45OCwzNDE0Ni44NiA5MjMyNi41MywzNDE0Ni44NiA5MjMyNi41MywzMTYxMC4yNiAiLz4NCiAgIDwvZz4NCiAgIDxwb2x5Z29uIGNsYXNzPSJmaWw2IiBwb2ludHM9IjY5MjMuNDksMTAxNzIuNjkgMTA3OTIuNjUsMTAxNzIuNjkgMTQ2NjEuODEsMTAxNzIuNjkgMTg1MzAuOTgsMTAxNzIuNjkgMjI0MDAuMTQsMTAxNzIuNjkgMjQzMzQuODYsMTAxNzIuNjkgMjQzMzQuODYsOTQ0MC4wOCAyODIwNC4wMiw5NDQwLjA4IDI4MjA0LjAyLDEwMTcyLjY5IDMwMTM4LjQ2LDEwMTcyLjY5IDMwMTM4LjQ2LDE0MDQxLjg1IDI5MDE4LjU4LDE0MDQxLjg1IDI5MDE4LjU4LDE3OTExLjAxIDI1MTQ5LjQyLDE3OTExLjAxIDI1MTQ5LjQyLDE3NDk4LjUyIDIxMjgwLjI1LDE3NDk4LjUyIDIxMjgwLjI1LDE3OTExLjAxIDE3NDExLjA5LDE3OTExLjAxIDEzNTQxLjkzLDE3OTExLjAxIDEwNTQzLjI0LDE3OTExLjAxIDEwNTQzLjI0LDE4NzkwLjggOTY3Mi43NywxODc5MC44IDk2NzIuNzcsMjE3ODAuMTcgNzczOC4zMiwyMTc4MC4xNyA3NzM4LjMyLDIzNzE0LjYyIDc3MzguMzIsMjU2NDkuMzQgNzczOC4zMiwyOTUxOC41IDc3MzguMzIsMzMzODcuNjYgNzczOC4zMiwzMzc0MC45NSA5NjcyLjc3LDMzNzQwLjk1IDk2NzIuNzcsMzY2MTcuNCAxMDU0My4yNCwzNjYxNy40IDEwNTQzLjI0LDM3NjEwLjExIDEwNzkyLjY1LDM3NjEwLjExIDE0NjYxLjgxLDM3NjEwLjExIDE4NTMwLjk4LDM3NjEwLjExIDIyNDAwLjE0LDM3NjEwLjExIDI0MzM0Ljg2LDM3NjEwLjExIDI2MjY5LjMsMzc2MTAuMTEgMjYyNjkuNTcsMzc2MTAuMTEgMjYyNjkuNTcsMzY5NTIuMzIgMzAxMzguNzQsMzY5NTIuMzIgMzAxMzguNzQsMzc2MTAuMTEgMzA5NTMuMywzNzYxMC4xMSAzMDk1My4zLDQxNDc5LjI3IDMwMTM4Ljc0LDQxNDc5LjI3IDMwMTM4Ljc0LDQ1MzQ4LjQzIDI5MDE4LjU4LDQ1MzQ4LjQzIDI2MjY5LjU3LDQ1MzQ4LjQzIDI1MTQ5LjQyLDQ1MzQ4LjQzIDI1MTQ5LjQyLDQ0OTM1Ljk1IDIxMjgwLjI1LDQ0OTM1Ljk1IDIxMjgwLjI1LDQ1MzQ4LjQzIDE3NDExLjA5LDQ1MzQ4LjQzIDEzNTQxLjkzLDQ1MzQ4LjQzIDk2NzIuNzcsNDUzNDguNDMgNTgwMy42MSw0NTM0OC40MyA1ODAzLjYxLDQ0OTk0Ljg3IDM4NjguODksNDQ5OTQuODcgMzg2OC44OSw0MzA2MC40MyAxOTM0LjQ0LDQzMDYwLjQzIDE5MzQuNDQsNDExMjUuOTggLTAsNDExMjUuOTggLTAsMzcyNTYuODIgLTAsMzMzODcuNjYgLTAsMjk1MTguNSAtMCwyNTY0OS4zNCAtMCwyMzcxNC42MiAtMCwyMTc4MC4xNyAtMCwxOTg0NS40NiAtMCwxNTk3Ni4yOSAxOTM0LjQ0LDE1OTc2LjI5IDE5MzQuNDQsMTQwNDEuODUgMzg2OC44OSwxNDA0MS44NSAzODY4Ljg5LDEyMTA3LjQxIDY5MjMuNDksMTIxMDcuNDEgIi8+DQogICA8Zz4NCiAgICA8cG9seWdvbiBjbGFzcz0iZmlsNyIgcG9pbnRzPSIzMDk1My4zLDM5OTExLjU0IDMwOTUzLjMsNDE0NzkuMjcgMzAxMzguNzQsNDE0NzkuMjcgMzAxMzguNzQsNDUzNDguNDMgMjkwMTguNTgsNDUzNDguNDMgMjYyNjkuNTcsNDUzNDguNDMgMjUxNDkuNDIsNDUzNDguNDMgMjUxNDkuNDIsNDQ5MzUuOTUgMjEyODAuMjUsNDQ5MzUuOTUgMjEyODAuMjUsNDUzNDguNDMgMTc0MTEuMDksNDUzNDguNDMgMTM1NDEuOTMsNDUzNDguNDMgOTY3Mi43Nyw0NTM0OC40MyA1ODAzLjYxLDQ1MzQ4LjQzIDU4MDMuNjEsNDQ5OTQuODcgMzg2OC44OSw0NDk5NC44NyAzODY4Ljg5LDQzMDYwLjQzIDE5MzQuNDQsNDMwNjAuNDMgMTkzNC40NCw0MTEyNS45OCAtMCw0MTEyNS45OCAtMCwzOTkxMS41NCAxNjQ4MC4wNSwzOTkxMS41NCAxNjQ4MC4wNSw0MjM2Ny44MyAyNjE0Ny4zNCw0MjM2Ny44MyAyNjE0Ny4zNCwzOTkxMS41NCAiLz4NCiAgICA8cG9seWdvbiBjbGFzcz0iZmlsNyIgcG9pbnRzPSItMCwzOTkxMS41NCAtMCwzNzI1Ni44MiAtMCwzNjkwMC4yNSA2ODkxLjk3LDM2OTAwLjI1IDY4OTEuOTcsMzk5MTEuNTQgIi8+DQogICA8L2c+DQogICA8cG9seWdvbiBjbGFzcz0iZmlsNiIgcG9pbnRzPSI3Mjc0OC4wMywxNzA5Ni4xOCA3Mjc0OC4wMywyMDk2NS4zNCA3Mjc0OC4wMywyNDgzNC41IDcyNzQ4LjAzLDI4NzAzLjY2IDcyNzQ4LjAzLDMwNjM3LjgzIDcyNzQ4LjAzLDMyNTcyLjgzIDcyNzQ4LjAzLDM1ODQwLjkzIDczNDIwLjA3LDM1ODQwLjkzIDczNDIwLjA3LDQxMzk4Ljk3IDcyNzQ4LjAzLDQxMzk4Ljk3IDcyNzQ4LjAzLDQ0MTc3Ljg0IDY5MTk4LjQ0LDQ0MTc3Ljg0IDY5MTk4LjQ0LDQ1MzQ4LjE2IDY1NjQ5LjEzLDQ1MzQ4LjE2IDY1NjQ5LjEzLDM3MDEwLjk3IDY2MDI3LjYzLDM3MDEwLjk3IDY2MDI3LjYzLDMzOTE4LjgyIDY0NTUwLjA4LDMzOTE4LjgyIDY0NTUwLjA4LDI4NzgzLjQyIDY1NjQ5LjEzLDI4NzgzLjQyIDY1NjQ5LjEzLDI3NTgzLjc4IDY1NjQ5LjEzLDIzNzE0LjYyIDY1NjQ5LjEzLDIwNzE1LjkzIDY0ODQxLjk3LDIwNzE1LjkzIDY0ODQxLjk3LDE5ODQ1LjQ2IDYyMDk5LjgyLDE5ODQ1LjQ2IDYyMDk5LjgyLDE3OTExLjAxIDYwMzI1LjE2LDE3OTExLjAxIDU2Nzc1LjU4LDE3OTExLjAxIDUzMjI2LjI2LDE3OTExLjAxIDUyOTAyLjAzLDE3OTExLjAxIDUyOTAyLjAzLDE5ODQ1LjQ2IDUwMjYzLjQ4LDE5ODQ1LjQ2IDUwMjYzLjQ4LDIwNzE1LjkzIDQ5MzUyLjcyLDIwNzE1LjkzIDQ5MzUyLjcyLDIwOTY1LjM0IDQ5MzUyLjcyLDI0ODM0LjUgNDkzNTIuNzIsMjg3MDMuNjYgNDkzNTIuNzIsMjg3ODMuNDIgNTE2NDYuNDgsMjg3ODMuNDIgNTE2NDYuNDgsMjgzMDYuOCA1NTE5NS43OSwyODMwNi44IDU1MTk1Ljc5LDI4NzgzLjQyIDU2MzM4LjcsMjg3ODMuNDIgNTY5NzAuNDUsMjg3ODMuNDIgNTk4ODguMDEsMjg3ODMuNDIgNTk4ODguMDEsMzM5MTguODIgNTYzMzguNywzMzkxOC44MiA1NjMzOC43LDMzNDMwLjk2IDUzNDIxLjEzLDMzNDMwLjk2IDQ5MzUyLjcyLDMzNDMwLjk2IDQ5MzUyLjcyLDM1ODQwLjkzIDQ5MzUyLjcyLDM4NjE5LjgxIDQ5MzUyLjcyLDM4NjIwLjA5IDQ5OTU2LjI0LDM4NjIwLjA5IDQ5OTU2LjI0LDQ0MTc4LjM5IDQ5MzUyLjcyLDQ0MTc4LjM5IDQ5MzUyLjcyLDQ1MzQ4LjQzIDQ1ODAzLjEzLDQ1MzQ4LjQzIDQ1ODAzLjEzLDQ0MTc4LjM5IDQyMjUzLjgyLDQ0MTc4LjM5IDQyMjUzLjgyLDQyNTY5LjI4IDQyMjUzLjgyLDM4NjIwLjA5IDQyMjUzLjgyLDM3MDEwLjk3IDQyNjMyLjMyLDM3MDEwLjk3IDQyNjMyLjMyLDMxNDUyLjk0IDQyMjUzLjgyLDMxNDUyLjk0IDQyMjUzLjgyLDI3NTgzLjc4IDQyMjUzLjgyLDIzNzE0LjYyIDQyMjUzLjgyLDE5ODQ1LjQ2IDQyMjUzLjgyLDE1OTc2LjI5IDQyNTc4LjA1LDE1OTc2LjI5IDQyNTc4LjA1LDE0MDQxLjU3IDQ0MzUyLjcxLDE0MDQxLjU3IDQ0MzUyLjcxLDEyMTA3LjEzIDQ2MTI3LjM2LDEyMTA3LjEzIDQ2MTI3LjM2LDEwMTcyLjY5IDQ5Njc2LjY4LDEwMTcyLjY5IDUzMjI2LjI2LDEwMTcyLjY5IDU2Nzc1LjU4LDEwMTcyLjY5IDYwMzI1LjE2LDEwMTcyLjY5IDYzODc0LjQ4LDEwMTcyLjY5IDY3NDI0LjA2LDEwMTcyLjY5IDY3NDI0LjA2LDEyMTA3LjEzIDY5MTk4LjQ0LDEyMTA3LjEzIDY5MTk4LjQ0LDE0MDQxLjU3IDcwOTczLjEsMTQwNDEuNTcgNzA5NzMuMSwxNzA5Ni4xOCAiLz4NCiAgIDxwYXRoIGNsYXNzPSJmaWw3IiBkPSJNNzI3NDguMDMgMzU1NTMuNDNsMCAyODcuNTEgNjcyLjA0IDAgMCA1NTU4LjAzIC02NzIuMDQgMCAwIDI3NzguODggLTM1NDkuNTkgMCAwIDExNzAuMzEgLTM1NDkuMzEgMCAwIC03MzM4LjQ0IDQzMTguMzggMCAwIC0yNDU2LjI5IDI3ODAuNTIgMHptLTIyMDM1Ljg5IC0yMTIyLjQ2bC0xMzU5LjQzIDAgMCAyNDA5Ljk3IDAgMjc3OC44OCAwIDAuMjcgNjAzLjUyIDAgMCA1NTU4LjMxIC02MDMuNTIgMCAwIDExNzAuMDQgLTM1NDkuNTkgMCAwIC0xMTcwLjA0IC0zNTQ5LjMxIDAgMCAtMTYwOS4xMSAwIC0zOTQ5LjE5IDAgLTE2MDkuMTEgMzc4LjUgMCAwIC00NDY4Ljg1IDgwNzkuODMgMCAwIDg4OC44NHoiLz4NCiAgIDxwb2x5Z29uIGNsYXNzPSJmaWw4IiBwb2ludHM9IjE0MTEyNi40MywxMDUxOC41NyAxNDcyNDUuMjMsMTA1MTguNTcgMTUxMTE0LjM5LDEwNTE4LjU3IDE1NDk4My41NSwxMDUxOC41NyAxNTg4NTIuNzIsMTA1MTguNTcgMTYwNzg3LjQ0LDEwNTE4LjU3IDE2MDc4Ny40NCw5Nzg1Ljk2IDE2NDY1Ni42LDk3ODUuOTYgMTY0NjU2LjYsMTA1MTguNTcgMTY2NTkxLjA0LDEwNTE4LjU3IDE2NjU5MS4wNCwxNDM4Ny43NCAxNjU0NzEuMTYsMTQzODcuNzQgMTY1NDcxLjE2LDE4MjU2LjkgMTYxNjAyLDE4MjU2LjkgMTYxNjAyLDE3ODQ0LjQxIDE1NzczMi44MywxNzg0NC40MSAxNTc3MzIuODMsMTgyNTYuOSAxNTM4NjMuNjcsMTgyNTYuOSAxNDk5OTQuNTEsMTgyNTYuOSAxNDY5OTUuODIsMTgyNTYuOSAxNDY5OTUuODIsMTkxMzYuNjkgMTQ0MTkwLjksMTkxMzYuNjkgMTQ0MTkwLjksMjAxOTEuMzQgMTQyMjcyLjM2LDIwMTkxLjM0IDE0MDMyMS43NCwyMDE5MS4zNCAxMzkxODIuOTUsMjAxOTEuMzQgMTM5MTgyLjk1LDIwMzMxLjk0IDEzOTM1Ny44MSwyMDMzMS45NCAxMzkzNTcuODEsMjM0NDguNDkgMTQxNTUwLjE2LDIzNDQ4LjQ5IDE0MTU1MC4xNiwyNDA2NC4zNCAxNDU0MTkuMzIsMjQwNjQuMzQgMTQ5Mjg4LjQ4LDI0MDY0LjM0IDE1MzE1Ny42NSwyNDA2NC4zNCAxNTUwOTIuMzYsMjQwNjQuMzQgMTU1MDkyLjM2LDIzNDQ4LjQ5IDE1ODk2MS41MywyMzQ0OC40OSAxNTg5NjEuNTMsMjQwNjQuMzQgMTYwODk1Ljk3LDI0MDY0LjM0IDE2MDg5NS45NywyNzMxNy42NSAxNTk3NzYuMDksMjczMTcuNjUgMTU5Nzc2LjA5LDMwMzA0LjU1IDE2MzI1My4wNCwzMDMwNC41NSAxNjMyNTMuMDQsMzA3MTIuOTMgMTY2NzMzLjg0LDMwNzEyLjkzIDE2NjczMy44NCwzNDU4Mi4wOSAxNjY3MzMuODQsMzg0NTEuMjUgMTYzMDc4LjE4LDM4NDUxLjI1IDE2MzA3OC4xOCwzOTA0OC4yIDE2MzA3OC4xOCw0MTMyMC4wMyAxNjExNDMuNzQsNDEzMjAuMDMgMTYxMTQzLjc0LDQzMjU0LjQ4IDE1ODA4OS4xNCw0MzI1NC40OCAxNTgwODkuMTQsNDUxODkuMTkgMTU0NzA0LjgyLDQ1MTg5LjE5IDE1NDIxOS45Nyw0NTE4OS4xOSAxNTA4MzUuNjYsNDUxODkuMTkgMTQ2OTY2LjQ5LDQ1MTg5LjE5IDE0MzA5Ny4zMyw0NTE4OS4xOSAxMzkyMjguMTcsNDUxODkuMTkgMTM3MjkzLjQ1LDQ1MTg5LjE5IDEzNzI5My40NSw0NTkyMS44IDEzMzQyNC4yOSw0NTkyMS44IDEzMzQyNC4yOSw0NTE4OS4xOSAxMzE0ODkuODQsNDUxODkuMTkgMTMxNDg5Ljg0LDQxMzIwLjAzIDEzMjYwOS43Myw0MTMyMC4wMyAxMzI2MDkuNzMsMzc0NTAuODcgMTM2NDc4Ljg5LDM3NDUwLjg3IDEzNjQ3OC44OSwzNzg2My4zNiAxNDAzNDguMDUsMzc4NjMuMzYgMTQwMzQ4LjA1LDM3NDUwLjg3IDE0NDIxNy4yMSwzNzQ1MC44NyAxNDgwODYuMzgsMzc0NTAuODcgMTUxMDg1LjA3LDM3NDUwLjg3IDE1MTA4NS4wNywzNjU3MS4wOCAxNTM4ODkuOTgsMzY1NzEuMDggMTUzODg5Ljk4LDM1NTE2LjQzIDE1Nzc1OS4xNCwzNTUxNi40MyAxNTkyMDkuMDIsMzU1MTYuNDMgMTU5MjA5LjAyLDMzOTg1LjE1IDE1OTM4My44OCwzMzk4NS4xNSAxNTkzODMuODgsMzExODYuODEgMTU1OTA2LjkyLDMxMTg2LjgxIDE1NTkwNi45MiwzMDEzNC4wOCAxNTIwMzcuNzYsMzAxMzQuMDggMTUyMDM3Ljc2LDMwNDcwLjEgMTQ4MTY4LjYsMzA0NzAuMSAxNDQyOTkuNDQsMzA0NzAuMSAxNDEzMDAuNzUsMzA0NzAuMSAxNDEzMDAuNzUsMzExODYuODEgMTM3NDMxLjU5LDMxMTg2LjgxIDEzNzQzMS41OSwzMDQ3MC4xIDEzNjU2MS4xMSwzMDQ3MC4xIDEzNjU2MS4xMSwyNzMxNy42NSAxMzc2ODEsMjczMTcuNjUgMTM3NjgxLDI1Mzk0Ljk5IDEzNTQ4OC42NSwyNTM5NC45OSAxMzU0ODguNjUsMjQ3OTguMDUgMTMxODMyLjk5LDI0Nzk4LjA1IDEzMTgzMi45OSwyMDkyOC44OSAxMzE4MzIuOTksMTcwNTkuNzIgMTMzMzk1LjI0LDE3MDU5LjcyIDEzMzM5NS4yNCwxNjY1MS4zNSAxMzQ1MzQuMDMsMTY2NTEuMzUgMTM0NTM0LjAzLDEyOTM1LjY3IDEzNTkwMS45NiwxMjkzNS42NyAxMzU5MDEuOTYsMTE0NDkuMzQgMTM4NDAzLjE5LDExNDQ5LjM0IDEzODQwMy4xOSwxMjQ1My4yOSAxNDAzMjEuNDcsMTI0NTMuMjkgMTQxMTI2LjQzLDEyNDUzLjI5ICIvPg0KICAgPHBvbHlnb24gY2xhc3M9ImZpbDciIHBvaW50cz0iMTY2MTY1LjQsMzg0NTEuMjUgMTYzMDc4LjE4LDM4NDUxLjI1IDE2MzA3OC4xOCwzOTA0OC4yIDE2MzA3OC4xOCw0MTMyMC4wMyAxNjExNDMuNzQsNDEzMjAuMDMgMTYxMTQzLjc0LDQzMjU0LjQ4IDE1ODA4OS4xNCw0MzI1NC40OCAxNTgwODkuMTQsNDUxODkuMTkgMTU0NzA0LjgyLDQ1MTg5LjE5IDE1NDIxOS45Nyw0NTE4OS4xOSAxNTA4MzUuNjYsNDUxODkuMTkgMTQ2OTY2LjQ5LDQ1MTg5LjE5IDE0MzA5Ny4zMyw0NTE4OS4xOSAxMzkyMjguMTcsNDUxODkuMTkgMTM3MjkzLjQ1LDQ1MTg5LjE5IDEzNzI5My40NSw0NTkyMS44IDEzMzQyNC4yOSw0NTkyMS44IDEzMzQyNC4yOSw0NTE4OS4xOSAxMzE0ODkuODQsNDUxODkuMTkgMTMxNDg5Ljg0LDQxMzIwLjAzIDEzMjYwOS43Myw0MTMyMC4wMyAxMzI2MDkuNzMsMzgwNTcuNjggMTM2MjEyLjQ5LDM4MDU3LjY4IDEzNjIxMi40OSw0MDUxMy45NyAxNDU4NzkuNzcsNDA1MTMuOTcgMTQ1ODc5Ljc3LDM4MDU3LjY4IDE1NTQ2Ny44NSwzODA1Ny42OCAxNTU0NjcuODUsMzU1MTYuNDMgMTU3NzU5LjE0LDM1NTE2LjQzIDE1OTIwOS4wMiwzNTUxNi40MyAxNTkyMDkuMDIsMzUwNDYuMzggMTY2MTY1LjQsMzUwNDYuMzggMTY2MTY1LjQsMzgwNTcuNjggIi8+DQogICA8cmVjdCBjbGFzcz0iZmlsOSIgeD0iOTIxOTIuNTEiIHk9IjQ0MjA4LjQ2IiB3aWR0aD0iMTc0Ny40MSIgaGVpZ2h0PSIxMDE5LjE5Ii8+DQogICA8cmVjdCBjbGFzcz0iZmlsOSIgeD0iOTM5MzkuOTIiIHk9IjQzNjk4Ljg2IiB3aWR0aD0iMTc0Ny40MSIgaGVpZ2h0PSIxMDE5LjE5Ii8+DQogICA8cmVjdCBjbGFzcz0iZmlsOSIgeD0iOTM5MzkuOTIiIHk9IjQ0NzE4LjA1IiB3aWR0aD0iMTc0Ny40MSIgaGVpZ2h0PSIxMDE5LjE5Ii8+DQogICA8cmVjdCBjbGFzcz0iZmlsOSIgeD0iOTU2ODcuMzIiIHk9IjQzNjk4Ljg2IiB3aWR0aD0iMTc0Ny40MSIgaGVpZ2h0PSIxMDE5LjE5Ii8+DQogICA8cmVjdCBjbGFzcz0iZmlsOSIgeD0iOTU2ODcuMzIiIHk9IjQ0NzE4LjA1IiB3aWR0aD0iMTc0Ny40MSIgaGVpZ2h0PSIxMDE5LjE5Ii8+DQogICA8cmVjdCBjbGFzcz0iZmlsOSIgeD0iOTc0MzQuNzMiIHk9IjQzMTg5LjI3IiB3aWR0aD0iMTc0Ny40MSIgaGVpZ2h0PSIxMDE5LjE5Ii8+DQogICA8cmVjdCBjbGFzcz0iZmlsOSIgeD0iOTc0MzQuNzMiIHk9IjQ0MjA4LjQ2IiB3aWR0aD0iMTc0Ny40MSIgaGVpZ2h0PSIxMDE5LjE5Ii8+DQogICA8cmVjdCBjbGFzcz0iZmlsOSIgeD0iOTc0MzQuNzMiIHk9IjQ1MjI3LjY1IiB3aWR0aD0iMTc0Ny40MSIgaGVpZ2h0PSIxMDE5LjE5Ii8+DQogICA8cmVjdCBjbGFzcz0iZmlsOSIgeD0iOTkxODIuMTMiIHk9IjQzMTg5LjI3IiB3aWR0aD0iMTc0Ny40MSIgaGVpZ2h0PSIxMDE5LjE5Ii8+DQogICA8cmVjdCBjbGFzcz0iZmlsOSIgeD0iMTAwOTI5LjU0IiB5PSI0MzE4OS4yNyIgd2lkdGg9IjE3NDcuNDEiIGhlaWdodD0iMTAxOS4xOSIvPg0KICAgPHJlY3QgY2xhc3M9ImZpbDkiIHg9IjEwMjY3Ni45NCIgeT0iNDMxODkuMjciIHdpZHRoPSIxNzQ3LjQxIiBoZWlnaHQ9IjEwMTkuMTkiLz4NCiAgIDxyZWN0IGNsYXNzPSJmaWw5IiB4PSI5OTE4Mi4xMyIgeT0iNDQyMDguNDYiIHdpZHRoPSIxNzQ3LjQxIiBoZWlnaHQ9IjEwMTkuMTkiLz4NCiAgIDxyZWN0IGNsYXNzPSJmaWw5IiB4PSIxMDA5MjkuNTQiIHk9IjQ0MjA4LjQ2IiB3aWR0aD0iMTc0Ny40MSIgaGVpZ2h0PSIxMDE5LjE5Ii8+DQogICA8cmVjdCBjbGFzcz0iZmlsOSIgeD0iMTAyNjc2Ljk0IiB5PSI0NDIwOC40NiIgd2lkdGg9IjE3NDcuNDEiIGhlaWdodD0iMTAxOS4xOSIvPg0KICAgPHJlY3QgY2xhc3M9ImZpbDkiIHg9Ijk5MTgyLjEzIiB5PSI0NTIyNy42NiIgd2lkdGg9IjE3NDcuNDEiIGhlaWdodD0iMTIwNi45MSIvPg0KICAgPHJlY3QgY2xhc3M9ImZpbDkiIHg9IjEwMDkyOS41NCIgeT0iNDUyMjcuNjUiIHdpZHRoPSIxNzQ3LjQxIiBoZWlnaHQ9IjEwMTkuMTkiLz4NCiAgIDxyZWN0IGNsYXNzPSJmaWw5IiB4PSIxMDI2NzYuOTQiIHk9IjQ1MjI3LjY1IiB3aWR0aD0iMTc0Ny40MSIgaGVpZ2h0PSIxMDE5LjE5Ii8+DQogICA8cmVjdCBjbGFzcz0iZmlsOSIgeD0iMTE0OTA4Ljc4IiB5PSI0NDIwOC40NiIgd2lkdGg9IjE3NDcuNDEiIGhlaWdodD0iMTAxOS4xOSIvPg0KICAgPHJlY3QgY2xhc3M9ImZpbDkiIHg9IjExMzE2MS4zNyIgeT0iNDM2OTguODYiIHdpZHRoPSIxNzQ3LjQxIiBoZWlnaHQ9IjEwMTkuMTkiLz4NCiAgIDxyZWN0IGNsYXNzPSJmaWw5IiB4PSIxMTMxNjEuMzciIHk9IjQ0NzE4LjA1IiB3aWR0aD0iMTc0Ny40MSIgaGVpZ2h0PSIxMDE5LjE5Ii8+DQogICA8cmVjdCBjbGFzcz0iZmlsOSIgeD0iMTExNDEzLjk3IiB5PSI0MzY5OC44NiIgd2lkdGg9IjE3NDcuNDEiIGhlaWdodD0iMTAxOS4xOSIvPg0KICAgPHJlY3QgY2xhc3M9ImZpbDkiIHg9IjExMTQxMy45NyIgeT0iNDQ3MTguMDUiIHdpZHRoPSIxNzQ3LjQxIiBoZWlnaHQ9IjEwMTkuMTkiLz4NCiAgIDxyZWN0IGNsYXNzPSJmaWw5IiB4PSIxMDk2NjYuNTYiIHk9IjQzMDE5Ljg5IiB3aWR0aD0iMTc0Ny40MSIgaGVpZ2h0PSIxMTg4LjU1Ii8+DQogICA8cmVjdCBjbGFzcz0iZmlsOSIgeD0iMTA5NjY2LjU2IiB5PSI0NDIwOC40NiIgd2lkdGg9IjE3NDcuNDEiIGhlaWdodD0iMTAxOS4xOSIvPg0KICAgPHJlY3QgY2xhc3M9ImZpbDkiIHg9IjEwOTY2Ni41NiIgeT0iNDUyMjcuNjUiIHdpZHRoPSIxNzQ3LjQxIiBoZWlnaHQ9IjEwMTkuMTkiLz4NCiAgIDxyZWN0IGNsYXNzPSJmaWw5IiB4PSIxMDc5MTkuMTYiIHk9IjQzMTg5LjI3IiB3aWR0aD0iMTc0Ny40MSIgaGVpZ2h0PSIxMDE5LjE5Ii8+DQogICA8cmVjdCBjbGFzcz0iZmlsOSIgeD0iMTA2MTcxLjc1IiB5PSI0MzE4OS4yNyIgd2lkdGg9IjE3NDcuNDEiIGhlaWdodD0iMTAxOS4xOSIvPg0KICAgPHJlY3QgY2xhc3M9ImZpbDkiIHg9IjEwNDQyNC4zNSIgeT0iNDMxODkuMjciIHdpZHRoPSIxNzQ3LjQxIiBoZWlnaHQ9IjEwMTkuMTkiLz4NCiAgIDxyZWN0IGNsYXNzPSJmaWw5IiB4PSIxMDc5MTkuMTYiIHk9IjQ0MjA4LjQ2IiB3aWR0aD0iMTc0Ny40MSIgaGVpZ2h0PSIxMDE5LjE5Ii8+DQogICA8cmVjdCBjbGFzcz0iZmlsOSIgeD0iMTA2MTcxLjc1IiB5PSI0NDIwOC40NiIgd2lkdGg9IjE3NDcuNDEiIGhlaWdodD0iMTAxOS4xOSIvPg0KICAgPHJlY3QgY2xhc3M9ImZpbDkiIHg9IjEwNDQyNC4zNSIgeT0iNDQyMDguNDYiIHdpZHRoPSIxNzQ3LjQxIiBoZWlnaHQ9IjEwMTkuMTkiLz4NCiAgIDxyZWN0IGNsYXNzPSJmaWw5IiB4PSIxMDc5MTkuMTYiIHk9IjQ1MjI3LjY1IiB3aWR0aD0iMTc0Ny40MSIgaGVpZ2h0PSIxMDE5LjE5Ii8+DQogICA8cmVjdCBjbGFzcz0iZmlsOSIgeD0iMTA2MTcxLjc1IiB5PSI0NTIyNy42NSIgd2lkdGg9IjE3NDcuNDEiIGhlaWdodD0iMTAxOS4xOSIvPg0KICAgPHJlY3QgY2xhc3M9ImZpbDkiIHg9IjEwNDQyNC4zNSIgeT0iNDUyMjcuNjUiIHdpZHRoPSIxNzQ3LjQxIiBoZWlnaHQ9IjEwMTkuMTkiLz4NCiAgIDxyZWN0IGNsYXNzPSJmaWw5IiB4PSI5NDQ1NC4xMiIgeT0iNDM1NDEuODMiIHdpZHRoPSIxMjMzLjE5IiBoZWlnaHQ9IjExNzYuMjIiLz4NCiAgIDxyZWN0IGNsYXNzPSJmaWw5IiB4PSIxMTM0NTUuNzQiIHk9IjQ0NzE4LjA1IiB3aWR0aD0iMTQ1My4wMiIgaGVpZ2h0PSIxMTU0LjAyIi8+DQogIDwvZz4NCiA8L2c+DQo8L3N2Zz4NCg==" alt="CAO(S)"><span class="tpill"><span class="dot" id="net"></span>Lousa</span></div>
+
+  <div class="bar tools" id="tools">
+    <button class="tb" data-tool="select" title="Selecionar (V)"><svg class="i" viewBox="0 0 24 24"><path d="M4 4h3M10 4h4M17 4h3v3M20 10v4M20 17v3h-3M14 20h-4M7 20H4v-3M4 14v-4M4 7V4"/></svg></button>
+    <button class="tb" data-tool="hand" title="Mover a lousa (H · ou segure Espaço)"><svg class="i" viewBox="0 0 24 24"><path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V12M11 11.5v-8a1.5 1.5 0 0 1 3 0V12M14 5.5a1.5 1.5 0 0 1 3 0V12M17 8.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-2a6 6 0 0 1-4.8-2.4l-3-4a1.6 1.6 0 0 1 2.4-2.1L8 14"/></svg></button>
+    <button class="tb on" data-tool="pen" title="Caneta (P)"><svg class="i" viewBox="0 0 24 24"><path d="M15.5 4.5l4 4L8 20H4v-4L15.5 4.5z"/><path d="M13 7l4 4"/></svg></button>
+    <button class="tb" data-tool="eraser" title="Borracha (E)"><svg class="i" viewBox="0 0 24 24"><path d="M7 21h13"/><path d="M5.6 15.4l9.2-9.2a2 2 0 0 1 2.8 0l2.2 2.2a2 2 0 0 1 0 2.8L12 19H8.2l-2.6-2.6a.7.7 0 0 1 0-1z"/><path d="M10 11l5 5"/></svg></button>
+    <button class="tb" data-tool="text" title="Texto (T)"><svg class="i" viewBox="0 0 24 24"><path d="M5 6V5h14v1M12 5v14M9 19h6"/></svg></button>
+    <span class="sep"></span>
+    <button class="tb stylebtn" id="stylebtn" title="Cor e espessura"><span class="sw" style="--c:#ededf0;width:auto;height:auto" id="stylesw"><i></i></span></button>
+    <div class="stylepop bar" id="stylepop">
+      <span id="colors" style="display:contents"></span>
+      <span class="sep"></span>
+      <span id="sizes" style="display:contents"></span>
+    </div>
+    <span class="sep wide"></span>
+    <button class="tb" id="undo" title="Desfazer (Ctrl+Z)"><svg class="i" viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
+    <button class="tb" id="redo" title="Refazer (Ctrl+Shift+Z)"><svg class="i" viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
+  </div>
+
+  <div class="bar zoom">
+    <button class="tb" id="zout" title="Diminuir"><svg class="i" viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button>
+    <button class="zv" id="zval" title="Voltar a 100%">100%</button>
+    <button class="tb" id="zin" title="Aumentar"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+    <span class="sep" style="margin:0 3px"></span>
+    <button class="tb" id="zfit" title="Ver tudo"><svg class="i" viewBox="0 0 24 24"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg></button>
+  </div>
+
+  <div class="bar selbar" id="selbar">
+    <button class="tb dg" id="seldel" title="Excluir seleção (Delete)"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg></button>
+  </div>
+
+  <button class="gearfab" id="gear" aria-label="Ajustes" title="Ajustes"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+  <div class="drawer" id="drawer"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+/* =================== estado =================== */
+const $ = id => document.getElementById(id);
+const cv = $('cv'), ctx = cv.getContext('2d');
+const COLORS = ['#ededf0', '#facc15', '#4ade80', '#60a5fa', '#f472b6', '#f87171'];
+const SIZES = [2, 4, 8, 16];
+const LS = (k, v) => { try { if (v === undefined) return JSON.parse(localStorage.getItem('lousa:' + k)); localStorage.setItem('lousa:' + k, JSON.stringify(v)); } catch (e) { return null; } };
+const st = Object.assign({ tool: 'pen', color: COLORS[0], size: 4 }, LS('pref') || {});
+if (!COLORS.includes(st.color)) st.color = COLORS[0];
+if (!SIZES.includes(st.size)) st.size = 4;
+const cam = Object.assign({ x: 0, y: 0, z: 1 }, LS('cam') || {});
+let role = null, docs = {}, since = 0, ready = false;
+const cache = new Map();           // path -> {body, bb, p2d}
+const pending = new Map();         // path -> body|null (a enviar)
+let undoS = [], redoS = [];
+let sel = new Set();               // paths selecionados
+let dirty = true, dpr = 1, W = 0, H = 0;
+const ERASE_R = 10;
+
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+let toastT;
+function toast(m, cls = '') { const t = $('toast'); t.textContent = m; t.className = 'toast show ' + cls; clearTimeout(toastT); toastT = setTimeout(() => t.className = 'toast ' + cls, 2600); }
+const isAdmin = () => role === 'admin';
+
+/* =================== servidor =================== */
+async function api(path, opt = {}) {
+  const r = await fetch(path, { credentials: 'same-origin', ...opt, headers: { 'content-type': 'application/json', ...(opt.headers || {}) } });
+  let data = {}; try { data = await r.json(); } catch (e) {}
+  return { ok: r.ok, status: r.status, data };
+}
+let flushT = 0, flushing = false;
+function commit(path, body) {
+  if (body === null) delete docs[path]; else docs[path] = body;
+  pending.set(path, body);
+  dirty = true;
+  clearTimeout(flushT); flushT = setTimeout(flush, 350);
+}
+async function flush() {
+  if (flushing || !pending.size) return;
+  flushing = true;
+  const batch = [...pending.entries()].slice(0, 300);
+  try {
+    const r = await api('/api/docs', { method: 'POST', body: JSON.stringify({ ops: batch.map(([path, body]) => ({ path, body })) }) });
+    if (r.status === 401) { lockScreen(); return; }
+    if (!r.ok) throw new Error(r.data.error || r.status);
+    for (const [p, b] of batch) if (pending.get(p) === b) pending.delete(p);
+    $('net').classList.remove('off');
+  } catch (e) {
+    $('net').classList.add('off');
+    clearTimeout(flushT); flushT = setTimeout(flush, 4000);
+  } finally { flushing = false; }
+  if (pending.size) { clearTimeout(flushT); flushT = setTimeout(flush, 150); }
+}
+async function poll() {
+  if (!ready || document.hidden) return;
+  try {
+    const r = await api('/api/changes?since=' + since);
+    if (r.status === 401) return lockScreen();
+    if (!r.ok) throw 0;
+    since = r.data.now || since;
+    for (const [p, b] of Object.entries(r.data.docs || {})) {
+      if (pending.has(p) || (draw && draw.path === p) || (edit && edit.path === p)) continue;
+      if (b === null) { delete docs[p]; sel.delete(p); } else docs[p] = b;
+      dirty = true;
+    }
+    if (!pending.size) $('net').classList.remove('off');
+  } catch (e) { $('net').classList.add('off'); }
+}
+window.pendingCount = () => pending.size + (draw || drag ? 1 : 0);
+window.addEventListener('beforeunload', e => { if (pending.size) { flush(); e.preventDefault(); e.returnValue = ''; } });
+document.addEventListener('visibilitychange', () => { if (document.hidden) flush(); else poll(); });
+
+/* histórico: cada ação = [[path, antes, depois], ...] */
+function act(list) {
+  list = list.filter(([, a, b]) => a !== b);
+  if (!list.length) return;
+  for (const [p, , b] of list) commit(p, b);
+  undoS.push(list); if (undoS.length > 200) undoS.shift();
+  redoS = []; syncHist();
+}
+function undo() { const a = undoS.pop(); if (!a) return; for (const [p, b] of a) commit(p, b ?? null); redoS.push(a); sel.clear(); syncHist(); }
+function redo() { const a = redoS.pop(); if (!a) return; for (const [p, , b] of a) commit(p, b ?? null); undoS.push(a); sel.clear(); syncHist(); }
+function syncHist() { $('undo').disabled = !undoS.length; $('redo').disabled = !redoS.length; dirty = true; }
+
+/* =================== geometria =================== */
+const toW = (sx, sy) => ({ x: sx / cam.z + cam.x, y: sy / cam.z + cam.y });
+const textFont = s => `500 ${s}px Inter, "SF Pro Display", "Segoe UI", system-ui, sans-serif`;
+const LH = 1.25;
+function info(path) {
+  const body = docs[path];
+  let c = cache.get(path);
+  if (c && c.body === body) return c;
+  c = { body, bb: null, p2d: null };
+  if (path.startsWith('s/')) {
+    const p = body.p, w = body.w;
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    const step = body.r ? 3 : 2;
+    for (let i = 0; i < p.length; i += step) { x0 = Math.min(x0, p[i]); x1 = Math.max(x1, p[i]); y0 = Math.min(y0, p[i + 1]); y1 = Math.max(y1, p[i + 1]); }
+    c.bb = [x0 - w, y0 - w, x1 + w, y1 + w];
+    c.p2d = strokePath(body);
+  } else if (path.startsWith('t/')) {
+    ctx.save(); ctx.font = textFont(body.s);
+    const lines = String(body.txt).split('\n');
+    const w = Math.max(...lines.map(l => ctx.measureText(l).width), body.s * .3);
+    ctx.restore();
+    c.bb = [body.x, body.y, body.x + w, body.y + lines.length * body.s * LH];
+  }
+  cache.set(path, c);
+  return c;
+}
+// traço com pressão: união de círculos + trapézios (preenchido); sem pressão: linha suavizada
+function strokePath(b) {
+  const p = b.p, path = new Path2D();
+  if (b.r) {
+    const n = p.length / 3, R = i => Math.max(.25, b.w / 2 * (.25 + 1.25 * p[i * 3 + 2] / 100));
+    for (let i = 0; i < n; i++) {
+      const x = p[i * 3], y = p[i * 3 + 1], r = R(i);
+      path.moveTo(x + r, y); path.arc(x, y, r, 0, Math.PI * 2);
+      if (i) {
+        const px = p[i * 3 - 3], py = p[i * 3 - 2], pr = R(i - 1), dx = x - px, dy = y - py, d = Math.hypot(dx, dy);
+        if (d > 0.01) {
+          const nx = -dy / d, ny = dx / d;
+          // mesmo sentido dos círculos, para a união (nonzero) não abrir buracos
+          path.moveTo(px + nx * pr, py + ny * pr); path.lineTo(px - nx * pr, py - ny * pr); path.lineTo(x - nx * r, y - ny * r); path.lineTo(x + nx * r, y + ny * r); path.closePath();
+        }
+      }
+    }
+  } else {
+    const n = p.length / 2;
+    path.moveTo(p[0], p[1]);
+    if (n === 1) path.lineTo(p[0] + .01, p[1]);
+    for (let i = 1; i < n - 1; i++) path.quadraticCurveTo(p[i * 2], p[i * 2 + 1], (p[i * 2] + p[i * 2 + 2]) / 2, (p[i * 2 + 1] + p[i * 2 + 3]) / 2);
+    if (n > 1) path.lineTo(p[n * 2 - 2], p[n * 2 - 1]);
+  }
+  return path;
+}
+function paintStroke(b, p2d) {
+  if (b.r) { ctx.fillStyle = b.c; ctx.fill(p2d, 'nonzero'); }
+  else { ctx.strokeStyle = b.c; ctx.lineWidth = b.w; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.stroke(p2d); }
+}
+function paintText(b) {
+  ctx.fillStyle = b.c; ctx.font = textFont(b.s); ctx.textBaseline = 'top';
+  String(b.txt).split('\n').forEach((l, i) => ctx.fillText(l, b.x, b.y + i * b.s * LH + b.s * .1));
+}
+const hitBB = (bb, x0, y0, x1, y1) => bb[0] <= x1 && bb[2] >= x0 && bb[1] <= y1 && bb[3] >= y0;
+function distSeg(x, y, ax, ay, bx, by) {
+  const dx = bx - ax, dy = by - ay, l = dx * dx + dy * dy;
+  let t = l ? ((x - ax) * dx + (y - ay) * dy) / l : 0; t = Math.max(0, Math.min(1, t));
+  return Math.hypot(x - ax - t * dx, y - ay - t * dy);
+}
+function hits(path, x, y, r) {
+  const c = info(path), b = docs[path];
+  if (!hitBB(c.bb, x - r, y - r, x + r, y + r)) return false;
+  if (path.startsWith('t/')) return true;
+  const s = b.r ? 3 : 2, p = b.p, lim = r + b.w / 2;
+  if (p.length === s) return Math.hypot(x - p[0], y - p[1]) <= lim;
+  for (let i = s; i < p.length; i += s) if (distSeg(x, y, p[i - s], p[i - s + 1], p[i], p[i + 1]) <= lim) return true;
+  return false;
+}
+function inRect(path, x0, y0, x1, y1) {
+  const c = info(path), b = docs[path];
+  if (!hitBB(c.bb, x0, y0, x1, y1)) return false;
+  if (path.startsWith('t/')) return true;
+  const s = b.r ? 3 : 2, p = b.p;
+  for (let i = 0; i < p.length; i += s) if (p[i] >= x0 && p[i] <= x1 && p[i + 1] >= y0 && p[i + 1] <= y1) return true;
+  return false;
+}
+const items = () => Object.keys(docs).filter(p => (p.startsWith('s/') || p.startsWith('t/')) && docs[p]).sort((a, b) => (docs[a].z || 0) - (docs[b].z || 0));
+function selBB() {
+  let bb = null;
+  for (const p of sel) { if (!docs[p]) continue; const b = info(p).bb; bb = bb ? [Math.min(bb[0], b[0]), Math.min(bb[1], b[1]), Math.max(bb[2], b[2]), Math.max(bb[3], b[3])] : b.slice(); }
+  return bb;
+}
+
+/* =================== desenho =================== */
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 3); W = innerWidth; H = innerHeight;
+  cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); dirty = true;
+}
+function frame() {
+  if (dirty) { dirty = false; render(); }
+  requestAnimationFrame(frame);
+}
+function render() {
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.fillStyle = '#0b0b0d'; ctx.fillRect(0, 0, W, H);
+  // grade de pontinhos que acompanha a lousa
+  let g = 22 * cam.z; while (g < 14) g *= 2; while (g > 44) g /= 2;
+  const ox = -((cam.x * cam.z) % g + g) % g, oy = -((cam.y * cam.z) % g + g) % g;
+  ctx.fillStyle = 'rgba(255,255,255,.07)';
+  for (let x = ox; x < W; x += g) for (let y = oy; y < H; y += g) ctx.fillRect(x - .6, y - .6, 1.2, 1.2);
+
+  ctx.setTransform(dpr * cam.z, 0, 0, dpr * cam.z, -cam.x * cam.z * dpr, -cam.y * cam.z * dpr);
+  const v0 = toW(0, 0), v1 = toW(W, H);
+  const mv = drag && drag.kind === 'move' ? drag : null;
+  for (const p of items()) {
+    if (edit && edit.path === p) continue;
+    const c = info(p);
+    const off = mv && sel.has(p);
+    const bb = off ? [c.bb[0] + mv.dx, c.bb[1] + mv.dy, c.bb[2] + mv.dx, c.bb[3] + mv.dy] : c.bb;
+    if (!hitBB(bb, v0.x, v0.y, v1.x, v1.y)) continue;
+    if (off) { ctx.save(); ctx.translate(mv.dx, mv.dy); }
+    if (p.startsWith('s/')) paintStroke(docs[p], c.p2d); else paintText(docs[p]);
+    if (off) ctx.restore();
+  }
+  if (draw) paintStroke(draw.body, strokePath(draw.body));
+
+  // seleção e laço
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const sb = selBB();
+  const bar = $('selbar');
+  if (sb && !(drag && drag.kind === 'marquee')) {
+    const dx = mv ? mv.dx : 0, dy = mv ? mv.dy : 0;
+    const x = (sb[0] + dx - cam.x) * cam.z - 6, y = (sb[1] + dy - cam.y) * cam.z - 6, w = (sb[2] - sb[0]) * cam.z + 12, h = (sb[3] - sb[1]) * cam.z + 12;
+    ctx.strokeStyle = 'rgba(96,165,250,.85)'; ctx.lineWidth = 1; ctx.setLineDash([5, 4]);
+    ctx.strokeRect(Math.round(x) + .5, Math.round(y) + .5, Math.round(w), Math.round(h)); ctx.setLineDash([]);
+    bar.classList.add('show'); bar.style.left = (x + w / 2) + 'px'; bar.style.top = Math.max(60, y - 8) + 'px';
+  } else bar.classList.remove('show');
+  if (drag && drag.kind === 'marquee') {
+    const x = Math.min(drag.sx, drag.cx), y = Math.min(drag.sy, drag.cy), w = Math.abs(drag.cx - drag.sx), h = Math.abs(drag.cy - drag.sy);
+    ctx.fillStyle = 'rgba(96,165,250,.08)'; ctx.fillRect(x, y, w, h);
+    ctx.strokeStyle = 'rgba(96,165,250,.7)'; ctx.setLineDash([5, 4]); ctx.strokeRect(x + .5, y + .5, w, h); ctx.setLineDash([]);
+  }
+  $('zval').textContent = Math.round(cam.z * 100) + '%';
+}
+
+/* =================== câmera =================== */
+let camT = 0;
+function setCam(x, y, z) {
+  cam.x = x; cam.y = y; cam.z = Math.min(16, Math.max(.05, z)); dirty = true;
+  clearTimeout(camT); camT = setTimeout(() => LS('cam', cam), 300);
+  if (edit) placeEditor();
+  updCursor();
+}
+function zoomAt(sx, sy, f) {
+  const w = toW(sx, sy), z = Math.min(16, Math.max(.05, cam.z * f));
+  setCam(w.x - sx / z, w.y - sy / z, z);
+}
+let anim = 0;
+function animTo(tx, ty, tz) {
+  cancelAnimationFrame(anim);
+  const fx = cam.x, fy = cam.y, fz = cam.z, t0 = performance.now(), D = matchMedia('(prefers-reduced-motion:reduce)').matches ? 1 : 380;
+  const cx = W / 2, cy = H / 2, wcx = tx + cx / tz, wcy = ty + cy / tz, fcx = fx + cx / fz, fcy = fy + cy / fz;
+  const step = now => {
+    const k = Math.min(1, (now - t0) / D), e = 1 - Math.pow(1 - k, 3);
+    const z = Math.exp(Math.log(fz) + (Math.log(tz) - Math.log(fz)) * e);
+    const mx = fcx + (wcx - fcx) * e, my = fcy + (wcy - fcy) * e;
+    setCam(mx - cx / z, my - cy / z, z);
+    if (k < 1) anim = requestAnimationFrame(step);
+  };
+  anim = requestAnimationFrame(step);
+}
+function zoomBy(f) { const z = Math.min(16, Math.max(.05, cam.z * f)), c = toW(W / 2, H / 2); animTo(c.x - W / 2 / z, c.y - H / 2 / z, z); }
+function fitAll() {
+  const list = items();
+  if (!list.length) return animTo(-W / 2, -H / 2, 1);
+  let bb = null;
+  for (const p of list) { const b = info(p).bb; bb = bb ? [Math.min(bb[0], b[0]), Math.min(bb[1], b[1]), Math.max(bb[2], b[2]), Math.max(bb[3], b[3])] : b.slice(); }
+  const pad = 80, z = Math.min(4, Math.max(.05, Math.min((W - pad * 2) / (bb[2] - bb[0] || 1), (H - pad * 2 - 80) / (bb[3] - bb[1] || 1))));
+  animTo((bb[0] + bb[2]) / 2 - W / 2 / z, (bb[1] + bb[3]) / 2 - H / 2 / z, z);
+}
+
+/* =================== cursor: só um ponto =================== */
+function dotCursor(d, fill, ring) {
+  d = Math.max(4, Math.min(60, Math.round(d))); const s = d + 4, c = s / 2;
+  const svg = ring
+    ? `<svg xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}"><circle cx="${c}" cy="${c}" r="${d / 2}" fill="rgba(255,255,255,.08)" stroke="rgba(0,0,0,.6)" stroke-width="2.5"/><circle cx="${c}" cy="${c}" r="${d / 2}" fill="none" stroke="#fff" stroke-width="1.2"/></svg>`
+    : `<svg xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}"><circle cx="${c}" cy="${c}" r="${d / 2}" fill="${fill}" stroke="rgba(0,0,0,.55)" stroke-width="1"/></svg>`;
+  return `url("data:image/svg+xml,${encodeURIComponent(svg)}") ${Math.round(c)} ${Math.round(c)}, auto`;
+}
+let spaceDown = false;
+function updCursor() {
+  const t = effTool();
+  let c;
+  if (drag && drag.kind === 'pan') c = 'grabbing';
+  else if (t === 'hand') c = 'grab';
+  else if (t === 'pen') c = dotCursor(st.size * cam.z, st.color);
+  else if (t === 'eraser') c = dotCursor(ERASE_R * 2, '', true);
+  else if (t === 'select' && hoverSel) c = drag ? 'grabbing' : 'grab';
+  else c = dotCursor(5, '#ededf0');
+  if (cv.style.cursor !== c) cv.style.cursor = c;
+}
+const effTool = () => spaceDown ? 'hand' : st.tool;
+let hoverSel = false;
+
+/* =================== entrada (caneta, mouse, toque) =================== */
+let draw = null, drag = null, edit = null, penSeen = false;
+const touches = new Map();
+let pinch = null;
+
+const capture = e => { try { cv.setPointerCapture(e.pointerId); } catch (err) {} };
+cv.addEventListener('pointerdown', e => {
+  if (!ready) return;
+  closePops();
+  if (edit) { finishEdit(); if (st.tool === 'text') return; }
+  if (e.pointerType === 'pen') penSeen = true;
+  if (e.pointerType === 'touch') {
+    touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (touches.size === 2) { cancelDraw(); drag = null; startPinch(); return; }
+    if (touches.size > 2) return;
+    if (penSeen) { capture(e); drag = { kind: 'pan', id: e.pointerId, lx: e.clientX, ly: e.clientY }; updCursor(); return; }
+  }
+  if (draw || drag) return;
+  capture(e);
+  let t = effTool();
+  if (e.button === 1 || (e.pointerType === 'mouse' && e.button === 2)) t = 'hand';
+  if (e.pointerType === 'pen' && (e.button === 5 || (e.buttons & 32) || e.button === 2)) t = 'eraser';
+  const w = toW(e.clientX, e.clientY);
+  if (t === 'hand') { drag = { kind: 'pan', id: e.pointerId, lx: e.clientX, ly: e.clientY }; updCursor(); return; }
+  if (t === 'pen') return startDraw(e, w);
+  if (t === 'eraser') { drag = { kind: 'erase', id: e.pointerId, gone: [], lw: w }; eraseAt(w.x, w.y); return; }
+  if (t === 'text') { e.preventDefault(); const hit = topHit(w.x, w.y, 4, 't/'); return openEditor(hit, w); }
+  if (t === 'select') {
+    const sb = selBB(), m = 6 / cam.z;
+    if (sb && w.x >= sb[0] - m && w.x <= sb[2] + m && w.y >= sb[1] - m && w.y <= sb[3] + m) { drag = { kind: 'move', id: e.pointerId, wx: w.x, wy: w.y, dx: 0, dy: 0 }; updCursor(); return; }
+    const hit = topHit(w.x, w.y, 6 / cam.z);
+    if (hit) {
+      if (!e.shiftKey) sel.clear();
+      sel.add(hit); dirty = true; hoverSel = true;
+      drag = { kind: 'move', id: e.pointerId, wx: w.x, wy: w.y, dx: 0, dy: 0 }; updCursor(); return;
+    }
+    if (!e.shiftKey) sel.clear();
+    drag = { kind: 'marquee', id: e.pointerId, sx: e.clientX, sy: e.clientY, cx: e.clientX, cy: e.clientY, base: new Set(sel) }; dirty = true;
+  }
+});
+cv.addEventListener('pointermove', e => {
+  if (e.pointerType === 'touch' && touches.has(e.pointerId)) {
+    touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pinch) return movePinch();
+  }
+  if (draw && draw.id === e.pointerId) {
+    const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+    for (const ev of (evs.length ? evs : [e])) addPoint(ev);
+    dirty = true; return;
+  }
+  if (!drag) {
+    if (st.tool === 'select' && !spaceDown) { const sb = selBB(), w = toW(e.clientX, e.clientY), m = 6 / cam.z; const h = !!(sb && w.x >= sb[0] - m && w.x <= sb[2] + m && w.y >= sb[1] - m && w.y <= sb[3] + m); if (h !== hoverSel) { hoverSel = h; updCursor(); } }
+    return;
+  }
+  if (drag.id !== e.pointerId) return;
+  if (drag.kind === 'pan') { setCam(cam.x - (e.clientX - drag.lx) / cam.z, cam.y - (e.clientY - drag.ly) / cam.z, cam.z); drag.lx = e.clientX; drag.ly = e.clientY; }
+  else if (drag.kind === 'erase') {
+    const w = toW(e.clientX, e.clientY), d = Math.hypot(w.x - drag.lw.x, w.y - drag.lw.y), r = ERASE_R / cam.z, n = Math.ceil(d / r);
+    for (let i = 1; i <= n; i++) eraseAt(drag.lw.x + (w.x - drag.lw.x) * i / n, drag.lw.y + (w.y - drag.lw.y) * i / n);
+    drag.lw = w;
+  }
+  else if (drag.kind === 'move') { const w = toW(e.clientX, e.clientY); drag.dx = w.x - drag.wx; drag.dy = w.y - drag.wy; dirty = true; }
+  else if (drag.kind === 'marquee') {
+    drag.cx = e.clientX; drag.cy = e.clientY;
+    const a = toW(Math.min(drag.sx, drag.cx), Math.min(drag.sy, drag.cy)), b = toW(Math.max(drag.sx, drag.cx), Math.max(drag.sy, drag.cy));
+    sel = new Set(drag.base); for (const p of items()) if (inRect(p, a.x, a.y, b.x, b.y)) sel.add(p);
+    dirty = true;
+  }
+});
+function endPointer(e) {
+  if (e.pointerType === 'touch') {
+    touches.delete(e.pointerId);
+    if (pinch) { if (touches.size < 2) pinch = null; return; }
+  }
+  if (draw && draw.id === e.pointerId) return endDraw(e.type === 'pointercancel');
+  if (!drag || drag.id !== e.pointerId) return;
+  const d = drag; drag = null;
+  if (d.kind === 'erase' && d.gone.length) act(d.gone.map(([p, b]) => [p, b, null]));
+  if (d.kind === 'move' && (d.dx || d.dy)) {
+    act([...sel].filter(p => docs[p]).map(p => [p, docs[p], shifted(docs[p], d.dx, d.dy)]));
+  }
+  dirty = true; updCursor();
+}
+cv.addEventListener('pointerup', endPointer);
+cv.addEventListener('pointercancel', endPointer);
+cv.addEventListener('contextmenu', e => e.preventDefault());
+
+function shifted(b, dx, dy) {
+  if (b.txt !== undefined) return { ...b, x: r2(b.x + dx), y: r2(b.y + dy) };
+  const s = b.r ? 3 : 2, p = b.p.slice();
+  for (let i = 0; i < p.length; i += s) { p[i] = r2(p[i] + dx); p[i + 1] = r2(p[i + 1] + dy); }
+  return { ...b, p };
+}
+const r2 = v => Math.round(v * 100) / 100;
+
+function topHit(x, y, r, prefix) {
+  const list = items().reverse();
+  for (const p of list) if ((!prefix || p.startsWith(prefix)) && hits(p, x, y, r)) return p;
+  return null;
+}
+function eraseAt(x, y) {
+  const r = ERASE_R / cam.z;
+  for (const p of items()) if (hits(p, x, y, r)) { drag.gone.push([p, docs[p]]); commit(p, null); sel.delete(p); }
+}
+
+/* traço */
+function startDraw(e, w) {
+  const pr = e.pointerType === 'pen' && e.pressure > 0;
+  draw = {
+    id: e.pointerId, path: 's/' + uid(), pen: pr, lx: w.x, ly: w.y, lp: e.pressure || .5,
+    body: { c: st.color, w: r2(st.size / cam.z), z: Date.now(), p: pr ? [r2(w.x), r2(w.y), Math.round((e.pressure || .5) * 100)] : [r2(w.x), r2(w.y)] }
+  };
+  if (pr) draw.body.r = 1;
+  dirty = true;
+}
+function addPoint(ev) {
+  const w = toW(ev.clientX, ev.clientY), d = draw, minD = .8 / cam.z;
+  const a = d.pen ? .62 : .5;   // suavização leve
+  const x = d.lx + (w.x - d.lx) * a, y = d.ly + (w.y - d.ly) * a;
+  if (Math.hypot(x - d.lx, y - d.ly) < minD) return;
+  d.lx = x; d.ly = y;
+  if (d.pen) { d.lp = d.lp + ((ev.pressure || d.lp) - d.lp) * .5; d.body.p.push(r2(x), r2(y), Math.round(d.lp * 100)); }
+  else d.body.p.push(r2(x), r2(y));
+  d.rawx = w.x; d.rawy = w.y;
+}
+function endDraw(cancel) {
+  const d = draw; draw = null;
+  if (cancel) { dirty = true; return; }
+  if (d.rawx !== undefined) { if (d.pen) d.body.p.push(r2(d.rawx), r2(d.rawy), Math.round(d.lp * 100)); else d.body.p.push(r2(d.rawx), r2(d.rawy)); }
+  act([[d.path, undefined, d.body]]);
+}
+function cancelDraw() { draw = null; dirty = true; }
+
+/* pinça com dois dedos */
+function startPinch() {
+  const [a, b] = [...touches.values()];
+  pinch = { d: Math.hypot(a.x - b.x, a.y - b.y) || 1, mx: (a.x + b.x) / 2, my: (a.y + b.y) / 2, cam: { ...cam } };
+  pinch.w = { x: pinch.mx / cam.z + cam.x, y: pinch.my / cam.z + cam.y };
+}
+function movePinch() {
+  const [a, b] = [...touches.values()];
+  const d = Math.hypot(a.x - b.x, a.y - b.y) || 1, mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+  const z = Math.min(16, Math.max(.05, pinch.cam.z * d / pinch.d));
+  setCam(pinch.w.x - mx / z, pinch.w.y - my / z, z);
+}
+
+/* roda: mouse = zoom, trackpad = rolar, pinça do trackpad (ctrl) = zoom */
+cv.addEventListener('wheel', e => {
+  e.preventDefault();
+  if (edit) finishEdit();
+  const mouseWheel = e.deltaMode === 1 || (e.deltaX === 0 && Math.abs(e.deltaY) >= 50 && Number.isInteger(e.deltaY));
+  if (e.ctrlKey || e.metaKey || mouseWheel) {
+    const dy = e.deltaMode === 1 ? e.deltaY * 33 : e.deltaY;
+    zoomAt(e.clientX, e.clientY, Math.exp(-dy * (e.ctrlKey && !mouseWheel ? .01 : .0018)));
+  } else if (e.shiftKey) setCam(cam.x + e.deltaY / cam.z, cam.y, cam.z);
+  else setCam(cam.x + e.deltaX / cam.z, cam.y + e.deltaY / cam.z, cam.z);
+}, { passive: false });
+['gesturestart', 'gesturechange'].forEach(t => document.addEventListener(t, e => e.preventDefault()));
+
+/* texto */
+function openEditor(path, w) {
+  const ta = document.createElement('textarea'); ta.id = 'ted'; ta.spellcheck = false;
+  const b = path ? docs[path] : { x: r2(w.x), y: r2(w.y - st.size * 2.2 / cam.z), s: r2(Math.max(10, st.size * 4.5) / cam.z), c: st.color, txt: '', z: Date.now() };
+  edit = { path: path || 't/' + uid(), isNew: !path, body: b, ta };
+  ta.value = b.txt; ta.style.color = b.c;
+  document.body.appendChild(ta); placeEditor(); dirty = true;
+  ta.addEventListener('input', placeEditor);
+  ta.addEventListener('keydown', ev => { ev.stopPropagation(); if (ev.key === 'Escape' || (ev.key === 'Enter' && (ev.ctrlKey || ev.metaKey))) { ev.preventDefault(); finishEdit(); } });
+  ta.addEventListener('blur', () => setTimeout(() => { if (edit && edit.ta === ta) finishEdit(); }, 0));
+  const foc = () => { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); };
+  foc(); setTimeout(foc, 0);
+}
+function placeEditor() {
+  const { ta, body: b } = edit, fs = b.s * cam.z;
+  ta.style.font = textFont(fs); ta.style.lineHeight = LH;
+  ta.style.left = (b.x - cam.x) * cam.z + 'px'; ta.style.top = (b.y - cam.y) * cam.z + 'px';
+  ta.style.width = '0px'; ta.style.height = '0px';
+  ta.style.width = (ta.scrollWidth + fs * .5) + 'px'; ta.style.height = ta.scrollHeight + 'px';
+}
+function finishEdit() {
+  const e = edit; if (!e) return; edit = null;
+  const txt = e.ta.value.replace(/\s+$/, ''); e.ta.remove();
+  if (e.isNew) { if (txt) act([[e.path, undefined, { ...e.body, txt }]]); }
+  else if (!txt) act([[e.path, docs[e.path], null]]);
+  else if (txt !== e.body.txt) act([[e.path, docs[e.path], { ...docs[e.path], txt }]]);
+  dirty = true;
+}
+
+/* =================== barra =================== */
+function setTool(t) {
+  if (edit) finishEdit();
+  st.tool = t; if (t !== 'select') { sel.clear(); hoverSel = false; }
+  document.querySelectorAll('[data-tool]').forEach(b => b.classList.toggle('on', b.dataset.tool === t));
+  LS('pref', st); updCursor(); dirty = true;
+}
+function buildStyle() {
+  $('colors').innerHTML = COLORS.map(c => `<button class="sw ${c === st.color ? 'on' : ''}" style="--c:${c}" data-color="${c}" title="Cor"><i></i></button>`).join('');
+  $('sizes').innerHTML = SIZES.map(s => `<button class="sz ${s === st.size ? 'on' : ''}" data-size="${s}" title="Espessura ${s}"><i style="width:${Math.min(14, s + 2)}px;height:${Math.min(14, s + 2)}px"></i></button>`).join('');
+  $('stylesw').style.setProperty('--c', st.color);
+}
+$('tools').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.tool) setTool(b.dataset.tool);
+  else if (b.dataset.color) { st.color = b.dataset.color; restyleSel({ c: st.color }); if (st.tool !== 'select') setTool(st.tool === 'text' ? 'text' : 'pen'); buildStyle(); LS('pref', st); updCursor(); }
+  else if (b.dataset.size) { st.size = +b.dataset.size; if (st.tool !== 'text' && st.tool !== 'select') setTool('pen'); buildStyle(); LS('pref', st); updCursor(); }
+  else if (b.id === 'undo') undo();
+  else if (b.id === 'redo') redo();
+  else if (b.id === 'stylebtn') { $('stylepop').classList.toggle('open'); return; }
+});
+function restyleSel(patch) { if (st.tool === 'select' && sel.size) act([...sel].filter(p => docs[p]).map(p => [p, docs[p], { ...docs[p], ...patch }])); }
+function closePops() { $('stylepop').classList.remove('open'); if ($('drawer').classList.contains('open')) toggleDrawer(false); }
+$('zin').onclick = () => zoomBy(1.25);
+$('zout').onclick = () => zoomBy(1 / 1.25);
+$('zval').onclick = () => { const c = toW(W / 2, H / 2); animTo(c.x - W / 2, c.y - H / 2, 1); };
+$('zfit').onclick = fitAll;
+$('seldel').onclick = delSel;
+async function delSel() {
+  const list = [...sel].filter(p => docs[p]); if (!list.length) return;
+  if (!(await ask(list.length === 1 ? 'Excluir o item selecionado?' : `Excluir os ${list.length} itens selecionados?`))) return;
+  act(list.map(p => [p, docs[p], null])); sel.clear(); hoverSel = false; updCursor();
+}
+
+document.addEventListener('keydown', e => {
+  if (/INPUT|TEXTAREA/.test(document.activeElement?.tagName || '') || document.querySelector('.scrim')) return;
+  const k = e.key.toLowerCase(), mod = e.ctrlKey || e.metaKey;
+  if (mod && k === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); return; }
+  if (mod && k === 'y') { e.preventDefault(); redo(); return; }
+  if (mod && k === 'a' && st.tool === 'select') { e.preventDefault(); sel = new Set(items()); dirty = true; return; }
+  if (mod && (k === '=' || k === '+')) { e.preventDefault(); zoomBy(1.25); return; }
+  if (mod && k === '-') { e.preventDefault(); zoomBy(1 / 1.25); return; }
+  if (mod && k === '0') { e.preventDefault(); $('zval').onclick(); return; }
+  if (mod) return;
+  if (k === ' ' && !spaceDown) { e.preventDefault(); spaceDown = true; updCursor(); return; }
+  if ((k === 'delete' || k === 'backspace') && sel.size) { e.preventDefault(); delSel(); return; }
+  if (k === 'escape') { sel.clear(); closePops(); dirty = true; return; }
+  const map = { v: 'select', h: 'hand', p: 'pen', b: 'pen', e: 'eraser', t: 'text' };
+  if (map[k]) setTool(map[k]);
+  if (k === '1' && e.shiftKey) fitAll();
+});
+document.addEventListener('keyup', e => { if (e.key === ' ') { spaceDown = false; updCursor(); } });
+window.addEventListener('blur', () => { spaceDown = false; updCursor(); });
+
+/* janela Cancelar/Excluir */
+function ask(title, ok = 'Excluir') {
+  return new Promise(res => {
+    const s = document.createElement('div'); s.className = 'scrim';
+    s.innerHTML = `<div class="ask"><h3>${esc(title)}</h3><div class="row"><button class="pill" data-a="0">Cancelar</button><button class="pill dg" data-a="1">${esc(ok)}</button></div></div>`;
+    document.body.appendChild(s);
+    const done = v => { s.remove(); document.removeEventListener('keydown', kd, true); res(v); };
+    const kd = ev => { if (ev.key === 'Escape') { ev.stopPropagation(); done(false); } if (ev.key === 'Enter') { ev.stopPropagation(); done(true); } };
+    document.addEventListener('keydown', kd, true);
+    s.addEventListener('pointerdown', ev => { if (ev.target === s) done(false); });
+    s.querySelectorAll('[data-a]').forEach(b => b.addEventListener('click', () => done(b.dataset.a === '1')));
+  });
+}
+
+/* =================== ajustes =================== */
+$('gear').onclick = e => { e.stopPropagation(); toggleDrawer(); };
+function toggleDrawer(force) {
+  const d = $('drawer'), open = force ?? !d.classList.contains('open');
+  d.classList.toggle('open', open); $('gear').classList.toggle('on', open);
+  if (open) drawDrawer();
+}
+async function drawDrawer() {
+  const d = $('drawer');
+  d.innerHTML = `
+    ${isAdmin() ? `<div class="sec"><h4>Fotos diárias</h4><p class="hint">Cópia automática da lousa todo dia (30 dias).</p><div id="bks"><div class="bk">Carregando…</div></div></div>
+    <div class="sec"><h4>Senha de emergência</h4><p class="hint">Só para quando o Quintal estiver fora do ar.</p><div class="row"><input class="inp pw" id="pin" type="text" autocomplete="off" spellcheck="false" placeholder="Nova senha"><button class="pill sm white" id="pinok">Salvar</button></div></div>` : ''}
+    <div class="sec"><div class="row"><span class="hint" style="margin:0;flex:1">Caneta: a pressão muda a espessura. Dois dedos movem e dão zoom.</span><button class="pill sm" id="out">Sair</button></div></div>`;
+  $('out').onclick = async () => { await flush(); await api('/api/logout', { method: 'POST' }); location.replace('https://meucaos.com/'); };
+  if (!isAdmin()) return;
+  $('pinok').onclick = async () => {
+    const v = $('pin').value.trim(); if (v.length < 4) return toast('Mínimo de 4 caracteres', 'r');
+    const r = await api('/api/pin', { method: 'POST', body: JSON.stringify({ pin: v }) });
+    toast(r.ok ? 'Senha de emergência trocada' : 'Não deu para salvar', r.ok ? '' : 'r'); if (r.ok) $('pin').value = '';
+  };
+  const r = await api('/api/backups'); const el = $('bks'); if (!el) return;
+  const list = (r.data.backups || []).slice(0, 10);
+  el.innerHTML = (list.length ? list.map(b => `<div class="bk"><span>${b.day.split('-').reverse().join('/')} · ${b.n} itens</span><a href="/api/backups/${b.day}" download="lousa-${b.day}.json">Baixar</a></div>`).join('') : '<div class="bk">Ainda sem fotos.</div>') +
+    `<div class="row" style="margin-top:6px"><button class="pill sm" id="bknow">Tirar foto agora</button></div>`;
+  $('bknow').onclick = async () => { await flush(); const x = await api('/api/backups/now', { method: 'POST' }); toast(x.ok ? 'Foto salva' : 'Não deu', x.ok ? '' : 'r'); drawDrawer(); };
+}
+document.addEventListener('pointerdown', e => { if (!$('tools').contains(e.target)) $('stylepop').classList.remove('open'); const d = $('drawer'); if (d.classList.contains('open') && !d.contains(e.target) && !$('gear').contains(e.target)) toggleDrawer(false); });
+
+/* =================== início =================== */
+window.addEventListener('resize', resize);
+resize(); buildStyle(); setTool(st.tool); syncHist();
+if (!LS('cam')) { cam.x = -W / 2; cam.y = -H / 2; }
+requestAnimationFrame(frame);
+(async () => {
+  const s = await api('/api/session').catch(() => ({ data: { down: true } }));
+  if (!s.data.role) return lockScreen();
+  role = s.data.role;
+  const d = await api('/api/docs');
+  if (!d.ok) return lockScreen();
+  docs = d.data.docs || {}; since = d.data.now || 0; ready = true; dirty = true;
+  document.body.classList.remove('locked');
+  setInterval(poll, 4000);
+})();
+</script>
+<script>
+/* login único pelo Quintal do CAO(S) */
+(function () {
+  const QUINTAL = 'https://meucaos.com/';
+  const emerg = /[?&]emergencia\b/.test(location.search);
+  const toQuintal = () => location.replace(QUINTAL + '?next=' + encodeURIComponent(location.origin + location.pathname));
+  function emergencyGate(down) {
+    document.getElementById('gate')?.remove();
+    const g = document.createElement('div'); g.id = 'gate';
+    g.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;gap:12px"><input class="gate-in" id="gate-pin" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" aria-label="Senha de emergência"><div style="font-size:11.5px;color:#85858e">${down ? 'Quintal fora do ar · senha de emergência' : 'Senha de emergência'}</div></div>`;
+    document.body.appendChild(g);
+    const inp = document.getElementById('gate-pin'); setTimeout(() => inp.focus(), 60);
+    let busy = 0;
+    const tryPin = async v => {
+      const r = await fetch('/api/login', { method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ kind: 'admin', pin: v }) }).catch(() => null);
+      return !!(r && r.ok);
+    };
+    inp.addEventListener('input', async () => { const v = inp.value.trim(), n = ++busy; if (v.length < 4) return; if (await tryPin(v) && n === busy) { inp.disabled = true; location.replace(location.pathname); } });
+    inp.addEventListener('keydown', async e => { if (e.key === 'Enter' && !(await tryPin(inp.value.trim()))) { inp.classList.remove('shake'); void inp.offsetWidth; inp.classList.add('shake'); inp.select(); } });
+  }
+  window.lockScreen = function () {
+    document.body.classList.add('locked');
+    if (emerg) return emergencyGate(false);
+    fetch('/api/session', { credentials: 'same-origin' }).then(r => r.json()).catch(() => ({ down: true })).then(d => {
+      if (d.role) { location.reload(); return; }
+      if (d.down) return emergencyGate(true);
+      if (d.reason === 'acesso') { document.body.insertAdjacentHTML('beforeend', '<div id="gate"><div style="color:#85858e;font-size:13px;text-align:center;line-height:1.6">Você não tem acesso à Lousa.<br>Peça a liberação no Quintal.</div></div>'); return; }
+      toQuintal();
+    });
+  };
+})();
+</script>
+<style>
+/* efeito glitch no logo */
+.glx{position:relative;display:inline-block;line-height:0;isolation:isolate}
+.glx>img{position:relative;z-index:1}
+.glx .gl{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;opacity:0;z-index:2;object-fit:contain}
+.glx .gl1{filter:drop-shadow(3px 0 0 rgba(255,0,110,.95)) drop-shadow(-1px 0 0 rgba(255,0,110,.6));animation:glx1 4.7s steps(1,end) infinite}
+.glx .gl2{filter:drop-shadow(-3px 0 0 rgba(0,255,240,.95)) drop-shadow(1px 0 0 rgba(0,255,240,.6));animation:glx2 6.1s steps(1,end) infinite}
+.glx>img:first-child{animation:glx0 4.7s steps(1,end) infinite}
+@keyframes glx0{0%,88%,100%{transform:none}89%{transform:translate(-2px,0) skewX(-4deg)}91%{transform:translate(2px,0)}93%{transform:translate(-1px,1px) skewX(3deg)}95%{transform:none}}
+@keyframes glx1{0%,87%{opacity:0;clip-path:inset(0 0 100% 0)}
+  88%{opacity:1;clip-path:inset(12% 0 70% 0);transform:translate(-6px,0)}
+  90%{clip-path:inset(55% 0 20% 0);transform:translate(5px,0)}
+  92%{clip-path:inset(30% 0 52% 0);transform:translate(-3px,0)}
+  94%{clip-path:inset(78% 0 4% 0);transform:translate(7px,0)}
+  96%{clip-path:inset(4% 0 85% 0);transform:translate(-4px,0)}
+  98%{opacity:0}100%{opacity:0}}
+@keyframes glx2{0%,90%{opacity:0;clip-path:inset(0 0 100% 0)}
+  91%{opacity:1;clip-path:inset(62% 0 18% 0);transform:translate(6px,0)}
+  93%{clip-path:inset(18% 0 66% 0);transform:translate(-5px,0)}
+  95%{clip-path:inset(44% 0 38% 0);transform:translate(4px,0)}
+  97%{clip-path:inset(85% 0 2% 0);transform:translate(-7px,0)}
+  99%{opacity:0}100%{opacity:0}}
+body.noglitch .glx .gl{display:none}body.noglitch .glx>img:first-child{animation:none}
+@media (prefers-reduced-motion:reduce){.glx .gl{display:none}.glx>img:first-child{animation:none}}
+</style>
+<script>
+/* glitch: embrulha o logo em camadas; liga/desliga em Ajustes do Quintal */
+(function () {
+  const img = document.getElementById('hero-logo');
+  const w = document.createElement('span'); w.className = 'glx';
+  img.replaceWith(w); w.appendChild(img);
+  for (const c of ['gl1', 'gl2']) { const g = img.cloneNode(); g.removeAttribute('id'); g.className = 'gl ' + c; g.alt = ''; g.setAttribute('aria-hidden', 'true'); w.appendChild(g); }
+  if (/^https?:$/.test(location.protocol))
+    fetch('/api/session', { credentials: 'same-origin' }).then(r => r.json()).then(d => { if (d && d.glitch === false) document.body.classList.add('noglitch'); }).catch(() => {});
+})();
+</script>
+<script>
+if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('/sw.js').catch(() => {});
+/* atualização automática: quando sai versão nova, recarrega assim que estiver livre */
+(function () {
+  if (!/^https?:$/.test(location.protocol)) return;
+  let v0 = null;
+  const idle = () => !document.querySelector('.scrim') && !document.getElementById('ted') && !(window.pendingCount && window.pendingCount());
+  const check = async () => {
+    try {
+      const v = (await (await fetch('/api/ver', { cache: 'no-store' })).json()).v;
+      if (!v) return;
+      if (v0 === null) v0 = v;
+      else if (v !== v0 && idle()) location.reload();
+    } catch (e) {}
+  };
+  check(); setInterval(check, 60000);
+})();
+</script>
+</body></html>

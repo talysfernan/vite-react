@@ -176,6 +176,7 @@ users  = [{ id, name, user, cargo, email, note, pass(hash), passEnc, active,
   - Anexos: `POST /api/files` (corpo = arquivo, cabeçalhos `x-name`, `x-board`), `GET /api/blob/:id?b=br|us[&dl=1]`, `DELETE /api/files/:id`; guardados em partes de 1,8 MB nas tabelas `files`/`file_parts` do Durable Object do país (fora da foto diária e do export).
   - Teste local com o servidor real: `.dev.vars` com `SESSION_SECRET=...` e `npx wrangler dev`; login local pela senha de emergência padrão.
   - Antes de publicar, anotar a versão atual (`/workers/scripts/caos-constelacao/deployments`) para poder voltar.
+- `lousa/` — painel **Lousa** (canvas infinito, worker `caos-lousa`) em **lousa.meucaos.com**, chave `lousa`, na área/categoria **Ferramentas** do Quintal. Tudo embutido no código (sem assets); dados num Durable Object `main`; foto diária por alarme do próprio DO. Cursor da caneta é só um ponto.
 - Fluxo das correções:
   1. Uma correção por vez, só o que foi pedido.
   2. Testar no navegador (Playwright) com a API simulada.
