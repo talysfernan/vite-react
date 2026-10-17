@@ -65,7 +65,13 @@ svg.i{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6;stro
 svg.wires{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;pointer-events:none}
 .wire{fill:none;stroke-width:1.6;stroke-linecap:round;transition:opacity .4s var(--ease),stroke-width .3s}
 .guide{position:absolute;pointer-events:none;border:0 dashed rgba(255,255,255,.28);z-index:1}
-.guide.h{height:0;border-top-width:1px}.guide.v{width:0;border-left-width:1px}
+.guide.h{height:0;border-top-width:1px}
+/* marcadores de espaçamento igual (somem ao soltar) */
+.gm{position:absolute;left:0;top:0;pointer-events:none;z-index:7}
+.gmk{position:absolute;background:var(--pink)}.gmk.h{height:1px}.gmk.v{width:1px}
+.gmk.h::before,.gmk.h::after{content:"";position:absolute;top:-4px;width:1px;height:9px;background:var(--pink)}.gmk.h::before{left:0}.gmk.h::after{right:0}
+.gmk.v::before,.gmk.v::after{content:"";position:absolute;left:-4px;height:1px;width:9px;background:var(--pink)}.gmk.v::before{top:0}.gmk.v::after{bottom:0}
+.gml{position:absolute;transform:translate(-50%,-50%);padding:1px 6px;border-radius:6px;font-size:10.5px;font-weight:600;color:#fff;background:var(--pink);line-height:1.5}.guide.v{width:0;border-left-width:1px}
 
 /* ---------- cards do mapa ---------- */
 .n{position:absolute;transform:translateY(-50%);cursor:pointer;z-index:2;transition:opacity .45s var(--ease),filter .45s}
@@ -814,7 +820,7 @@ function drawWorld() {
   $('#docks').hidden = false;
   const vis = visNodes(list), offs = offOf(list);
   const fx = freeNodes();
-  w.innerHTML = `${fx.filter(f => f.kind === 'f_area').map(fxHTML).join('')}<svg class="wires" id="wires"></svg>${vis.map(n => nodeHTML(n, list, offs)).join('')}${fx.filter(f => f.kind !== 'f_area').map(fxHTML).join('')}<div class="guide h" id="gh" hidden></div><div class="guide v" id="gv" hidden></div>`;
+  w.innerHTML = `${fx.filter(f => f.kind === 'f_area').map(fxHTML).join('')}<svg class="wires" id="wires"></svg>${vis.map(n => nodeHTML(n, list, offs)).join('')}${fx.filter(f => f.kind !== 'f_area').map(fxHTML).join('')}<div class="guide h" id="gh" hidden></div><div class="guide v" id="gv" hidden></div><div class="gm" id="gm"></div>`;
   drawWires(vis);
   if (PRES) presMark();
 }
@@ -952,19 +958,57 @@ function magnetRects(skip) {
 }
 const magnetFx = (d, nx, ny) => snapRect(d, nx, ny, d.el.offsetWidth, d.el.offsetHeight);
 /* ímã: bordas e centro do retângulo arrastado contra os vizinhos, com guias tracejadas */
+/* espaços entre vizinhos que se encostam na vertical (v) e na horizontal (h) */
+function gapsOf(rs) {
+  const v = [], h = [];
+  rs.forEach(a => {
+    let bv = null, bh = null;
+    rs.forEach(b => {
+      if (b === a) return;
+      if (b.x < a.x + a.w && b.x + b.w > a.x && b.y >= a.y + a.h && (!bv || b.y < bv.y)) bv = b;
+      if (b.y < a.y + a.h && b.y + b.h > a.y && b.x >= a.x + a.w && (!bh || b.x < bh.x)) bh = b;
+    });
+    if (bv && bv.y - (a.y + a.h) < 600) v.push({ g: bv.y - (a.y + a.h), a, b: bv });
+    if (bh && bh.x - (a.x + a.w) < 600) h.push({ g: bh.x - (a.x + a.w), a, b: bh });
+  });
+  return { v, h };
+}
+/* ímã em todos os sentidos: bordas, centro e espaçamento igual (entre dois vizinhos ou igual a outro espaço do mapa) */
 function snapRect(d, nx, ny, w, h) {
-  const th = 8 / V.z, xs = [nx, nx + w / 2, nx + w], ys = [ny, ny + h / 2, ny + h];
+  const th = 8 / V.z, G = d.gaps || (d.gaps = gapsOf(d.cands));
+  /* o espaçamento igual tem prioridade sobre um alinhamento de borda à mesma distância */
+  const wt = g => g === 2 ? .25 : g ? .5 : 1, sc = c => c ? Math.abs(c.d) * wt(c.gap) : Infinity;
+  const better = (cur, dd, gap) => Math.abs(dd) < th && Math.abs(dd) * wt(gap) < sc(cur);
   let bx = null, by = null;
-  for (const r of d.cands) {
-    const cx = [r.x, r.x + r.w / 2, r.x + r.w], cy = [r.y, r.y + r.h / 2, r.y + r.h];
-    for (const a of xs) for (const c of cx) { const dd = c - a; if (Math.abs(dd) < th && (!bx || Math.abs(dd) < Math.abs(bx.d))) bx = { d: dd, at: c, r }; }
-    for (const a of ys) for (const c of cy) { const dd = c - a; if (Math.abs(dd) < th && (!by || Math.abs(dd) < Math.abs(by.d))) by = { d: dd, at: c, r }; }
+  /* bordas e centro */
+  const xs = [nx, nx + w / 2, nx + w];
+  for (const r of d.cands) { const cx = [r.x, r.x + r.w / 2, r.x + r.w]; for (const a of xs) for (const c of cx) { const dd = c - a; if (better(bx, dd)) bx = { d: dd, at: c, r }; } }
+  /* espaçamento na horizontal: vizinhos à esquerda e à direita que dividem a mesma faixa */
+  { let L = null, R = null; const yo = r => r.y < ny + h && r.y + r.h > ny;
+    for (const r of d.cands) if (yo(r)) { if (r.x + r.w <= nx + w / 2 && (!L || r.x + r.w > L.x + L.w)) L = r; if (r.x >= nx + w / 2 && (!R || r.x < R.x)) R = r; }
+    if (L && R) { const dd = (L.x + L.w + R.x - w) / 2 - nx; if (better(bx, dd, 2)) bx = { d: dd, gap: 2, L, R }; }
+    for (const e of G.h) { if (!yo(e.a) || !yo(e.b)) continue; if (L && e.a !== L) { const dd = L.x + L.w + e.g - nx; if (better(bx, dd, 1)) bx = { d: dd, gap: true, L, ref: e }; } if (R && e.b !== R) { const dd = R.x - e.g - w - nx; if (better(bx, dd, 1)) bx = { d: dd, gap: true, R, ref: e }; } }
   }
-  if (bx) nx += bx.d; if (by) ny += by.d;
-  const gh = $('#gh'), gv = $('#gv');
-  if (bx) { const t0 = Math.min(ny, bx.r.y) - 16, t1 = Math.max(ny + h, bx.r.y + bx.r.h) + 16; Object.assign(gv.style, { left: bx.at + 'px', top: t0 + 'px', height: (t1 - t0) + 'px' }); gv.hidden = false; } else gv.hidden = true;
-  if (by) { const l0 = Math.min(nx, by.r.x) - 16, l1 = Math.max(nx + w, by.r.x + by.r.w) + 16; Object.assign(gh.style, { left: l0 + 'px', top: by.at + 'px', width: (l1 - l0) + 'px' }); gh.hidden = false; } else gh.hidden = true;
-  const key = (bx ? bx.at : '') + '|' + (by ? by.at : '');
+  if (bx) nx += bx.d;
+  const ys = [ny, ny + h / 2, ny + h];
+  for (const r of d.cands) { const cy = [r.y, r.y + r.h / 2, r.y + r.h]; for (const a of ys) for (const c of cy) { const dd = c - a; if (better(by, dd)) by = { d: dd, at: c, r }; } }
+  /* espaçamento na vertical: vizinhos em cima e embaixo que dividem a mesma coluna */
+  { let T = null, B = null; const xo = r => r.x < nx + w && r.x + r.w > nx;
+    for (const r of d.cands) if (xo(r)) { if (r.y + r.h <= ny + h / 2 && (!T || r.y + r.h > T.y + T.h)) T = r; if (r.y >= ny + h / 2 && (!B || r.y < B.y)) B = r; }
+    if (T && B) { const dd = (T.y + T.h + B.y - h) / 2 - ny; if (better(by, dd, 2)) by = { d: dd, gap: 2, T, B }; }
+    for (const e of G.v) { if (!xo(e.a) || !xo(e.b)) continue; if (T && e.a !== T) { const dd = T.y + T.h + e.g - ny; if (better(by, dd, 1)) by = { d: dd, gap: true, T, ref: e }; } if (B && e.b !== B) { const dd = B.y - e.g - h - ny; if (better(by, dd, 1)) by = { d: dd, gap: true, B, ref: e }; } }
+  }
+  if (by) ny += by.d;
+  /* guias de borda e marcadores de espaço */
+  const gh = $('#gh'), gv = $('#gv'), gm = $('#gm'), M = { x: nx, y: ny, w, h }, mk = [];
+  const hgap = (P, Q) => { const x0 = P.x + P.w, x1 = Q.x; if (x1 - x0 < 2) return; const y = (Math.max(P.y, Q.y) + Math.min(P.y + P.h, Q.y + Q.h)) / 2; mk.push(`<i class="gmk h" style="left:${x0}px;top:${y}px;width:${x1 - x0}px"></i><b class="gml" style="left:${(x0 + x1) / 2}px;top:${y}px">${Math.round(x1 - x0)}</b>`); };
+  const vgap = (P, Q) => { const y0 = P.y + P.h, y1 = Q.y; if (y1 - y0 < 2) return; const x = (Math.max(P.x, Q.x) + Math.min(P.x + P.w, Q.x + Q.w)) / 2; mk.push(`<i class="gmk v" style="left:${x}px;top:${y0}px;height:${y1 - y0}px"></i><b class="gml" style="left:${x}px;top:${(y0 + y1) / 2}px">${Math.round(y1 - y0)}</b>`); };
+  if (bx && bx.gap) { if (bx.L) hgap(bx.L, M); if (bx.R) hgap(M, bx.R); if (bx.ref) hgap(bx.ref.a, bx.ref.b); }
+  if (by && by.gap) { if (by.T) vgap(by.T, M); if (by.B) vgap(M, by.B); if (by.ref) vgap(by.ref.a, by.ref.b); }
+  if (gm) gm.innerHTML = mk.join('');
+  if (bx && !bx.gap) { const t0 = Math.min(ny, bx.r.y) - 16, t1 = Math.max(ny + h, bx.r.y + bx.r.h) + 16; Object.assign(gv.style, { left: bx.at + 'px', top: t0 + 'px', height: (t1 - t0) + 'px' }); gv.hidden = false; } else gv.hidden = true;
+  if (by && !by.gap) { const l0 = Math.min(nx, by.r.x) - 16, l1 = Math.max(nx + w, by.r.x + by.r.w) + 16; Object.assign(gh.style, { left: l0 + 'px', top: by.at + 'px', width: (l1 - l0) + 'px' }); gh.hidden = false; } else gh.hidden = true;
+  const key = (bx ? Math.round(nx) : '') + '|' + (by ? Math.round(ny) : '');
   if (key !== d.snap) { if ((bx || by) && navigator.vibrate) try { navigator.vibrate(8); } catch (er) {} d.snap = key; }
   return { x: Math.round(nx), y: Math.round(ny) };
 }
@@ -1010,12 +1054,12 @@ function endPtr(e) {
   DRAG = null; $('#stage')?.classList.remove('grab');
   if (e.type === 'pointercancel') { if (d.node || d.fx || d.rs) drawWorld(); return; }
   if (d.rs) { if (d.moved) { const n = N(d.rs.id); n.w = Math.round(d.el.offsetWidth); if (n.kind === 'f_area') n.h = Math.round(d.el.offsetHeight); putNode(n); } return; }
-  if (d.fx) { d.el.classList.remove('drag'); $('#gh').hidden = true; $('#gv').hidden = true; if (!d.moved) { openFx(d.fx.id); return; } const n = N(d.fx.id); n.x = d.nx; n.y = d.ny; putNode(n); return; }
+  if (d.fx) { d.el.classList.remove('drag'); $('#gh').hidden = true; $('#gv').hidden = true; $('#gm').innerHTML = ''; if (!d.moved) { openFx(d.fx.id); return; } const n = N(d.fx.id); n.x = d.nx; n.y = d.ny; putNode(n); return; }
   if (d.fxTap) { if (Math.hypot(e.clientX - d.sx, e.clientY - d.sy) < 6) openFx(d.fxTap); return; }
   if (d.tap) { if (Math.hypot(e.clientX - d.sx, e.clientY - d.sy) < 6) presGoId(d.tap); return; }
   if (!d.node) return;
   if (!d.moved) { openEd(d.node.id); return; }
-  $('#gh').hidden = true; $('#gv').hidden = true;
+  $('#gh').hidden = true; $('#gv').hidden = true; $('#gm').innerHTML = '';
   d.sub.forEach(s => { const p = d.pos[s.id]; if (p) putNode({ ...N(s.id), x: p.x, y: p.y }); $(`.n[data-id="${s.id}"]`)?.classList.remove('drag'); });
   const nn = N(d.node.id), rt = nn && nn.parent && N(nn.parent);
   if (rt && rt.kind === 'nucleo') {
